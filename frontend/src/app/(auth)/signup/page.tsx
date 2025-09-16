@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function SignupPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -34,6 +35,7 @@ export default function SignupPage() {
       await setDoc(doc(db, "users", user.uid), {
         uid: user.uid,
         email: user.email,
+        name: name,
       });
       router.push("/onboarding");
     } catch (error: any) {
@@ -49,6 +51,16 @@ export default function SignupPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSignUp} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
