@@ -6,10 +6,12 @@ interface FilterContextType {
   filters: {
     categories: string[];
     distance: number;
+    searchTerm: string;
   };
   setFilters: (filters: {
     categories: string[];
     distance: number;
+    searchTerm: string;
   }) => void;
 }
 
@@ -19,6 +21,7 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
   const [filters, setFilters] = useState({
     categories: [] as string[],
     distance: 100,
+    searchTerm: "",
   });
 
   return (

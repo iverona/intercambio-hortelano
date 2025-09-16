@@ -15,14 +15,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, LogOut, Settings } from "lucide-react";
+import { User, LogOut, Settings, Search } from "lucide-react";
 import Filter from "./Filter";
 import { useFilters } from "@/context/FilterContext";
+import { Input } from "@/components/ui/input";
 
 const Header = () => {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const { setFilters } = useFilters();
+  const { filters, setFilters } = useFilters();
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -44,6 +45,18 @@ const Header = () => {
           Portal de Intercambio Hortelano
         </Link>
         <nav className="flex items-center gap-4">
+          <div className="relative flex-1 md:grow-0">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Search for tomatoes, honey..."
+              className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+              value={filters.searchTerm}
+              onChange={(e) =>
+                setFilters({ ...filters, searchTerm: e.target.value })
+              }
+            />
+          </div>
           <Filter onFilterChange={setFilters} />
           <Link href="/" className="text-gray-600 hover:text-gray-800">
             Home

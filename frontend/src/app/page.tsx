@@ -87,6 +87,12 @@ export default function Home() {
         );
       }
 
+      if (filters.searchTerm) {
+        filteredData = filteredData.filter((product) =>
+          product.name.toLowerCase().includes(filters.searchTerm.toLowerCase())
+        );
+      }
+
       setProducts(filteredData);
       setLoading(false);
     });
