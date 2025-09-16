@@ -3,6 +3,7 @@
 import Link from "next/link";
 import ProductCard from "@/components/shared/ProductCard";
 import { useAuth } from "@/context/AuthContext";
+import { useFilters } from "@/context/FilterContext";
 import { db } from "@/lib/firebase";
 import { getDistance } from "@/lib/geolocation";
 import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
@@ -10,9 +11,10 @@ import { useEffect, useState } from "react";
 
 interface Product {
   id: string;
-  name: string;
+  name:string;
   description: string;
   imageUrl: string;
+  category: string;
   isForExchange?: boolean;
   price?: number;
   location?: {
@@ -24,6 +26,7 @@ interface Product {
 
 export default function Home() {
   const { user } = useAuth();
+  const { filters } = useFilters();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<{
@@ -70,12 +73,26 @@ export default function Home() {
           .sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity));
       }
 
-      setProducts(productsData);
+      // Apply filters
+      let filteredData = productsData;
+      if (filters.categories.length > 0) {
+        filteredData = filteredData.filter((product) =>
+          filters.categories.includes(product.category)
+        );
+      }
+
+      if (filters.distance < 100) {
+        filteredData = filteredData.filter(
+          (product) => (product.distance || Infinity) <= filters.distance
+        );
+      }
+
+      setProducts(filteredData);
       setLoading(false);
     });
 
     return () => unsubscribe();
-  }, [userLocation]);
+  }, [userLocation, filters]);
 
   if (loading) {
     return <div>Loading...</div>;
