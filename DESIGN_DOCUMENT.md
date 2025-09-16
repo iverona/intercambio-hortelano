@@ -55,7 +55,7 @@ This document outlines the technical and functional specifications for the appli
 *   3.1. **As a user,** I want to see a main feed of listings, prioritized by those closest to my location. ✅
 *   3.2. **As a user,** I want to be able to filter listings by category (e.g., "Vegetables", "Fruits", "Honey"). ✅
 *   3.3. **As a user,** I want to be able to search for specific items by name. ✅
-*   3.4. **As a user,** I want to click on a listing to view more details, including information about the producer.
+*   3.4. **As a user,** I want to click on a listing to view more details, including information about the producer. ✅
 
 #### 4. Initiating & Completing Exchanges
 *   4.1. **As a user,** I want to be able to contact the producer of a listing to propose an exchange or purchase.
