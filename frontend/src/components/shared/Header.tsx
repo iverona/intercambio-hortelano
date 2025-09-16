@@ -16,10 +16,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { User, LogOut, Settings } from "lucide-react";
+import Filter from "./Filter";
+import { useFilters } from "@/context/FilterContext";
 
 const Header = () => {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const { setFilters } = useFilters();
 
   const handleLogout = async () => {
     await signOut(auth);
@@ -41,6 +44,7 @@ const Header = () => {
           Portal de Intercambio Hortelano
         </Link>
         <nav className="flex items-center gap-4">
+          <Filter onFilterChange={setFilters} />
           <Link href="/" className="text-gray-600 hover:text-gray-800">
             Home
           </Link>
