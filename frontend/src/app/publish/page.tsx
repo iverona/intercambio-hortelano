@@ -21,7 +21,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -40,11 +40,16 @@ export default function PublishPage() {
       return;
     }
     try {
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
+      const userData = userDoc.data();
+
       await addDoc(collection(db, "products"), {
         name,
         description,
         category,
         userId: user.uid,
+        location: userData?.location || null,
       });
       router.push("/");
     } catch (error: any) {

@@ -1,10 +1,11 @@
-import React from 'react';
+import React from "react";
 
 interface ProductCardProps {
   product: {
     name: string;
     description: string;
     imageUrl: string;
+    distance?: number;
   };
 }
 
@@ -19,6 +20,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       <div className="p-4">
         <h3 className="text-lg font-semibold">{product.name}</h3>
         <p className="text-gray-600 mt-2">{product.description}</p>
+        {product.distance && (
+          <p className="text-gray-500 text-sm mt-2">
+            {product.distance.toFixed(2)} km away
+          </p>
+        )}
       </div>
     </div>
   );
