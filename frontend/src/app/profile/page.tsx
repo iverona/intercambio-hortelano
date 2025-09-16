@@ -13,8 +13,10 @@ import {
   getDoc,
   updateDoc,
 } from "firebase/firestore";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface Product {
   id: string;
@@ -42,13 +44,17 @@ export default function ProfilePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [exchanges, setExchanges] = useState<Exchange[]>([]);
   const [userData, setUserData] = useState<UserData | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState("");
 
   useEffect(() => {
     if (user) {
       const userRef = doc(db, "users", user.uid);
       getDoc(userRef).then((doc) => {
         if (doc.exists()) {
-          setUserData(doc.data() as UserData);
+          const data = doc.data() as UserData;
+          setUserData(data);
+          setNewName(data.name);
         }
       });
 
@@ -88,6 +94,32 @@ export default function ProfilePage() {
     await updateDoc(exchangeRef, { status });
   };
 
+  const handleSave = async () => {
+    if (user) {
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, { name: newName });
+      setUserData((prev) => (prev ? { ...prev, name: newName } : null));
+      setIsEditing(false);
+    }
+  };
+
+  const handlePasswordChange = () => {
+    const auth = getAuth();
+    if (auth.currentUser && auth.currentUser.email) {
+      sendPasswordResetEmail(auth, auth.currentUser.email)
+        .then(() => {
+          alert("Password reset email sent!");
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    } else {
+      alert(
+        "Could not send password reset email. User not found or email is missing."
+      );
+    }
+  };
+
   return (
     <main className="container mx-auto px-4 py-8">
       {userData && (
@@ -104,8 +136,34 @@ export default function ProfilePage() {
             </AvatarFallback>
           </Avatar>
           <div className="text-center">
-            <h1 className="text-2xl font-bold">{userData.name}</h1>
+            {isEditing ? (
+              <Input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="text-2xl font-bold text-center"
+              />
+            ) : (
+              <h1 className="text-2xl font-bold">{userData.name}</h1>
+            )}
             <p className="text-gray-600">{userData.email}</p>
+          </div>
+          <div className="flex gap-2 mt-4">
+            {isEditing ? (
+              <>
+                <Button onClick={handleSave}>Save</Button>
+                <Button variant="outline" onClick={() => setIsEditing(false)}>
+                  Cancel
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button onClick={() => setIsEditing(true)}>Edit Profile</Button>
+                <Button variant="outline" onClick={handlePasswordChange}>
+                  Change Password
+                </Button>
+              </>
+            )}
           </div>
         </div>
       )}
