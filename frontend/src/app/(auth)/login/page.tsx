@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { auth } from "@/lib/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth, db, googleProvider } from "@/lib/firebase";
+import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { Chrome } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -21,6 +23,26 @@ export default function LoginPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/");
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (!userDoc.exists()) {
+        await setDoc(doc(db, "users", user.uid), {
+          uid: user.uid,
+          email: user.email,
+          name: user.displayName,
+        });
+        router.push("/onboarding");
+      } else {
+        router.push("/");
+      }
     } catch (error: any) {
       setError(error.message);
     }
@@ -58,6 +80,13 @@ export default function LoginPage() {
               Login
             </Button>
           </form>
+          <div className="mt-4 text-center text-sm">
+            Or
+          </div>
+          <Button onClick={handleGoogleLogin} className="w-full mt-4 flex items-center gap-2">
+            <Chrome size={18} />
+            Sign in with Google
+          </Button>
           <div className="mt-4 text-center">
             <Link href="/signup" className="text-sm text-blue-600 hover:underline">
               Don't have an account? Sign up
