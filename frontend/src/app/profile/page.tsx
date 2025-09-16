@@ -12,6 +12,7 @@ import {
   doc,
   getDoc,
   updateDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { useEffect, useState } from "react";
@@ -128,6 +129,16 @@ export default function ProfilePage() {
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (confirm("Are you sure you want to delete this product?")) {
+      await deleteDoc(doc(db, "products", id));
+    }
+  };
+
+  const handleEdit = (id: string) => {
+    router.push(`/product/${id}/edit`);
+  };
+
   // Show loading state while checking authentication
   if (loading) {
     return (
@@ -196,7 +207,12 @@ export default function ProfilePage() {
         <h2 className="text-xl font-semibold mb-4">My Products</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard
+              key={product.id}
+              product={product}
+              onEdit={() => handleEdit(product.id)}
+              onDelete={() => handleDelete(product.id)}
+            />
           ))}
         </div>
       </div>
