@@ -13,6 +13,8 @@ interface Product {
   name: string;
   description: string;
   imageUrl: string;
+  isForExchange?: boolean;
+  price?: number;
   location?: {
     latitude: number;
     longitude: number;
