@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -18,9 +19,11 @@ import { User, LogOut, Settings } from "lucide-react";
 
 const Header = () => {
   const { user, loading } = useAuth();
+  const router = useRouter();
 
   const handleLogout = async () => {
     await signOut(auth);
+    router.push("/");
   };
 
   // Get user initials for avatar fallback
