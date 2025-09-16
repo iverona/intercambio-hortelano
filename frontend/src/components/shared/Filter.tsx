@@ -28,6 +28,7 @@ interface FilterProps {
   onFilterChange: (filters: {
     categories: string[];
     distance: number;
+    searchTerm: string;
   }) => void;
 }
 
@@ -51,6 +52,7 @@ const Filter = ({ onFilterChange }: FilterProps) => {
     onFilterChange({
       categories: selectedCategories,
       distance,
+      searchTerm: "", // searchTerm is not modified here
     });
     setIsOpen(false);
   };
@@ -61,6 +63,7 @@ const Filter = ({ onFilterChange }: FilterProps) => {
     onFilterChange({
       categories: [],
       distance: 100,
+      searchTerm: "", // searchTerm is not modified here
     });
   };
 

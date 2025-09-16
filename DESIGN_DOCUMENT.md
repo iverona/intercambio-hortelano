@@ -41,20 +41,20 @@ This document outlines the technical and functional specifications for the appli
 ### Core User Journeys
 
 #### 1. User Registration & Onboarding
-*   1.1. **As a new user,** I want to sign up for an account using my email and password or my Google account so that I can join the community.
-*   1.2. **As a new user,** I want to be prompted to share my general location (e.g., city or postal code) during onboarding so the app can show me relevant local listings.
+*   1.1. **As a new user,** I want to sign up for an account using my email and password or my Google account so that I can join the community. ✅
+*   1.2. **As a new user,** I want to be prompted to share my general location (e.g., city or postal code) during onboarding so the app can show me relevant local listings. ✅
 *   1.3. **As a new user,** I want a brief tour or explanation of how the points and badges system works to get me excited about participating.
 
 #### 2. Managing Listings (Producer Role)
-*   2.1. **As a user,** I want to create a new listing for a product I want to offer.
-*   2.2. **As a user,** when creating a listing, I want to add a title, a short description, select a category, and choose an icon that represents my product.
-*   2.3. **As a user,** I want to specify if my item is for exchange, for a price, or both.
-*   2.4. **As a user,** I want to see and manage all the listings I have created on my profile page.
+*   2.1. **As a user,** I want to create a new listing for a product I want to offer. ✅
+*   2.2. **As a user,** when creating a listing, I want to add a title, a short description, select a category, and choose an icon that represents my product. ✅
+*   2.3. **As a user,** I want to specify if my item is for exchange, for a price, or both. ✅
+*   2.4. **As a user,** I want to see and manage all the listings I have created on my profile page. ✅
 
 #### 3. Browsing & Finding Products (Consumer Role)
-*   3.1. **As a user,** I want to see a main feed of listings, prioritized by those closest to my location.
-*   3.2. **As a user,** I want to be able to filter listings by category (e.g., "Vegetables", "Fruits", "Honey").
-*   3.3. **As a user,** I want to be able to search for specific items by name.
+*   3.1. **As a user,** I want to see a main feed of listings, prioritized by those closest to my location. ✅
+*   3.2. **As a user,** I want to be able to filter listings by category (e.g., "Vegetables", "Fruits", "Honey"). ✅
+*   3.3. **As a user,** I want to be able to search for specific items by name. ✅
 *   3.4. **As a user,** I want to click on a listing to view more details, including information about the producer.
 
 #### 4. Initiating & Completing Exchanges
