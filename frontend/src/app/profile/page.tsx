@@ -17,6 +17,7 @@ import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 interface Product {
   id: string;
@@ -40,7 +41,8 @@ interface UserData {
 }
 
 export default function ProfilePage() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [exchanges, setExchanges] = useState<Exchange[]>([]);
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -48,6 +50,12 @@ export default function ProfilePage() {
   const [newName, setNewName] = useState("");
 
   useEffect(() => {
+    // Redirect to home if not authenticated
+    if (!loading && !user) {
+      router.push("/");
+      return;
+    }
+
     if (user) {
       const userRef = doc(db, "users", user.uid);
       getDoc(userRef).then((doc) => {
@@ -87,7 +95,7 @@ export default function ProfilePage() {
         unsubscribeExchanges();
       };
     }
-  }, [user]);
+  }, [user, loading, router]);
 
   const handleExchange = async (exchangeId: string, status: string) => {
     const exchangeRef = doc(db, "exchanges", exchangeId);
@@ -119,6 +127,22 @@ export default function ProfilePage() {
       );
     }
   };
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <main className="container mx-auto px-4 py-8">
+        <div className="flex justify-center items-center h-64">
+          <p className="text-gray-500">Loading...</p>
+        </div>
+      </main>
+    );
+  }
+
+  // Don't render content if no user (will redirect)
+  if (!user) {
+    return null;
+  }
 
   return (
     <main className="container mx-auto px-4 py-8">
