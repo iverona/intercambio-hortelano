@@ -78,7 +78,9 @@ export default function ProductDetailPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
           <img
-            src={product.imageUrl}
+            src={`https://placehold.co/600x400/EEE/31343C?text=${encodeURIComponent(
+              product.name
+            )}`}
             alt={product.name}
             className="w-full rounded-lg shadow-md"
           />

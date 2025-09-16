@@ -13,7 +13,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <img
-        src={product.imageUrl}
+        src={`https://placehold.co/400x300/EEE/31343C?text=${encodeURIComponent(
+          product.name
+        )}`}
         alt={product.name}
         className="w-full h-48 object-cover"
       />
