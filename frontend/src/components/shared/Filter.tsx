@@ -13,7 +13,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Slider } from "@/components/ui/slider";
-import { Separator } from "@/components/ui/separator";
 import { Filter as FilterIcon, X } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -82,42 +81,42 @@ const Filter = ({ onFilterChange }: FilterProps) => {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-md">
-        <SheetHeader className="space-y-1">
-          <SheetTitle className="text-xl">Filter Products</SheetTitle>
-          <SheetDescription>
+      <SheetContent className="w-full sm:max-w-md overflow-y-auto">
+        <SheetHeader className="space-y-2 pb-6">
+          <SheetTitle className="text-xl font-semibold">Filter Products</SheetTitle>
+          <SheetDescription className="text-sm">
             Refine your search by category and distance
           </SheetDescription>
         </SheetHeader>
         
-        <div className="mt-6 space-y-6">
+        <div className="space-y-6 pb-20">
           {/* Categories Section */}
-          <div className="space-y-4">
+          <div className="bg-gray-50/50 dark:bg-gray-900/20 rounded-xl p-5 space-y-4 border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-semibold">Categories</h3>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Categories</h3>
               {selectedCategories.length > 0 && (
                 <button
                   onClick={() => setSelectedCategories([])}
-                  className="text-xs text-muted-foreground hover:text-foreground"
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-200"
                 >
                   Clear all
                 </button>
               )}
             </div>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {categories.map((category) => (
                 <label
                   key={category.id}
-                  className="flex items-center space-x-3 cursor-pointer group"
+                  className="flex items-center space-x-3 p-2.5 rounded-lg cursor-pointer hover:bg-white dark:hover:bg-gray-800 transition-all duration-200 group"
                 >
                   <Checkbox
                     id={category.id}
                     checked={selectedCategories.includes(category.id)}
                     onCheckedChange={() => handleCategoryChange(category.id)}
-                    className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
+                    className="data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600 transition-all duration-200"
                   />
-                  <span className="text-2xl">{category.icon}</span>
-                  <span className="flex-1 text-sm group-hover:text-foreground transition-colors">
+                  <span className="text-2xl select-none">{category.icon}</span>
+                  <span className="flex-1 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-colors duration-200">
                     {category.label}
                   </span>
                 </label>
@@ -125,26 +124,28 @@ const Filter = ({ onFilterChange }: FilterProps) => {
             </div>
           </div>
 
-          <Separator />
-
           {/* Distance Section */}
-          <div className="space-y-4">
+          <div className="bg-gray-50/50 dark:bg-gray-900/20 rounded-xl p-5 space-y-4 border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-semibold">Maximum Distance</h3>
-              <span className="text-sm font-medium text-green-600">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Maximum Distance</h3>
+              <span className="text-sm font-semibold text-green-600 dark:text-green-500 bg-green-50 dark:bg-green-900/20 px-2.5 py-1 rounded-full">
                 {distance === 100 ? "Any distance" : `${distance} km`}
               </span>
             </div>
             
             {/* Preset buttons */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 p-1 bg-gray-100 dark:bg-gray-800 rounded-lg">
               {[5, 10, 25, 100].map((preset) => (
                 <Button
                   key={preset}
-                  variant={distance === preset ? "default" : "outline"}
+                  variant={distance === preset ? "default" : "ghost"}
                   size="sm"
                   onClick={() => setPresetDistance(preset)}
-                  className="flex-1 text-xs"
+                  className={`flex-1 text-xs font-medium transition-all duration-200 ${
+                    distance === preset 
+                      ? "bg-white dark:bg-gray-700 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600" 
+                      : "hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                  }`}
                 >
                   {preset === 100 ? "Any" : `${preset}km`}
                 </Button>
@@ -152,7 +153,7 @@ const Filter = ({ onFilterChange }: FilterProps) => {
             </div>
 
             {/* Slider */}
-            <div className="px-2">
+            <div className="px-3 py-2">
               <Slider
                 value={[distance]}
                 onValueChange={(value) => setDistance(value[0])}
@@ -160,30 +161,31 @@ const Filter = ({ onFilterChange }: FilterProps) => {
                 step={5}
                 className="py-4"
               />
-              <div className="flex justify-between text-xs text-muted-foreground mt-1">
+              <div className="flex justify-between text-xs text-muted-foreground mt-2">
                 <span>0 km</span>
+                <span>50 km</span>
                 <span>100 km</span>
               </div>
             </div>
           </div>
-        </div>
-        
-        {/* Action Buttons */}
-        <div className="absolute bottom-6 left-6 right-6 flex gap-3">
-          <Button 
-            variant="outline" 
-            className="flex-1" 
-            onClick={handleResetFilters}
-            disabled={selectedCategories.length === 0 && distance === 100}
-          >
-            Reset
-          </Button>
-          <Button 
-            className="flex-1 bg-green-600 hover:bg-green-700" 
-            onClick={handleApplyFilters}
-          >
-            Apply Filters
-          </Button>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 pt-2">
+            <Button 
+              variant="outline" 
+              className="flex-1 h-11 font-medium hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-200" 
+              onClick={handleResetFilters}
+              disabled={selectedCategories.length === 0 && distance === 100}
+            >
+              Reset Filters
+            </Button>
+            <Button 
+              className="flex-1 h-11 font-medium bg-green-600 hover:bg-green-700 text-white shadow-sm transition-all duration-200" 
+              onClick={handleApplyFilters}
+            >
+              Apply Filters
+            </Button>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
