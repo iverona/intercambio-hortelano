@@ -107,9 +107,11 @@ export default function ProductDetailPage() {
               </div>
             </div>
           )}
-          <Button size="lg" onClick={handleContact}>
-            Contactar al Vendedor
-          </Button>
+          {user && (
+            <Button size="lg" onClick={handleContact}>
+              Contactar al Vendedor
+            </Button>
+          )}
         </div>
       </div>
     </main>

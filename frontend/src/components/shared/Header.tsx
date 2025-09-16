@@ -28,9 +28,11 @@ const Header = () => {
               My Profile
             </Link>
           )}
-          <Button asChild>
-            <Link href="/publish">Publish Product</Link>
-          </Button>
+          {user && (
+            <Button asChild>
+              <Link href="/publish">Publish Product</Link>
+            </Button>
+          )}
           {!loading &&
             (user ? (
               <Button onClick={handleLogout} variant="outline">
