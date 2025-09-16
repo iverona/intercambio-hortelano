@@ -41,37 +41,37 @@ This document outlines the technical and functional specifications for the appli
 ### Core User Journeys
 
 #### 1. User Registration & Onboarding
-*   **As a new user,** I want to sign up for an account using my email and password or my Google account so that I can join the community.
-*   **As a new user,** I want to be prompted to share my general location (e.g., city or postal code) during onboarding so the app can show me relevant local listings.
-*   **As a new user,** I want a brief tour or explanation of how the points and badges system works to get me excited about participating.
+*   1.1. **As a new user,** I want to sign up for an account using my email and password or my Google account so that I can join the community.
+*   1.2. **As a new user,** I want to be prompted to share my general location (e.g., city or postal code) during onboarding so the app can show me relevant local listings.
+*   1.3. **As a new user,** I want a brief tour or explanation of how the points and badges system works to get me excited about participating.
 
 #### 2. Managing Listings (Producer Role)
-*   **As a user,** I want to create a new listing for a product I want to offer.
-*   **As a user,** when creating a listing, I want to add a title, a short description, select a category, and choose an icon that represents my product.
-*   **As a user,** I want to specify if my item is for exchange, for a price, or both.
-*   **As a user,** I want to see and manage all the listings I have created on my profile page.
+*   2.1. **As a user,** I want to create a new listing for a product I want to offer.
+*   2.2. **As a user,** when creating a listing, I want to add a title, a short description, select a category, and choose an icon that represents my product.
+*   2.3. **As a user,** I want to specify if my item is for exchange, for a price, or both.
+*   2.4. **As a user,** I want to see and manage all the listings I have created on my profile page.
 
 #### 3. Browsing & Finding Products (Consumer Role)
-*   **As a user,** I want to see a main feed of listings, prioritized by those closest to my location.
-*   **As a user,** I want to be able to filter listings by category (e.g., "Vegetables", "Fruits", "Honey").
-*   **As a user,** I want to be able to search for specific items by name.
-*   **As a user,** I want to click on a listing to view more details, including information about the producer.
+*   3.1. **As a user,** I want to see a main feed of listings, prioritized by those closest to my location.
+*   3.2. **As a user,** I want to be able to filter listings by category (e.g., "Vegetables", "Fruits", "Honey").
+*   3.3. **As a user,** I want to be able to search for specific items by name.
+*   3.4. **As a user,** I want to click on a listing to view more details, including information about the producer.
 
 #### 4. Initiating & Completing Exchanges
-*   **As a user,** I want to be able to contact the producer of a listing to propose an exchange or purchase.
-*   **As a user,** I want to have a simple messaging interface to communicate with other users about an exchange.
-*   **As a user,** I want to be able to accept or decline an exchange proposal.
-*   **As a user,** after an exchange is complete, I want to be able to mark it as "completed" and leave a review for the other person.
+*   4.1. **As a user,** I want to be able to contact the producer of a listing to propose an exchange or purchase.
+*   4.2. **As a user,** I want to have a simple messaging interface to communicate with other users about an exchange.
+*   4.3. **As a user,** I want to be able to accept or decline an exchange proposal.
+*   4.4. **As a user,** after an exchange is complete, I want to be able to mark it as "completed" and leave a review for the other person.
 
 #### 5. Producer-Consumer Interaction
-*   **As a producer,** I want to receive a notification when a consumer is interested in one of my listings.
-*   **As a consumer,** I want to receive a notification when a producer responds to my inquiry or accepts my proposal.
-*   **As a user,** I want to see the status of my ongoing exchanges (e.g., "Proposed", "Accepted", "Completed") in a dedicated section of my profile.
+*   5.1. **As a producer,** I want to receive a notification when a consumer is interested in one of my listings.
+*   5.2. **As a consumer,** I want to receive a notification when a producer responds to my inquiry or accepts my proposal.
+*   5.3. **As a user,** I want to see the status of my ongoing exchanges (e.g., "Proposed", "Accepted", "Completed") in a dedicated section of my profile.
 
 #### 6. Reputation and Trust
-*   **As a user,** I want to see a producer's overall rating and read reviews from other users before I decide to interact with them.
-*   **As a user,** I want my profile to display my level, badges, and average rating to build trust within the community.
-*   **As a user,** I want the review system to be simple, perhaps a star rating and an optional short comment.
+*   6.1. **As a user,** I want to see a producer's overall rating and read reviews from other users before I decide to interact with them.
+*   6.2. **As a user,** I want my profile to display my level, badges, and average rating to build trust within the community.
+*   6.3. **As a user,** I want the review system to be simple, perhaps a star rating and an optional short comment.
 
 ## 5. UI/UX Design Proposal
 
