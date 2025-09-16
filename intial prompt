@@ -1,0 +1,16 @@
+I'm starting a new application. It's a portal where producers and consumer can exchange products from a vegetable patch, garden or orchard Think of vegetables, fruits, but also wool, ecologic honey or even clothing. Things can be for free (you exchange e.g. fruits for honey, or clothing) or have a price. 
+
+Let's define some initial technical considerations:
+1) The application is initally intented to be only web, but might evolve to a mobile app in the future
+2) I don't have any language code or framework preference. Choose whatever you consider it's best
+3) The application must use the Google Cloud and Firebase ecosystem where needed
+4) It won't have a massive scale, but take the best possible architectural design decisions
+5) We won't, initially, handle payments. If we need to do so in the future we will use an external service (like stripe and others)
+
+Now let's define functional aspects of the application:
+1) The user interface must be simple, allowing users to be at the same time producers (they can offer things in the portal) and consumers (they can swap or buy things from others). 
+2) I'd like to gamify the experience somehow
+3) In the main listing, show icons, not pictures (e.g. a tomato icon, lettuce, honey) as pictures won't be professional and could clutter the interface
+4) Consider distance. Since this is an ecological portal, makes sense to priotitize local offerings
+
+Let's start discussing about the app. Don't implement anything, we will first define the app structure, then implement a prototype (very likely just the UI with mock data) and then the frontend. 
