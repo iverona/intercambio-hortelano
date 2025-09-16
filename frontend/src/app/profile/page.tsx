@@ -18,6 +18,7 @@ import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 
 interface Product {
@@ -39,6 +40,7 @@ interface UserData {
   name: string;
   email: string;
   avatarUrl: string;
+  bio?: string;
 }
 
 export default function ProfilePage() {
@@ -49,6 +51,7 @@ export default function ProfilePage() {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState("");
+  const [newBio, setNewBio] = useState("");
 
   useEffect(() => {
     // Redirect to home if not authenticated
@@ -64,6 +67,7 @@ export default function ProfilePage() {
           const data = doc.data() as UserData;
           setUserData(data);
           setNewName(data.name);
+          setNewBio(data.bio || "");
         }
       });
 
@@ -106,8 +110,10 @@ export default function ProfilePage() {
   const handleSave = async () => {
     if (user) {
       const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, { name: newName });
-      setUserData((prev) => (prev ? { ...prev, name: newName } : null));
+      await updateDoc(userRef, { name: newName, bio: newBio });
+      setUserData((prev) =>
+        prev ? { ...prev, name: newName, bio: newBio } : null
+      );
       setIsEditing(false);
     }
   };
@@ -182,6 +188,16 @@ export default function ProfilePage() {
               <h1 className="text-2xl font-bold">{userData.name}</h1>
             )}
             <p className="text-gray-600">{userData.email}</p>
+            {isEditing ? (
+              <Textarea
+                value={newBio}
+                onChange={(e) => setNewBio(e.target.value)}
+                placeholder="Tell us a bit about yourself"
+                className="mt-2 text-center"
+              />
+            ) : (
+              <p className="text-gray-700 mt-2">{userData.bio}</p>
+            )}
           </div>
           <div className="flex gap-2 mt-4">
             {isEditing ? (

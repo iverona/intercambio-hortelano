@@ -3,6 +3,11 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
@@ -21,6 +26,7 @@ interface Product {
 interface User {
   name: string;
   avatarUrl: string;
+  bio?: string;
 }
 
 export default function ProductDetailPage() {
@@ -100,23 +106,30 @@ export default function ProductDetailPage() {
           </div>
           <p className="text-gray-600 mb-4">{product.description}</p>
           {seller && (
-            <div className="flex items-center space-x-4 mb-4">
-              <Avatar>
-                <AvatarImage src={seller.avatarUrl} alt={seller.name} />
-                <AvatarFallback>
-                  {seller.name
-                    ? seller.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")
-                    : ""}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-semibold">{seller.name}</p>
-                <p className="text-sm text-gray-500">Vendedor</p>
-              </div>
-            </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <div className="flex items-center space-x-4 mb-4 cursor-pointer">
+                  <Avatar>
+                    <AvatarImage src={seller.avatarUrl} alt={seller.name} />
+                    <AvatarFallback>
+                      {seller.name
+                        ? seller.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                        : ""}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-semibold">{seller.name}</p>
+                    <p className="text-sm text-gray-500">Vendedor</p>
+                  </div>
+                </div>
+              </PopoverTrigger>
+              <PopoverContent>
+                <p className="text-sm">{seller.bio || "No bio available."}</p>
+              </PopoverContent>
+            </Popover>
           )}
           {user && (
             <Button size="lg" onClick={handleContact}>
