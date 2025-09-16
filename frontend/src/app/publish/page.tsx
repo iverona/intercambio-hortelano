@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -31,6 +32,9 @@ export default function PublishPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
+  const [isForExchange, setIsForExchange] = useState(false);
+  const [isForSale, setIsForSale] = useState(false);
+  const [price, setPrice] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -46,6 +50,17 @@ export default function PublishPage() {
       setError("You must be logged in to publish a product.");
       return;
     }
+
+    if (!isForExchange && !isForSale) {
+      setError("Please select at least one transaction type.");
+      return;
+    }
+
+    if (isForSale && !price) {
+      setError("Please enter a price for the product.");
+      return;
+    }
+
     try {
       const userRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userRef);
@@ -57,6 +72,8 @@ export default function PublishPage() {
         category,
         userId: user.uid,
         location: userData?.location || null,
+        isForExchange,
+        price: isForSale ? parseFloat(price) : null,
       });
       router.push("/");
     } catch (error: any) {
@@ -126,6 +143,37 @@ export default function PublishPage() {
               <Label htmlFor="picture">Product Picture</Label>
               <Input id="picture" type="file" />
             </div>
+            <div className="grid gap-2">
+              <Label>Transaction Type</Label>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="exchange"
+                  checked={isForExchange}
+                  onCheckedChange={(checked) => setIsForExchange(!!checked)}
+                />
+                <Label htmlFor="exchange">For Exchange</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="sale"
+                  checked={isForSale}
+                  onCheckedChange={(checked) => setIsForSale(!!checked)}
+                />
+                <Label htmlFor="sale">For Sale</Label>
+              </div>
+            </div>
+            {isForSale && (
+              <div className="grid gap-2">
+                <Label htmlFor="price">Price</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  placeholder="e.g., 5.00"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                />
+              </div>
+            )}
             {error && <p className="text-red-500 text-sm">{error}</p>}
           </form>
         </CardContent>

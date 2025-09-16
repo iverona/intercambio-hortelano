@@ -1,6 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
@@ -13,6 +14,8 @@ interface Product {
   description: string;
   imageUrl: string;
   userId: string;
+  isForExchange?: boolean;
+  price?: number;
 }
 
 interface User {
@@ -86,7 +89,15 @@ export default function ProductDetailPage() {
           />
         </div>
         <div>
-          <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
+          <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
+          <div className="flex space-x-2 mb-4">
+            {product.isForExchange && (
+              <Badge variant="secondary">For Exchange</Badge>
+            )}
+            {product.price && (
+              <Badge variant="default">${product.price.toFixed(2)}</Badge>
+            )}
+          </div>
           <p className="text-gray-600 mb-4">{product.description}</p>
           {seller && (
             <div className="flex items-center space-x-4 mb-4">
