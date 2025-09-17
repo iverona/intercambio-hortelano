@@ -19,14 +19,40 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import ChatList from "@/components/shared/ChatList";
+import {
+  User,
+  Package,
+  MessageSquare,
+  ArrowRightLeft,
+  Edit,
+  Save,
+  X,
+  Mail,
+  MapPin,
+  Calendar,
+  Sparkles,
+  Shield,
+  Settings,
+  Trash2,
+  Check,
+  Clock,
+  AlertCircle
+} from "lucide-react";
 
 interface Product {
   id: string;
   name: string;
   description: string;
   imageUrl: string;
+  createdAt?: {
+    seconds: number;
+    nanoseconds: number;
+  };
 }
 
 interface Exchange {
@@ -35,6 +61,10 @@ interface Exchange {
   status: string;
   buyerId: string;
   sellerId: string;
+  createdAt?: {
+    seconds: number;
+    nanoseconds: number;
+  };
 }
 
 interface UserData {
@@ -42,7 +72,284 @@ interface UserData {
   email: string;
   avatarUrl: string;
   bio?: string;
+  location?: {
+    latitude: number;
+    longitude: number;
+  };
+  joinedDate?: {
+    seconds: number;
+    nanoseconds: number;
+  };
 }
+
+// Loading skeleton component
+const ProfileSkeleton = () => (
+  <div className="animate-pulse">
+    <div className="flex flex-col items-center space-y-4">
+      <div className="h-32 w-32 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded-full"></div>
+      <div className="space-y-2">
+        <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-48 mx-auto"></div>
+        <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-32 mx-auto"></div>
+      </div>
+    </div>
+  </div>
+);
+
+// Product skeleton component
+const ProductGridSkeleton = () => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {[...Array(4)].map((_, i) => (
+      <div key={i} className="animate-pulse">
+        <div className="bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded-xl h-64"></div>
+      </div>
+    ))}
+  </div>
+);
+
+// Hero section for profile
+const ProfileHero = ({ userData, isEditing, newName, newBio, setNewName, setNewBio, handleSave, setIsEditing, handlePasswordChange }: {
+  userData: UserData;
+  isEditing: boolean;
+  newName: string;
+  newBio: string;
+  setNewName: (name: string) => void;
+  setNewBio: (bio: string) => void;
+  handleSave: () => void;
+  setIsEditing: (editing: boolean) => void;
+  handlePasswordChange: () => void;
+}) => {
+  const memberSince = userData.joinedDate 
+    ? new Date(userData.joinedDate.seconds * 1000).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+    : 'Recently';
+
+  return (
+    <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950 rounded-2xl mb-8">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+      </div>
+
+      <div className="relative px-8 py-12">
+        <div className="flex flex-col items-center space-y-6">
+          {/* Avatar with status ring */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-400 rounded-full blur-lg opacity-50 animate-pulse"></div>
+            <Avatar className="h-32 w-32 border-4 border-white dark:border-gray-800 shadow-xl relative">
+              <AvatarImage src={userData.avatarUrl} alt={userData.name} />
+              <AvatarFallback className="text-2xl font-bold bg-gradient-to-br from-green-400 to-emerald-500 text-white">
+                {userData.name
+                  ? userData.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                  : ""}
+              </AvatarFallback>
+            </Avatar>
+            <div className="absolute bottom-2 right-2 h-6 w-6 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full"></div>
+          </div>
+
+          {/* User info */}
+          <div className="text-center max-w-2xl">
+            {isEditing ? (
+              <div className="space-y-4">
+                <Input
+                  type="text"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  className="text-3xl font-bold text-center bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm"
+                  placeholder="Your name"
+                />
+                <Textarea
+                  value={newBio}
+                  onChange={(e) => setNewBio(e.target.value)}
+                  placeholder="Tell us a bit about yourself..."
+                  className="text-center bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm resize-none"
+                  rows={3}
+                />
+              </div>
+            ) : (
+              <>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
+                  {userData.name}
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-2 text-lg">
+                  {userData.bio || "No bio yet. Click edit to add one!"}
+                </p>
+              </>
+            )}
+
+            {/* User badges */}
+            <div className="flex flex-wrap justify-center gap-2 mt-4">
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Mail className="w-3 h-3" />
+                {userData.email}
+              </Badge>
+              <Badge variant="secondary" className="flex items-center gap-1">
+                <Calendar className="w-3 h-3" />
+                Member since {memberSince}
+              </Badge>
+              {userData.location && (
+                <Badge variant="secondary" className="flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  Location verified
+                </Badge>
+              )}
+              <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 flex items-center gap-1">
+                <Shield className="w-3 h-3" />
+                Verified Gardener
+              </Badge>
+            </div>
+          </div>
+
+          {/* Action buttons */}
+          <div className="flex flex-wrap gap-3 justify-center">
+            {isEditing ? (
+              <>
+                <Button onClick={handleSave} className="group">
+                  <Save className="mr-2 h-4 w-4" />
+                  Save Changes
+                </Button>
+                <Button variant="outline" onClick={() => setIsEditing(false)} className="group">
+                  <X className="mr-2 h-4 w-4" />
+                  Cancel
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button onClick={() => setIsEditing(true)} className="group">
+                  <Edit className="mr-2 h-4 w-4 transition-transform group-hover:rotate-12" />
+                  Edit Profile
+                </Button>
+                <Button variant="outline" onClick={handlePasswordChange} className="group">
+                  <Settings className="mr-2 h-4 w-4 transition-transform group-hover:rotate-90" />
+                  Change Password
+                </Button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Stats card component
+const StatsCard = ({ icon: Icon, label, value, color }: {
+  icon: React.ElementType;
+  label: string;
+  value: number | string;
+  color: string;
+}) => (
+  <Card className="p-6 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+    <div className="flex items-center gap-4">
+      <div className={`p-3 ${color} rounded-lg`}>
+        <Icon className="w-6 h-6 text-white" />
+      </div>
+      <div>
+        <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">{label}</p>
+      </div>
+    </div>
+  </Card>
+);
+
+// Empty state component
+const EmptyState = ({ icon: Icon, title, description, action }: {
+  icon: React.ElementType;
+  title: string;
+  description: string;
+  action?: React.ReactNode;
+}) => (
+  <Card className="p-12 text-center bg-gray-50/50 dark:bg-gray-900/50 border-dashed">
+    <div className="flex flex-col items-center">
+      <div className="relative">
+        <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 rounded-full blur-xl opacity-30"></div>
+        <Icon className="w-16 h-16 text-gray-400 dark:text-gray-600 relative z-10" />
+      </div>
+      <h3 className="mt-4 text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
+      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 max-w-sm">{description}</p>
+      {action && <div className="mt-4">{action}</div>}
+    </div>
+  </Card>
+);
+
+// Exchange card component
+const ExchangeCard = ({ exchange, userId, onAccept, onReject }: {
+  exchange: Exchange;
+  userId: string;
+  onAccept: () => void;
+  onReject: () => void;
+}) => {
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return <Clock className="w-4 h-4 text-yellow-500" />;
+      case 'accepted':
+        return <Check className="w-4 h-4 text-green-500" />;
+      case 'rejected':
+        return <X className="w-4 h-4 text-red-500" />;
+      default:
+        return <AlertCircle className="w-4 h-4 text-gray-500" />;
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+      case 'accepted':
+        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      case 'rejected':
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+    }
+  };
+
+  return (
+    <Card className="p-6 hover:shadow-lg transition-all duration-300">
+      <div className="flex justify-between items-center">
+        <div className="flex-1">
+          <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">
+            {exchange.productName}
+          </h4>
+          <div className="flex items-center gap-2 mt-2">
+            <Badge className={`${getStatusColor(exchange.status)} border-0 flex items-center gap-1`}>
+              {getStatusIcon(exchange.status)}
+              {exchange.status.charAt(0).toUpperCase() + exchange.status.slice(1)}
+            </Badge>
+            {exchange.createdAt && (
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {new Date(exchange.createdAt.seconds * 1000).toLocaleDateString()}
+              </span>
+            )}
+          </div>
+        </div>
+        {userId === exchange.sellerId && exchange.status === "pending" && (
+          <div className="flex gap-2">
+            <Button
+              onClick={onAccept}
+              size="sm"
+              className="bg-green-500 hover:bg-green-600"
+            >
+              <Check className="w-4 h-4 mr-1" />
+              Accept
+            </Button>
+            <Button
+              onClick={onReject}
+              size="sm"
+              variant="destructive"
+            >
+              <X className="w-4 h-4 mr-1" />
+              Reject
+            </Button>
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+};
 
 export default function ProfilePage() {
   const { user, loading } = useAuth();
@@ -150,8 +457,11 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <main className="container mx-auto px-4 py-8">
-        <div className="flex justify-center items-center h-64">
-          <p className="text-gray-500">Loading...</p>
+        <div className="max-w-6xl mx-auto">
+          <ProfileSkeleton />
+          <div className="mt-8">
+            <ProductGridSkeleton />
+          </div>
         </div>
       </main>
     );
@@ -164,111 +474,146 @@ export default function ProfilePage() {
 
   return (
     <main className="container mx-auto px-4 py-8">
-      {userData && (
-        <div className="flex flex-col items-center space-y-4">
-          <Avatar className="h-24 w-24">
-            <AvatarImage src={userData.avatarUrl} alt={userData.name} />
-            <AvatarFallback>
-              {userData.name
-                ? userData.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                : ""}
-            </AvatarFallback>
-          </Avatar>
-          <div className="text-center">
-            {isEditing ? (
-              <Input
-                type="text"
-                value={newName}
-                onChange={(e) => setNewName(e.target.value)}
-                className="text-2xl font-bold text-center"
-              />
-            ) : (
-              <h1 className="text-2xl font-bold">{userData.name}</h1>
-            )}
-            <p className="text-gray-600">{userData.email}</p>
-            {isEditing ? (
-              <Textarea
-                value={newBio}
-                onChange={(e) => setNewBio(e.target.value)}
-                placeholder="Tell us a bit about yourself"
-                className="mt-2 text-center"
-              />
-            ) : (
-              <p className="text-gray-700 mt-2">{userData.bio}</p>
-            )}
-          </div>
-          <div className="flex gap-2 mt-4">
-            {isEditing ? (
-              <>
-                <Button onClick={handleSave}>Save</Button>
-                <Button variant="outline" onClick={() => setIsEditing(false)}>
-                  Cancel
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button onClick={() => setIsEditing(true)}>Edit Profile</Button>
-                <Button variant="outline" onClick={handlePasswordChange}>
-                  Change Password
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">My Products</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onEdit={() => handleEdit(product.id)}
-              onDelete={() => handleDelete(product.id)}
+      <div className="max-w-6xl mx-auto">
+        {userData && (
+          <>
+            <ProfileHero
+              userData={userData}
+              isEditing={isEditing}
+              newName={newName}
+              newBio={newBio}
+              setNewName={setNewName}
+              setNewBio={setNewBio}
+              handleSave={handleSave}
+              setIsEditing={setIsEditing}
+              handlePasswordChange={handlePasswordChange}
             />
-          ))}
-        </div>
-      </div>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">My Messages</h2>
-        <ChatList />
-      </div>
-
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">My Exchanges</h2>
-        <div className="space-y-4">
-          {exchanges.map((exchange) => (
-            <div
-              key={exchange.id}
-              className="p-4 border rounded-lg flex justify-between items-center"
-            >
-              <div>
-                <p className="font-semibold">{exchange.productName}</p>
-                <p className="text-sm text-gray-500">{exchange.status}</p>
-              </div>
-              {user?.uid === exchange.sellerId &&
-                exchange.status === "pending" && (
-                  <div className="flex gap-2">
-                    <Button
-                      onClick={() => handleExchange(exchange.id, "accepted")}
-                    >
-                      Accept
-                    </Button>
-                    <Button
-                      onClick={() => handleExchange(exchange.id, "rejected")}
-                      variant="destructive"
-                    >
-                      Reject
-                    </Button>
-                  </div>
-                )}
+            {/* Stats Section */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <StatsCard
+                icon={Package}
+                label="Products Listed"
+                value={products.length}
+                color="bg-gradient-to-br from-blue-500 to-blue-600"
+              />
+              <StatsCard
+                icon={ArrowRightLeft}
+                label="Active Exchanges"
+                value={exchanges.filter(e => e.status === 'pending').length}
+                color="bg-gradient-to-br from-purple-500 to-purple-600"
+              />
+              <StatsCard
+                icon={Check}
+                label="Completed"
+                value={exchanges.filter(e => e.status === 'accepted').length}
+                color="bg-gradient-to-br from-green-500 to-green-600"
+              />
+              <StatsCard
+                icon={MessageSquare}
+                label="Messages"
+                value="12"
+                color="bg-gradient-to-br from-orange-500 to-orange-600"
+              />
             </div>
-          ))}
+          </>
+        )}
+
+        {/* My Products Section */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg">
+                <Package className="w-5 h-5 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                My Products
+              </h2>
+            </div>
+            <Button asChild>
+              <Link href="/publish">
+                <Sparkles className="mr-2 h-4 w-4" />
+                Add New Product
+              </Link>
+            </Button>
+          </div>
+
+          {products.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {products.map((product) => (
+                <div key={product.id} className="group relative transform transition-all duration-300 hover:scale-105">
+                  <ProductCard
+                    product={product}
+                    onEdit={() => handleEdit(product.id)}
+                    onDelete={() => handleDelete(product.id)}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              icon={Package}
+              title="No products yet"
+              description="Start sharing your garden's bounty with the community"
+              action={
+                <Button asChild>
+                  <Link href="/publish">Publish Your First Product</Link>
+                </Button>
+              }
+            />
+          )}
+        </div>
+
+        {/* My Messages Section */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-orange-400 to-orange-500 rounded-lg">
+              <MessageSquare className="w-5 h-5 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              My Messages
+            </h2>
+          </div>
+          <Card className="p-6 shadow-lg">
+            <ChatList />
+          </Card>
+        </div>
+
+        {/* My Exchanges Section */}
+        <div>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-2 bg-gradient-to-br from-purple-400 to-purple-500 rounded-lg">
+              <ArrowRightLeft className="w-5 h-5 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              My Exchanges
+            </h2>
+          </div>
+
+          {exchanges.length > 0 ? (
+            <div className="space-y-4">
+              {exchanges.map((exchange) => (
+                <ExchangeCard
+                  key={exchange.id}
+                  exchange={exchange}
+                  userId={user?.uid || ""}
+                  onAccept={() => handleExchange(exchange.id, "accepted")}
+                  onReject={() => handleExchange(exchange.id, "rejected")}
+                />
+              ))}
+            </div>
+          ) : (
+            <EmptyState
+              icon={ArrowRightLeft}
+              title="No exchanges yet"
+              description="Browse products to start exchanging with other gardeners"
+              action={
+                <Button asChild variant="outline">
+                  <Link href="/">Browse Products</Link>
+                </Button>
+              }
+            />
+          )}
         </div>
       </div>
     </main>
