@@ -41,7 +41,8 @@ import {
   Trash2,
   Check,
   Clock,
-  AlertCircle
+  AlertCircle,
+  DollarSign
 } from "lucide-react";
 
 interface Product {
@@ -61,6 +62,15 @@ interface Exchange {
   status: string;
   buyerId: string;
   sellerId: string;
+  requesterId?: string;
+  ownerId?: string;
+  offer?: {
+    type: "exchange" | "purchase" | "chat";
+    offeredProductId?: string;
+    offeredProductName?: string;
+    amount?: number;
+    message?: string;
+  };
   createdAt?: {
     seconds: number;
     nanoseconds: number;
@@ -307,14 +317,66 @@ const ExchangeCard = ({ exchange, userId, onAccept, onReject }: {
     }
   };
 
+  const getOfferTypeIcon = (type?: string) => {
+    switch (type) {
+      case 'exchange':
+        return <ArrowRightLeft className="w-4 h-4 text-green-600" />;
+      case 'purchase':
+        return <DollarSign className="w-4 h-4 text-blue-600" />;
+      case 'chat':
+        return <MessageSquare className="w-4 h-4 text-purple-600" />;
+      default:
+        return <Package className="w-4 h-4 text-gray-600" />;
+    }
+  };
+
+  const getOfferDescription = () => {
+    if (!exchange.offer) return null;
+    
+    switch (exchange.offer.type) {
+      case 'exchange':
+        return exchange.offer.offeredProductName 
+          ? `Offers: ${exchange.offer.offeredProductName}`
+          : 'Proposes an exchange';
+      case 'purchase':
+        return exchange.offer.amount 
+          ? `Offers: €${exchange.offer.amount.toFixed(2)}`
+          : 'Wants to purchase';
+      case 'chat':
+        return 'Wants to discuss';
+      default:
+        return null;
+    }
+  };
+
+  // Determine if this user is the owner (seller) or requester (buyer)
+  const isOwner = userId === (exchange.ownerId || exchange.sellerId);
+  const isRequester = userId === (exchange.requesterId || exchange.buyerId);
+
   return (
     <Card className="p-6 hover:shadow-lg transition-all duration-300">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-start">
         <div className="flex-1">
-          <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">
-            {exchange.productName}
-          </h4>
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-2 mb-2">
+            {exchange.offer && getOfferTypeIcon(exchange.offer.type)}
+            <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-lg">
+              {isOwner ? 'Someone wants: ' : 'You requested: '}{exchange.productName}
+            </h4>
+          </div>
+          
+          {exchange.offer && (
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+              {getOfferDescription()}
+            </p>
+          )}
+          
+          {exchange.offer?.message && (
+            <p className="text-sm text-gray-500 dark:text-gray-500 italic mb-2">
+              "{exchange.offer.message}"
+            </p>
+          )}
+          
+          <div className="flex items-center gap-2">
             <Badge className={`${getStatusColor(exchange.status)} border-0 flex items-center gap-1`}>
               {getStatusIcon(exchange.status)}
               {exchange.status.charAt(0).toUpperCase() + exchange.status.slice(1)}
@@ -326,7 +388,8 @@ const ExchangeCard = ({ exchange, userId, onAccept, onReject }: {
             )}
           </div>
         </div>
-        {userId === exchange.sellerId && exchange.status === "pending" && (
+        
+        {isOwner && exchange.status === "pending" && (
           <div className="flex gap-2">
             <Button
               onClick={onAccept}
@@ -391,21 +454,44 @@ export default function ProfilePage() {
         setProducts(productsData);
       });
 
-      const exchangesQuery = query(
+      // Query for exchanges where user is either buyer/requester or seller/owner
+      const exchangesAsBuyerQuery = query(
         collection(db, "exchanges"),
         where("buyerId", "==", user.uid)
       );
-      const unsubscribeExchanges = onSnapshot(exchangesQuery, (snapshot) => {
-        const exchangesData = snapshot.docs.map((doc) => ({
+      
+      const exchangesAsSellerQuery = query(
+        collection(db, "exchanges"),
+        where("sellerId", "==", user.uid)
+      );
+
+      // Subscribe to both queries
+      const unsubscribeExchangesAsBuyer = onSnapshot(exchangesAsBuyerQuery, (snapshot) => {
+        const buyerExchanges = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         })) as Exchange[];
-        setExchanges(exchangesData);
+        
+        // Also get seller exchanges
+        onSnapshot(exchangesAsSellerQuery, (snapshot2) => {
+          const sellerExchanges = snapshot2.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as Exchange[];
+          
+          // Combine and deduplicate
+          const allExchanges = [...buyerExchanges, ...sellerExchanges];
+          const uniqueExchanges = allExchanges.filter((exchange, index, self) =>
+            index === self.findIndex((e) => e.id === exchange.id)
+          );
+          
+          setExchanges(uniqueExchanges);
+        });
       });
 
       return () => {
         unsubscribeProducts();
-        unsubscribeExchanges();
+        unsubscribeExchangesAsBuyer();
       };
     }
   }, [user, loading, router]);

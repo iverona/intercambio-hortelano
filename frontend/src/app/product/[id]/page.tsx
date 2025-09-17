@@ -23,6 +23,7 @@ import {
 } from "firebase/firestore";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import OfferModal from "@/components/shared/OfferModal";
 
 interface Chat {
   id: string;
@@ -59,6 +60,7 @@ export default function ProductDetailPage() {
   const [product, setProduct] = useState<Product | null>(null);
   const [seller, setSeller] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showOfferModal, setShowOfferModal] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -81,41 +83,89 @@ export default function ProductDetailPage() {
     fetchProduct();
   }, [id]);
 
-  const handleContact = async () => {
+  const handleOfferSubmit = async (offer: {
+    type: "exchange" | "purchase" | "chat";
+    offeredProductId?: string;
+    offeredProductName?: string;
+    amount?: number;
+    message?: string;
+  }) => {
     if (!user || !product || !seller) return;
 
-    // 1. Check if a chat already exists
-    const chatsRef = collection(db, "chats");
-    const q = query(
-      chatsRef,
-      where("listingId", "==", id),
-      where("participants", "array-contains", user.uid)
-    );
-
-    const querySnapshot = await getDocs(q);
-    let existingChat: Chat | null = null;
-
-    querySnapshot.forEach((doc) => {
-      const chat = doc.data() as Omit<Chat, "id">;
-      if (chat.participants.includes(product.userId)) {
-        existingChat = { id: doc.id, ...chat };
-      }
-    });
-
-    if (existingChat) {
-      // 2. If chat exists, navigate to it
-      router.push(`/exchanges/${existingChat.id}`);
-    } else {
-      // 3. If not, create a new chat
-      const newChat = {
-        listingId: id,
-        listingTitle: product.name,
-        participants: [user.uid, product.userId],
+    try {
+      // 1. Create an exchange/transaction record
+      const exchangesRef = collection(db, "exchanges");
+      const exchangeData = {
+        productId: id,
+        productName: product.name,
+        requesterId: user.uid,
+        ownerId: product.userId,
+        status: "pending",
+        offer: {
+          type: offer.type,
+          ...(offer.offeredProductId && { offeredProductId: offer.offeredProductId }),
+          ...(offer.offeredProductName && { offeredProductName: offer.offeredProductName }),
+          ...(offer.amount && { amount: offer.amount }),
+          ...(offer.message && { message: offer.message }),
+        },
         createdAt: serverTimestamp(),
-        lastMessage: null,
       };
-      const docRef = await addDoc(chatsRef, newChat);
-      router.push(`/exchanges/${docRef.id}`);
+
+      // For backwards compatibility, also add buyerId and sellerId
+      const exchangeWithLegacy = {
+        ...exchangeData,
+        buyerId: user.uid,
+        sellerId: product.userId,
+      };
+
+      await addDoc(exchangesRef, exchangeWithLegacy);
+
+      // 2. Check if a chat already exists
+      const chatsRef = collection(db, "chats");
+      const q = query(
+        chatsRef,
+        where("listingId", "==", id),
+        where("participants", "array-contains", user.uid)
+      );
+
+      const querySnapshot = await getDocs(q);
+      let existingChat: Chat | null = null;
+
+      querySnapshot.forEach((docSnapshot) => {
+        const chat = docSnapshot.data() as Omit<Chat, "id">;
+        if (chat.participants.includes(product.userId)) {
+          existingChat = { id: docSnapshot.id, ...chat };
+        }
+      });
+
+      if (existingChat) {
+        // 3. If chat exists, navigate to it
+        router.push(`/exchanges/${existingChat.id}`);
+      } else {
+        // 4. If not, create a new chat
+        const newChat = {
+          listingId: id,
+          listingTitle: product.name,
+          participants: [user.uid, product.userId],
+          createdAt: serverTimestamp(),
+          lastMessage: null,
+        };
+        const docRef = await addDoc(chatsRef, newChat);
+        
+        // If there's an initial message, add it
+        if (offer.message) {
+          const messagesRef = collection(db, "chats", docRef.id, "messages");
+          await addDoc(messagesRef, {
+            text: offer.message,
+            senderId: user.uid,
+            createdAt: serverTimestamp(),
+          });
+        }
+
+        router.push(`/exchanges/${docRef.id}`);
+      }
+    } catch (error) {
+      console.error("Error submitting offer:", error);
     }
   };
 
@@ -176,13 +226,32 @@ export default function ProductDetailPage() {
               </PopoverContent>
             </Popover>
           )}
-          {user && (
-            <Button size="lg" onClick={handleContact}>
-              Contactar al Vendedor
+          {user && product.userId !== user.uid && (
+            <Button size="lg" onClick={() => setShowOfferModal(true)}>
+              I'm Interested
             </Button>
+          )}
+          {user && product.userId === user.uid && (
+            <p className="text-sm text-gray-500 italic">This is your product</p>
           )}
         </div>
       </div>
+      
+      {product && (
+        <OfferModal
+          isOpen={showOfferModal}
+          onClose={() => setShowOfferModal(false)}
+          product={{
+            id,
+            name: product.name,
+            description: product.description,
+            imageUrl: product.imageUrl,
+            isForExchange: product.isForExchange,
+            price: product.price,
+          }}
+          onOfferSubmit={handleOfferSubmit}
+        />
+      )}
     </main>
   );
 }
