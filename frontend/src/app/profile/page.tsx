@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
+import ChatList from "@/components/shared/ChatList";
 
 interface Product {
   id: string;
@@ -231,6 +232,11 @@ export default function ProfilePage() {
             />
           ))}
         </div>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">My Messages</h2>
+        <ChatList />
       </div>
 
       <div className="mt-8">

@@ -22,9 +22,17 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 
+interface ProductData {
+  name: string;
+  description: string;
+  category: string;
+  isForExchange: boolean;
+  price: number | null;
+}
+
 interface ProductFormProps {
-  onSubmit: (data: any) => void;
-  initialData?: any;
+  onSubmit: (data: ProductData) => void;
+  initialData?: ProductData;
   isEdit?: boolean;
 }
 
@@ -98,6 +106,7 @@ export default function ProductForm({
               placeholder="e.g., Fresh Tomatoes"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              disabled={isEdit}
             />
           </div>
           <div className="grid gap-2">
