@@ -7,6 +7,8 @@ import { Label } from "@/components/ui/label";
 import { auth, db } from "@/lib/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { useGoogleAuth } from "@/hooks/useGoogleAuth";
+import { Chrome } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -18,6 +20,7 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { handleGoogleAuth, error: googleError, loading: googleLoading } = useGoogleAuth();
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,8 +41,8 @@ export default function SignupPage() {
         name: name,
       });
       router.push("/onboarding");
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "An error occurred");
     }
   };
 
@@ -89,11 +92,18 @@ export default function SignupPage() {
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {(error || googleError) && <p className="text-red-500 text-sm">{error || googleError}</p>}
             <Button type="submit" className="w-full">
               Sign Up
             </Button>
           </form>
+          <div className="mt-4 text-center text-sm">
+            Or
+          </div>
+          <Button onClick={handleGoogleAuth} disabled={googleLoading} className="w-full mt-4 flex items-center gap-2">
+            <Chrome size={18} />
+            Sign up with Google
+          </Button>
           <div className="mt-4 text-center">
             <Link href="/login" className="text-sm text-blue-600 hover:underline">
               Already have an account? Login
