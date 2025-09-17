@@ -5,6 +5,8 @@ import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
 import { AuthProvider } from "@/context/AuthContext";
 import { FilterProvider } from "@/context/FilterContext";
+import { NotificationProvider } from "@/context/NotificationContext";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,11 +35,14 @@ export default function RootLayout({
       >
         <AuthProvider>
           <FilterProvider>
-            <div className="flex flex-col min-h-screen">
-              <Header />
-              <main className="flex-grow">{children}</main>
-              <Footer />
-            </div>
+            <NotificationProvider>
+              <div className="flex flex-col min-h-screen">
+                <Header />
+                <main className="flex-grow">{children}</main>
+                <Footer />
+              </div>
+              <Toaster />
+            </NotificationProvider>
           </FilterProvider>
         </AuthProvider>
       </body>

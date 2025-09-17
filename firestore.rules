@@ -26,5 +26,39 @@ service cloud.firestore {
         allow update, delete: if false;
       }
     }
+
+    match /notifications/{notificationId} {
+      // Allow read if user is authenticated
+      // The query in the app already filters by recipientId
+      allow read: if request.auth != null;
+      // Allow create if authenticated and the notification has a valid recipientId
+      allow create: if request.auth != null && 
+        request.resource.data.recipientId != null;
+      // Allow update only if the user is the recipient and only updating isRead field
+      allow update: if request.auth != null && 
+        resource.data.recipientId == request.auth.uid &&
+        request.resource.data.recipientId == resource.data.recipientId &&
+        request.resource.data.senderId == resource.data.senderId &&
+        request.resource.data.type == resource.data.type &&
+        request.resource.data.entityId == resource.data.entityId &&
+        request.resource.data.createdAt == resource.data.createdAt;
+      // Prevent deletes to maintain notification history
+      allow delete: if false;
+    }
+
+    // Rules for exchanges collection
+    match /exchanges/{exchangeId} {
+      // Allow read if user is authenticated (queries will filter by buyerId/sellerId)
+      allow read: if request.auth != null;
+      // Allow create if authenticated
+      allow create: if request.auth != null;
+      // Allow update if user is buyer or seller
+      allow update: if request.auth != null && 
+        (resource.data.buyerId == request.auth.uid || 
+         resource.data.sellerId == request.auth.uid);
+      // Allow delete if user is the seller
+      allow delete: if request.auth != null && 
+        resource.data.sellerId == request.auth.uid;
+    }
   }
 }

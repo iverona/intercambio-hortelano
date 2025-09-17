@@ -19,6 +19,7 @@ import { User, LogOut, Settings, Search } from "lucide-react";
 import Filter from "./Filter";
 import { useFilters } from "@/context/FilterContext";
 import { Input } from "@/components/ui/input";
+import NotificationBell from "./NotificationBell";
 
 const Header = () => {
   const { user, loading } = useAuth();
@@ -68,9 +69,11 @@ const Header = () => {
           )}
           {!loading &&
             (user ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Avatar className="cursor-pointer hover:opacity-80 transition-opacity">
+              <>
+                <NotificationBell />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Avatar className="cursor-pointer hover:opacity-80 transition-opacity">
                     <AvatarImage src={user.photoURL || undefined} alt={user.email || "User"} />
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       {getUserInitials()}
@@ -102,6 +105,7 @@ const Header = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              </>
             ) : (
               <Button asChild>
                 <Link href="/login">Login</Link>
