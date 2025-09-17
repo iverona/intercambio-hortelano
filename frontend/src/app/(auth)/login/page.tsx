@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { auth, db, googleProvider } from "@/lib/firebase";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { auth } from "@/lib/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 import { Chrome } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -17,34 +17,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { handleGoogleAuth, error: googleError, loading: googleLoading } = useGoogleAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(auth, email, password);
       router.push("/");
-    } catch (error: any) {
-      setError(error.message);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (!userDoc.exists()) {
-        await setDoc(doc(db, "users", user.uid), {
-          uid: user.uid,
-          email: user.email,
-          name: user.displayName,
-        });
-        router.push("/onboarding");
-      } else {
-        router.push("/");
-      }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "An error occurred");
     }
   };
 
@@ -75,7 +56,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {(error || googleError) && <p className="text-red-500 text-sm">{error || googleError}</p>}
             <Button type="submit" className="w-full">
               Login
             </Button>
@@ -83,13 +64,13 @@ export default function LoginPage() {
           <div className="mt-4 text-center text-sm">
             Or
           </div>
-          <Button onClick={handleGoogleLogin} className="w-full mt-4 flex items-center gap-2">
+          <Button onClick={handleGoogleAuth} disabled={googleLoading} className="w-full mt-4 flex items-center gap-2">
             <Chrome size={18} />
             Sign in with Google
           </Button>
           <div className="mt-4 text-center">
             <Link href="/signup" className="text-sm text-blue-600 hover:underline">
-              Don't have an account? Sign up
+              Don&apos;t have an account? Sign up
             </Link>
           </div>
         </CardContent>
