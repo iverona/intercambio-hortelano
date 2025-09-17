@@ -24,6 +24,7 @@ import {
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import OfferModal from "@/components/shared/OfferModal";
+import { createNotification } from "@/lib/notifications";
 
 interface Chat {
   id: string;
@@ -118,7 +119,15 @@ export default function ProductDetailPage() {
         sellerId: product.userId,
       };
 
-      await addDoc(exchangesRef, exchangeWithLegacy);
+      const exchangeDoc = await addDoc(exchangesRef, exchangeWithLegacy);
+
+      // Create notification for the product owner
+      await createNotification({
+        recipientId: product.userId,
+        senderId: user.uid,
+        type: "NEW_PROPOSAL",
+        entityId: exchangeDoc.id,
+      });
 
       // 2. Check if a chat already exists
       const chatsRef = collection(db, "chats");

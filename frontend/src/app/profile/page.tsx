@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ChatList from "@/components/shared/ChatList";
+import { createNotification } from "@/lib/notifications";
 import {
   User,
   Package,
@@ -372,7 +373,7 @@ const ExchangeCard = ({ exchange, userId, onAccept, onReject }: {
           
           {exchange.offer?.message && (
             <p className="text-sm text-gray-500 dark:text-gray-500 italic mb-2">
-              "{exchange.offer.message}"
+              &ldquo;{exchange.offer.message}&rdquo;
             </p>
           )}
           
@@ -497,8 +498,42 @@ export default function ProfilePage() {
   }, [user, loading, router]);
 
   const handleExchange = async (exchangeId: string, status: string) => {
-    const exchangeRef = doc(db, "exchanges", exchangeId);
-    await updateDoc(exchangeRef, { status });
+    if (!user) return;
+    
+    try {
+      const exchangeRef = doc(db, "exchanges", exchangeId);
+      
+      // First, get the exchange details to know who to notify
+      const exchangeSnap = await getDoc(exchangeRef);
+      if (!exchangeSnap.exists()) {
+        console.error("Exchange not found");
+        return;
+      }
+      
+      const exchangeData = exchangeSnap.data() as Exchange;
+      
+      // Update the exchange status
+      await updateDoc(exchangeRef, { status });
+      
+      // Determine the recipient (the person who made the offer)
+      const recipientId = exchangeData.requesterId || exchangeData.buyerId;
+      
+      // Create notification for the requester/buyer
+      if (recipientId && recipientId !== user.uid) {
+        const notificationType = status === "accepted" ? "PROPOSAL_ACCEPTED" : "PROPOSAL_REJECTED";
+        
+        await createNotification({
+          recipientId: recipientId,
+          senderId: user.uid,
+          type: notificationType,
+          entityId: exchangeId,
+        });
+        
+        console.log(`Notification sent: ${notificationType} to ${recipientId}`);
+      }
+    } catch (error) {
+      console.error("Error handling exchange:", error);
+    }
   };
 
   const handleSave = async () => {
