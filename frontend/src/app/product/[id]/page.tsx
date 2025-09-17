@@ -10,9 +10,31 @@ import {
 } from "@/components/ui/popover";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
-import { addDoc, collection, doc, getDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  query,
+  where,
+  getDocs,
+  serverTimestamp,
+  Timestamp,
+} from "firebase/firestore";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+
+interface Chat {
+  id: string;
+  listingId: string;
+  listingTitle: string;
+  participants: string[];
+  createdAt?: Timestamp;
+  lastMessage?: {
+    text: string;
+    createdAt: Timestamp;
+  } | null;
+}
 
 interface Product {
   name: string;
@@ -60,17 +82,40 @@ export default function ProductDetailPage() {
   }, [id]);
 
   const handleContact = async () => {
-    if (user && product) {
-      const exchangeData = {
-        productId: id,
-        productName: product.name,
-        sellerId: product.userId,
-        buyerId: user.uid,
-        status: "pending",
-        createdAt: new Date(),
+    if (!user || !product || !seller) return;
+
+    // 1. Check if a chat already exists
+    const chatsRef = collection(db, "chats");
+    const q = query(
+      chatsRef,
+      where("listingId", "==", id),
+      where("participants", "array-contains", user.uid)
+    );
+
+    const querySnapshot = await getDocs(q);
+    let existingChat: Chat | null = null;
+
+    querySnapshot.forEach((doc) => {
+      const chat = doc.data() as Omit<Chat, "id">;
+      if (chat.participants.includes(product.userId)) {
+        existingChat = { id: doc.id, ...chat };
+      }
+    });
+
+    if (existingChat) {
+      // 2. If chat exists, navigate to it
+      router.push(`/exchanges/${existingChat.id}`);
+    } else {
+      // 3. If not, create a new chat
+      const newChat = {
+        listingId: id,
+        listingTitle: product.name,
+        participants: [user.uid, product.userId],
+        createdAt: serverTimestamp(),
+        lastMessage: null,
       };
-      await addDoc(collection(db, "exchanges"), exchangeData);
-      router.push("/profile");
+      const docRef = await addDoc(chatsRef, newChat);
+      router.push(`/exchanges/${docRef.id}`);
     }
   };
 

@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow public read access to products and users for browsing
+    match /products/{productId} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null && request.auth.uid == request.resource.data.userId;
+    }
+
+    match /users/{userId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Secure the chats collection
+    match /chats/{chatId} {
+      // Allow read and write only if the user is a participant in the chat
+      allow read, create, update: if request.auth != null && request.auth.uid in resource.data.participants;
+
+      // Secure the messages subcollection
+      match /messages/{messageId} {
+        // Allow read and create only if the user is a participant in the parent chat document
+        allow read, create: if request.auth != null && get(/databases/$(database)/documents/chats/$(chatId)).data.participants.hasAny([request.auth.uid]);
+        // Disallow updates and deletes to messages to maintain chat history integrity
+        allow update, delete: if false;
+      }
+    }
+  }
+}
