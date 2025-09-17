@@ -58,9 +58,9 @@ This document outlines the technical and functional specifications for the appli
 *   3.4. **As a user,** I want to click on a listing to view more details, including information about the producer. ✅
 
 #### 4. Initiating & Completing Exchanges
-*   4.1. **As a user,** I want to be able to contact the producer of a listing to propose an exchange or purchase.
-*   4.2. **As a user,** I want to have a simple messaging interface to communicate with other users about an exchange.
-*   4.3. **As a user,** I want to be able to accept or decline an exchange proposal.
+*   4.1. **As a user,** I want to be able to contact the producer of a listing to propose an exchange or purchase. ✅
+*   4.2. **As a user,** I want to have a simple messaging interface to communicate with other users about an exchange. ✅
+*   4.3. **As a user,** I want to be able to accept or decline an exchange proposal. ✅
 *   4.4. **As a user,** after an exchange is complete, I want to be able to mark it as "completed" and leave a review for the other person.
 
 #### 5. Producer-Consumer Interaction
