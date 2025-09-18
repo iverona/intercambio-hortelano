@@ -518,18 +518,38 @@ export default function ProfilePage() {
       // Determine the recipient (the person who made the offer)
       const recipientId = exchangeData.requesterId || exchangeData.buyerId;
       
-      // Create notification for the requester/buyer
+      // Create notification for the requester/buyer with proper metadata
       if (recipientId && recipientId !== user.uid) {
-        const notificationType = status === "accepted" ? "PROPOSAL_ACCEPTED" : "PROPOSAL_REJECTED";
+        const notificationType = status === "accepted" ? "OFFER_ACCEPTED" : "OFFER_REJECTED";
+        
+        // Build metadata for the notification
+        const metadata: any = {
+          productName: exchangeData.productName,
+        };
+        
+        // Add offer details if available
+        if (exchangeData.offer) {
+          metadata.offerType = exchangeData.offer.type;
+          if (exchangeData.offer.offeredProductName) {
+            metadata.offeredProductName = exchangeData.offer.offeredProductName;
+          }
+          if (exchangeData.offer.offeredProductId) {
+            metadata.offeredProductId = exchangeData.offer.offeredProductId;
+          }
+          if (exchangeData.offer.amount) {
+            metadata.offerAmount = exchangeData.offer.amount;
+          }
+        }
         
         await createNotification({
           recipientId: recipientId,
           senderId: user.uid,
           type: notificationType,
           entityId: exchangeId,
+          metadata: metadata,
         });
         
-        console.log(`Notification sent: ${notificationType} to ${recipientId}`);
+        console.log(`Notification sent: ${notificationType} to ${recipientId} with metadata:`, metadata);
       }
     } catch (error) {
       console.error("Error handling exchange:", error);

@@ -6,8 +6,20 @@ import {
   XCircle, 
   ArrowRightLeft,
   Bell,
-  LucideIcon
+  LucideIcon,
+  DollarSign
 } from "lucide-react";
+
+export interface NotificationMetadata {
+  productName?: string;
+  productId?: string;
+  offeredProductName?: string;
+  offeredProductId?: string;
+  offerAmount?: number;
+  offerType?: "exchange" | "purchase" | "chat";
+  senderName?: string;
+  message?: string;
+}
 
 export interface NotificationDisplay {
   title: string;
@@ -20,40 +32,68 @@ export interface NotificationDisplay {
 export const getNotificationDisplay = (
   type: string,
   entityId: string,
-  senderId?: string
+  metadata?: NotificationMetadata
 ): NotificationDisplay => {
   switch (type) {
     case "NEW_OFFER":
+    case "NEW_PROPOSAL": // Handle old type for backward compatibility
+      let offerDescription = "Someone made an offer on your product";
+      let offerIcon = Package;
+      
+      if (metadata) {
+        if (metadata.offerType === "exchange" && metadata.offeredProductName) {
+          offerDescription = `Offered "${metadata.offeredProductName}" for your "${metadata.productName}"`;
+          offerIcon = ArrowRightLeft;
+        } else if (metadata.offerType === "purchase" && metadata.offerAmount) {
+          offerDescription = `Offered €${metadata.offerAmount.toFixed(2)} for your "${metadata.productName}"`;
+          offerIcon = DollarSign;
+        } else if (metadata.offerType === "chat") {
+          offerDescription = `Wants to chat about your "${metadata.productName}"`;
+          offerIcon = MessageCircle;
+        } else if (metadata.productName) {
+          offerDescription = `New offer for your "${metadata.productName}"`;
+        }
+      }
+      
       return {
         title: "New Offer Received",
-        description: "Someone made an offer on your product",
-        icon: Package,
+        description: offerDescription,
+        icon: offerIcon,
         iconColor: "text-blue-500",
-        route: `/product/${entityId}`,
+        route: `/exchanges/${entityId}`,
       };
     
     case "OFFER_ACCEPTED":
+    case "PROPOSAL_ACCEPTED": // Handle old type for backward compatibility
       return {
         title: "Offer Accepted",
-        description: "Your offer has been accepted",
+        description: metadata?.productName 
+          ? `Your offer for "${metadata.productName}" was accepted`
+          : "Your offer has been accepted",
         icon: CheckCircle,
         iconColor: "text-green-500",
         route: `/exchanges/${entityId}`,
       };
     
     case "OFFER_REJECTED":
+    case "PROPOSAL_REJECTED": // Handle old type for backward compatibility
       return {
         title: "Offer Declined",
-        description: "Your offer was declined",
+        description: metadata?.productName
+          ? `Your offer for "${metadata.productName}" was declined`
+          : "Your offer was declined",
         icon: XCircle,
         iconColor: "text-red-500",
-        route: `/product/${entityId}`,
+        route: `/exchanges/${entityId}`,
       };
     
     case "MESSAGE_RECEIVED":
+    case "NEW_MESSAGE": // Handle old type for backward compatibility
       return {
         title: "New Message",
-        description: "You have a new message in your exchange",
+        description: metadata?.senderName
+          ? `Message from ${metadata.senderName}`
+          : "You have a new message in your exchange",
         icon: MessageCircle,
         iconColor: "text-purple-500",
         route: `/exchanges/${entityId}`,
@@ -62,7 +102,9 @@ export const getNotificationDisplay = (
     case "EXCHANGE_COMPLETED":
       return {
         title: "Exchange Completed",
-        description: "Your exchange has been marked as complete",
+        description: metadata?.productName
+          ? `Exchange completed for "${metadata.productName}"`
+          : "Your exchange has been marked as complete",
         icon: ArrowRightLeft,
         iconColor: "text-green-600",
         route: `/exchanges/${entityId}`,

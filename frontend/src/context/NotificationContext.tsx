@@ -6,6 +6,17 @@ import { collection, query, where, onSnapshot, orderBy, Timestamp, doc, updateDo
 import { db } from "@/lib/firebase";
 import { useAuth } from "./AuthContext";
 
+interface NotificationMetadata {
+  productName?: string;
+  productId?: string;
+  offeredProductName?: string;
+  offeredProductId?: string;
+  offerAmount?: number;
+  offerType?: "exchange" | "purchase" | "chat";
+  senderName?: string;
+  message?: string;
+}
+
 interface Notification {
   id: string;
   recipientId: string;
@@ -14,6 +25,7 @@ interface Notification {
   entityId: string;
   isRead: boolean;
   createdAt: Date;
+  metadata?: NotificationMetadata;
 }
 
 interface NotificationContextType {
@@ -32,18 +44,13 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const previousCountRef = useRef(0);
 
   useEffect(() => {
-    console.log("NotificationProvider useEffect - user:", user?.uid);
-    
     // Clear notifications when user logs out
     if (!user) {
-      console.log("No user, clearing notifications");
       setNotifications([]);
       setUnreadCount(0);
       previousCountRef.current = 0;
       return;
     }
-
-    console.log("Setting up notification listener for user:", user.uid);
     
     // Set up the query for the logged-in user
     const q = query(
@@ -55,7 +62,6 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     const unsubscribe = onSnapshot(
       q, 
       (snapshot) => {
-        console.log("Notification snapshot received, size:", snapshot.size);
         const newNotifications: Notification[] = [];
         let newUnreadCount = 0;
         
@@ -71,6 +77,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
             createdAt: data.createdAt instanceof Timestamp 
               ? data.createdAt.toDate() 
               : new Date(data.createdAt),
+            metadata: data.metadata || {},
           };
           newNotifications.push(notification);
           if (!notification.isRead) {
@@ -78,12 +85,46 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
           }
         });
 
-        // Show toast for new, unread notifications
+        // Show toast for new, unread notifications with specific content
         // Only show if the count increased (not on initial load)
         if (previousCountRef.current > 0 && newNotifications.length > previousCountRef.current) {
           const latestNotification = newNotifications[0];
           if (!latestNotification.isRead) {
-            toast.info(`You have a new notification!`);
+            // Create a specific message based on notification type and metadata
+            let toastMessage = "You have a new notification!";
+            const metadata = latestNotification.metadata;
+            
+            switch (latestNotification.type) {
+              case "NEW_OFFER":
+              case "NEW_PROPOSAL": // Handle old type
+                if (metadata?.offerType === "exchange" && metadata?.offeredProductName) {
+                  toastMessage = `New exchange offer: ${metadata.offeredProductName} for your ${metadata.productName}`;
+                } else if (metadata?.offerType === "purchase" && metadata?.offerAmount) {
+                  toastMessage = `New purchase offer: €${metadata.offerAmount.toFixed(2)} for your ${metadata.productName}`;
+                } else if (metadata?.offerType === "chat") {
+                  toastMessage = `Someone wants to chat about your ${metadata.productName}`;
+                } else {
+                  toastMessage = `New offer for your ${metadata?.productName || "product"}`;
+                }
+                break;
+              case "OFFER_ACCEPTED":
+              case "PROPOSAL_ACCEPTED": // Handle old type
+                toastMessage = `Your offer for ${metadata?.productName || "a product"} was accepted!`;
+                break;
+              case "OFFER_REJECTED":
+              case "PROPOSAL_REJECTED": // Handle old type
+                toastMessage = `Your offer for ${metadata?.productName || "a product"} was declined`;
+                break;
+              case "MESSAGE_RECEIVED":
+              case "NEW_MESSAGE": // Handle old type
+                toastMessage = `New message from ${metadata?.senderName || "someone"}`;
+                break;
+              case "EXCHANGE_COMPLETED":
+                toastMessage = `Exchange completed for ${metadata?.productName || "your product"}`;
+                break;
+            }
+            
+            toast.info(toastMessage);
           }
         }
         
@@ -93,15 +134,10 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       },
       (error) => {
         console.error("Error fetching notifications:", error);
-        console.error("Error code:", error.code);
-        console.error("Error message:", error.message);
-        console.error("Current user ID:", user?.uid);
         
         // Handle permission errors gracefully
         if (error.code === 'permission-denied') {
-          console.log("Permission denied for notifications. User may not be authenticated yet.");
-          console.log("Auth state - user exists:", !!user);
-          console.log("Auth state - user ID:", user?.uid);
+          // This can happen during auth state changes, ignore silently
         }
       }
     );
