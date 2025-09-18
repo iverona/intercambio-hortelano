@@ -22,7 +22,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRightLeft, DollarSign, MessageSquare, Package } from "lucide-react";
+import { ArrowRightLeft, DollarSign, MessageSquare, Package, CheckCircle, XCircle } from "lucide-react";
+import { createNotification } from "@/lib/notifications";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
@@ -36,6 +38,8 @@ interface Exchange {
   productId: string;
   productName: string;
   status: string;
+  requesterId: string;
+  ownerId: string;
   offer?: {
     type: "exchange" | "purchase" | "chat";
     offeredProductId?: string;
@@ -146,7 +150,206 @@ export default function ChatPage() {
       },
     });
 
+    // Send notification to the chat partner
+    if (chatPartner) {
+      const messageMetadata: any = {};
+      
+      // Only add fields that have values
+      const senderName = user.displayName || user.email || "Someone";
+      if (senderName) {
+        messageMetadata.senderName = senderName;
+      }
+      if (newMessage) {
+        messageMetadata.message = newMessage.substring(0, 100); // First 100 chars of message
+      }
+
+      await createNotification({
+        recipientId: chatPartner.id,
+        senderId: user.uid,
+        type: "MESSAGE_RECEIVED",
+        entityId: chatId,
+        metadata: messageMetadata,
+      });
+    }
+
     setNewMessage("");
+  };
+
+  const handleAcceptOffer = async () => {
+    if (!relatedExchange || !user) return;
+
+    try {
+      // Update exchange status
+      const exchangeRef = doc(db, "exchanges", relatedExchange.id);
+      await updateDoc(exchangeRef, {
+        status: "accepted",
+        updatedAt: serverTimestamp(),
+      });
+
+      // Send notification to the requester
+      const recipientId = relatedExchange.requesterId === user.uid 
+        ? relatedExchange.ownerId 
+        : relatedExchange.requesterId;
+
+      // Build complete metadata for the notification
+      const acceptMetadata: any = {};
+      if (relatedExchange.productName) {
+        acceptMetadata.productName = relatedExchange.productName;
+      }
+      if (relatedExchange.productId) {
+        acceptMetadata.productId = relatedExchange.productId;
+      }
+      // Add offer details if available
+      if (relatedExchange.offer) {
+        acceptMetadata.offerType = relatedExchange.offer.type;
+        if (relatedExchange.offer.offeredProductName) {
+          acceptMetadata.offeredProductName = relatedExchange.offer.offeredProductName;
+        }
+        if (relatedExchange.offer.amount) {
+          acceptMetadata.offerAmount = relatedExchange.offer.amount;
+        }
+      }
+
+      await createNotification({
+        recipientId,
+        senderId: user.uid,
+        type: "OFFER_ACCEPTED",
+        entityId: chatId, // Use chatId to navigate to the chat
+        metadata: acceptMetadata,
+      });
+
+      toast.success("Offer accepted successfully!");
+      
+      // Reload exchange data
+      const updatedDoc = await getDoc(exchangeRef);
+      if (updatedDoc.exists()) {
+        setRelatedExchange({
+          id: updatedDoc.id,
+          ...updatedDoc.data(),
+        } as Exchange);
+      }
+    } catch (error) {
+      console.error("Error accepting offer:", error);
+      toast.error("Failed to accept offer");
+    }
+  };
+
+  const handleRejectOffer = async () => {
+    if (!relatedExchange || !user) return;
+
+    try {
+      // Update exchange status
+      const exchangeRef = doc(db, "exchanges", relatedExchange.id);
+      await updateDoc(exchangeRef, {
+        status: "rejected",
+        updatedAt: serverTimestamp(),
+      });
+
+      // Send notification to the requester
+      const recipientId = relatedExchange.requesterId === user.uid 
+        ? relatedExchange.ownerId 
+        : relatedExchange.requesterId;
+
+      // Build complete metadata for the notification
+      const rejectMetadata: any = {};
+      if (relatedExchange.productName) {
+        rejectMetadata.productName = relatedExchange.productName;
+      }
+      if (relatedExchange.productId) {
+        rejectMetadata.productId = relatedExchange.productId;
+      }
+      // Add offer details if available
+      if (relatedExchange.offer) {
+        rejectMetadata.offerType = relatedExchange.offer.type;
+        if (relatedExchange.offer.offeredProductName) {
+          rejectMetadata.offeredProductName = relatedExchange.offer.offeredProductName;
+        }
+        if (relatedExchange.offer.amount) {
+          rejectMetadata.offerAmount = relatedExchange.offer.amount;
+        }
+      }
+
+      await createNotification({
+        recipientId,
+        senderId: user.uid,
+        type: "OFFER_REJECTED",
+        entityId: chatId, // Use chatId to navigate to the chat
+        metadata: rejectMetadata,
+      });
+
+      toast.info("Offer declined");
+      
+      // Reload exchange data
+      const updatedDoc = await getDoc(exchangeRef);
+      if (updatedDoc.exists()) {
+        setRelatedExchange({
+          id: updatedDoc.id,
+          ...updatedDoc.data(),
+        } as Exchange);
+      }
+    } catch (error) {
+      console.error("Error rejecting offer:", error);
+      toast.error("Failed to decline offer");
+    }
+  };
+
+  const handleCompleteExchange = async () => {
+    if (!relatedExchange || !user) return;
+
+    try {
+      // Update exchange status
+      const exchangeRef = doc(db, "exchanges", relatedExchange.id);
+      await updateDoc(exchangeRef, {
+        status: "completed",
+        completedAt: serverTimestamp(),
+      });
+
+      // Send notification to the other party
+      const recipientId = relatedExchange.requesterId === user.uid 
+        ? relatedExchange.ownerId 
+        : relatedExchange.requesterId;
+
+      // Build complete metadata for the notification
+      const completeMetadata: any = {};
+      if (relatedExchange.productName) {
+        completeMetadata.productName = relatedExchange.productName;
+      }
+      if (relatedExchange.productId) {
+        completeMetadata.productId = relatedExchange.productId;
+      }
+      // Add offer details if available
+      if (relatedExchange.offer) {
+        completeMetadata.offerType = relatedExchange.offer.type;
+        if (relatedExchange.offer.offeredProductName) {
+          completeMetadata.offeredProductName = relatedExchange.offer.offeredProductName;
+        }
+        if (relatedExchange.offer.amount) {
+          completeMetadata.offerAmount = relatedExchange.offer.amount;
+        }
+      }
+
+      await createNotification({
+        recipientId,
+        senderId: user.uid,
+        type: "EXCHANGE_COMPLETED",
+        entityId: chatId, // Use chatId to navigate to the chat
+        metadata: completeMetadata,
+      });
+
+      toast.success("Exchange marked as completed!");
+      
+      // Reload exchange data
+      const updatedDoc = await getDoc(exchangeRef);
+      if (updatedDoc.exists()) {
+        setRelatedExchange({
+          id: updatedDoc.id,
+          ...updatedDoc.data(),
+        } as Exchange);
+      }
+    } catch (error) {
+      console.error("Error completing exchange:", error);
+      toast.error("Failed to complete exchange");
+    }
   };
 
   const getOfferTypeIcon = (type?: string) => {
@@ -206,10 +409,61 @@ export default function ChatPage() {
                 )}
               </div>
               
-              <Badge className={`${getStatusColor(relatedExchange.status)} border-0`}>
-                {relatedExchange.status.charAt(0).toUpperCase() + relatedExchange.status.slice(1)}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge className={`${getStatusColor(relatedExchange.status)} border-0`}>
+                  {relatedExchange.status.charAt(0).toUpperCase() + relatedExchange.status.slice(1)}
+                </Badge>
+              </div>
             </div>
+            
+            {/* Action buttons for pending offers */}
+            {relatedExchange.status === "pending" && user && (
+              <div className="flex gap-2 mt-3 pt-3 border-t border-blue-200 dark:border-blue-800">
+                {relatedExchange.ownerId === user.uid ? (
+                  // Product owner can accept/reject
+                  <>
+                    <Button
+                      size="sm"
+                      variant="default"
+                      onClick={handleAcceptOffer}
+                      className="flex-1"
+                    >
+                      <CheckCircle className="w-4 h-4 mr-1" />
+                      Accept Offer
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={handleRejectOffer}
+                      className="flex-1"
+                    >
+                      <XCircle className="w-4 h-4 mr-1" />
+                      Decline
+                    </Button>
+                  </>
+                ) : (
+                  // Requester sees waiting status
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Waiting for response from the owner...
+                  </p>
+                )}
+              </div>
+            )}
+            
+            {/* Complete button for accepted exchanges */}
+            {relatedExchange.status === "accepted" && user && (
+              <div className="mt-3 pt-3 border-t border-blue-200 dark:border-blue-800">
+                <Button
+                  size="sm"
+                  variant="default"
+                  onClick={handleCompleteExchange}
+                  className="w-full"
+                >
+                  <CheckCircle className="w-4 h-4 mr-1" />
+                  Mark as Completed
+                </Button>
+              </div>
+            )}
           </Card>
         )}
         

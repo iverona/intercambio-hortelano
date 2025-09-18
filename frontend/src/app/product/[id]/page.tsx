@@ -121,12 +121,33 @@ export default function ProductDetailPage() {
 
       const exchangeDoc = await addDoc(exchangesRef, exchangeWithLegacy);
 
-      // Create notification for the product owner
+      // Create notification for the product owner with detailed metadata
+      const notificationMetadata: any = {
+        productName: product.name,
+        productId: id,
+        offerType: offer.type,
+      };
+
+      // Only add fields that have values
+      if (offer.offeredProductName) {
+        notificationMetadata.offeredProductName = offer.offeredProductName;
+      }
+      if (offer.offeredProductId) {
+        notificationMetadata.offeredProductId = offer.offeredProductId;
+      }
+      if (offer.amount !== undefined && offer.amount !== null) {
+        notificationMetadata.offerAmount = offer.amount;
+      }
+      if (offer.message) {
+        notificationMetadata.message = offer.message;
+      }
+
       await createNotification({
         recipientId: product.userId,
         senderId: user.uid,
-        type: "NEW_PROPOSAL",
+        type: "NEW_OFFER",
         entityId: exchangeDoc.id,
+        metadata: notificationMetadata,
       });
 
       // 2. Check if a chat already exists

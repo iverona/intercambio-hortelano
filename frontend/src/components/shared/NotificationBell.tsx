@@ -27,13 +27,7 @@ const NotificationBell = () => {
     }
   }, [open, unreadCount, markAllAsRead]);
 
-  const handleNotificationClick = async (notification: {
-    id: string;
-    type: string;
-    entityId: string;
-    senderId: string;
-    isRead: boolean;
-  }) => {
+  const handleNotificationClick = async (notification: any) => {
     // Mark as read if not already
     if (!notification.isRead) {
       await markAsRead(notification.id);
@@ -43,7 +37,7 @@ const NotificationBell = () => {
     const display = getNotificationDisplay(
       notification.type,
       notification.entityId,
-      notification.senderId
+      notification.metadata
     );
 
     // Close popover
@@ -91,7 +85,7 @@ const NotificationBell = () => {
                 const display = getNotificationDisplay(
                   notification.type,
                   notification.entityId,
-                  notification.senderId
+                  notification.metadata
                 );
                 const Icon = display.icon;
 
