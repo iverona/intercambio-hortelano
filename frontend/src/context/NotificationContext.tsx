@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode, useRef } from "react";
 import { toast } from "sonner";
-import { collection, query, where, onSnapshot, orderBy, Timestamp } from "firebase/firestore";
+import { collection, query, where, onSnapshot, orderBy, Timestamp, doc, updateDoc, writeBatch } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "./AuthContext";
 
@@ -19,6 +19,8 @@ interface Notification {
 interface NotificationContextType {
   notifications: Notification[];
   unreadCount: number;
+  markAsRead: (notificationId: string) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -107,8 +109,42 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, [user]); // Only depend on user, not notifications.length
 
+  // Mark a single notification as read
+  const markAsRead = async (notificationId: string) => {
+    try {
+      const notificationRef = doc(db, "notifications", notificationId);
+      await updateDoc(notificationRef, {
+        isRead: true
+      });
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      toast.error("Failed to mark notification as read");
+    }
+  };
+
+  // Mark all notifications as read
+  const markAllAsRead = async () => {
+    if (notifications.length === 0 || unreadCount === 0) return;
+
+    try {
+      const batch = writeBatch(db);
+      
+      notifications.forEach((notification) => {
+        if (!notification.isRead) {
+          const notificationRef = doc(db, "notifications", notification.id);
+          batch.update(notificationRef, { isRead: true });
+        }
+      });
+
+      await batch.commit();
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+      toast.error("Failed to mark notifications as read");
+    }
+  };
+
   return (
-    <NotificationContext.Provider value={{ notifications, unreadCount }}>
+    <NotificationContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead }}>
       {children}
     </NotificationContext.Provider>
   );

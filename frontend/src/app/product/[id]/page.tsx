@@ -237,7 +237,7 @@ export default function ProductDetailPage() {
           )}
           {user && product.userId !== user.uid && (
             <Button size="lg" onClick={() => setShowOfferModal(true)}>
-              I'm Interested
+              I&apos;m Interested
             </Button>
           )}
           {user && product.userId === user.uid && (
