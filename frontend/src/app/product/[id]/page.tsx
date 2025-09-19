@@ -24,7 +24,7 @@ import {
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import OfferModal from "@/components/shared/OfferModal";
-import { createNotification } from "@/lib/notifications";
+import { createNotification, NotificationMetadata } from "@/lib/notifications";
 
 interface Chat {
   id: string;
@@ -121,14 +121,55 @@ export default function ProductDetailPage() {
 
       const exchangeDoc = await addDoc(exchangesRef, exchangeWithLegacy);
 
+      // 2. Check if a chat already exists or create a new one
+      const chatsRef = collection(db, "chats");
+      const q = query(
+        chatsRef,
+        where("listingId", "==", id),
+        where("participants", "array-contains", user.uid)
+      );
+
+      const querySnapshot = await getDocs(q);
+      let chatId: string | null = null;
+
+      if (!querySnapshot.empty) {
+        querySnapshot.forEach((docSnapshot) => {
+          const chat = docSnapshot.data() as Omit<Chat, "id">;
+          if (chat.participants.includes(product.userId)) {
+            chatId = docSnapshot.id;
+          }
+        });
+      }
+
+      if (!chatId) {
+        const newChat = {
+          listingId: id,
+          listingTitle: product.name,
+          participants: [user.uid, product.userId],
+          createdAt: serverTimestamp(),
+          lastMessage: null,
+        };
+        const docRef = await addDoc(chatsRef, newChat);
+        chatId = docRef.id;
+
+        if (offer.message) {
+          const messagesRef = collection(db, "chats", docRef.id, "messages");
+          await addDoc(messagesRef, {
+            text: offer.message,
+            senderId: user.uid,
+            createdAt: serverTimestamp(),
+          });
+        }
+      }
+
       // Create notification for the product owner with detailed metadata
-      const notificationMetadata: any = {
+      const notificationMetadata: NotificationMetadata = {
         productName: product.name,
         productId: id,
         offerType: offer.type,
+        chatId: chatId,
       };
 
-      // Only add fields that have values
       if (offer.offeredProductName) {
         notificationMetadata.offeredProductName = offer.offeredProductName;
       }
@@ -150,50 +191,7 @@ export default function ProductDetailPage() {
         metadata: notificationMetadata,
       });
 
-      // 2. Check if a chat already exists
-      const chatsRef = collection(db, "chats");
-      const q = query(
-        chatsRef,
-        where("listingId", "==", id),
-        where("participants", "array-contains", user.uid)
-      );
-
-      const querySnapshot = await getDocs(q);
-      let existingChat: Chat | null = null;
-
-      querySnapshot.forEach((docSnapshot) => {
-        const chat = docSnapshot.data() as Omit<Chat, "id">;
-        if (chat.participants.includes(product.userId)) {
-          existingChat = { id: docSnapshot.id, ...chat };
-        }
-      });
-
-      if (existingChat) {
-        // 3. If chat exists, navigate to it
-        router.push(`/exchanges/${existingChat.id}`);
-      } else {
-        // 4. If not, create a new chat
-        const newChat = {
-          listingId: id,
-          listingTitle: product.name,
-          participants: [user.uid, product.userId],
-          createdAt: serverTimestamp(),
-          lastMessage: null,
-        };
-        const docRef = await addDoc(chatsRef, newChat);
-        
-        // If there's an initial message, add it
-        if (offer.message) {
-          const messagesRef = collection(db, "chats", docRef.id, "messages");
-          await addDoc(messagesRef, {
-            text: offer.message,
-            senderId: user.uid,
-            createdAt: serverTimestamp(),
-          });
-        }
-
-        router.push(`/exchanges/${docRef.id}`);
-      }
+      router.push(`/exchanges/${chatId}`);
     } catch (error) {
       console.error("Error submitting offer:", error);
     }
