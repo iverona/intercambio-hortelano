@@ -20,6 +20,7 @@ export interface NotificationMetadata {
   senderName?: string;
   message?: string;
   chatId?: string;
+  exchangeId?: string;
 }
 
 export interface NotificationDisplay {
@@ -61,7 +62,7 @@ export const getNotificationDisplay = (
         description: offerDescription,
         icon: offerIcon,
         iconColor: "text-blue-500",
-        route: metadata?.chatId ? `/exchanges/${metadata.chatId}` : `/exchanges/${entityId}`,
+        route: `/exchanges/details/${entityId}`,
       };
     
     case "OFFER_ACCEPTED":
@@ -73,7 +74,7 @@ export const getNotificationDisplay = (
           : "Your offer has been accepted",
         icon: CheckCircle,
         iconColor: "text-green-500",
-        route: `/exchanges/${entityId}`,
+        route: `/exchanges/details/${entityId}`,
       };
     
     case "OFFER_REJECTED":
@@ -85,7 +86,7 @@ export const getNotificationDisplay = (
           : "Your offer was declined",
         icon: XCircle,
         iconColor: "text-red-500",
-        route: `/exchanges/${entityId}`,
+        route: `/exchanges/details/${entityId}`,
       };
     
     case "MESSAGE_RECEIVED":
@@ -97,7 +98,7 @@ export const getNotificationDisplay = (
           : "You have a new message in your exchange",
         icon: MessageCircle,
         iconColor: "text-purple-500",
-        route: `/exchanges/${entityId}`,
+        route: `/exchanges/details/${entityId}`,
       };
     
     case "EXCHANGE_COMPLETED":
@@ -108,7 +109,7 @@ export const getNotificationDisplay = (
           : "Your exchange has been marked as complete",
         icon: ArrowRightLeft,
         iconColor: "text-green-600",
-        route: `/exchanges/${entityId}`,
+        route: `/exchanges/details/${entityId}`,
       };
     
     default:

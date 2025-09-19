@@ -15,9 +15,7 @@ import {
   collection,
   doc,
   getDoc,
-  query,
-  where,
-  getDocs,
+  updateDoc,
   serverTimestamp,
   Timestamp,
 } from "firebase/firestore";
@@ -94,7 +92,18 @@ export default function ProductDetailPage() {
     if (!user || !product || !seller) return;
 
     try {
-      // 1. Create an exchange/transaction record
+      // Create a chat for this exchange immediately
+      const chatData = {
+        participants: [user.uid, product.userId],
+        listingId: id,
+        listingTitle: product.name,
+        createdAt: serverTimestamp(),
+        lastMessage: null,
+      };
+
+      const chatRef = await addDoc(collection(db, "chats"), chatData);
+
+      // Create an exchange record with the chat already linked
       const exchangesRef = collection(db, "exchanges");
       const exchangeData = {
         productId: id,
@@ -102,6 +111,7 @@ export default function ProductDetailPage() {
         requesterId: user.uid,
         ownerId: product.userId,
         status: "pending",
+        chatId: chatRef.id, // Link the chat immediately
         offer: {
           type: offer.type,
           ...(offer.offeredProductId && { offeredProductId: offer.offeredProductId }),
@@ -110,56 +120,27 @@ export default function ProductDetailPage() {
           ...(offer.message && { message: offer.message }),
         },
         createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       };
 
-      // For backwards compatibility, also add buyerId and sellerId
-      const exchangeWithLegacy = {
-        ...exchangeData,
-        buyerId: user.uid,
-        sellerId: product.userId,
-      };
+      const exchangeDoc = await addDoc(exchangesRef, exchangeData);
 
-      const exchangeDoc = await addDoc(exchangesRef, exchangeWithLegacy);
-
-      // 2. Check if a chat already exists or create a new one
-      const chatsRef = collection(db, "chats");
-      const q = query(
-        chatsRef,
-        where("listingId", "==", id),
-        where("participants", "array-contains", user.uid)
-      );
-
-      const querySnapshot = await getDocs(q);
-      let chatId: string | null = null;
-
-      if (!querySnapshot.empty) {
-        querySnapshot.forEach((docSnapshot) => {
-          const chat = docSnapshot.data() as Omit<Chat, "id">;
-          if (chat.participants.includes(product.userId)) {
-            chatId = docSnapshot.id;
-          }
-        });
-      }
-
-      if (!chatId) {
-        const newChat = {
-          listingId: id,
-          listingTitle: product.name,
-          participants: [user.uid, product.userId],
+      // If there's an initial message, add it to the chat
+      if (offer.message) {
+        const messagesRef = collection(db, "chats", chatRef.id, "messages");
+        await addDoc(messagesRef, {
+          text: offer.message,
+          senderId: user.uid,
           createdAt: serverTimestamp(),
-          lastMessage: null,
-        };
-        const docRef = await addDoc(chatsRef, newChat);
-        chatId = docRef.id;
+        });
 
-        if (offer.message) {
-          const messagesRef = collection(db, "chats", docRef.id, "messages");
-          await addDoc(messagesRef, {
+        // Update the lastMessage field on the chat
+        await updateDoc(doc(db, "chats", chatRef.id), {
+          lastMessage: {
             text: offer.message,
-            senderId: user.uid,
             createdAt: serverTimestamp(),
-          });
-        }
+          },
+        });
       }
 
       // Create notification for the product owner with detailed metadata
@@ -167,7 +148,7 @@ export default function ProductDetailPage() {
         productName: product.name,
         productId: id,
         offerType: offer.type,
-        chatId: chatId,
+        exchangeId: exchangeDoc.id,
       };
 
       if (offer.offeredProductName) {
@@ -191,7 +172,8 @@ export default function ProductDetailPage() {
         metadata: notificationMetadata,
       });
 
-      router.push(`/exchanges/${chatId}`);
+      // Navigate to the exchange details page
+      router.push(`/exchanges/details/${exchangeDoc.id}`);
     } catch (error) {
       console.error("Error submitting offer:", error);
     }
