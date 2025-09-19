@@ -51,17 +51,17 @@ service cloud.firestore {
 
     // Rules for exchanges collection
     match /exchanges/{exchangeId} {
-      // Allow read if user is authenticated (queries will filter by buyerId/sellerId)
+      // Allow read if user is authenticated (queries will filter by requesterId/ownerId)
       allow read: if request.auth != null;
       // Allow create if authenticated
       allow create: if request.auth != null;
-      // Allow update if user is buyer or seller
+      // Allow update if user is the requester or owner
       allow update: if request.auth != null && 
-        (resource.data.buyerId == request.auth.uid || 
-         resource.data.sellerId == request.auth.uid);
-      // Allow delete if user is the seller
+        (resource.data.requesterId == request.auth.uid || 
+         resource.data.ownerId == request.auth.uid);
+      // Allow delete if user is the owner
       allow delete: if request.auth != null && 
-        resource.data.sellerId == request.auth.uid;
+        resource.data.ownerId == request.auth.uid;
     }
   }
 }

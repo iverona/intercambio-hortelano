@@ -18,6 +18,7 @@ export interface NotificationMetadata {
   senderName?: string;
   message?: string;
   chatId?: string;
+  exchangeId?: string;
 }
 
 interface CreateNotificationParams {

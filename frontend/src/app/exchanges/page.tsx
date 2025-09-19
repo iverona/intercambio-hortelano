@@ -321,9 +321,8 @@ export default function ExchangesPage() {
   }, [user, authLoading, router]);
 
   const handleExchangeClick = (exchange: Exchange) => {
-    if (exchange.chatId) {
-      router.push(`/exchanges/${exchange.chatId}`);
-    }
+    // Always go to exchange details page for consistency
+    router.push(`/exchanges/details/${exchange.id}`);
   };
 
   // Filter exchanges by status
