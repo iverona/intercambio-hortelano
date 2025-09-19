@@ -42,6 +42,16 @@ interface Message {
   createdAt: Timestamp;
 }
 
+interface NotificationMetadata {
+  productName?: string;
+  productId?: string;
+  offerType?: "exchange" | "purchase" | "chat";
+  offeredProductName?: string;
+  offerAmount?: number;
+  senderName?: string;
+  message?: string;
+}
+
 interface Exchange {
   id: string;
   productId: string;
@@ -92,11 +102,88 @@ export default function ExchangeDetailsPage() {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Set up real-time listener for exchange document
   useEffect(() => {
     if (!exchangeId || !user) return;
 
-    loadExchangeDetails();
-  }, [exchangeId, user]);
+    const exchangeRef = doc(db, "exchanges", exchangeId);
+    
+    const unsubscribe = onSnapshot(exchangeRef, async (exchangeDoc) => {
+      if (!exchangeDoc.exists()) {
+        toast.error("Exchange not found");
+        router.push("/exchanges");
+        return;
+      }
+
+      const exchangeData = exchangeDoc.data();
+      const exchangeInfo: Exchange = {
+        id: exchangeDoc.id,
+        ...exchangeData,
+      } as Exchange;
+
+      try {
+        // Get requester info
+        const requesterDoc = await getDoc(doc(db, "users", exchangeData.requesterId));
+        if (requesterDoc.exists()) {
+          const requesterData = requesterDoc.data();
+          exchangeInfo.requester = {
+            id: exchangeData.requesterId,
+            name: requesterData.name || requesterData.displayName || "Unknown User",
+            avatarUrl: requesterData.avatarUrl || "",
+          };
+        }
+
+        // Get owner info
+        const ownerDoc = await getDoc(doc(db, "users", exchangeData.ownerId));
+        if (ownerDoc.exists()) {
+          const ownerData = ownerDoc.data();
+          exchangeInfo.owner = {
+            id: exchangeData.ownerId,
+            name: ownerData.name || ownerData.displayName || "Unknown User",
+            avatarUrl: ownerData.avatarUrl || "",
+          };
+        }
+
+        // Get product details
+        if (exchangeData.productId) {
+          const productDoc = await getDoc(doc(db, "products", exchangeData.productId));
+          if (productDoc.exists()) {
+            const productData = productDoc.data();
+            exchangeInfo.product = {
+              id: exchangeData.productId,
+              title: productData.title,
+              description: productData.description,
+              images: productData.images || [],
+              category: productData.category,
+              condition: productData.condition,
+            };
+          }
+        }
+
+        setExchange(exchangeInfo);
+        setLoading(false);
+        
+        // Log exchange state for debugging
+        console.log("Exchange updated:", {
+          id: exchangeInfo.id,
+          status: exchangeInfo.status,
+          chatId: exchangeInfo.chatId,
+          isOwner: user.uid === exchangeInfo.ownerId,
+          isRequester: user.uid === exchangeInfo.requesterId
+        });
+      } catch (error) {
+        console.error("Error loading exchange details:", error);
+        toast.error("Failed to load exchange details");
+        setLoading(false);
+      }
+    }, (error) => {
+      console.error("Error listening to exchange updates:", error);
+      toast.error("Failed to listen for exchange updates");
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, [exchangeId, user, router]);
 
   // Set up chat listener when exchange has a chatId
   useEffect(() => {
@@ -121,80 +208,6 @@ export default function ExchangeDetailsPage() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const loadExchangeDetails = async () => {
-    if (!user) return;
-
-    try {
-      // Get exchange document
-      const exchangeDoc = await getDoc(doc(db, "exchanges", exchangeId));
-      
-      if (!exchangeDoc.exists()) {
-        toast.error("Exchange not found");
-        router.push("/exchanges");
-        return;
-      }
-
-      const exchangeData = exchangeDoc.data();
-      const exchangeInfo: Exchange = {
-        id: exchangeDoc.id,
-        ...exchangeData,
-      } as Exchange;
-
-      // Get requester info
-      const requesterDoc = await getDoc(doc(db, "users", exchangeData.requesterId));
-      if (requesterDoc.exists()) {
-        const requesterData = requesterDoc.data();
-        exchangeInfo.requester = {
-          id: exchangeData.requesterId,
-          name: requesterData.name || requesterData.displayName || "Unknown User",
-          avatarUrl: requesterData.avatarUrl || "",
-        };
-      }
-
-      // Get owner info
-      const ownerDoc = await getDoc(doc(db, "users", exchangeData.ownerId));
-      if (ownerDoc.exists()) {
-        const ownerData = ownerDoc.data();
-        exchangeInfo.owner = {
-          id: exchangeData.ownerId,
-          name: ownerData.name || ownerData.displayName || "Unknown User",
-          avatarUrl: ownerData.avatarUrl || "",
-        };
-      }
-
-      // Get product details
-      if (exchangeData.productId) {
-        const productDoc = await getDoc(doc(db, "products", exchangeData.productId));
-        if (productDoc.exists()) {
-          const productData = productDoc.data();
-          exchangeInfo.product = {
-            id: exchangeData.productId,
-            title: productData.title,
-            description: productData.description,
-            images: productData.images || [],
-            category: productData.category,
-            condition: productData.condition,
-          };
-        }
-      }
-
-      setExchange(exchangeInfo);
-      setLoading(false);
-      
-      // Log exchange state for debugging
-      console.log("Exchange loaded:", {
-        id: exchangeInfo.id,
-        status: exchangeInfo.status,
-        chatId: exchangeInfo.chatId,
-        isOwner: user.uid === exchangeInfo.ownerId,
-        isRequester: user.uid === exchangeInfo.requesterId
-      });
-    } catch (error) {
-      console.error("Error loading exchange details:", error);
-      toast.error("Failed to load exchange details");
-      setLoading(false);
-    }
-  };
 
   const handleAcceptOffer = async () => {
     if (!exchange || !user) return;
@@ -208,7 +221,7 @@ export default function ExchangeDetailsPage() {
       });
 
       // Send notification to the requester
-      const acceptMetadata: any = {};
+      const acceptMetadata: NotificationMetadata = {};
       if (exchange.productName) {
         acceptMetadata.productName = exchange.productName;
       }
@@ -234,9 +247,7 @@ export default function ExchangeDetailsPage() {
       });
 
       toast.success("Offer accepted! Chat is now available below.");
-      
-      // Reload the exchange details to show the chat
-      await loadExchangeDetails();
+      // The real-time listener will automatically update the UI
     } catch (error) {
       console.error("Error accepting offer:", error);
       toast.error("Failed to accept offer");
@@ -255,7 +266,7 @@ export default function ExchangeDetailsPage() {
       });
 
       // Send notification to the requester
-      const rejectMetadata: any = {};
+      const rejectMetadata: NotificationMetadata = {};
       if (exchange.productName) {
         rejectMetadata.productName = exchange.productName;
       }
@@ -281,9 +292,7 @@ export default function ExchangeDetailsPage() {
       });
 
       toast.info("Offer declined");
-      
-      // Reload exchange data
-      await loadExchangeDetails();
+      // The real-time listener will automatically update the UI
     } catch (error) {
       console.error("Error rejecting offer:", error);
       toast.error("Failed to decline offer");
@@ -318,7 +327,7 @@ export default function ExchangeDetailsPage() {
       const partner = exchange.requesterId === user.uid ? exchange.owner : exchange.requester;
       
       if (partnerId) {
-        const messageMetadata: any = {};
+        const messageMetadata: NotificationMetadata = {};
         
         const senderName = user.displayName || user.email || "Someone";
         if (senderName) {
@@ -591,7 +600,7 @@ export default function ExchangeDetailsPage() {
                       ? exchange.ownerId 
                       : exchange.requesterId;
 
-                    const completeMetadata: any = {};
+                    const completeMetadata: NotificationMetadata = {};
                     if (exchange.productName) {
                       completeMetadata.productName = exchange.productName;
                     }
@@ -617,7 +626,7 @@ export default function ExchangeDetailsPage() {
                     });
 
                     toast.success("Exchange marked as completed!");
-                    await loadExchangeDetails();
+                    // The real-time listener will automatically update the UI
                   } catch (error) {
                     console.error("Error completing exchange:", error);
                     toast.error("Failed to complete exchange");
