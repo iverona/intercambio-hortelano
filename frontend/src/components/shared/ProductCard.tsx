@@ -61,7 +61,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const timeInfo = getTimeAgo(product.createdAt);
 
   return (
-    <Card className="group relative overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800">
+    <Card className="group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800">
       {/* Favorite button */}
       <button className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white dark:hover:bg-gray-700">
         <Heart className="w-4 h-4 text-gray-600 dark:text-gray-300 hover:text-red-500 transition-colors" />
@@ -69,8 +69,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
       {/* Image container with overlay */}
       <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent z-10"></div>
+        {/* Gradient overlay - lighter and only at bottom */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent z-10"></div>
         
         {/* Badges positioned on image */}
         <div className="absolute top-3 left-3 z-20 flex flex-wrap gap-2">
