@@ -19,6 +19,7 @@ export interface NotificationMetadata {
   offerType?: "exchange" | "purchase" | "chat";
   senderName?: string;
   message?: string;
+  chatId?: string;
 }
 
 export interface NotificationDisplay {
@@ -60,7 +61,7 @@ export const getNotificationDisplay = (
         description: offerDescription,
         icon: offerIcon,
         iconColor: "text-blue-500",
-        route: `/exchanges/${entityId}`,
+        route: metadata?.chatId ? `/exchanges/${metadata.chatId}` : `/exchanges/${entityId}`,
       };
     
     case "OFFER_ACCEPTED":

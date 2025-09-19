@@ -8,7 +8,7 @@ export type NotificationType =
   | "MESSAGE_RECEIVED"
   | "EXCHANGE_COMPLETED";
 
-interface NotificationMetadata {
+export interface NotificationMetadata {
   productName?: string;
   productId?: string;
   offeredProductName?: string;
@@ -17,6 +17,7 @@ interface NotificationMetadata {
   offerType?: "exchange" | "purchase" | "chat";
   senderName?: string;
   message?: string;
+  chatId?: string;
 }
 
 interface CreateNotificationParams {
@@ -47,7 +48,7 @@ export async function createNotification({
     const cleanMetadata: NotificationMetadata = {};
     Object.entries(metadata).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        (cleanMetadata as any)[key] = value;
+        (cleanMetadata as Record<string, string | number>)[key] = value;
       }
     });
 
