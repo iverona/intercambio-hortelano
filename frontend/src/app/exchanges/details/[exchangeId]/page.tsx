@@ -32,8 +32,10 @@ import {
   Clock,
   Send,
 } from "lucide-react";
-import { createNotification } from "@/lib/notifications";
+import { createNotification, NotificationType } from "@/lib/notifications";
 import { toast } from "sonner";
+import { ReviewSection, Review } from "@/components/shared/ReviewSection";
+import { submitReview } from "@/lib/reviewHelpers";
 
 interface Message {
   id: string;
@@ -88,6 +90,9 @@ interface Exchange {
     images: string[];
     category: string;
     condition: string;
+  };
+  reviews?: {
+    [userId: string]: Review;
   };
 }
 
@@ -350,6 +355,31 @@ export default function ExchangeDetailsPage() {
     } catch (error) {
       console.error("Error sending message:", error);
       toast.error("Failed to send message");
+    }
+  };
+
+  const handleReviewSubmit = async (rating: number, comment: string) => {
+    if (!exchange || !user) return;
+
+    try {
+      // Determine who is being reviewed
+      const reviewedUserId = user.uid === exchange.ownerId ? exchange.requesterId : exchange.ownerId;
+      
+      await submitReview({
+        exchangeId: exchange.id,
+        rating,
+        comment,
+        currentUserId: user.uid,
+        reviewedUserId,
+        exchangeProductName: exchange.productName,
+        currentUserName: user.displayName || user.email || "Someone",
+      });
+
+      toast.success("Review submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting review:", error);
+      toast.error("Failed to submit review");
+      throw error;
     }
   };
 
@@ -659,6 +689,40 @@ export default function ExchangeDetailsPage() {
             </div>
           )}
         </Card>
+
+        {/* Review Section - Shows for completed exchanges */}
+        {exchange.status === "completed" && (
+          <Card className="mt-6 p-0 overflow-hidden">
+            <div className="p-4 border-b bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950 dark:to-red-950">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Exchange Reviews
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                Share your experience and help build trust in the community
+              </p>
+            </div>
+            <div className="p-6">
+              <ReviewSection
+                exchangeId={exchange.id}
+                currentUserId={user?.uid || ""}
+                partnerId={partner?.id || ""}
+                partnerName={partner?.name || "User"}
+                partnerAvatar={partner?.avatarUrl}
+                existingReviewByUser={
+                  exchange.reviews && user?.uid && exchange.reviews[partner?.id || ""]?.reviewerId === user.uid
+                    ? exchange.reviews[partner?.id || ""]
+                    : undefined
+                }
+                existingReviewByPartner={
+                  exchange.reviews && partner?.id && exchange.reviews[user?.uid || ""]?.reviewerId === partner.id
+                    ? exchange.reviews[user?.uid || ""]
+                    : undefined
+                }
+                onReviewSubmit={handleReviewSubmit}
+              />
+            </div>
+          </Card>
+        )}
 
         {/* Integrated Chat Section - Available for all exchanges */}
         {exchange?.chatId && (

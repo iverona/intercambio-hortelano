@@ -19,6 +19,8 @@ import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { TomatoRating } from "@/components/shared/TomatoRating";
 import {
   User,
   Edit,
@@ -36,6 +38,9 @@ import {
   ArrowRightLeft,
   Package,
   Trash2,
+  Star,
+  Trophy,
+  Award,
 } from "lucide-react";
 
 interface UserData {
@@ -61,6 +66,13 @@ interface UserData {
     showLocation?: boolean;
     publicProfile?: boolean;
   };
+  reputation?: {
+    averageRating: number;
+    totalReviews: number;
+  };
+  points?: number;
+  level?: number;
+  badges?: string[];
 }
 
 // Loading skeleton component
@@ -308,10 +320,18 @@ export default function ProfilePage() {
                           Location verified
                         </Badge>
                       )}
-                      <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 flex items-center gap-1">
-                        <Shield className="w-3 h-3" />
-                        Verified Gardener
-                      </Badge>
+                      {userData.reputation && userData.reputation.totalReviews > 0 && (
+                        <div className="flex items-center gap-2">
+                          <TomatoRating 
+                            rating={userData.reputation.averageRating} 
+                            size="sm" 
+                            showNumber={true}
+                          />
+                          <span className="text-sm text-gray-600 dark:text-gray-400">
+                            ({userData.reputation.totalReviews} reviews)
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </>
                 )}
@@ -362,6 +382,74 @@ export default function ProfilePage() {
             </div>
           </div>
         </ProfileSection>
+
+        {/* Reputation & Gamification Section */}
+        {userData.reputation && (
+          <ProfileSection title="Reputation & Achievements" icon={Trophy}>
+            <div className="space-y-4">
+              {/* Rating Overview */}
+              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 rounded-lg">
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                    Your Rating
+                  </h3>
+                  {userData.reputation.totalReviews > 0 ? (
+                    <div className="flex items-center gap-3">
+                      <TomatoRating 
+                        rating={userData.reputation.averageRating} 
+                        size="lg" 
+                        showNumber={true}
+                      />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Based on {userData.reputation.totalReviews} review{userData.reputation.totalReviews !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      No reviews yet. Complete your first exchange to get started!
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Points & Level */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Star className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <h4 className="font-medium">Points</h4>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {userData.points || 0}
+                  </p>
+                </div>
+                <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Award className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                    <h4 className="font-medium">Level</h4>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    {getLevelName(userData.level || 0)}
+                  </p>
+                </div>
+              </div>
+
+              {/* Badges (placeholder for now) */}
+              {userData.badges && userData.badges.length > 0 && (
+                <div>
+                  <h4 className="font-medium mb-2">Badges Earned</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {userData.badges.map((badge) => (
+                      <Badge key={badge} variant="secondary">
+                        {badge}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </ProfileSection>
+        )}
 
         {/* Notification Preferences */}
         <ProfileSection title="Notification Preferences" icon={Bell}>
@@ -481,4 +569,16 @@ export default function ProfilePage() {
       </div>
     </main>
   );
+}
+
+// Helper function to get level name
+function getLevelName(level: number): string {
+  const levels = [
+    "Seed",
+    "Sprout",
+    "Gardener",
+    "Harvester",
+    "Master Grower"
+  ];
+  return levels[Math.min(level, levels.length - 1)] || "Seed";
 }

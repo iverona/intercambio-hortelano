@@ -6,7 +6,8 @@ export type NotificationType =
   | "OFFER_ACCEPTED"
   | "OFFER_REJECTED"
   | "MESSAGE_RECEIVED"
-  | "EXCHANGE_COMPLETED";
+  | "EXCHANGE_COMPLETED"
+  | "REVIEW_RECEIVED";
 
 export interface NotificationMetadata {
   productName?: string;
