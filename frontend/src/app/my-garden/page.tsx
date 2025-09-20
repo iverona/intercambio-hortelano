@@ -25,8 +25,6 @@ import {
   MessageSquare,
   TrendingUp,
   Sparkles,
-  Trash2,
-  Edit,
 } from "lucide-react";
 
 interface Product {

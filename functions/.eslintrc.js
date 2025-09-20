@@ -3,6 +3,7 @@ module.exports = {
     es6: true,
     node: true,
   },
+  ignorePatterns: ["lib/"],
   parserOptions: {
     "ecmaVersion": 2018,
   },

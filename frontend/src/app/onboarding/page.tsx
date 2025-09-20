@@ -30,7 +30,7 @@ export default function OnboardingPage() {
             router.push("/");
           }
         },
-        (error) => {
+        () => {
           setError("Unable to retrieve your location.");
           setLoading(false);
         }

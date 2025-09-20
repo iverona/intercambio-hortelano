@@ -32,10 +32,11 @@ import {
   Clock,
   Send,
 } from "lucide-react";
-import { createNotification, NotificationType } from "@/lib/notifications";
+import { createNotification } from "@/lib/notifications";
 import { toast } from "sonner";
 import { ReviewSection, Review } from "@/components/shared/ReviewSection";
 import { submitReview } from "@/lib/reviewHelpers";
+import Image from "next/image";
 
 interface Message {
   id: string;
@@ -329,7 +330,6 @@ export default function ExchangeDetailsPage() {
 
       // Send notification to the chat partner
       const partnerId = exchange.requesterId === user.uid ? exchange.ownerId : exchange.requesterId;
-      const partner = exchange.requesterId === user.uid ? exchange.owner : exchange.requester;
       
       if (partnerId) {
         const messageMetadata: NotificationMetadata = {};
@@ -498,9 +498,11 @@ export default function ExchangeDetailsPage() {
             {exchange.product && (
               <div className="space-y-2">
                 {exchange.product.images.length > 0 && (
-                  <img
+                  <Image
                     src={exchange.product.images[0]}
                     alt={exchange.product.title}
+                    width={500}
+                    height={500}
                     className="w-full h-48 object-cover rounded-lg mb-3"
                   />
                 )}

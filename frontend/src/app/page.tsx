@@ -17,7 +17,6 @@ import {
   Package, 
   ArrowRight,
   Leaf,
-  Heart,
   Users,
   TrendingUp
 } from "lucide-react";

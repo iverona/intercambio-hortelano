@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import {
   Sheet,
@@ -13,8 +12,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Slider } from "@/components/ui/slider";
-import { Filter as FilterIcon, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Filter as FilterIcon } from "lucide-react";
+import { useState } from "react";
 
 const categories = [
   { id: "vegetables", label: "Vegetables", icon: "🥬" },

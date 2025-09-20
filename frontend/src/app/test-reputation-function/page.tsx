@@ -263,7 +263,7 @@ export default function TestReputationFunction() {
           <div className="space-y-3 text-sm">
             <div className="flex gap-2">
               <span className="font-semibold">1.</span>
-              <p>When a review is submitted, it's saved to the exchange document.</p>
+              <p>When a review is submitted, it&apos;s saved to the exchange document.</p>
             </div>
             <div className="flex gap-2">
               <span className="font-semibold">2.</span>
@@ -279,7 +279,7 @@ export default function TestReputationFunction() {
             </div>
             <div className="flex gap-2">
               <span className="font-semibold">5.</span>
-              <p>The user's level is updated based on total points.</p>
+              <p>The user&apos;s level is updated based on total points.</p>
             </div>
             <div className="flex gap-2">
               <span className="font-semibold">6.</span>

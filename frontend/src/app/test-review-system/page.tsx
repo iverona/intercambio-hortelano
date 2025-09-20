@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/lib/firebase";
-import { collection, query, where, onSnapshot, doc, getDoc } from "firebase/firestore";
+import { collection, query, where, onSnapshot, doc } from "firebase/firestore";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -242,11 +242,11 @@ export default function TestReviewSystemPage() {
         <Card className="p-6 bg-blue-50 dark:bg-blue-950/20">
           <h3 className="font-semibold mb-2">How the Review System Works:</h3>
           <ol className="list-decimal list-inside space-y-2 text-sm text-gray-700 dark:text-gray-300">
-            <li>Complete an exchange by marking it as "completed"</li>
+            <li>Complete an exchange by marking it as &quot;completed&quot;</li>
             <li>Go to the exchange details page to leave a review</li>
             <li>Rate your experience with 1-5 tomatoes 🍅</li>
             <li>Add an optional comment (max 280 characters)</li>
-            <li>Your partner's reputation updates automatically</li>
+            <li>Your partner&apos;s reputation updates automatically</li>
             <li>Earn points: 5🍅 = 25pts, 4🍅 = 20pts, base = 15pts</li>
             <li>Level up as you accumulate points!</li>
           </ol>

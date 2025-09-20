@@ -143,7 +143,7 @@ export default function PublishPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [isPublishing, setIsPublishing] = useState(false);
+  const [, setIsPublishing] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {

@@ -19,7 +19,6 @@ import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TomatoRating } from "@/components/shared/TomatoRating";
 import {
   User,

@@ -80,7 +80,7 @@ export default function TestNotificationsEnhanced() {
     try {
       await markAsRead(notificationId);
       toast.success("Notification marked as read");
-    } catch (error) {
+    } catch {
       toast.error("Failed to mark notification as read");
     }
   };
@@ -89,7 +89,7 @@ export default function TestNotificationsEnhanced() {
     try {
       await markAllAsRead();
       toast.success("All notifications marked as read");
-    } catch (error) {
+    } catch {
       toast.error("Failed to mark all notifications as read");
     }
   };
@@ -228,7 +228,7 @@ export default function TestNotificationsEnhanced() {
             <p className="text-sm font-medium">Auto-Read Feature:</p>
             <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
               <li>Notifications are automatically marked as read when you open the notification bell</li>
-              <li>There's a 500ms delay to let you see the unread state briefly</li>
+              <li>There&apos;s a 500ms delay to let you see the unread state briefly</li>
               <li>The unread count badge updates immediately</li>
             </ul>
           </div>
@@ -249,7 +249,7 @@ export default function TestNotificationsEnhanced() {
             <ul className="text-sm text-muted-foreground space-y-1 list-disc list-inside">
               <li>Unread notifications have a blue background tint</li>
               <li>Each notification type has a unique icon and color</li>
-              <li>Timestamps show relative time (e.g., "2 hours ago")</li>
+              <li>Timestamps show relative time (e.g., &quot;2 hours ago&quot;)</li>
               <li>Hover states indicate clickable areas</li>
             </ul>
           </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Package, DollarSign, MessageSquare, ArrowLeft, Check } from "lucide-react";
 import { db } from "@/lib/firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
@@ -58,13 +57,7 @@ export default function OfferModal({
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (isOpen && user) {
-      fetchUserProducts();
-    }
-  }, [isOpen, user]);
-
-  const fetchUserProducts = async () => {
+  const fetchUserProducts = useCallback(async () => {
     if (!user) return;
     
     setLoading(true);
@@ -84,7 +77,13 @@ export default function OfferModal({
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (isOpen && user) {
+      fetchUserProducts();
+    }
+  }, [isOpen, user, fetchUserProducts]);
 
   const handleTypeSelection = (type: "exchange" | "purchase" | "chat") => {
     setOfferType(type);
@@ -153,7 +152,7 @@ export default function OfferModal({
             <DialogHeader>
               <DialogTitle>How would you like to proceed?</DialogTitle>
               <DialogDescription>
-                Choose how you'd like to acquire "{product.name}"
+                Choose how you&apos;d like to acquire &quot;{product.name}&quot;
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3 mt-4">
@@ -233,7 +232,7 @@ export default function OfferModal({
             ) : userProducts.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  You don't have any products listed yet.
+                  You don&apos;t have any products listed yet.
                 </p>
                 <Button variant="outline" onClick={() => setStep("select-type")}>
                   Go Back
@@ -306,7 +305,7 @@ export default function OfferModal({
             <DialogHeader>
               <DialogTitle>Make an Offer</DialogTitle>
               <DialogDescription>
-                Specify the amount you'd like to pay
+                Specify the amount you&apos;d like to pay
               </DialogDescription>
             </DialogHeader>
             
@@ -374,7 +373,7 @@ export default function OfferModal({
               </Card>
               
               <Card className="p-4">
-                <h4 className="font-semibold mb-2">You're offering:</h4>
+                <h4 className="font-semibold mb-2">You&apos;re offering:</h4>
                 {offerType === "exchange" && selectedProduct && (
                   <p className="text-gray-700 dark:text-gray-300">{selectedProduct.name}</p>
                 )}

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/context/AuthContext";
-import { toast } from "sonner";
 import { ArrowRight, CheckCircle } from "lucide-react";
 
 export default function TestExchangeFlowPage() {
@@ -37,7 +36,7 @@ export default function TestExchangeFlowPage() {
               </div>
               <div>
                 <p className="font-medium">User A creates a product</p>
-                <p className="text-sm text-gray-600">Lists "Organic Tomatoes" for exchange</p>
+                <p className="text-sm text-gray-600">Lists &quot;Organic Tomatoes&quot; for exchange</p>
               </div>
             </div>
             
@@ -47,8 +46,8 @@ export default function TestExchangeFlowPage() {
               </div>
               <div>
                 <p className="font-medium">User B makes an offer</p>
-                <p className="text-sm text-gray-600">Offers "Fresh Lettuce" in exchange</p>
-                <p className="text-sm text-blue-600 font-medium mt-1">→ User A receives: "New exchange offer: Fresh Lettuce for your Organic Tomatoes"</p>
+                <p className="text-sm text-gray-600">Offers &quot;Fresh Lettuce&quot; in exchange</p>
+                <p className="text-sm text-blue-600 font-medium mt-1">→ User A receives: &quot;New exchange offer: Fresh Lettuce for your Organic Tomatoes&quot;</p>
               </div>
             </div>
             
@@ -58,8 +57,8 @@ export default function TestExchangeFlowPage() {
               </div>
               <div>
                 <p className="font-medium">User A accepts the offer</p>
-                <p className="text-sm text-gray-600">Clicks "Accept Offer" in the exchange chat</p>
-                <p className="text-sm text-green-600 font-medium mt-1">→ User B receives: "Your offer for Organic Tomatoes was accepted!"</p>
+                <p className="text-sm text-gray-600">Clicks &quot;Accept Offer&quot; in the exchange chat</p>
+                <p className="text-sm text-green-600 font-medium mt-1">→ User B receives: &quot;Your offer for Organic Tomatoes was accepted!&quot;</p>
               </div>
             </div>
             
@@ -70,7 +69,7 @@ export default function TestExchangeFlowPage() {
               <div>
                 <p className="font-medium">Exchange is completed</p>
                 <p className="text-sm text-gray-600">Either user marks the exchange as complete</p>
-                <p className="text-sm text-purple-600 font-medium mt-1">→ Other user receives: "Exchange completed for Organic Tomatoes"</p>
+                <p className="text-sm text-purple-600 font-medium mt-1">→ Other user receives: &quot;Exchange completed for Organic Tomatoes&quot;</p>
               </div>
             </div>
           </div>
@@ -82,30 +81,30 @@ export default function TestExchangeFlowPage() {
             <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
               <p className="font-medium text-sm">New Offer (to product owner)</p>
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                Exchange: "New exchange offer: Fresh Lettuce for your Organic Tomatoes"<br/>
-                Purchase: "New purchase offer: €25.50 for your Organic Tomatoes"<br/>
-                Chat: "Someone wants to chat about your Organic Tomatoes"
+                Exchange: &quot;New exchange offer: Fresh Lettuce for your Organic Tomatoes&quot;<br/>
+                Purchase: &quot;New purchase offer: €25.50 for your Organic Tomatoes&quot;<br/>
+                Chat: &quot;Someone wants to chat about your Organic Tomatoes&quot;
               </p>
             </div>
             
             <div className="p-3 bg-green-50 dark:bg-green-950 rounded-lg">
               <p className="font-medium text-sm">Offer Accepted (to requester)</p>
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                "Your offer for Organic Tomatoes was accepted!"
+                &quot;Your offer for Organic Tomatoes was accepted!&quot;
               </p>
             </div>
             
             <div className="p-3 bg-red-50 dark:bg-red-950 rounded-lg">
               <p className="font-medium text-sm">Offer Rejected (to requester)</p>
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                "Your offer for Organic Tomatoes was declined"
+                &quot;Your offer for Organic Tomatoes was declined&quot;
               </p>
             </div>
             
             <div className="p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
               <p className="font-medium text-sm">Exchange Completed (to other party)</p>
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                "Exchange completed for Organic Tomatoes"
+                &quot;Exchange completed for Organic Tomatoes&quot;
               </p>
             </div>
           </div>

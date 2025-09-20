@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -104,9 +105,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
 
         {/* Product image */}
-        <img
+        <Image
           src={product.imageUrl || `https://placehold.co/400x300/EEE/31343C?text=${encodeURIComponent(product.name)}`}
           alt={product.name}
+          width={400}
+          height={300}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
       </div>

@@ -11,6 +11,28 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
 
+interface NotificationMetadata {
+  productName?: string;
+  productId?: string;
+  offeredProductName?: string;
+  offeredProductId?: string;
+  offerAmount?: number;
+  offerType?: "exchange" | "purchase" | "chat";
+  senderName?: string;
+  message?: string;
+}
+
+interface Notification {
+  id: string;
+  recipientId: string;
+  senderId: string;
+  type: string;
+  entityId: string;
+  isRead: boolean;
+  createdAt: Date;
+  metadata?: NotificationMetadata;
+}
+
 const NotificationBell = () => {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const router = useRouter();
@@ -27,7 +49,7 @@ const NotificationBell = () => {
     }
   }, [open, unreadCount, markAllAsRead]);
 
-  const handleNotificationClick = async (notification: any) => {
+  const handleNotificationClick = async (notification: Notification) => {
     // Mark as read if not already
     if (!notification.isRead) {
       await markAsRead(notification.id);

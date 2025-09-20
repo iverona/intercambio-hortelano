@@ -7,13 +7,21 @@ import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 import ProductForm from "@/components/shared/ProductForm";
 
+interface ProductData {
+  name: string;
+  description: string;
+  category: string;
+  isForExchange: boolean;
+  price: number | null;
+}
+
 export default function EditProductPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const params = useParams();
   const { id } = params;
 
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState<ProductData | null>(null);
 
   useEffect(() => {
     if (loading) return;
@@ -26,7 +34,7 @@ export default function EditProductPage() {
       const docRef = doc(db, "products", id as string);
       getDoc(docRef).then((docSnap) => {
         if (docSnap.exists()) {
-          setProduct(docSnap.data() as any);
+          setProduct(docSnap.data() as ProductData);
         } else {
           console.log("No such document!");
         }
@@ -34,7 +42,7 @@ export default function EditProductPage() {
     }
   }, [id, user, loading, router]);
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: ProductData) => {
     if (id) {
       const docRef = doc(db, "products", id as string);
       await updateDoc(docRef, data);

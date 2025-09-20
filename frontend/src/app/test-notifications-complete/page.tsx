@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { createNotification, NotificationType } from "@/lib/notifications";
+import { createNotification, NotificationType, NotificationMetadata } from "@/lib/notifications";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { ArrowRightLeft, DollarSign, MessageCircle, CheckCircle, XCircle, Package } from "lucide-react";
@@ -35,7 +35,7 @@ export default function TestNotificationsCompletePage() {
 
     try {
       // Build metadata based on notification type
-      const metadata: any = {
+      const metadata: NotificationMetadata = {
         productName,
         productId: "test-product-123",
         senderName: user.displayName || user.email || "Test User",
@@ -85,7 +85,7 @@ export default function TestNotificationsCompletePage() {
       case "OFFER_REJECTED":
         return `Your offer for ${productName} was declined`;
       case "MESSAGE_RECEIVED":
-        return `New message from ${user?.displayName || "someone"}: "${message.substring(0, 50)}..."`;
+        return `New message from ${user?.displayName || "someone"}: &quot;${message.substring(0, 50)}...&quot;`;
       case "EXCHANGE_COMPLETED":
         return `Exchange completed for ${productName}`;
       default:
@@ -252,7 +252,7 @@ export default function TestNotificationsCompletePage() {
         <div className="space-y-2">
           <p className="text-sm font-medium">Toast Message:</p>
           <p className="text-sm text-gray-700 dark:text-gray-300 italic">
-            "{getNotificationPreview()}"
+            &quot;{getNotificationPreview()}&quot;
           </p>
         </div>
       </Card>
@@ -271,7 +271,7 @@ export default function TestNotificationsCompletePage() {
           <li>Copy your User ID from the info box above</li>
           <li>Paste it in the Recipient User ID field to send notifications to yourself</li>
           <li>Configure the notification type and details</li>
-          <li>Click "Send Test Notification"</li>
+          <li>Click &quot;Send Test Notification&quot;</li>
           <li>Check the notification bell in the header to see the notification</li>
           <li>You should also see a toast message with the notification content</li>
         </ol>

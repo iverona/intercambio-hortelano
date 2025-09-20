@@ -29,9 +29,6 @@ interface ReviewSectionProps {
 }
 
 export function ReviewSection({
-  exchangeId,
-  currentUserId,
-  partnerId,
   partnerName,
   partnerAvatar,
   existingReviewByUser,
@@ -178,7 +175,7 @@ export function ReviewSection({
             </Avatar>
             <div className="flex-1">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold">{partnerName}'s Review</h3>
+                <h3 className="font-semibold">{partnerName}&apos;s Review</h3>
                 <span className="text-sm text-gray-500">
                   {existingReviewByPartner.createdAt?.toDate?.().toLocaleDateString() || ""}
                 </span>

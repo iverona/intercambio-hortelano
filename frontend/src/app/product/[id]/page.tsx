@@ -17,24 +17,12 @@ import {
   getDoc,
   updateDoc,
   serverTimestamp,
-  Timestamp,
 } from "firebase/firestore";
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import OfferModal from "@/components/shared/OfferModal";
 import { createNotification, NotificationMetadata } from "@/lib/notifications";
-
-interface Chat {
-  id: string;
-  listingId: string;
-  listingTitle: string;
-  participants: string[];
-  createdAt?: Timestamp;
-  lastMessage?: {
-    text: string;
-    createdAt: Timestamp;
-  } | null;
-}
+import Image from "next/image";
 
 interface Product {
   name: string;
@@ -191,11 +179,13 @@ export default function ProductDetailPage() {
     <main className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
-          <img
+          <Image
             src={`https://placehold.co/600x400/EEE/31343C?text=${encodeURIComponent(
               product.name
             )}`}
             alt={product.name}
+            width={600}
+            height={400}
             className="w-full rounded-lg shadow-md"
           />
         </div>
