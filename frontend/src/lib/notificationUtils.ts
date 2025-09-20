@@ -7,7 +7,8 @@ import {
   ArrowRightLeft,
   Bell,
   LucideIcon,
-  DollarSign
+  DollarSign,
+  Star,
 } from "lucide-react";
 
 export interface NotificationMetadata {
@@ -109,6 +110,17 @@ export const getNotificationDisplay = (
           : "Your exchange has been marked as complete",
         icon: ArrowRightLeft,
         iconColor: "text-green-600",
+        route: `/exchanges/details/${entityId}`,
+      };
+
+    case "REVIEW_RECEIVED":
+      return {
+        title: "New Review Received",
+        description: metadata?.senderName
+          ? `${metadata.senderName} left you a review`
+          : "You have received a new review for a recent exchange",
+        icon: Star,
+        iconColor: "text-yellow-500",
         route: `/exchanges/details/${entityId}`,
       };
     

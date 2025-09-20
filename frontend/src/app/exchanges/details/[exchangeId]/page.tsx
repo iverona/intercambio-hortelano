@@ -709,14 +709,10 @@ export default function ExchangeDetailsPage() {
                 partnerName={partner?.name || "User"}
                 partnerAvatar={partner?.avatarUrl}
                 existingReviewByUser={
-                  exchange.reviews && user?.uid && exchange.reviews[partner?.id || ""]?.reviewerId === user.uid
-                    ? exchange.reviews[partner?.id || ""]
-                    : undefined
+                  exchange.reviews && user?.uid ? exchange.reviews[user.uid] : undefined
                 }
                 existingReviewByPartner={
-                  exchange.reviews && partner?.id && exchange.reviews[user?.uid || ""]?.reviewerId === partner.id
-                    ? exchange.reviews[user?.uid || ""]
-                    : undefined
+                  exchange.reviews && partner?.id ? exchange.reviews[partner.id] : undefined
                 }
                 onReviewSubmit={handleReviewSubmit}
               />
