@@ -1,6 +1,7 @@
 {
   "projects": {
-    "testing": "portal-intercambio-hortelano"
+    "testing": "portal-intercambio-hortelano",
+    "default": "portal-intercambio-hortelano"
   },
   "targets": {},
   "etags": {}

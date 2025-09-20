@@ -17,7 +17,12 @@ interface Exchange {
   status: string;
   requesterId: string;
   ownerId: string;
-  reviews?: Record<string, any>;
+  reviews?: Record<string, {
+    reviewerId: string;
+    rating: number;
+    comment?: string;
+    createdAt: unknown;
+  }>;
 }
 
 interface UserReputation {
@@ -36,7 +41,7 @@ export default function TestReviewSystemPage() {
 
   useEffect(() => {
     if (!user) {
-      router.push("/login");
+      setLoading(false);
       return;
     }
 
@@ -95,6 +100,24 @@ export default function TestReviewSystemPage() {
     if (!user) return false;
     return exchange.reviews?.[user.uid] !== undefined;
   };
+
+  if (!user) {
+    return (
+      <main className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <Card className="p-8">
+            <div className="text-center space-y-4">
+              <h2 className="text-2xl font-bold">Review System Test</h2>
+              <p className="text-gray-600">Please log in to access the review system test dashboard.</p>
+              <Button onClick={() => router.push("/login")} className="mt-4">
+                Go to Login
+              </Button>
+            </div>
+          </Card>
+        </div>
+      </main>
+    );
+  }
 
   if (loading) {
     return (
