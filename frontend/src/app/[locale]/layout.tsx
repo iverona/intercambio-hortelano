@@ -5,6 +5,7 @@ import Footer from "@/components/shared/Footer";
 import { AuthProvider } from "@/context/AuthContext";
 import { FilterProvider } from "@/context/FilterContext";
 import { NotificationProvider } from "@/context/NotificationContext";
+import NotificationToaster from "@/components/shared/NotificationToaster";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProviderClient } from "@/locales/provider";
 import { getCurrentLocale } from "@/locales/server";
@@ -31,6 +32,7 @@ export default async function RootLayout({
               <main className="flex-grow">{children}</main>
               <Footer />
             </div>
+            <NotificationToaster />
             <Toaster />
           </NotificationProvider>
         </FilterProvider>

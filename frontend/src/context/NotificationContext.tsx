@@ -1,7 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode, useRef } from "react";
-import { toast } from "sonner";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { collection, query, where, onSnapshot, orderBy, Timestamp, doc, updateDoc, writeBatch } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "./AuthContext";
@@ -41,14 +40,12 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const previousCountRef = useRef(0);
 
   useEffect(() => {
     // Clear notifications when user logs out
     if (!user) {
       setNotifications([]);
       setUnreadCount(0);
-      previousCountRef.current = 0;
       return;
     }
     
@@ -85,31 +82,6 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
           }
         });
 
-        // Show toast for high-priority notifications
-        if (previousCountRef.current > 0 && newNotifications.length > previousCountRef.current) {
-          const latestNotification = newNotifications[0];
-          if (!latestNotification.isRead) {
-            let toastMessage: string | null = null;
-            const metadata = latestNotification.metadata;
-
-            switch (latestNotification.type) {
-              case "OFFER_ACCEPTED":
-              case "PROPOSAL_ACCEPTED": // Handle old type
-                toastMessage = `Your offer for ${metadata?.productName || "a product"} was accepted!`;
-                break;
-              case "OFFER_REJECTED":
-              case "PROPOSAL_REJECTED": // Handle old type
-                toastMessage = `Your offer for ${metadata?.productName || "a product"} was declined`;
-                break;
-            }
-            
-            if (toastMessage) {
-              toast.info(toastMessage);
-            }
-          }
-        }
-
-        previousCountRef.current = newNotifications.length;
         setNotifications(newNotifications);
         setUnreadCount(newUnreadCount);
       },
@@ -135,7 +107,6 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       });
     } catch (error) {
       console.error("Error marking notification as read:", error);
-      toast.error("Failed to mark notification as read");
     }
   };
 
@@ -156,7 +127,6 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       await batch.commit();
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
-      toast.error("Failed to mark notifications as read");
     }
   };
 
