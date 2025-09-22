@@ -38,7 +38,7 @@ export const getNotificationDisplay = (
   type: string,
   entityId: string,
   metadata: NotificationMetadata | undefined,
-  t: (key: any, params?: any) => string
+  t: (key: string, params?: Record<string, string | number>) => string
 ): NotificationDisplay => {
   switch (type) {
     case "NEW_OFFER":
