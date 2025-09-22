@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { TomatoRating } from "./TomatoRating";
 import { CheckCircle, MessageSquare, Clock } from "lucide-react";
 import { Timestamp } from "firebase/firestore";
+import { useI18n } from "@/locales/provider";
 
 export interface Review {
   rating: number;
@@ -38,6 +39,7 @@ export function ReviewSection({
   existingReviewByPartner,
   onReviewSubmit,
 }: ReviewSectionProps) {
+  const t = useI18n();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,7 +73,7 @@ export function ReviewSection({
             </Avatar>
             <div className="flex-1">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold">{partnerName}'s Review</h3>
+                <h3 className="font-semibold">{t('review_section.partner_review_title', { partnerName })}</h3>
                 <span className="text-sm text-gray-500">
                   {existingReviewByPartner.createdAt?.toDate?.().toLocaleDateString() || ""}
                 </span>
@@ -97,7 +99,7 @@ export function ReviewSection({
             </div>
             <div className="flex-1">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-semibold">Your Review</h3>
+                <h3 className="font-semibold">{t('review_section.your_review_title')}</h3>
                 <span className="text-sm text-gray-500">
                   {existingReviewByUser.createdAt?.toDate?.().toLocaleDateString() || ""}
                 </span>
@@ -120,12 +122,12 @@ export function ReviewSection({
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/50 mb-3">
                   <MessageSquare className="w-6 h-6 text-orange-600 dark:text-orange-400" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">Share Your Experience</h3>
+                <h3 className="text-lg font-semibold mb-2">{t('review_section.share_experience_title')}</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                  How was your exchange with {partnerName}? Your feedback helps build trust in our community.
+                  {t('review_section.share_experience_description', { partnerName })}
                 </p>
                 <Button onClick={() => setShowReviewForm(true)} className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600">
-                  Leave a Review
+                  {t('review_section.leave_review_button')}
                 </Button>
               </div>
             </Card>
@@ -133,14 +135,14 @@ export function ReviewSection({
             <Card className="p-6">
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-semibold mb-2">Review Your Exchange</h3>
+                  <h3 className="text-lg font-semibold mb-2">{t('review_section.review_exchange_title')}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Rate your experience with {partnerName}
+                    {t('review_section.review_exchange_description', { partnerName })}
                   </p>
                 </div>
 
                 <div>
-                  <Label className="text-base mb-2 block">Your Rating</Label>
+                  <Label className="text-base mb-2 block">{t('review_section.rating_label')}</Label>
                   <TomatoRating
                     rating={rating}
                     interactive={true}
@@ -148,25 +150,25 @@ export function ReviewSection({
                     size="lg"
                   />
                   {rating === 0 && (
-                    <p className="text-sm text-red-500 mt-1">Please select a rating</p>
+                    <p className="text-sm text-red-500 mt-1">{t('review_section.rating_error')}</p>
                   )}
                 </div>
 
                 <div>
                   <Label htmlFor="comment" className="text-base mb-2 block">
-                    Comment (Optional)
+                    {t('review_section.comment_label')}
                   </Label>
                   <Textarea
                     id="comment"
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    placeholder="Share details about your exchange experience..."
+                    placeholder={t('review_section.comment_placeholder')}
                     className="resize-none"
                     rows={4}
                     maxLength={280}
                   />
                   <p className="text-xs text-gray-500 mt-1 text-right">
-                    {comment.length}/280 characters
+                    {t('review_section.characters_remaining', { count: comment.length })}
                   </p>
                 </div>
 
@@ -176,14 +178,14 @@ export function ReviewSection({
                     disabled={rating === 0 || isSubmitting}
                     className="flex-1"
                   >
-                    {isSubmitting ? "Submitting..." : "Submit Review"}
+                    {isSubmitting ? t('review_section.submitting_button') : t('review_section.submit_button')}
                   </Button>
                   <Button
                     variant="outline"
                     onClick={() => setShowReviewForm(false)}
                     disabled={isSubmitting}
                   >
-                    Cancel
+                    {t('review_section.cancel_button')}
                   </Button>
                 </div>
               </div>
@@ -197,7 +199,7 @@ export function ReviewSection({
         <Card className="p-6 border-dashed bg-gray-50 dark:bg-gray-900/50">
           <div className="flex items-center gap-3 text-gray-500">
             <Clock className="w-5 h-5" />
-            <p className="text-sm">Waiting for {partnerName} to leave their review</p>
+            <p className="text-sm">{t('review_section.waiting_for_review', { partnerName })}</p>
           </div>
         </Card>
       )}

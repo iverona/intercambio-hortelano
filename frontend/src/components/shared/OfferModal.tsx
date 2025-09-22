@@ -18,6 +18,7 @@ import { ArrowRight, Package, DollarSign, MessageSquare, ArrowLeft, Check } from
 import { db } from "@/lib/firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
+import { useI18n } from "@/locales/provider";
 
 interface Product {
   id: string;
@@ -50,6 +51,7 @@ export default function OfferModal({
   onOfferSubmit,
 }: OfferModalProps) {
   const { user } = useAuth();
+  const t = useI18n();
   const [step, setStep] = useState<Step>("select-type");
   const [offerType, setOfferType] = useState<"exchange" | "purchase" | "chat" | null>(null);
   const [userProducts, setUserProducts] = useState<Product[]>([]);
@@ -151,9 +153,9 @@ export default function OfferModal({
         return (
           <>
             <DialogHeader>
-              <DialogTitle>How would you like to proceed?</DialogTitle>
+              <DialogTitle>{t('offer_modal.select_type.title')}</DialogTitle>
               <DialogDescription>
-                Choose how you'd like to acquire "{product.name}"
+                {t('offer_modal.select_type.description', { productName: product.name })}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-3 mt-4">
@@ -167,9 +169,9 @@ export default function OfferModal({
                       <Package className="w-5 h-5 text-green-600 dark:text-green-400" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold">Propose an Exchange</h3>
+                      <h3 className="font-semibold">{t('offer_modal.select_type.exchange_title')}</h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Trade one of your items
+                        {t('offer_modal.select_type.exchange_description')}
                       </p>
                     </div>
                     <ArrowRight className="w-5 h-5 text-gray-400" />
@@ -187,9 +189,9 @@ export default function OfferModal({
                       <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold">Offer Payment</h3>
+                      <h3 className="font-semibold">{t('offer_modal.select_type.purchase_title')}</h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Pay €{product.price.toFixed(2)}
+                        {t('offer_modal.select_type.purchase_description', { price: product.price.toFixed(2) })}
                       </p>
                     </div>
                     <ArrowRight className="w-5 h-5 text-gray-400" />
@@ -206,9 +208,9 @@ export default function OfferModal({
                     <MessageSquare className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold">Just Chat</h3>
+                    <h3 className="font-semibold">{t('offer_modal.select_type.chat_title')}</h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Discuss other arrangements
+                      {t('offer_modal.select_type.chat_description')}
                     </p>
                   </div>
                   <ArrowRight className="w-5 h-5 text-gray-400" />
@@ -222,21 +224,21 @@ export default function OfferModal({
         return (
           <>
             <DialogHeader>
-              <DialogTitle>Select item to offer in exchange</DialogTitle>
+              <DialogTitle>{t('offer_modal.exchange_details.title')}</DialogTitle>
               <DialogDescription>
-                Choose from your available products
+                {t('offer_modal.exchange_details.description')}
               </DialogDescription>
             </DialogHeader>
             
             {loading ? (
-              <div className="text-center py-8">Loading your products...</div>
+              <div className="text-center py-8">{t('offer_modal.exchange_details.loading')}</div>
             ) : userProducts.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  You don't have any products listed yet.
+                  {t('offer_modal.exchange_details.no_products')}
                 </p>
                 <Button variant="outline" onClick={() => setStep("select-type")}>
-                  Go Back
+                  {t('offer_modal.exchange_details.go_back')}
                 </Button>
               </div>
             ) : (
@@ -272,10 +274,10 @@ export default function OfferModal({
             
             <div className="mt-4 space-y-3">
               <div>
-                <Label htmlFor="message">Add a message (optional)</Label>
+                <Label htmlFor="message">{t('offer_modal.exchange_details.add_message_label')}</Label>
                 <Textarea
                   id="message"
-                  placeholder="Explain why this would be a good exchange..."
+                  placeholder={t('offer_modal.exchange_details.add_message_placeholder')}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   rows={3}
@@ -285,14 +287,14 @@ export default function OfferModal({
               <div className="flex gap-2">
                 <Button variant="outline" onClick={handleBack} className="flex-1">
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
+                  {t('offer_modal.general.back_button')}
                 </Button>
                 <Button 
                   onClick={() => setStep("confirmation")} 
                   disabled={!selectedProduct}
                   className="flex-1"
                 >
-                  Continue
+                  {t('offer_modal.exchange_details.continue_button')}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -304,15 +306,15 @@ export default function OfferModal({
         return (
           <>
             <DialogHeader>
-              <DialogTitle>Make an Offer</DialogTitle>
+              <DialogTitle>{t('offer_modal.purchase_details.title')}</DialogTitle>
               <DialogDescription>
-                Specify the amount you'd like to pay
+                {t('offer_modal.purchase_details.description')}
               </DialogDescription>
             </DialogHeader>
             
             <div className="space-y-4 mt-4">
               <div>
-                <Label htmlFor="amount">Offer Amount (€)</Label>
+                <Label htmlFor="amount">{t('offer_modal.purchase_details.amount_label')}</Label>
                 <Input
                   id="amount"
                   type="number"
@@ -323,16 +325,16 @@ export default function OfferModal({
                 />
                 {product.price && (
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Listed price: €{product.price.toFixed(2)}
+                    {t('offer_modal.purchase_details.listed_price', { price: product.price.toFixed(2) })}
                   </p>
                 )}
               </div>
               
               <div>
-                <Label htmlFor="purchase-message">Add a message (optional)</Label>
+                <Label htmlFor="purchase-message">{t('offer_modal.purchase_details.add_message_label')}</Label>
                 <Textarea
                   id="purchase-message"
-                  placeholder="Add any notes about your offer..."
+                  placeholder={t('offer_modal.purchase_details.add_message_placeholder')}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   rows={3}
@@ -342,14 +344,14 @@ export default function OfferModal({
               <div className="flex gap-2">
                 <Button variant="outline" onClick={handleBack} className="flex-1">
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
+                  {t('offer_modal.general.back_button')}
                 </Button>
                 <Button 
                   onClick={() => setStep("confirmation")} 
                   disabled={!offerAmount || parseFloat(offerAmount) <= 0}
                   className="flex-1"
                 >
-                  Continue
+                  {t('offer_modal.purchase_details.continue_button')}
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -361,34 +363,34 @@ export default function OfferModal({
         return (
           <>
             <DialogHeader>
-              <DialogTitle>Confirm Your Offer</DialogTitle>
+              <DialogTitle>{t('offer_modal.confirmation.title')}</DialogTitle>
               <DialogDescription>
-                Review your offer before sending
+                {t('offer_modal.confirmation.description')}
               </DialogDescription>
             </DialogHeader>
             
             <div className="mt-4 space-y-4">
               <Card className="p-4">
-                <h4 className="font-semibold mb-2">You want:</h4>
+                <h4 className="font-semibold mb-2">{t('offer_modal.confirmation.you_want')}</h4>
                 <p className="text-gray-700 dark:text-gray-300">{product.name}</p>
               </Card>
               
               <Card className="p-4">
-                <h4 className="font-semibold mb-2">You're offering:</h4>
+                <h4 className="font-semibold mb-2">{t('offer_modal.confirmation.you_offer')}</h4>
                 {offerType === "exchange" && selectedProduct && (
-                  <p className="text-gray-700 dark:text-gray-300">{selectedProduct.name}</p>
+                  <p className="text-gray-700 dark:text-gray-300">{t('offer_modal.confirmation.offering_exchange', { productName: selectedProduct.name })}</p>
                 )}
                 {offerType === "purchase" && (
-                  <p className="text-gray-700 dark:text-gray-300">€{parseFloat(offerAmount).toFixed(2)}</p>
+                  <p className="text-gray-700 dark:text-gray-300">{t('offer_modal.confirmation.offering_purchase', { amount: parseFloat(offerAmount).toFixed(2) })}</p>
                 )}
                 {offerType === "chat" && (
-                  <p className="text-gray-700 dark:text-gray-300">To discuss arrangements</p>
+                  <p className="text-gray-700 dark:text-gray-300">{t('offer_modal.confirmation.offering_chat')}</p>
                 )}
               </Card>
               
               {message && (
                 <Card className="p-4">
-                  <h4 className="font-semibold mb-2">Your message:</h4>
+                  <h4 className="font-semibold mb-2">{t('offer_modal.confirmation.your_message')}</h4>
                   <p className="text-gray-700 dark:text-gray-300">{message}</p>
                 </Card>
               )}
@@ -396,11 +398,11 @@ export default function OfferModal({
               <div className="flex gap-2">
                 <Button variant="outline" onClick={handleBack} className="flex-1">
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
+                  {t('offer_modal.general.back_button')}
                 </Button>
                 <Button onClick={handleConfirm} className="flex-1">
                   <Check className="w-4 h-4 mr-2" />
-                  Send Offer
+                  {t('offer_modal.confirmation.send_button')}
                 </Button>
               </div>
             </div>
