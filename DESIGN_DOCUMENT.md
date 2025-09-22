@@ -73,6 +73,9 @@ This document outlines the technical and functional specifications for the appli
 *   6.2. **As a user,** I want my profile to display my level, badges, and average rating to build trust within the community.
 *   6.3. **As a user,** I want the review system to be simple, perhaps a star rating and an optional short comment.
 
+### 7. Accessibility & Internationalization
+*   7.1. **As a user,** I want to be able to switch the application's language between English and Spanish so that I can use the platform in my preferred language. ✅
+
 ## 5. UI/UX Design Proposal
 
 **Overall Aesthetic:**
@@ -125,7 +128,7 @@ This document outlines the technical and functional specifications for the appli
     *   **My Listings:** A grid of the user's created listings.
     *   **My Exchanges:** A list of ongoing and completed exchanges with their status.
     *   **Reviews:** Reviews they've received.
-    *   **Settings:** To edit their profile.
+    *   **Settings:** To edit their profile. This section will also contain the **Language Selector**.
 
 ---
 

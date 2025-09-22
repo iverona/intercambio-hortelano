@@ -41,7 +41,9 @@ import {
   Star,
   Trophy,
   Award,
+  Languages,
 } from "lucide-react";
+import { useChangeLocale, useCurrentLocale, useI18n } from "@/locales/provider";
 
 interface UserData {
   name: string;
@@ -104,6 +106,7 @@ const ProfileSection = ({ title, icon: Icon, children }: {
 );
 
 export default function ProfilePage() {
+  const t = useI18n();
   const { user, loading } = useAuth();
   const router = useRouter();
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -248,16 +251,16 @@ export default function ProfilePage() {
           </div>
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              My Profile
+              {t('profile.title')}
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Manage your personal information and preferences
+              {t('profile.subtitle')}
             </p>
           </div>
         </div>
 
         {/* Profile Information Section */}
-        <ProfileSection title="Personal Information" icon={User}>
+        <ProfileSection title={t('profile.personal_info')} icon={User}>
           <div className="space-y-6">
             {/* Avatar and basic info */}
             <div className="flex items-start gap-6">
@@ -277,23 +280,23 @@ export default function ProfilePage() {
                 {isEditing ? (
                   <>
                     <div>
-                      <Label htmlFor="name">Name</Label>
+                      <Label htmlFor="name">{t('profile.name_label')}</Label>
                       <Input
                         id="name"
                         type="text"
                         value={newName}
                         onChange={(e) => setNewName(e.target.value)}
                         className="mt-1"
-                        placeholder="Your name"
+                        placeholder={t('profile.name_placeholder')}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="bio">Bio</Label>
+                      <Label htmlFor="bio">{t('profile.bio_label')}</Label>
                       <Textarea
                         id="bio"
                         value={newBio}
                         onChange={(e) => setNewBio(e.target.value)}
-                        placeholder="Tell us about yourself and your garden..."
+                        placeholder={t('profile.bio_placeholder')}
                         className="mt-1 resize-none"
                         rows={4}
                       />
@@ -306,18 +309,18 @@ export default function ProfilePage() {
                         {userData.name}
                       </h2>
                       <p className="text-gray-600 dark:text-gray-400 mt-2">
-                        {userData.bio || "No bio added yet"}
+                        {userData.bio || t('profile.no_bio')}
                       </p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <Badge variant="secondary" className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        Member since {memberSince}
+                        {t('profile.member_since', { date: memberSince })}
                       </Badge>
                       {userData.location && (
                         <Badge variant="secondary" className="flex items-center gap-1">
                           <MapPin className="w-3 h-3" />
-                          Location verified
+                          {t('profile.location_verified')}
                         </Badge>
                       )}
                       {userData.reputation && userData.reputation.totalReviews > 0 && (
@@ -328,7 +331,7 @@ export default function ProfilePage() {
                             showNumber={true}
                           />
                           <span className="text-sm text-gray-600 dark:text-gray-400">
-                            ({userData.reputation.totalReviews} reviews)
+                            {t('profile.reviews', { count: userData.reputation.totalReviews })}
                           </span>
                         </div>
                       )}
@@ -343,7 +346,7 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Email:</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">{t('profile.email_label')}</span>
                   {showEmail ? (
                     <span className="text-sm font-medium">{userData.email}</span>
                   ) : (
@@ -366,17 +369,17 @@ export default function ProfilePage() {
                 <>
                   <Button onClick={handleSave}>
                     <Save className="mr-2 h-4 w-4" />
-                    Save Changes
+                    {t('profile.save_button')}
                   </Button>
                   <Button variant="outline" onClick={() => setIsEditing(false)}>
                     <X className="mr-2 h-4 w-4" />
-                    Cancel
+                    {t('profile.cancel_button')}
                   </Button>
                 </>
               ) : (
                 <Button onClick={() => setIsEditing(true)}>
                   <Edit className="mr-2 h-4 w-4" />
-                  Edit Profile
+                  {t('profile.edit_button')}
                 </Button>
               )}
             </div>
@@ -385,13 +388,13 @@ export default function ProfilePage() {
 
         {/* Reputation & Gamification Section */}
         {userData.reputation && (
-          <ProfileSection title="Reputation & Achievements" icon={Trophy}>
+          <ProfileSection title={t('profile.reputation_achievements')} icon={Trophy}>
             <div className="space-y-4">
               {/* Rating Overview */}
               <div className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 rounded-lg">
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                    Your Rating
+                    {t('profile.your_rating')}
                   </h3>
                   {userData.reputation.totalReviews > 0 ? (
                     <div className="flex items-center gap-3">
@@ -401,12 +404,14 @@ export default function ProfilePage() {
                         showNumber={true}
                       />
                       <span className="text-sm text-gray-600 dark:text-gray-400">
-                        Based on {userData.reputation.totalReviews} review{userData.reputation.totalReviews !== 1 ? 's' : ''}
+                        {userData.reputation.totalReviews === 1
+                          ? t('profile.based_on_reviews', { count: 1 })
+                          : t('profile.based_on_reviews_plural', { count: userData.reputation.totalReviews })}
                       </span>
                     </div>
                   ) : (
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      No reviews yet. Complete your first exchange to get started!
+                      {t('profile.no_reviews')}
                     </p>
                   )}
                 </div>
@@ -417,7 +422,7 @@ export default function ProfilePage() {
                 <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <Star className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                    <h4 className="font-medium">Points</h4>
+                    <h4 className="font-medium">{t('profile.points')}</h4>
                   </div>
                   <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                     {userData.points || 0}
@@ -426,7 +431,7 @@ export default function ProfilePage() {
                 <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
                     <Award className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                    <h4 className="font-medium">Level</h4>
+                    <h4 className="font-medium">{t('profile.level')}</h4>
                   </div>
                   <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                     {getLevelName(userData.level || 0)}
@@ -437,7 +442,7 @@ export default function ProfilePage() {
               {/* Badges (placeholder for now) */}
               {userData.badges && userData.badges.length > 0 && (
                 <div>
-                  <h4 className="font-medium mb-2">Badges Earned</h4>
+                  <h4 className="font-medium mb-2">{t('profile.badges_earned')}</h4>
                   <div className="flex flex-wrap gap-2">
                     {userData.badges.map((badge) => (
                       <Badge key={badge} variant="secondary">
@@ -452,12 +457,12 @@ export default function ProfilePage() {
         )}
 
         {/* Notification Preferences */}
-        <ProfileSection title="Notification Preferences" icon={Bell}>
+        <ProfileSection title={t('profile.notification_prefs')} icon={Bell}>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="email-notif">Email Notifications</Label>
-                <p className="text-sm text-gray-500">Receive updates via email</p>
+                <Label htmlFor="email-notif">{t('profile.email_notifs')}</Label>
+                <p className="text-sm text-gray-500">{t('profile.email_notifs_desc')}</p>
               </div>
               <Checkbox
                 id="email-notif"
@@ -470,9 +475,9 @@ export default function ProfilePage() {
               <div className="space-y-0.5">
                 <Label htmlFor="message-notif" className="flex items-center gap-2">
                   <MessageSquare className="w-4 h-4" />
-                  New Messages
+                  {t('profile.new_messages_notifs')}
                 </Label>
-                <p className="text-sm text-gray-500">When someone sends you a message</p>
+                <p className="text-sm text-gray-500">{t('profile.new_messages_notifs_desc')}</p>
               </div>
               <Checkbox
                 id="message-notif"
@@ -484,9 +489,9 @@ export default function ProfilePage() {
               <div className="space-y-0.5">
                 <Label htmlFor="exchange-notif" className="flex items-center gap-2">
                   <ArrowRightLeft className="w-4 h-4" />
-                  Exchange Updates
+                  {t('profile.exchange_updates_notifs')}
                 </Label>
-                <p className="text-sm text-gray-500">When exchange status changes</p>
+                <p className="text-sm text-gray-500">{t('profile.exchange_updates_notifs_desc')}</p>
               </div>
               <Checkbox
                 id="exchange-notif"
@@ -498,9 +503,9 @@ export default function ProfilePage() {
               <div className="space-y-0.5">
                 <Label htmlFor="product-notif" className="flex items-center gap-2">
                   <Package className="w-4 h-4" />
-                  Product Interest
+                  {t('profile.product_interest_notifs')}
                 </Label>
-                <p className="text-sm text-gray-500">When someone is interested in your products</p>
+                <p className="text-sm text-gray-500">{t('profile.product_interest_notifs_desc')}</p>
               </div>
               <Checkbox
                 id="product-notif"
@@ -511,13 +516,26 @@ export default function ProfilePage() {
           </div>
         </ProfileSection>
 
-        {/* Privacy Settings */}
-        <ProfileSection title="Privacy Settings" icon={Shield}>
+        {/* Language Settings */}
+        <ProfileSection title={t('profile.language_settings')} icon={Languages}>
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="show-location">Show My Location</Label>
-                <p className="text-sm text-gray-500">Display approximate location on your profile</p>
+                <Label htmlFor="language-select">{t('profile.select_language')}</Label>
+                <p className="text-sm text-gray-500">{t('profile.select_language_desc')}</p>
+              </div>
+              <LanguageSelector />
+            </div>
+          </div>
+        </ProfileSection>
+
+        {/* Privacy Settings */}
+        <ProfileSection title={t('profile.privacy_settings')} icon={Shield}>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="show-location">{t('profile.show_location')}</Label>
+                <p className="text-sm text-gray-500">{t('profile.show_location_desc')}</p>
               </div>
               <Checkbox
                 id="show-location"
@@ -527,8 +545,8 @@ export default function ProfilePage() {
             </div>
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label htmlFor="public-profile">Public Profile</Label>
-                <p className="text-sm text-gray-500">Allow non-registered users to view your profile</p>
+                <Label htmlFor="public-profile">{t('profile.public_profile')}</Label>
+                <p className="text-sm text-gray-500">{t('profile.public_profile_desc')}</p>
               </div>
               <Checkbox
                 id="public-profile"
@@ -540,28 +558,28 @@ export default function ProfilePage() {
         </ProfileSection>
 
         {/* Account Management */}
-        <ProfileSection title="Account Management" icon={Lock}>
+        <ProfileSection title={t('profile.account_management')} icon={Lock}>
           <div className="space-y-4">
             <div>
               <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
-                Password & Security
+                {t('profile.password_security')}
               </h3>
               <Button onClick={handlePasswordChange} variant="outline">
                 <Lock className="mr-2 h-4 w-4" />
-                Change Password
+                {t('profile.change_password')}
               </Button>
             </div>
             <Separator />
             <div>
               <h3 className="text-sm font-medium text-red-600 dark:text-red-400 mb-3">
-                Danger Zone
+                {t('profile.danger_zone')}
               </h3>
               <p className="text-sm text-gray-500 mb-3">
-                Once you delete your account, there is no going back. Please be certain.
+                {t('profile.delete_account_warning')}
               </p>
               <Button onClick={handleDeleteAccount} variant="destructive">
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete Account
+                {t('profile.delete_account')}
               </Button>
             </div>
           </div>
@@ -582,3 +600,26 @@ function getLevelName(level: number): string {
   ];
   return levels[Math.min(level, levels.length - 1)] || "Seed";
 }
+
+// Language selector component
+const LanguageSelector = () => {
+  const changeLocale = useChangeLocale();
+  const currentLocale = useCurrentLocale();
+
+  return (
+    <div className="flex gap-2">
+      <Button
+        variant={currentLocale === 'en' ? 'default' : 'outline'}
+        onClick={() => changeLocale('en')}
+      >
+        English
+      </Button>
+      <Button
+        variant={currentLocale === 'es' ? 'default' : 'outline'}
+        onClick={() => changeLocale('es')}
+      >
+        Español
+      </Button>
+    </div>
+  );
+};

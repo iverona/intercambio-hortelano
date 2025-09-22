@@ -1,5 +1,6 @@
 "use client";
 
+import { useI18n } from "@/locales/provider";
 import Link from "next/link";
 import ProductCard from "@/components/shared/ProductCard";
 import { useAuth } from "@/context/AuthContext";
@@ -53,125 +54,132 @@ const ProductSkeleton = () => (
 );
 
 // Empty state component
-const EmptyState = ({ user }: { user: { uid: string } | null }) => (
-  <div className="flex flex-col items-center justify-center py-20 px-4">
-    <div className="relative">
-      <div className="absolute inset-0 bg-green-100 rounded-full blur-3xl opacity-30 animate-pulse"></div>
-      <Package className="w-24 h-24 text-gray-300 relative z-10" />
+const EmptyState = ({ user }: { user: { uid: string } | null }) => {
+  const t = useI18n();
+  return (
+    <div className="flex flex-col items-center justify-center py-20 px-4">
+      <div className="relative">
+        <div className="absolute inset-0 bg-green-100 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+        <Package className="w-24 h-24 text-gray-300 relative z-10" />
+      </div>
+      <h3 className="mt-6 text-2xl font-semibold text-gray-900">{t('home.empty_state.title')}</h3>
+      <p className="mt-2 text-gray-500 text-center max-w-md">
+        {t('home.empty_state.subtitle')}
+      </p>
+      {user && (
+        <Button asChild className="mt-6 group">
+          <Link href="/publish">
+            {t('home.empty_state.cta')}
+            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </Button>
+      )}
     </div>
-    <h3 className="mt-6 text-2xl font-semibold text-gray-900">No products found</h3>
-    <p className="mt-2 text-gray-500 text-center max-w-md">
-      Be the first to share your garden&apos;s bounty with the community!
-    </p>
-    {user && (
-      <Button asChild className="mt-6 group">
-        <Link href="/publish">
-          Publish your first product
-          <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-        </Link>
-      </Button>
-    )}
-  </div>
-);
+  );
+};
 
 // Hero section component
-const HeroSection = ({ productCount, user }: { productCount: number; user: { uid: string } | null }) => (
-  <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950">
-    {/* Animated background elements */}
-    <div className="absolute inset-0 overflow-hidden">
-      <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-      <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-      <div className="absolute top-40 left-1/2 w-80 h-80 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
-    </div>
+const HeroSection = ({ productCount, user }: { productCount: number; user: { uid: string } | null }) => {
+  const t = useI18n();
+  return (
+    <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-40 left-1/2 w-80 h-80 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+      </div>
 
-    <div className="relative container mx-auto px-4 py-16 lg:py-24">
-      <div className="text-center max-w-4xl mx-auto">
-        {/* Welcome badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg mb-6">
-          <Sparkles className="w-4 h-4 text-yellow-500" />
-          <span className="text-sm font-medium">Welcome to the community</span>
-        </div>
+      <div className="relative container mx-auto px-4 py-16 lg:py-24">
+        <div className="text-center max-w-4xl mx-auto">
+          {/* Welcome badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg mb-6">
+            <Sparkles className="w-4 h-4 text-yellow-500" />
+            <span className="text-sm font-medium">{t('home.hero.badge')}</span>
+          </div>
 
-        {/* Main heading */}
-        <h1 className="text-5xl lg:text-7xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent mb-6">
-          Share Your Harvest
-        </h1>
-        
-        {/* Subtitle */}
-        <p className="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-          Connect with local gardeners, exchange fresh produce, and build a sustainable community
-        </p>
+          {/* Main heading */}
+          <h1 className="text-5xl lg:text-7xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent mb-6">
+            {t('home.hero.title')}
+          </h1>
+          
+          {/* Subtitle */}
+          <p className="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+            {t('home.hero.subtitle')}
+          </p>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-          {user ? (
-            <Button asChild size="lg" className="group">
-              <Link href="/publish">
-                Share Your Produce
-                <Leaf className="ml-2 h-5 w-5 transition-transform group-hover:rotate-12" />
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            {user ? (
+              <Button asChild size="lg" className="group">
+                <Link href="/publish">
+                  {t('home.hero.cta.primary')}
+                  <Leaf className="ml-2 h-5 w-5 transition-transform group-hover:rotate-12" />
+                </Link>
+              </Button>
+            ) : (
+              <Button asChild size="lg" className="group">
+                <Link href="/signup">
+                  {t('home.hero.cta.primary.unauthenticated')}
+                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </Link>
+              </Button>
+            )}
+            <Button asChild size="lg" variant="outline" className="group">
+              <Link href="#products">
+                {t('home.hero.cta.secondary')}
+                <Package className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-          ) : (
-            <Button asChild size="lg" className="group">
-              <Link href="/signup">
-                Join the Community
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Button>
-          )}
-          <Button asChild size="lg" variant="outline" className="group">
-            <Link href="#products">
-              Browse Products
-              <Package className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
-        </div>
+          </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-auto">
-          <Card className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg">
-            <div className="flex items-center justify-center gap-3">
-              <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-                <Package className="w-5 h-5 text-green-600 dark:text-green-400" />
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-auto">
+            <Card className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg">
+              <div className="flex items-center justify-center gap-3">
+                <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                  <Package className="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
+                <div className="text-left">
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{productCount}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('home.hero.stats.products')}</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">{productCount}</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Products</p>
+            </Card>
+            
+            <Card className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg">
+              <div className="flex items-center justify-center gap-3">
+                <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                  <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div className="text-left">
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">500+</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('home.hero.stats.gardeners')}</p>
+                </div>
               </div>
-            </div>
-          </Card>
-          
-          <Card className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg">
-            <div className="flex items-center justify-center gap-3">
-              <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            </Card>
+            
+            <Card className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg">
+              <div className="flex items-center justify-center gap-3">
+                <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                  <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                </div>
+                <div className="text-left">
+                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">1.2k</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('home.hero.stats.exchanges')}</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">500+</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Gardeners</p>
-              </div>
-            </div>
-          </Card>
-          
-          <Card className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg">
-            <div className="flex items-center justify-center gap-3">
-              <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-              </div>
-              <div className="text-left">
-                <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">1.2k</p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Exchanges</p>
-              </div>
-            </div>
-          </Card>
+            </Card>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // Enhanced product card wrapper with animations
 const AnimatedProductCard = ({ product, index }: { product: Product; index: number }) => {
+  const t = useI18n();
   const isNew = product.createdAt && 
     new Date(product.createdAt.seconds * 1000) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 
@@ -184,7 +192,7 @@ const AnimatedProductCard = ({ product, index }: { product: Product; index: numb
       {isNew && (
         <div className="absolute -top-2 -right-2 z-10">
           <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0 shadow-lg animate-pulse">
-            New
+            {t('home.products.new_badge')}
           </Badge>
         </div>
       )}
@@ -198,6 +206,7 @@ const AnimatedProductCard = ({ product, index }: { product: Product; index: numb
 };
 
 export default function Home() {
+  const t = useI18n();
   const { user } = useAuth();
   const { filters } = useFilters();
   const [products, setProducts] = useState<Product[]>([]);
@@ -285,13 +294,17 @@ export default function Home() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                Fresh from the Garden
+                {t('home.products.title')}
               </h2>
               <p className="mt-2 text-gray-600 dark:text-gray-400">
                 {loading ? (
                   <span className="inline-block w-32 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></span>
                 ) : (
-                  <>Showing {products.length} products {filters.searchTerm && `for "${filters.searchTerm}"`}</>
+                  <>
+                    {filters.searchTerm 
+                      ? t('home.products.showing_with_search', { count: products.length, searchTerm: filters.searchTerm })
+                      : t('home.products.showing', { count: products.length })}
+                  </>
                 )}
               </p>
             </div>
@@ -307,7 +320,7 @@ export default function Home() {
                 {filters.distance < 100 && (
                   <Badge variant="secondary" className="flex items-center gap-1">
                     <MapPin className="w-3 h-3" />
-                    Within {filters.distance}km
+                    {t('home.products.filters.within', { distance: filters.distance })}
                   </Badge>
                 )}
               </div>

@@ -25,8 +25,10 @@ import Filter from "./Filter";
 import { useFilters } from "@/context/FilterContext";
 import { Input } from "@/components/ui/input";
 import NotificationBell from "./NotificationBell";
+import { useCurrentLocale } from "@/locales/provider";
 
 const Header = () => {
+  const locale = useCurrentLocale();
   const { user, loading } = useAuth();
   const router = useRouter();
   const { filters, setFilters } = useFilters();
@@ -47,7 +49,7 @@ const Header = () => {
   return (
     <header className="bg-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold text-gray-800">
+        <Link href={`/${locale}`} className="text-2xl font-bold text-gray-800">
           Portal de Intercambio Hortelano
         </Link>
         <nav className="flex items-center gap-4">
@@ -64,12 +66,12 @@ const Header = () => {
             />
           </div>
           <Filter onFilterChange={setFilters} />
-          <Link href="/" className="text-gray-600 hover:text-gray-800">
+          <Link href={`/${locale}`} className="text-gray-600 hover:text-gray-800">
             Home
           </Link>
           {user && (
             <Button asChild>
-              <Link href="/publish">Publish Product</Link>
+              <Link href={`/${locale}/publish`}>Publish Product</Link>
             </Button>
           )}
           {!loading &&
@@ -87,19 +89,19 @@ const Header = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuItem asChild>
-                      <Link href="/profile" className="flex items-center cursor-pointer">
+                      <Link href={`/${locale}/profile`} className="flex items-center cursor-pointer">
                         <User className="mr-2 h-4 w-4" />
                         <span>My Profile</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/my-garden" className="flex items-center cursor-pointer">
+                      <Link href={`/${locale}/my-garden`} className="flex items-center cursor-pointer">
                         <Flower2 className="mr-2 h-4 w-4" />
                         <span>My Garden</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href="/exchanges" className="flex items-center cursor-pointer">
+                      <Link href={`/${locale}/exchanges`} className="flex items-center cursor-pointer">
                         <ArrowRightLeft className="mr-2 h-4 w-4" />
                         <span>My Exchanges</span>
                       </Link>
@@ -117,7 +119,7 @@ const Header = () => {
               </>
             ) : (
               <Button asChild>
-                <Link href="/login">Login</Link>
+                <Link href={`/${locale}/login`}>Login</Link>
               </Button>
             ))}
         </nav>
