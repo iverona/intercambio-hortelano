@@ -18,6 +18,12 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      "src/app/test-exchange-flow/page.tsx",
+      "src/app/test-notifications/page.tsx",
+      "src/app/test-notifications-complete/page.tsx",
+      "src/app/test-notifications-enhanced/page.tsx",
+      "src/app/test-reputation-function/page.tsx",
+      "src/app/test-review-system/page.tsx",
     ],
   },
 ];
