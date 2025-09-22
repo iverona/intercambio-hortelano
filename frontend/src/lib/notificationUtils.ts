@@ -1,4 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
+import { es } from "date-fns/locale";
 import { 
   Package, 
   MessageCircle, 
@@ -32,34 +33,46 @@ export interface NotificationDisplay {
   route: string;
 }
 
+// This function will be called with the translation function
 export const getNotificationDisplay = (
   type: string,
   entityId: string,
-  metadata?: NotificationMetadata
+  metadata: NotificationMetadata | undefined,
+  t: (key: any, params?: any) => string
 ): NotificationDisplay => {
   switch (type) {
     case "NEW_OFFER":
     case "NEW_PROPOSAL": // Handle old type for backward compatibility
-      let offerDescription = "Someone made an offer on your product";
+      let offerDescription = t("notifications.new_offer.default");
       let offerIcon = Package;
       
       if (metadata) {
         if (metadata.offerType === "exchange" && metadata.offeredProductName) {
-          offerDescription = `Offered "${metadata.offeredProductName}" for your "${metadata.productName}"`;
+          offerDescription = t("notifications.new_offer.exchange", {
+            offeredProduct: metadata.offeredProductName,
+            productName: metadata.productName || ""
+          });
           offerIcon = ArrowRightLeft;
         } else if (metadata.offerType === "purchase" && metadata.offerAmount) {
-          offerDescription = `Offered €${metadata.offerAmount.toFixed(2)} for your "${metadata.productName}"`;
+          offerDescription = t("notifications.new_offer.purchase", {
+            amount: metadata.offerAmount.toFixed(2),
+            productName: metadata.productName || ""
+          });
           offerIcon = DollarSign;
-        } else if (metadata.offerType === "chat") {
-          offerDescription = `Wants to chat about your "${metadata.productName}"`;
+        } else if (metadata.offerType === "chat" && metadata.productName) {
+          offerDescription = t("notifications.new_offer.chat", {
+            productName: metadata.productName
+          });
           offerIcon = MessageCircle;
         } else if (metadata.productName) {
-          offerDescription = `New offer for your "${metadata.productName}"`;
+          offerDescription = t("notifications.new_offer.simple", {
+            productName: metadata.productName
+          });
         }
       }
       
       return {
-        title: "New Offer Received",
+        title: t("notifications.new_offer.title"),
         description: offerDescription,
         icon: offerIcon,
         iconColor: "text-blue-500",
@@ -69,10 +82,10 @@ export const getNotificationDisplay = (
     case "OFFER_ACCEPTED":
     case "PROPOSAL_ACCEPTED": // Handle old type for backward compatibility
       return {
-        title: "Offer Accepted",
+        title: t("notifications.offer_accepted.title"),
         description: metadata?.productName 
-          ? `Your offer for "${metadata.productName}" was accepted`
-          : "Your offer has been accepted",
+          ? t("notifications.offer_accepted.with_product", { productName: metadata.productName })
+          : t("notifications.offer_accepted.default"),
         icon: CheckCircle,
         iconColor: "text-green-500",
         route: `/exchanges/details/${entityId}`,
@@ -81,10 +94,10 @@ export const getNotificationDisplay = (
     case "OFFER_REJECTED":
     case "PROPOSAL_REJECTED": // Handle old type for backward compatibility
       return {
-        title: "Offer Declined",
+        title: t("notifications.offer_declined.title"),
         description: metadata?.productName
-          ? `Your offer for "${metadata.productName}" was declined`
-          : "Your offer was declined",
+          ? t("notifications.offer_declined.with_product", { productName: metadata.productName })
+          : t("notifications.offer_declined.default"),
         icon: XCircle,
         iconColor: "text-red-500",
         route: `/exchanges/details/${entityId}`,
@@ -93,10 +106,10 @@ export const getNotificationDisplay = (
     case "MESSAGE_RECEIVED":
     case "NEW_MESSAGE": // Handle old type for backward compatibility
       return {
-        title: "New Message",
+        title: t("notifications.message_received.title"),
         description: metadata?.senderName
-          ? `Message from ${metadata.senderName}`
-          : "You have a new message in your exchange",
+          ? t("notifications.message_received.with_sender", { senderName: metadata.senderName })
+          : t("notifications.message_received.default"),
         icon: MessageCircle,
         iconColor: "text-purple-500",
         route: `/exchanges/details/${entityId}`,
@@ -104,10 +117,10 @@ export const getNotificationDisplay = (
     
     case "EXCHANGE_COMPLETED":
       return {
-        title: "Exchange Completed",
+        title: t("notifications.exchange_completed.title"),
         description: metadata?.productName
-          ? `Exchange completed for "${metadata.productName}"`
-          : "Your exchange has been marked as complete",
+          ? t("notifications.exchange_completed.with_product", { productName: metadata.productName })
+          : t("notifications.exchange_completed.default"),
         icon: ArrowRightLeft,
         iconColor: "text-green-600",
         route: `/exchanges/details/${entityId}`,
@@ -115,10 +128,10 @@ export const getNotificationDisplay = (
 
     case "REVIEW_RECEIVED":
       return {
-        title: "New Review Received",
+        title: t("notifications.review_received.title"),
         description: metadata?.senderName
-          ? `${metadata.senderName} left you a review`
-          : "You have received a new review for a recent exchange",
+          ? t("notifications.review_received.with_sender", { senderName: metadata.senderName })
+          : t("notifications.review_received.default"),
         icon: Star,
         iconColor: "text-yellow-500",
         route: `/exchanges/details/${entityId}`,
@@ -126,8 +139,8 @@ export const getNotificationDisplay = (
     
     default:
       return {
-        title: "New Notification",
-        description: "You have a new notification",
+        title: t("notifications.default.title"),
+        description: t("notifications.default.description"),
         icon: Bell,
         iconColor: "text-gray-500",
         route: "/",
@@ -135,9 +148,12 @@ export const getNotificationDisplay = (
   }
 };
 
-export const formatNotificationTime = (date: Date): string => {
+export const formatNotificationTime = (date: Date, locale?: string): string => {
   try {
-    return formatDistanceToNow(date, { addSuffix: true });
+    return formatDistanceToNow(date, { 
+      addSuffix: true,
+      locale: locale === 'es' ? es : undefined 
+    });
   } catch {
     return "Recently";
   }

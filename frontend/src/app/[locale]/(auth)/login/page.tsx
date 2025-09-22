@@ -11,8 +11,10 @@ import { Chrome } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useI18n } from "@/locales/provider";
 
 export default function LoginPage() {
+  const t = useI18n();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -33,12 +35,12 @@ export default function LoginPage() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Login</CardTitle>
+          <CardTitle>{t('login.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('login.email_label')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -48,7 +50,7 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('login.password_label')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -58,19 +60,19 @@ export default function LoginPage() {
             </div>
             {(error || googleError) && <p className="text-red-500 text-sm">{error || googleError}</p>}
             <Button type="submit" className="w-full">
-              Login
+              {t('login.login_button')}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Or
+            {t('login.or')}
           </div>
           <Button onClick={handleGoogleAuth} disabled={googleLoading} className="w-full mt-4 flex items-center gap-2">
             <Chrome size={18} />
-            Sign in with Google
+            {t('login.google_button')}
           </Button>
           <div className="mt-4 text-center">
             <Link href="/signup" className="text-sm text-blue-600 hover:underline">
-              Don&apos;t have an account? Sign up
+              {t('login.signup_prompt')}
             </Link>
           </div>
         </CardContent>

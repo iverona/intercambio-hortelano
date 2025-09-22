@@ -228,5 +228,44 @@ export default {
   "filter.fruits": "Fruits",
   "filter.honey": "Honey",
   "filter.handicrafts": "Handicrafts",
-  "filter.other": "Other"
+  "filter.other": "Other",
+
+  "login.title": "Login",
+  "login.email_label": "Email",
+  "login.password_label": "Password",
+  "login.login_button": "Login",
+  "login.or": "Or",
+  "login.google_button": "Sign in with Google",
+  "login.signup_prompt": "Don't have an account? Sign up",
+
+  "notifications.new_offer.title": "New Offer Received",
+  "notifications.new_offer.default": "Someone made an offer on your product",
+  "notifications.new_offer.exchange": "Offered \"{offeredProduct}\" for your \"{productName}\"",
+  "notifications.new_offer.purchase": "Offered €{amount} for your \"{productName}\"",
+  "notifications.new_offer.chat": "Wants to chat about your \"{productName}\"",
+  "notifications.new_offer.simple": "New offer for your \"{productName}\"",
+  
+  "notifications.offer_accepted.title": "Offer Accepted",
+  "notifications.offer_accepted.with_product": "Your offer for \"{productName}\" was accepted",
+  "notifications.offer_accepted.default": "Your offer has been accepted",
+  
+  "notifications.offer_declined.title": "Offer Declined",
+  "notifications.offer_declined.with_product": "Your offer for \"{productName}\" was declined",
+  "notifications.offer_declined.default": "Your offer was declined",
+  
+  "notifications.message_received.title": "New Message",
+  "notifications.message_received.with_sender": "Message from {senderName}",
+  "notifications.message_received.default": "You have a new message in your exchange",
+  
+  "notifications.exchange_completed.title": "Exchange Completed",
+  "notifications.exchange_completed.with_product": "Exchange completed for \"{productName}\"",
+  "notifications.exchange_completed.default": "Your exchange has been marked as complete",
+  
+  "notifications.review_received.title": "New Review Received",
+  "notifications.review_received.with_sender": "{senderName} left you a review",
+  "notifications.review_received.default": "You have received a new review for a recent exchange",
+  
+  "notifications.default.title": "New Notification",
+  "notifications.default.description": "You have a new notification",
+  "notifications.time.recently": "Recently"
 } as const;

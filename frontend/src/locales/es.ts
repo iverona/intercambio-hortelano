@@ -228,5 +228,44 @@ export default {
   "filter.fruits": "Frutas",
   "filter.honey": "Miel",
   "filter.handicrafts": "Artesanías",
-  "filter.other": "Otro"
+  "filter.other": "Otro",
+
+  "login.title": "Iniciar Sesión",
+  "login.email_label": "Correo Electrónico",
+  "login.password_label": "Contraseña",
+  "login.login_button": "Iniciar Sesión",
+  "login.or": "O",
+  "login.google_button": "Iniciar sesión con Google",
+  "login.signup_prompt": "¿No tienes una cuenta? Regístrate",
+
+  "notifications.new_offer.title": "Nueva Oferta Recibida",
+  "notifications.new_offer.default": "Alguien hizo una oferta por tu producto",
+  "notifications.new_offer.exchange": "Ofreció \"{offeredProduct}\" por tu \"{productName}\"",
+  "notifications.new_offer.purchase": "Ofreció €{amount} por tu \"{productName}\"",
+  "notifications.new_offer.chat": "Quiere chatear sobre tu \"{productName}\"",
+  "notifications.new_offer.simple": "Nueva oferta por tu \"{productName}\"",
+  
+  "notifications.offer_accepted.title": "Oferta Aceptada",
+  "notifications.offer_accepted.with_product": "Tu oferta por \"{productName}\" fue aceptada",
+  "notifications.offer_accepted.default": "Tu oferta ha sido aceptada",
+  
+  "notifications.offer_declined.title": "Oferta Rechazada",
+  "notifications.offer_declined.with_product": "Tu oferta por \"{productName}\" fue rechazada",
+  "notifications.offer_declined.default": "Tu oferta fue rechazada",
+  
+  "notifications.message_received.title": "Nuevo Mensaje",
+  "notifications.message_received.with_sender": "Mensaje de {senderName}",
+  "notifications.message_received.default": "Tienes un nuevo mensaje en tu intercambio",
+  
+  "notifications.exchange_completed.title": "Intercambio Completado",
+  "notifications.exchange_completed.with_product": "Intercambio completado para \"{productName}\"",
+  "notifications.exchange_completed.default": "Tu intercambio ha sido marcado como completado",
+  
+  "notifications.review_received.title": "Nueva Reseña Recibida",
+  "notifications.review_received.with_sender": "{senderName} te dejó una reseña",
+  "notifications.review_received.default": "Has recibido una nueva reseña por un intercambio reciente",
+  
+  "notifications.default.title": "Nueva Notificación",
+  "notifications.default.description": "Tienes una nueva notificación",
+  "notifications.time.recently": "Recientemente"
 } as const;

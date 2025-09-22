@@ -5,15 +5,19 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { useNotifications } from "@/context/NotificationContext";
 import { Badge } from "@/components/ui/badge";
-import { getNotificationDisplay, formatNotificationTime } from "@/lib/notificationUtils";
-import { useRouter } from "next/navigation";
+import { getNotificationDisplay, formatNotificationTime, NotificationMetadata } from "@/lib/notificationUtils";
+import { useRouter, useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { useI18n } from "@/locales/provider";
 
 const NotificationBell = () => {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const router = useRouter();
+  const params = useParams();
+  const locale = params?.locale as string || 'en';
+  const t = useI18n();
   const [open, setOpen] = useState(false);
 
   // Auto-mark all as read when popover opens
@@ -27,7 +31,14 @@ const NotificationBell = () => {
     }
   }, [open, unreadCount, markAllAsRead]);
 
-  const handleNotificationClick = async (notification: any) => {
+  const handleNotificationClick = async (notification: {
+    id: string;
+    type: string;
+    entityId: string;
+    metadata?: NotificationMetadata;
+    isRead: boolean;
+    createdAt: Date;
+  }) => {
     // Mark as read if not already
     if (!notification.isRead) {
       await markAsRead(notification.id);
@@ -37,14 +48,15 @@ const NotificationBell = () => {
     const display = getNotificationDisplay(
       notification.type,
       notification.entityId,
-      notification.metadata
+      notification.metadata,
+      t
     );
 
     // Close popover
     setOpen(false);
 
-    // Navigate to the relevant page
-    router.push(display.route);
+    // Navigate to the relevant page (with locale prefix)
+    router.push(`/${locale}${display.route}`);
   };
 
   return (
@@ -85,7 +97,8 @@ const NotificationBell = () => {
                 const display = getNotificationDisplay(
                   notification.type,
                   notification.entityId,
-                  notification.metadata
+                  notification.metadata,
+                  t
                 );
                 const Icon = display.icon;
 
@@ -121,7 +134,7 @@ const NotificationBell = () => {
                         )}
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {formatNotificationTime(notification.createdAt)}
+                        {formatNotificationTime(notification.createdAt, locale)}
                       </p>
                     </div>
                   </button>
@@ -139,7 +152,7 @@ const NotificationBell = () => {
                 className="w-full text-xs"
                 onClick={() => {
                   setOpen(false);
-                  router.push("/notifications");
+                  router.push(`/${locale}/notifications`);
                 }}
               >
                 View all notifications
