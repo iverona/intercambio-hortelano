@@ -28,6 +28,7 @@ import {
   Trash2,
   Edit,
 } from "lucide-react";
+import { useI18n } from "@/locales/provider";
 
 interface Product {
   id: string;
@@ -92,6 +93,7 @@ const ProductGridSkeleton = () => (
 );
 
 export default function MyGardenPage() {
+  const t = useI18n();
   const { user, loading } = useAuth();
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
@@ -126,7 +128,7 @@ export default function MyGardenPage() {
   }, [user, loading, router]);
 
   const handleDelete = async (id: string) => {
-    if (confirm("Are you sure you want to delete this product?")) {
+    if (confirm(t('my_garden.delete_confirm'))) {
       await deleteDoc(doc(db, "products", id));
     }
   };
@@ -166,17 +168,17 @@ export default function MyGardenPage() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                  My Garden
+                  {t('my_garden.title')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1">
-                  Manage your products and offerings
+                  {t('my_garden.subtitle')}
                 </p>
               </div>
             </div>
             <Button asChild size="lg">
               <Link href="/publish">
                 <Plus className="mr-2 h-5 w-5" />
-                Add New Product
+                {t('my_garden.add_new_product')}
               </Link>
             </Button>
           </div>
@@ -185,25 +187,25 @@ export default function MyGardenPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <StatsCard
               icon={Package}
-              label="Active Products"
+              label={t('my_garden.stats.active_products')}
               value={products.length}
               color="bg-gradient-to-br from-blue-500 to-blue-600"
             />
             <StatsCard
               icon={Eye}
-              label="Total Views"
+              label={t('my_garden.stats.total_views')}
               value="234"
               color="bg-gradient-to-br from-purple-500 to-purple-600"
             />
             <StatsCard
               icon={MessageSquare}
-              label="Inquiries"
+              label={t('my_garden.stats.inquiries')}
               value="12"
               color="bg-gradient-to-br from-orange-500 to-orange-600"
             />
             <StatsCard
               icon={TrendingUp}
-              label="Success Rate"
+              label={t('my_garden.stats.success_rate')}
               value="85%"
               color="bg-gradient-to-br from-green-500 to-green-600"
             />
@@ -214,13 +216,13 @@ export default function MyGardenPage() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-              Your Products ({products.length})
+              {t('my_garden.your_products', { count: products.length })}
             </h2>
             {products.length > 0 && (
               <div className="flex gap-2">
                 <Badge variant="secondary">
                   <Sparkles className="w-3 h-3 mr-1" />
-                  All Active
+                  {t('my_garden.all_active')}
                 </Badge>
               </div>
             )}
@@ -240,13 +242,13 @@ export default function MyGardenPage() {
           ) : (
             <EmptyState
               icon={Flower2}
-              title="No products in your garden yet"
-              description="Start sharing your garden's bounty with the community. Add your first product to get started!"
+              title={t('my_garden.empty_state.title')}
+              description={t('my_garden.empty_state.subtitle')}
               action={
                 <Button asChild size="lg">
                   <Link href="/publish">
                     <Plus className="mr-2 h-4 w-4" />
-                    Publish Your First Product
+                    {t('my_garden.empty_state.cta')}
                   </Link>
                 </Button>
               }
@@ -258,13 +260,13 @@ export default function MyGardenPage() {
         {products.length > 0 && (
           <Card className="mt-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 border-green-200 dark:border-green-800">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              💡 Tips for Success
+              {t('my_garden.tips.title')}
             </h3>
             <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-              <li>• Add clear, well-lit photos of your products</li>
-              <li>• Update your listings regularly with availability</li>
-              <li>• Respond to inquiries promptly to build trust</li>
-              <li>• Consider offering variety packs or bundles</li>
+              <li>{t('my_garden.tips.item1')}</li>
+              <li>{t('my_garden.tips.item2')}</li>
+              <li>{t('my_garden.tips.item3')}</li>
+              <li>{t('my_garden.tips.item4')}</li>
             </ul>
           </Card>
         )}

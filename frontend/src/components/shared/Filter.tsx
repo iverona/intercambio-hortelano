@@ -15,14 +15,7 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Filter as FilterIcon, X } from "lucide-react";
 import { useState, useEffect } from "react";
-
-const categories = [
-  { id: "vegetables", label: "Vegetables", icon: "🥬" },
-  { id: "fruits", label: "Fruits", icon: "🍎" },
-  { id: "honey", label: "Honey", icon: "🍯" },
-  { id: "handicrafts", label: "Handicrafts", icon: "🎨" },
-  { id: "other", label: "Other", icon: "📦" },
-];
+import { useI18n } from "@/locales/provider";
 
 interface FilterProps {
   onFilterChange: (filters: {
@@ -33,6 +26,14 @@ interface FilterProps {
 }
 
 const Filter = ({ onFilterChange }: FilterProps) => {
+  const t = useI18n();
+  const categories = [
+    { id: "vegetables", label: t('filter.vegetables'), icon: "🥬" },
+    { id: "fruits", label: t('filter.fruits'), icon: "🍎" },
+    { id: "honey", label: t('filter.honey'), icon: "🍯" },
+    { id: "handicrafts", label: t('filter.handicrafts'), icon: "🎨" },
+    { id: "other", label: t('filter.other'), icon: "📦" },
+  ];
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [distance, setDistance] = useState(100);
   const [isOpen, setIsOpen] = useState(false);
@@ -76,7 +77,7 @@ const Filter = ({ onFilterChange }: FilterProps) => {
       <SheetTrigger asChild>
         <Button variant="outline" className="relative flex items-center gap-2">
           <FilterIcon className="h-4 w-4" />
-          <span>Filter</span>
+          <span>{t('header.filter')}</span>
           {activeFiltersCount > 0 && (
             <Badge variant="default" className="ml-1 h-5 px-1.5 text-xs">
               {activeFiltersCount}
@@ -86,9 +87,9 @@ const Filter = ({ onFilterChange }: FilterProps) => {
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-md overflow-y-auto">
         <SheetHeader className="space-y-2 pb-6">
-          <SheetTitle className="text-xl font-semibold">Filter Products</SheetTitle>
+          <SheetTitle className="text-xl font-semibold">{t('filter.title')}</SheetTitle>
           <SheetDescription className="text-sm">
-            Refine your search by category and distance
+            {t('filter.subtitle')}
           </SheetDescription>
         </SheetHeader>
         
@@ -96,13 +97,13 @@ const Filter = ({ onFilterChange }: FilterProps) => {
           {/* Categories Section */}
           <div className="bg-gray-50/50 dark:bg-gray-900/20 rounded-xl p-5 space-y-4 border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Categories</h3>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t('filter.categories')}</h3>
               {selectedCategories.length > 0 && (
                 <button
                   onClick={() => setSelectedCategories([])}
                   className="text-xs text-muted-foreground hover:text-foreground transition-colors duration-200"
                 >
-                  Clear all
+                  {t('filter.clear_all')}
                 </button>
               )}
             </div>
@@ -130,9 +131,9 @@ const Filter = ({ onFilterChange }: FilterProps) => {
           {/* Distance Section */}
           <div className="bg-gray-50/50 dark:bg-gray-900/20 rounded-xl p-5 space-y-4 border border-gray-100 dark:border-gray-800">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">Maximum Distance</h3>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t('filter.distance')}</h3>
               <span className="text-sm font-semibold text-green-600 dark:text-green-500 bg-green-50 dark:bg-green-900/20 px-2.5 py-1 rounded-full">
-                {distance === 100 ? "Any distance" : `${distance} km`}
+                {distance === 100 ? t('filter.any_distance') : `${distance} km`}
               </span>
             </div>
             
@@ -150,7 +151,7 @@ const Filter = ({ onFilterChange }: FilterProps) => {
                       : "hover:bg-gray-50 dark:hover:bg-gray-700/50"
                   }`}
                 >
-                  {preset === 100 ? "Any" : `${preset}km`}
+                  {preset === 100 ? t('filter.any') : `${preset}km`}
                 </Button>
               ))}
             </div>
@@ -180,13 +181,13 @@ const Filter = ({ onFilterChange }: FilterProps) => {
               onClick={handleResetFilters}
               disabled={selectedCategories.length === 0 && distance === 100}
             >
-              Reset Filters
+              {t('filter.reset')}
             </Button>
             <Button 
               className="flex-1 h-11 font-medium bg-green-600 hover:bg-green-700 text-white shadow-sm transition-all duration-200" 
               onClick={handleApplyFilters}
             >
-              Apply Filters
+              {t('filter.apply')}
             </Button>
           </div>
         </div>

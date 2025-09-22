@@ -5,15 +5,17 @@ import { useRouter, useParams } from "next/navigation";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
-import ProductForm from "@/components/shared/ProductForm";
+import ProductForm, { ProductData } from "@/components/shared/ProductForm";
+import { useI18n } from "@/locales/provider";
 
 export default function EditProductPage() {
+  const t = useI18n();
   const { user, loading } = useAuth();
   const router = useRouter();
   const params = useParams();
   const { id } = params;
 
-  const [product, setProduct] = useState(null);
+  const [product, setProduct] = useState<ProductData | null>(null);
 
   useEffect(() => {
     if (loading) return;
@@ -26,7 +28,7 @@ export default function EditProductPage() {
       const docRef = doc(db, "products", id as string);
       getDoc(docRef).then((docSnap) => {
         if (docSnap.exists()) {
-          setProduct(docSnap.data() as any);
+          setProduct(docSnap.data() as ProductData);
         } else {
           console.log("No such document!");
         }
@@ -34,10 +36,10 @@ export default function EditProductPage() {
     }
   }, [id, user, loading, router]);
 
-  const handleSubmit = async (data: any) => {
+  const handleSubmit = async (data: ProductData) => {
     if (id) {
       const docRef = doc(db, "products", id as string);
-      await updateDoc(docRef, data);
+      await updateDoc(docRef, { ...data });
       router.push("/profile");
     }
   };
@@ -46,7 +48,7 @@ export default function EditProductPage() {
     return (
       <main className="container mx-auto px-4 py-8">
         <div className="flex justify-center items-center h-64">
-          <p className="text-gray-500">Loading...</p>
+          <p className="text-gray-500">{t('product.edit.loading')}</p>
         </div>
       </main>
     );

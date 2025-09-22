@@ -33,6 +33,7 @@ import {
   Send,
 } from "lucide-react";
 import { createNotification, NotificationType } from "@/lib/notifications";
+import { useI18n } from "@/locales/provider";
 import { toast } from "sonner";
 import { ReviewSection, Review } from "@/components/shared/ReviewSection";
 import { submitReview } from "@/lib/reviewHelpers";
@@ -97,6 +98,7 @@ interface Exchange {
 }
 
 export default function ExchangeDetailsPage() {
+  const t = useI18n();
   const { user } = useAuth();
   const router = useRouter();
   const params = useParams();
@@ -115,7 +117,7 @@ export default function ExchangeDetailsPage() {
     
     const unsubscribe = onSnapshot(exchangeRef, async (exchangeDoc) => {
       if (!exchangeDoc.exists()) {
-        toast.error("Exchange not found");
+        toast.error(t('exchanges.details.toast.exchange_not_found'));
         router.push("/exchanges");
         return;
       }
@@ -178,12 +180,12 @@ export default function ExchangeDetailsPage() {
         });
       } catch (error) {
         console.error("Error loading exchange details:", error);
-        toast.error("Failed to load exchange details");
+        toast.error(t('exchanges.details.toast.failed_to_load'));
         setLoading(false);
       }
     }, (error) => {
       console.error("Error listening to exchange updates:", error);
-      toast.error("Failed to listen for exchange updates");
+      toast.error(t('exchanges.details.toast.failed_to_listen'));
       setLoading(false);
     });
 
@@ -251,11 +253,11 @@ export default function ExchangeDetailsPage() {
         metadata: acceptMetadata,
       });
 
-      toast.success("Offer accepted! Chat is now available below.");
+      toast.success(t('exchanges.details.toast.offer_accepted'));
       // The real-time listener will automatically update the UI
     } catch (error) {
       console.error("Error accepting offer:", error);
-      toast.error("Failed to accept offer");
+      toast.error(t('exchanges.details.toast.failed_to_accept'));
     }
   };
 
@@ -296,11 +298,11 @@ export default function ExchangeDetailsPage() {
         metadata: rejectMetadata,
       });
 
-      toast.info("Offer declined");
+      toast.info(t('exchanges.details.toast.offer_declined'));
       // The real-time listener will automatically update the UI
     } catch (error) {
       console.error("Error rejecting offer:", error);
-      toast.error("Failed to decline offer");
+      toast.error(t('exchanges.details.toast.failed_to_decline'));
     }
   };
 
@@ -354,7 +356,7 @@ export default function ExchangeDetailsPage() {
       setNewMessage("");
     } catch (error) {
       console.error("Error sending message:", error);
-      toast.error("Failed to send message");
+      toast.error(t('exchanges.details.toast.failed_to_send_message'));
     }
   };
 
@@ -375,10 +377,10 @@ export default function ExchangeDetailsPage() {
         currentUserName: user.displayName || user.email || "Someone",
       });
 
-      toast.success("Review submitted successfully!");
+      toast.success(t('exchanges.details.toast.review_submitted'));
     } catch (error) {
       console.error("Error submitting review:", error);
-      toast.error("Failed to submit review");
+      toast.error(t('exchanges.details.toast.failed_to_submit_review'));
       throw error;
     }
   };
@@ -443,9 +445,9 @@ export default function ExchangeDetailsPage() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           <Card className="p-8 text-center">
-            <p className="text-gray-500">Exchange not found</p>
+            <p className="text-gray-500">{t('exchanges.details.toast.exchange_not_found')}</p>
             <Button onClick={() => router.push("/exchanges")} className="mt-4">
-              Back to Exchanges
+              {t('exchanges.details.back_to_exchanges')}
             </Button>
           </Card>
         </div>
@@ -467,7 +469,7 @@ export default function ExchangeDetailsPage() {
           className="mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Exchanges
+          {t('exchanges.details.back_to_exchanges')}
         </Button>
 
         {/* Exchange Details Card */}
@@ -478,10 +480,10 @@ export default function ExchangeDetailsPage() {
               {getOfferTypeIcon(exchange.offer?.type)}
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  Exchange Details
+                  {t('exchanges.details.title')}
                 </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  Created {formatDate(exchange.createdAt)}
+                  {t('exchanges.details.created', { date: formatDate(exchange.createdAt) })}
                 </p>
               </div>
             </div>
@@ -493,7 +495,7 @@ export default function ExchangeDetailsPage() {
           {/* Product Information */}
           <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
             <h2 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              Product Information
+              {t('exchanges.details.product_info')}
             </h2>
             {exchange.product && (
               <div className="space-y-2">
@@ -523,7 +525,7 @@ export default function ExchangeDetailsPage() {
           {/* Offer Details */}
           <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
             <h2 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              Offer Details
+              {t('exchanges.details.offer_details')}
             </h2>
             <div className="space-y-2">
               {exchange.offer?.type === "exchange" && exchange.offer.offeredProductName && (
@@ -562,7 +564,7 @@ export default function ExchangeDetailsPage() {
           {/* Partner Information */}
           <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
             <h2 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              {isOwner ? "Requester" : "Owner"} Information
+              {isOwner ? t('exchanges.details.partner_info.requester') : t('exchanges.details.partner_info.owner')}
             </h2>
             <div className="flex items-center gap-3">
               <Avatar className="h-12 w-12">
@@ -576,7 +578,7 @@ export default function ExchangeDetailsPage() {
                   {partner?.name || "Unknown User"}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {isOwner ? "Requested this exchange" : "Owns this product"}
+                  {isOwner ? t('exchanges.details.partner_info.requested') : t('exchanges.details.partner_info.owns')}
                 </p>
               </div>
             </div>
@@ -591,7 +593,7 @@ export default function ExchangeDetailsPage() {
                 variant="default"
               >
                 <CheckCircle className="w-4 h-4 mr-2" />
-                Accept Offer
+                {t('exchanges.details.accept_offer')}
               </Button>
               <Button
                 onClick={handleRejectOffer}
@@ -599,7 +601,7 @@ export default function ExchangeDetailsPage() {
                 variant="outline"
               >
                 <XCircle className="w-4 h-4 mr-2" />
-                Decline Offer
+                {t('exchanges.details.decline_offer')}
               </Button>
             </div>
           )}
@@ -608,7 +610,7 @@ export default function ExchangeDetailsPage() {
             <div className="p-4 bg-yellow-50 dark:bg-yellow-950 rounded-lg text-center">
               <Clock className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                Waiting for the owner to respond to your offer
+                {t('exchanges.details.waiting_for_owner')}
               </p>
             </div>
           )}
@@ -655,18 +657,18 @@ export default function ExchangeDetailsPage() {
                       metadata: completeMetadata,
                     });
 
-                    toast.success("Exchange marked as completed!");
+                    toast.success(t('exchanges.details.toast.exchange_completed'));
                     // The real-time listener will automatically update the UI
                   } catch (error) {
                     console.error("Error completing exchange:", error);
-                    toast.error("Failed to complete exchange");
+                    toast.error(t('exchanges.details.toast.failed_to_complete'));
                   }
                 }}
                 className="w-full"
                 variant="outline"
               >
                 <CheckCircle className="w-4 h-4 mr-2" />
-                Mark as Completed
+                {t('exchanges.details.mark_as_completed')}
               </Button>
             </div>
           )}
@@ -675,7 +677,7 @@ export default function ExchangeDetailsPage() {
             <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg text-center">
               <XCircle className="w-8 h-8 text-red-600 mx-auto mb-2" />
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                This offer has been declined
+                {t('exchanges.details.offer_declined')}
               </p>
             </div>
           )}
@@ -684,7 +686,7 @@ export default function ExchangeDetailsPage() {
             <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg text-center">
               <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                This exchange has been completed
+                {t('exchanges.details.exchange_completed')}
               </p>
             </div>
           )}
@@ -695,10 +697,10 @@ export default function ExchangeDetailsPage() {
           <Card className="mt-6 p-0 overflow-hidden">
             <div className="p-4 border-b bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950 dark:to-red-950">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Exchange Reviews
+                {t('exchanges.details.reviews.title')}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Share your experience and help build trust in the community
+                {t('exchanges.details.reviews.subtitle')}
               </p>
             </div>
             <div className="p-6">
@@ -727,11 +729,11 @@ export default function ExchangeDetailsPage() {
               <div className="flex items-center gap-2">
                 <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  Chat with {partner?.name || "User"}
+                  {t('exchanges.details.chat.title', { name: partner?.name || "User" })}
                 </h2>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Discuss details about the exchange
+                {t('exchanges.details.chat.subtitle')}
               </p>
             </div>
 
@@ -741,9 +743,9 @@ export default function ExchangeDetailsPage() {
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
                     <MessageSquare className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-500 dark:text-gray-400">No messages yet</p>
+                    <p className="text-gray-500 dark:text-gray-400">{t('exchanges.details.chat.no_messages')}</p>
                     <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">
-                      Start the conversation about your exchange
+                      {t('exchanges.details.chat.start_conversation')}
                     </p>
                   </div>
                 </div>
@@ -799,7 +801,7 @@ export default function ExchangeDetailsPage() {
                 <Input
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
-                  placeholder="Type your message..."
+                  placeholder={t('exchanges.details.chat.placeholder')}
                   className="flex-1"
                 />
                 <Button type="submit" size="icon">

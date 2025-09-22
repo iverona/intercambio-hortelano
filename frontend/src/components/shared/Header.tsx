@@ -25,9 +25,10 @@ import Filter from "./Filter";
 import { useFilters } from "@/context/FilterContext";
 import { Input } from "@/components/ui/input";
 import NotificationBell from "./NotificationBell";
-import { useCurrentLocale } from "@/locales/provider";
+import { useCurrentLocale, useI18n } from "@/locales/provider";
 
 const Header = () => {
+  const t = useI18n();
   const locale = useCurrentLocale();
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -50,14 +51,14 @@ const Header = () => {
     <header className="bg-white shadow-md">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href={`/${locale}`} className="text-2xl font-bold text-gray-800">
-          Portal de Intercambio Hortelano
+          {t('header.title')}
         </Link>
         <nav className="flex items-center gap-4">
           <div className="relative flex-1 md:grow-0">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search for tomatoes, honey..."
+              placeholder={t('header.search_placeholder')}
               className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
               value={filters.searchTerm}
               onChange={(e) =>
@@ -67,11 +68,11 @@ const Header = () => {
           </div>
           <Filter onFilterChange={setFilters} />
           <Link href={`/${locale}`} className="text-gray-600 hover:text-gray-800">
-            Home
+            {t('header.home')}
           </Link>
           {user && (
             <Button asChild>
-              <Link href={`/${locale}/publish`}>Publish Product</Link>
+              <Link href={`/${locale}/publish`}>{t('header.publish')}</Link>
             </Button>
           )}
           {!loading &&
@@ -91,19 +92,19 @@ const Header = () => {
                     <DropdownMenuItem asChild>
                       <Link href={`/${locale}/profile`} className="flex items-center cursor-pointer">
                         <User className="mr-2 h-4 w-4" />
-                        <span>My Profile</span>
+                        <span>{t('header.profile')}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href={`/${locale}/my-garden`} className="flex items-center cursor-pointer">
                         <Flower2 className="mr-2 h-4 w-4" />
-                        <span>My Garden</span>
+                        <span>{t('header.my_garden')}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href={`/${locale}/exchanges`} className="flex items-center cursor-pointer">
                         <ArrowRightLeft className="mr-2 h-4 w-4" />
-                        <span>My Exchanges</span>
+                        <span>{t('header.my_exchanges')}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
@@ -112,14 +113,14 @@ const Header = () => {
                       className="flex items-center cursor-pointer text-red-600 focus:text-red-600"
                     >
                       <LogOut className="mr-2 h-4 w-4" />
-                      <span>Logout</span>
+                      <span>{t('header.logout')}</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </>
             ) : (
               <Button asChild>
-                <Link href={`/${locale}/login`}>Login</Link>
+                <Link href={`/${locale}/login`}>{t('header.login')}</Link>
               </Button>
             ))}
         </nav>

@@ -32,6 +32,7 @@ import {
   AlertCircle,
   ChevronRight,
 } from "lucide-react";
+import { useI18n } from "@/locales/provider";
 
 interface Exchange {
   id: string;
@@ -104,6 +105,7 @@ const EmptyState = ({ icon: Icon, title, description, action }: {
 
 // Exchange item component
 const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () => void }) => {
+  const t = useI18n();
   const { user } = useAuth();
   const isRequester = user?.uid === exchange.requesterId;
   
@@ -171,7 +173,7 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
                 {exchange.productName}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {isRequester ? "To: " : "From: "}{exchange.partner?.name}
+                {isRequester ? t('exchanges.item.to', { name: exchange.partner?.name }) : t('exchanges.item.from', { name: exchange.partner?.name })}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -191,10 +193,10 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
                 {getOfferTypeIcon(exchange.offer.type)}
                 <span>
                   {exchange.offer.type === "exchange" && exchange.offer.offeredProductName
-                    ? `Offered: ${exchange.offer.offeredProductName}`
+                    ? t('exchanges.item.offered', { product: exchange.offer.offeredProductName })
                     : exchange.offer.type === "purchase" && exchange.offer.amount
                     ? `€${exchange.offer.amount.toFixed(2)}`
-                    : "Chat request"}
+                    : t('exchanges.item.chat_request')}
                 </span>
               </div>
             </div>
@@ -210,10 +212,10 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
             ) : (
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 {exchange.status === 'pending' && !isRequester 
-                  ? "Action required" 
+                  ? t('exchanges.item.action_required')
                   : exchange.status === 'pending' && isRequester
-                  ? "Waiting for response"
-                  : "No messages yet"}
+                  ? t('exchanges.item.waiting_for_response')
+                  : t('exchanges.item.no_messages')}
               </p>
             )}
             <div className="flex items-center gap-2 text-xs text-gray-400">
@@ -247,6 +249,7 @@ const ExchangeSkeleton = () => (
 );
 
 export default function ExchangesPage() {
+  const t = useI18n();
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const [exchanges, setExchanges] = useState<Exchange[]>([]);
@@ -369,17 +372,17 @@ export default function ExchangesPage() {
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                  My Exchanges
+                  {t('exchanges.title')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1">
-                  Manage your exchanges and conversations
+                  {t('exchanges.subtitle')}
                 </p>
               </div>
             </div>
             <Button asChild>
               <Link href="/">
                 <Package className="mr-2 h-4 w-4" />
-                Browse Products
+                {t('exchanges.browse_products')}
               </Link>
             </Button>
           </div>
@@ -388,25 +391,25 @@ export default function ExchangesPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <StatsCard
               icon={Inbox}
-              label="Pending Requests"
+              label={t('exchanges.stats.pending')}
               value={pendingCount}
               color="bg-gradient-to-br from-yellow-500 to-orange-600"
             />
             <StatsCard
               icon={MessageSquare}
-              label="Active Exchanges"
+              label={t('exchanges.stats.active')}
               value={activeExchanges.length}
               color="bg-gradient-to-br from-green-500 to-emerald-600"
             />
             <StatsCard
               icon={Archive}
-              label="Total Exchanges"
+              label={t('exchanges.stats.total')}
               value={totalExchanges}
               color="bg-gradient-to-br from-blue-500 to-indigo-600"
             />
             <StatsCard
               icon={CheckCircle}
-              label="Success Rate"
+              label={t('exchanges.stats.success_rate')}
               value={`${successRate}%`}
               color="bg-gradient-to-br from-purple-500 to-pink-600"
             />
@@ -418,7 +421,7 @@ export default function ExchangesPage() {
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="active" className="flex items-center gap-2">
               <MessageSquare className="w-4 h-4" />
-              Active
+              {t('exchanges.tabs.active')}
               {activeExchanges.length > 0 && (
                 <Badge variant="secondary" className="ml-1">
                   {activeExchanges.length}
@@ -427,7 +430,7 @@ export default function ExchangesPage() {
             </TabsTrigger>
             <TabsTrigger value="pending" className="flex items-center gap-2">
               <Clock className="w-4 h-4" />
-              Pending
+              {t('exchanges.tabs.pending')}
               {pendingExchanges.length > 0 && (
                 <Badge variant="secondary" className="ml-1">
                   {pendingExchanges.length}
@@ -436,7 +439,7 @@ export default function ExchangesPage() {
             </TabsTrigger>
             <TabsTrigger value="completed" className="flex items-center gap-2">
               <Archive className="w-4 h-4" />
-              History
+              {t('exchanges.tabs.history')}
               {completedExchanges.length > 0 && (
                 <Badge variant="secondary" className="ml-1">
                   {completedExchanges.length}
@@ -458,8 +461,8 @@ export default function ExchangesPage() {
             ) : (
               <EmptyState
                 icon={MessageSquare}
-                title="No active exchanges"
-                description="Your accepted exchanges with ongoing conversations will appear here"
+                title={t('exchanges.empty.active.title')}
+                description={t('exchanges.empty.active.subtitle')}
               />
             )}
           </TabsContent>
@@ -495,8 +498,8 @@ export default function ExchangesPage() {
             ) : (
               <EmptyState
                 icon={Clock}
-                title="No pending exchanges"
-                description="Exchange requests waiting for approval will appear here"
+                title={t('exchanges.empty.pending.title')}
+                description={t('exchanges.empty.pending.subtitle')}
               />
             )}
           </TabsContent>
@@ -514,8 +517,8 @@ export default function ExchangesPage() {
             ) : (
               <EmptyState
                 icon={Archive}
-                title="No exchange history"
-                description="Your completed and rejected exchanges will appear here"
+                title={t('exchanges.empty.history.title')}
+                description={t('exchanges.empty.history.subtitle')}
               />
             )}
           </TabsContent>
@@ -525,13 +528,13 @@ export default function ExchangesPage() {
         {exchanges.length > 0 && (
           <Card className="mt-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 border-blue-200 dark:border-blue-800">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              💡 Exchange Tips
+              {t('exchanges.tips.title')}
             </h3>
             <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-              <li>• Respond to exchange requests promptly to build trust</li>
-              <li>• Use the chat to coordinate pickup/delivery details</li>
-              <li>• Mark exchanges as completed once the trade is done</li>
-              <li>• Be clear about product condition and availability</li>
+              <li>{t('exchanges.tips.item1')}</li>
+              <li>{t('exchanges.tips.item2')}</li>
+              <li>{t('exchanges.tips.item3')}</li>
+              <li>{t('exchanges.tips.item4')}</li>
             </ul>
           </Card>
         )}

@@ -19,6 +19,7 @@ import {
   Camera
 } from "lucide-react";
 import Link from "next/link";
+import { useI18n } from "@/locales/provider";
 
 // Loading skeleton component
 const LoadingSkeleton = () => (
@@ -36,7 +37,9 @@ const LoadingSkeleton = () => (
 );
 
 // Hero section for publish page
-const PublishHero = () => (
+const PublishHero = () => {
+  const t = useI18n();
+  return (
   <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950 mb-8 rounded-2xl">
     {/* Animated background elements */}
     <div className="absolute inset-0 overflow-hidden">
@@ -49,22 +52,22 @@ const PublishHero = () => (
         <Button asChild variant="ghost" size="sm" className="group">
           <Link href="/">
             <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            Back to Home
+            {t('publish.back_to_home')}
           </Link>
         </Button>
         
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg">
           <Sparkles className="w-4 h-4 text-yellow-500" />
-          <span className="text-sm font-medium">Share with the community</span>
+          <span className="text-sm font-medium">{t('publish.share_with_community')}</span>
         </div>
       </div>
 
       <div className="max-w-2xl">
         <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent mb-4">
-          Publish Your Product
+          {t('publish.publish_your_product')}
         </h1>
         <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-          Share your garden&apos;s bounty with the community. Whether you&apos;re offering fresh produce for exchange or sale, your contribution helps build a sustainable local network.
+          {t('publish.hero_subtitle')}
         </p>
 
         {/* Quick tips */}
@@ -74,8 +77,8 @@ const PublishHero = () => (
               <Camera className="w-4 h-4 text-green-600 dark:text-green-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Add Photos</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Clear images help</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t('publish.tip.add_photos')}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">{t('publish.tip.add_photos_desc')}</p>
             </div>
           </div>
           
@@ -84,8 +87,8 @@ const PublishHero = () => (
               <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Location</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Auto-detected</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t('publish.tip.location')}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">{t('publish.tip.location_desc')}</p>
             </div>
           </div>
           
@@ -94,8 +97,8 @@ const PublishHero = () => (
               <Leaf className="w-4 h-4 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Exchange</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">Trade or sell</p>
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t('publish.tip.exchange')}</p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">{t('publish.tip.exchange_desc')}</p>
             </div>
           </div>
         </div>
@@ -103,22 +106,28 @@ const PublishHero = () => (
     </div>
   </div>
 );
+}
 
 // Error component
-const ErrorMessage = ({ message }: { message: string }) => (
+const ErrorMessage = ({ message }: { message: string }) => {
+  const t = useI18n();
+  return (
   <div className="mt-6 p-4 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg">
     <div className="flex items-start gap-3">
       <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5" />
       <div>
-        <h3 className="font-medium text-red-900 dark:text-red-100">Error publishing product</h3>
+        <h3 className="font-medium text-red-900 dark:text-red-100">{t('publish.error_publishing')}</h3>
         <p className="text-sm text-red-700 dark:text-red-300 mt-1">{message}</p>
       </div>
     </div>
   </div>
 );
+}
 
 // Success animation component
-const SuccessAnimation = () => (
+const SuccessAnimation = () => {
+  const t = useI18n();
+  return (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
     <Card className="p-8 bg-white dark:bg-gray-800 shadow-2xl">
       <div className="text-center">
@@ -129,17 +138,19 @@ const SuccessAnimation = () => (
           </div>
         </div>
         <h2 className="mt-4 text-2xl font-bold text-gray-900 dark:text-gray-100">
-          Product Published!
+          {t('publish.success_title')}
         </h2>
         <p className="mt-2 text-gray-600 dark:text-gray-400">
-          Your product is now visible to the community
+          {t('publish.success_subtitle')}
         </p>
       </div>
     </Card>
   </div>
 );
+}
 
 export default function PublishPage() {
+  const t = useI18n();
   const { user, loading } = useAuth();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -161,7 +172,7 @@ export default function PublishPage() {
     price?: number | null;
   }) => {
     if (!user) {
-      setError("You must be logged in to publish a product.");
+      setError(t('publish.error.must_be_logged_in'));
       return;
     }
 
@@ -224,11 +235,11 @@ export default function PublishPage() {
                   <Upload className="w-5 h-5 text-white" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  Product Details
+                  {t('publish.product_details')}
                 </h2>
               </div>
               <p className="text-gray-600 dark:text-gray-400">
-                Fill in the information below to list your product
+                {t('publish.form_subtitle')}
               </p>
             </div>
 
@@ -254,10 +265,10 @@ export default function PublishPage() {
           {/* Help section */}
           <Card className="mt-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 border-0">
             <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              Need help?
+              {t('publish.help_title')}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Check our guidelines for publishing products or contact support if you have any questions about sharing your produce with the community.
+              {t('publish.help_subtitle')}
             </p>
           </Card>
         </div>

@@ -22,6 +22,7 @@ import {
 import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import OfferModal from "@/components/shared/OfferModal";
+import { useI18n } from "@/locales/provider";
 import { createNotification, NotificationMetadata } from "@/lib/notifications";
 
 interface Chat {
@@ -52,6 +53,7 @@ interface User {
 }
 
 export default function ProductDetailPage() {
+  const t = useI18n();
   const params = useParams();
   const id = params.id as string;
   const { user } = useAuth();
@@ -180,11 +182,11 @@ export default function ProductDetailPage() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>{t('product.loading')}</div>;
   }
 
   if (!product) {
-    return <div>Product not found</div>;
+    return <div>{t('product.not_found')}</div>;
   }
 
   return (
@@ -203,7 +205,7 @@ export default function ProductDetailPage() {
           <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
           <div className="flex space-x-2 mb-4">
             {product.isForExchange && (
-              <Badge variant="secondary">For Exchange</Badge>
+              <Badge variant="secondary">{t('product.for_exchange')}</Badge>
             )}
             {product.price && (
               <Badge variant="default">${product.price.toFixed(2)}</Badge>
@@ -227,22 +229,22 @@ export default function ProductDetailPage() {
                   </Avatar>
                   <div>
                     <p className="font-semibold">{seller.name}</p>
-                    <p className="text-sm text-gray-500">Vendedor</p>
+                    <p className="text-sm text-gray-500">{t('product.seller')}</p>
                   </div>
                 </div>
               </PopoverTrigger>
               <PopoverContent>
-                <p className="text-sm">{seller.bio || "No bio available."}</p>
+                <p className="text-sm">{seller.bio || t('product.no_bio')}</p>
               </PopoverContent>
             </Popover>
           )}
           {user && product.userId !== user.uid && (
             <Button size="lg" onClick={() => setShowOfferModal(true)}>
-              I&apos;m Interested
+              {t('product.interested_button')}
             </Button>
           )}
           {user && product.userId === user.uid && (
-            <p className="text-sm text-gray-500 italic">This is your product</p>
+            <p className="text-sm text-gray-500 italic">{t('product.your_product')}</p>
           )}
         </div>
       </div>

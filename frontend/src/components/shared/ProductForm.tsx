@@ -21,8 +21,9 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
+import { useI18n } from "@/locales/provider";
 
-interface ProductData {
+export interface ProductData {
   name: string;
   description: string;
   category: string;
@@ -41,6 +42,7 @@ export default function ProductForm({
   initialData,
   isEdit = false,
 }: ProductFormProps) {
+  const t = useI18n();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -64,17 +66,17 @@ export default function ProductForm({
     e.preventDefault();
 
     if (!category) {
-      setError("Please select a category.");
+      setError(t('product.form.error.no_category'));
       return;
     }
 
     if (!isForExchange && !isForSale) {
-      setError("Please select at least one transaction type.");
+      setError(t('product.form.error.no_transaction_type'));
       return;
     }
 
     if (isForSale && !price) {
-      setError("Please enter a price for the product.");
+      setError(t('product.form.error.no_price'));
       return;
     }
 
@@ -90,7 +92,7 @@ export default function ProductForm({
   return (
     <Card className="max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle>{isEdit ? "Edit Product" : "Publish a New Product"}</CardTitle>
+        <CardTitle>{isEdit ? t('product.edit.title') : t('product.publish.title')}</CardTitle>
         <CardDescription>
           {isEdit
             ? "Update the form below to edit your product."
@@ -100,50 +102,50 @@ export default function ProductForm({
       <CardContent>
         <form onSubmit={handleSubmit} className="grid gap-6">
           <div className="grid gap-2">
-            <Label htmlFor="name">Product Name</Label>
+            <Label htmlFor="name">{t('product.form.name_label')}</Label>
             <Input
               id="name"
-              placeholder="e.g., Fresh Tomatoes"
+              placeholder={t('product.form.name_placeholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={isEdit}
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description">{t('product.form.description_label')}</Label>
             <Textarea
               id="description"
-              placeholder="e.g., Ripe and juicy tomatoes from my garden."
+              placeholder={t('product.form.description_placeholder')}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">{t('product.form.category_label')}</Label>
             <Select onValueChange={setCategory} value={category}>
               <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
+                <SelectValue placeholder={t('product.form.category_placeholder')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="vegetables">Vegetables</SelectItem>
-                <SelectItem value="fruits">Fruits</SelectItem>
-                <SelectItem value="handmade">Handmade Goods</SelectItem>
+                <SelectItem value="vegetables">{t('product.form.category.vegetables')}</SelectItem>
+                <SelectItem value="fruits">{t('product.form.category.fruits')}</SelectItem>
+                <SelectItem value="handmade">{t('product.form.category.handmade')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="picture">Product Picture</Label>
+            <Label htmlFor="picture">{t('product.form.picture_label')}</Label>
             <Input id="picture" type="file" />
           </div>
           <div className="grid gap-2">
-            <Label>Transaction Type</Label>
+            <Label>{t('product.form.transaction_type_label')}</Label>
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="exchange"
                 checked={isForExchange}
                 onCheckedChange={(checked) => setIsForExchange(!!checked)}
               />
-              <Label htmlFor="exchange">For Exchange</Label>
+              <Label htmlFor="exchange">{t('product.form.for_exchange_label')}</Label>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox
@@ -156,16 +158,16 @@ export default function ProductForm({
                   }
                 }}
               />
-              <Label htmlFor="sale">For Sale</Label>
+              <Label htmlFor="sale">{t('product.form.for_sale_label')}</Label>
             </div>
           </div>
           {isForSale && (
             <div className="grid gap-2">
-              <Label htmlFor="price">Price</Label>
+              <Label htmlFor="price">{t('product.form.price_label')}</Label>
               <Input
                 id="price"
                 type="number"
-                placeholder="e.g., 5.00"
+                placeholder={t('product.form.price_placeholder')}
                 value={price}
                 onChange={(e) => setPrice(e.target.value)}
               />
@@ -176,7 +178,7 @@ export default function ProductForm({
       </CardContent>
       <CardFooter>
         <Button onClick={handleSubmit} className="w-full">
-          {isEdit ? "Save Changes" : "Publish Product"}
+          {isEdit ? t('product.form.save_button') : t('product.form.publish_button')}
         </Button>
       </CardFooter>
     </Card>
