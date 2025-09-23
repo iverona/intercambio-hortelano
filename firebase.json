@@ -40,16 +40,18 @@
       "startCommand": "npm run dev"
     }
   },
-  "apphosting": {
-    "backendId": "backend0644",
-    "rootDir": "frontend/",
-    "ignore": [
-      "node_modules",
-      ".git",
-      "firebase-debug.log",
-      "firebase-debug.*.log",
-      "functions",
-      "frontend/src/app/test-*"
-    ]
-  }
+  "apphosting": [    
+    {
+      "backendId": "backend",
+      "rootDir": "frontend/",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "functions"
+      ],
+      "alwaysDeployFromSource": true
+    }
+  ]
 }

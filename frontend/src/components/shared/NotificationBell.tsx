@@ -49,7 +49,7 @@ const NotificationBell = () => {
       notification.type,
       notification.entityId,
       notification.metadata,
-      t
+      t as (key: string, params?: Record<string, string | number> | undefined) => string
     );
 
     // Close popover
@@ -98,7 +98,7 @@ const NotificationBell = () => {
                   notification.type,
                   notification.entityId,
                   notification.metadata,
-                  t
+                  t as (key: string, params?: Record<string, string | number> | undefined) => string
                 );
                 const Icon = display.icon;
 

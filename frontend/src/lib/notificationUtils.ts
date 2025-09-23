@@ -33,12 +33,15 @@ export interface NotificationDisplay {
   route: string;
 }
 
+// Type for translation function parameters
+type TranslationParams = Record<string, string | number> | undefined;
+
 // This function will be called with the translation function
 export const getNotificationDisplay = (
   type: string,
   entityId: string,
   metadata: NotificationMetadata | undefined,
-  t: (key: string, params?: Record<string, string | number>) => string
+  t: (key: string, params?: TranslationParams) => string
 ): NotificationDisplay => {
   switch (type) {
     case "NEW_OFFER":
