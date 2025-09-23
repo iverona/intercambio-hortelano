@@ -24,7 +24,17 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      if (!userCredential.user.emailVerified) {
+        setError(
+          "Your email is not verified. Please check your inbox for the verification link."
+        );
+        return;
+      }
       router.push("/");
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");

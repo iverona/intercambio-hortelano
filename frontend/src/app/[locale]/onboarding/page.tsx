@@ -7,8 +7,10 @@ import { db } from "@/lib/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useI18n } from "@/locales/provider";
 
 export default function OnboardingPage() {
+  const t = useI18n();
   const { user } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -31,12 +33,12 @@ export default function OnboardingPage() {
           }
         },
         (error) => {
-          setError("Unable to retrieve your location.");
+          setError(t('onboarding.error.no_location'));
           setLoading(false);
         }
       );
     } else {
-      setError("Geolocation is not supported by this browser.");
+      setError(t('onboarding.error.no_geolocation'));
     }
   };
 
@@ -44,19 +46,18 @@ export default function OnboardingPage() {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Welcome!</CardTitle>
+          <CardTitle>{t('onboarding.welcome')}</CardTitle>
         </CardHeader>
         <CardContent className="text-center">
           <p className="mb-4">
-            To get the most out of the platform, please share your location to
-            see nearby products.
+            {t('onboarding.description')}
           </p>
           <div className="flex gap-4 justify-center">
             <Button onClick={handleLocation} disabled={loading}>
-              {loading ? "Loading..." : "Share Location"}
+              {loading ? t('onboarding.loading_button') : t('onboarding.share_location_button')}
             </Button>
             <Button onClick={() => router.push("/")} variant="outline">
-              Skip
+              {t('onboarding.skip_button')}
             </Button>
           </div>
           {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
