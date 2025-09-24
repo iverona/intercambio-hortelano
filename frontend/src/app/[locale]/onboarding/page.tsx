@@ -11,7 +11,7 @@ import { useI18n } from "@/locales/provider";
 
 export default function OnboardingPage() {
   const t = useI18n();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +30,8 @@ export default function OnboardingPage() {
               },
               onboardingComplete: true,
             });
+            // Refresh the user state before redirecting
+            await refreshUser();
             router.push("/");
           }
         },
@@ -50,6 +52,8 @@ export default function OnboardingPage() {
         await updateDoc(userRef, {
           onboardingComplete: true,
         });
+        // Refresh the user state before redirecting
+        await refreshUser();
         router.push("/");
       } catch (error) {
         // Handle potential error, e.g., show a message

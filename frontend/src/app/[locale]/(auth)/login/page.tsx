@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
+import { useAuth } from "@/context/AuthContext";
 import { Chrome } from "lucide-react";
 import { handleUserRedirect } from "@/lib/authUtils";
 import Link from "next/link";
@@ -20,6 +21,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { refreshUser } = useAuth();
   const { handleGoogleAuth, error: googleError, loading: googleLoading } = useGoogleAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -38,6 +40,9 @@ export default function LoginPage() {
       }
 
       const user = userCredential.user;
+      // Refresh the user state to ensure the header updates immediately
+      await refreshUser();
+      // Then handle the redirect
       await handleUserRedirect(user, router);
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
