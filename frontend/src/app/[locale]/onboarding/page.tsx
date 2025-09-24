@@ -28,6 +28,7 @@ export default function OnboardingPage() {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
               },
+              onboardingComplete: true,
             });
             router.push("/");
           }
@@ -39,6 +40,24 @@ export default function OnboardingPage() {
       );
     } else {
       setError(t('onboarding.error.no_geolocation'));
+    }
+  };
+
+  const handleSkip = async () => {
+    if (user) {
+      try {
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, {
+          onboardingComplete: true,
+        });
+        router.push("/");
+      } catch (error) {
+        // Handle potential error, e.g., show a message
+        setError("Could not update onboarding status. Please try again.");
+      }
+    } else {
+      // If no user, just redirect
+      router.push("/");
     }
   };
 
@@ -56,7 +75,7 @@ export default function OnboardingPage() {
             <Button onClick={handleLocation} disabled={loading}>
               {loading ? t('onboarding.loading_button') : t('onboarding.share_location_button')}
             </Button>
-            <Button onClick={() => router.push("/")} variant="outline">
+            <Button onClick={handleSkip} variant="outline">
               {t('onboarding.skip_button')}
             </Button>
           </div>

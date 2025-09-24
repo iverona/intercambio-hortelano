@@ -8,6 +8,7 @@ import { auth } from "@/lib/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 import { Chrome } from "lucide-react";
+import { handleUserRedirect } from "@/lib/authUtils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -35,7 +36,9 @@ export default function LoginPage() {
         );
         return;
       }
-      router.push("/");
+
+      const user = userCredential.user;
+      await handleUserRedirect(user, router);
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
     }

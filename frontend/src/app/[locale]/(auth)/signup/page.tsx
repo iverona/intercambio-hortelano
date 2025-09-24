@@ -45,6 +45,7 @@ export default function SignupPage() {
         uid: user.uid,
         email: user.email,
         name: name,
+        onboardingComplete: false,
       });
       await sendEmailVerification(user);
       setIsSubmitted(true);

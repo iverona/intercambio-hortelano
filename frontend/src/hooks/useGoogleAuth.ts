@@ -5,6 +5,7 @@ import { signInWithPopup } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { handleUserRedirect } from "@/lib/authUtils";
 
 export const useGoogleAuth = () => {
   const router = useRouter();
@@ -21,17 +22,17 @@ export const useGoogleAuth = () => {
       const userDoc = await getDoc(doc(db, "users", user.uid));
       
       if (!userDoc.exists()) {
-        // New user - create user document and redirect to onboarding
+        // New user - create user document
         await setDoc(doc(db, "users", user.uid), {
           uid: user.uid,
           email: user.email,
           name: user.displayName,
+          onboardingComplete: false,
         });
-        router.push("/onboarding");
-      } else {
-        // Existing user - redirect to home
-        router.push("/");
       }
+      
+      // Handle redirect for both new and existing users
+      await handleUserRedirect(user, router);
     } catch (error) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
