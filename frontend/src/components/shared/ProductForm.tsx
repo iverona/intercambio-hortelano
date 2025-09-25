@@ -22,6 +22,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 import { useI18n } from "@/locales/provider";
+import { categories } from "@/lib/categories";
 
 export interface ProductData {
   name: string;
@@ -132,9 +133,11 @@ export default function ProductForm({
                 <SelectValue placeholder={t('product.form.category_placeholder')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="vegetables">{t('product.form.category.vegetables')}</SelectItem>
-                <SelectItem value="fruits">{t('product.form.category.fruits')}</SelectItem>
-                <SelectItem value="handmade">{t('product.form.category.handmade')}</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {t(category.translationKey as any)}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
