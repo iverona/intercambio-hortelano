@@ -16,6 +16,7 @@ import { Slider } from "@/components/ui/slider";
 import { Filter as FilterIcon, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useI18n } from "@/locales/provider";
+import { categories } from "@/lib/categories";
 
 interface FilterProps {
   onFilterChange: (filters: {
@@ -27,13 +28,6 @@ interface FilterProps {
 
 const Filter = ({ onFilterChange }: FilterProps) => {
   const t = useI18n();
-  const categories = [
-    { id: "vegetables", label: t('filter.vegetables'), icon: "🥬" },
-    { id: "fruits", label: t('filter.fruits'), icon: "🍎" },
-    { id: "honey", label: t('filter.honey'), icon: "🍯" },
-    { id: "handicrafts", label: t('filter.handicrafts'), icon: "🎨" },
-    { id: "other", label: t('filter.other'), icon: "📦" },
-  ];
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [distance, setDistance] = useState(100);
   const [isOpen, setIsOpen] = useState(false);
@@ -121,7 +115,7 @@ const Filter = ({ onFilterChange }: FilterProps) => {
                   />
                   <span className="text-2xl select-none">{category.icon}</span>
                   <span className="flex-1 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-colors duration-200">
-                    {category.label}
+                    {t(category.translationKey as any)}
                   </span>
                 </label>
               ))}

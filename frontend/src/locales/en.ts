@@ -91,6 +91,7 @@ export default {
   "product.form.category.vegetables": "Vegetables",
   "product.form.category.fruits": "Fruits",
   "product.form.category.handmade": "Handmade Goods",
+  "product.form.category.services": "Services",
   "product.form.picture_label": "Product Picture",
   "product.form.transaction_type_label": "Transaction Type",
   "product.form.for_exchange_label": "For Exchange",
