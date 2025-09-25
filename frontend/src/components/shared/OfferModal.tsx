@@ -59,6 +59,7 @@ export default function OfferModal({
   const [offerAmount, setOfferAmount] = useState<string>(product.price?.toString() || "");
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen && user) {
@@ -101,6 +102,7 @@ export default function OfferModal({
   };
 
   const handleBack = () => {
+    setError(null);
     if (step === "exchange-details" || step === "purchase-details") {
       setStep("select-type");
       setOfferType(null);
@@ -116,6 +118,12 @@ export default function OfferModal({
   };
 
   const handleConfirm = () => {
+    if (offerType === "purchase" && parseFloat(offerAmount) < 0) {
+      setError(t("offer_modal.purchase_details.error.negative_amount"));
+      setStep("purchase-details");
+      return;
+    }
+
     const offer: {
       type: "exchange" | "purchase" | "chat";
       offeredProductId?: string;
@@ -144,6 +152,7 @@ export default function OfferModal({
     setSelectedProduct(null);
     setOfferAmount(product.price?.toString() || "");
     setMessage("");
+    setError(null);
     onClose();
   };
 
@@ -319,8 +328,19 @@ export default function OfferModal({
                   id="amount"
                   type="number"
                   step="0.01"
+                  min="0"
                   value={offerAmount}
-                  onChange={(e) => setOfferAmount(e.target.value)}
+                  onChange={(e) => {
+                    const newAmount = e.target.value;
+                    setOfferAmount(newAmount);
+                    if (parseFloat(newAmount) < 0) {
+                      setError(
+                        t("offer_modal.purchase_details.error.negative_amount")
+                      );
+                    } else {
+                      setError(null);
+                    }
+                  }}
                   placeholder="0.00"
                 />
                 {product.price && (
@@ -329,6 +349,7 @@ export default function OfferModal({
                   </p>
                 )}
               </div>
+              {error && <p className="text-red-500 text-sm">{error}</p>}
               
               <div>
                 <Label htmlFor="purchase-message">{t('offer_modal.purchase_details.add_message_label')}</Label>
@@ -346,9 +367,9 @@ export default function OfferModal({
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   {t('offer_modal.general.back_button')}
                 </Button>
-                <Button 
-                  onClick={() => setStep("confirmation")} 
-                  disabled={!offerAmount || parseFloat(offerAmount) <= 0}
+                <Button
+                  onClick={() => setStep("confirmation")}
+                  disabled={!offerAmount || parseFloat(offerAmount) < 0}
                   className="flex-1"
                 >
                   {t('offer_modal.purchase_details.continue_button')}

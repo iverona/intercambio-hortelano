@@ -80,6 +80,11 @@ export default function ProductForm({
       return;
     }
 
+    if (isForSale && parseFloat(price) < 0) {
+      setError(t('product.form.error.negative_price'));
+      return;
+    }
+
     onSubmit({
       name,
       description,
@@ -167,9 +172,18 @@ export default function ProductForm({
               <Input
                 id="price"
                 type="number"
+                min="0"
                 placeholder={t('product.form.price_placeholder')}
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
+                onChange={(e) => {
+                  const newPrice = e.target.value;
+                  setPrice(newPrice);
+                  if (parseFloat(newPrice) < 0) {
+                    setError(t("product.form.error.negative_price"));
+                  } else {
+                    setError(null);
+                  }
+                }}
               />
             </div>
           )}

@@ -100,6 +100,7 @@ export default {
   "product.form.error.no_category": "Por favor, selecciona una categoría.",
   "product.form.error.no_transaction_type": "Por favor, selecciona al menos un tipo de transacción.",
   "product.form.error.no_price": "Por favor, introduce un precio para el producto.",
+  "product.form.error.negative_price": "El precio no puede ser un número negativo.",
   "product.form.save_button": "Guardar Cambios",
   "product.form.publish_button": "Publicar Producto",
 
@@ -291,6 +292,7 @@ export default {
   "offer_modal.purchase_details.description": "Especifica la cantidad que te gustaría pagar",
   "offer_modal.purchase_details.amount_label": "Cantidad de la Oferta (€)",
   "offer_modal.purchase_details.listed_price": "Precio de lista: €{price}",
+  "offer_modal.purchase_details.error.negative_amount": "El importe de la oferta no puede ser negativo.",
   "offer_modal.purchase_details.add_message_label": "Añadir un mensaje (opcional)",
   "offer_modal.purchase_details.add_message_placeholder": "Añade cualquier nota sobre tu oferta...",
   "offer_modal.purchase_details.continue_button": "Continuar",
