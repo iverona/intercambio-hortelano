@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -51,7 +52,13 @@ const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href={`/${locale}`} className="text-2xl font-bold text-gray-800">
-          {t('header.title')}
+          <Image
+            src="/header-logo.png"
+            alt="Logo"
+            width={52}
+            height={40}
+            priority
+          />
         </Link>
         <nav className="flex items-center gap-4">
           <div className="relative flex-1 md:grow-0">
