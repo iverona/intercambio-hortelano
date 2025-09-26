@@ -502,18 +502,15 @@ export default function ExchangeDetailsPage() {
                 {exchange.product.images.length > 0 && (
                   <img
                     src={exchange.product.images[0]}
-                    alt={exchange.product.title}
+                    alt={exchange.productName}
                     className="w-full h-48 object-cover rounded-lg mb-3"
                   />
                 )}
                 <p className="text-sm">
-                  <span className="font-medium">Title:</span> {exchange.product.title}
+                  <span className="font-medium">Title:</span> {exchange.productName}
                 </p>
                 <p className="text-sm">
                   <span className="font-medium">Category:</span> {exchange.product.category}
-                </p>
-                <p className="text-sm">
-                  <span className="font-medium">Condition:</span> {exchange.product.condition}
                 </p>
                 <p className="text-sm">
                   <span className="font-medium">Description:</span> {exchange.product.description}
