@@ -255,8 +255,31 @@ export default function Home() {
           .sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity));
       }
 
+      // Apply sorting
+      let sortedData = [...productsData];
+      switch (filters.sortBy) {
+        case "date_newest":
+          sortedData.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+          break;
+        case "date_oldest":
+          sortedData.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+          break;
+        case "price_low_high":
+          sortedData.sort((a, b) => (a.price || 0) - (b.price || 0));
+          break;
+        case "price_high_low":
+          sortedData.sort((a, b) => (b.price || 0) - (a.price || 0));
+          break;
+        case "distance":
+        default:
+          if (userLocation) {
+            sortedData.sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity));
+          }
+          break;
+      }
+
       // Apply filters
-      let filteredData = productsData;
+      let filteredData = sortedData;
       if (filters.categories.length > 0) {
         filteredData = filteredData.filter((product) =>
           filters.categories.includes(product.category)

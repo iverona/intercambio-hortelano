@@ -7,11 +7,13 @@ interface FilterContextType {
     categories: string[];
     distance: number;
     searchTerm: string;
+    sortBy: string;
   };
   setFilters: (filters: {
     categories: string[];
     distance: number;
     searchTerm: string;
+    sortBy: string;
   }) => void;
 }
 
@@ -22,6 +24,7 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
     categories: [] as string[],
     distance: 100,
     searchTerm: "",
+    sortBy: "distance",
   });
 
   return (

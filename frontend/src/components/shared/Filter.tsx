@@ -13,6 +13,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Slider } from "@/components/ui/slider";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Filter as FilterIcon, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useI18n } from "@/locales/provider";
@@ -23,6 +24,7 @@ interface FilterProps {
     categories: string[];
     distance: number;
     searchTerm: string;
+    sortBy: string;
   }) => void;
 }
 
@@ -30,6 +32,7 @@ const Filter = ({ onFilterChange }: FilterProps) => {
   const t = useI18n();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [distance, setDistance] = useState(100);
+  const [sortBy, setSortBy] = useState("distance");
   const [isOpen, setIsOpen] = useState(false);
 
   // Calculate active filters count
@@ -48,6 +51,7 @@ const Filter = ({ onFilterChange }: FilterProps) => {
       categories: selectedCategories,
       distance,
       searchTerm: "", // searchTerm is not modified here
+      sortBy,
     });
     setIsOpen(false);
   };
@@ -55,10 +59,12 @@ const Filter = ({ onFilterChange }: FilterProps) => {
   const handleResetFilters = () => {
     setSelectedCategories([]);
     setDistance(100);
+    setSortBy("distance");
     onFilterChange({
       categories: [],
       distance: 100,
       searchTerm: "", // searchTerm is not modified here
+      sortBy: "distance",
     });
   };
 
@@ -120,6 +126,33 @@ const Filter = ({ onFilterChange }: FilterProps) => {
                 </label>
               ))}
             </div>
+          </div>
+
+          {/* Sort By Section */}
+          <div className="bg-gray-50/50 dark:bg-gray-900/20 rounded-xl p-5 space-y-4 border border-gray-100 dark:border-gray-800">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t('filter.sort_by')}</h3>
+            <RadioGroup value={sortBy} onValueChange={setSortBy}>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="distance" id="distance" />
+                <Label htmlFor="distance">{t('filter.sort_options.distance')}</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="date_newest" id="date_newest" />
+                <Label htmlFor="date_newest">{t('filter.sort_options.date_newest')}</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="date_oldest" id="date_oldest" />
+                <Label htmlFor="date_oldest">{t('filter.sort_options.date_oldest')}</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="price_low_high" id="price_low_high" />
+                <Label htmlFor="price_low_high">{t('filter.sort_options.price_low_high')}</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="price_high_low" id="price_high_low" />
+                <Label htmlFor="price_high_low">{t('filter.sort_options.price_high_low')}</Label>
+              </div>
+            </RadioGroup>
           </div>
 
           {/* Distance Section */}
