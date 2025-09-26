@@ -115,7 +115,7 @@ const Filter = ({ onFilterChange }: FilterProps) => {
                   />
                   <span className="text-2xl select-none">{category.icon}</span>
                   <span className="flex-1 text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 transition-colors duration-200">
-                    {t(category.translationKey as any)}
+                    {(t as any)(category.translationKey)}
                   </span>
                 </label>
               ))}

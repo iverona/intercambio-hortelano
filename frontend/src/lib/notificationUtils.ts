@@ -45,7 +45,7 @@ export const getNotificationDisplay = (
 ): NotificationDisplay => {
   switch (type) {
     case "NEW_OFFER":
-    case "NEW_PROPOSAL": // Handle old type for backward compatibility
+    case "NEW_PROPOSAL": { // Handle old type for backward compatibility
       let offerDescription = t("notifications.new_offer.default");
       let offerIcon = Package;
       
@@ -81,6 +81,7 @@ export const getNotificationDisplay = (
         iconColor: "text-blue-500",
         route: `/exchanges/details/${entityId}`,
       };
+    }
     
     case "OFFER_ACCEPTED":
     case "PROPOSAL_ACCEPTED": // Handle old type for backward compatibility

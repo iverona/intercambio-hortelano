@@ -135,7 +135,7 @@ export default function ProductForm({
               <SelectContent>
                 {categories.map((category) => (
                   <SelectItem key={category.id} value={category.id}>
-                    {t(category.translationKey as any)}
+                    {(t as any)(category.translationKey)}
                   </SelectItem>
                 ))}
               </SelectContent>
