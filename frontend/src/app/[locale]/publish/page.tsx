@@ -262,8 +262,9 @@ export default function PublishPage() {
               </div>
             </div>
 
-            <ProductForm 
+            <ProductForm
               onSubmit={handlePublish}
+              isSubmitting={isPublishing}
             />
             
             {error && <ErrorMessage message={error} />}

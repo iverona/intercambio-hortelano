@@ -31,7 +31,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import imageCompression from "browser-image-compression";
-import { Upload, X } from "lucide-react";
+import { Loader2, Upload, X } from "lucide-react";
 import Image from "next/image";
 
 export interface ProductData {
@@ -58,12 +58,14 @@ interface ProductFormProps {
   onSubmit: (data: ProductSubmitData) => void;
   initialData?: ProductData;
   isEdit?: boolean;
+  isSubmitting?: boolean;
 }
 
 export default function ProductForm({
   onSubmit,
   initialData,
   isEdit = false,
+  isSubmitting = false,
 }: ProductFormProps) {
   const t = useI18n();
   const [name, setName] = useState("");
@@ -74,6 +76,7 @@ export default function ProductForm({
   const [price, setPrice] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [imageSources, setImageSources] = useState<({ type: 'url', value: string } | { type: 'file', value: File, preview: string })[]>([]);
+  const [isCompressing, setIsCompressing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -97,6 +100,7 @@ export default function ProductForm({
       return;
     }
 
+    setIsCompressing(true);
     const newSources: { type: 'file', value: File, preview: string }[] = [];
     for (const file of files) {
       try {
@@ -112,6 +116,7 @@ export default function ProductForm({
       }
     }
     setImageSources([...imageSources, ...newSources]);
+    setIsCompressing(false);
   };
 
   const handleRemoveImage = (index: number) => {
@@ -180,7 +185,7 @@ export default function ProductForm({
               placeholder={t('product.form.name_placeholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
-              disabled={isEdit}
+              disabled={isEdit || isSubmitting}
             />
           </div>
           <div className="grid gap-2">
@@ -190,11 +195,12 @@ export default function ProductForm({
               placeholder={t('product.form.description_placeholder')}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              disabled={isSubmitting}
             />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="category">{t('product.form.category_label')}</Label>
-            <Select onValueChange={setCategory} value={category}>
+            <Select onValueChange={setCategory} value={category} disabled={isSubmitting}>
               <SelectTrigger>
                 <SelectValue placeholder={t('product.form.category_placeholder')} />
               </SelectTrigger>
@@ -228,6 +234,7 @@ export default function ProductForm({
                           size="icon"
                           className="absolute top-2 right-2"
                           onClick={() => handleRemoveImage(index)}
+                          disabled={isSubmitting}
                         >
                           <X className="h-4 w-4" />
                         </Button>
@@ -242,11 +249,15 @@ export default function ProductForm({
             {imageSources.length < 4 && (
               <div
                 className="flex items-center justify-center w-full"
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => !isSubmitting && !isCompressing && fileInputRef.current?.click()}
               >
-                <div className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800">
+                <div className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg ${isSubmitting || isCompressing ? 'cursor-not-allowed bg-gray-100 dark:bg-gray-800' : 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                    {isCompressing ? (
+                      <Loader2 className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400 animate-spin" />
+                    ) : (
+                      <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                    )}
                     <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
                       <span className="font-semibold">
                         {t("product.form.upload_cta")}
@@ -277,6 +288,7 @@ export default function ProductForm({
                 id="exchange"
                 checked={isForExchange}
                 onCheckedChange={(checked) => setIsForExchange(!!checked)}
+                disabled={isSubmitting}
               />
               <Label htmlFor="exchange">{t('product.form.for_exchange_label')}</Label>
             </div>
@@ -290,6 +302,7 @@ export default function ProductForm({
                     setPrice("");
                   }
                 }}
+                disabled={isSubmitting}
               />
               <Label htmlFor="sale">{t('product.form.for_sale_label')}</Label>
             </div>
@@ -312,6 +325,7 @@ export default function ProductForm({
                     setError(null);
                   }
                 }}
+                disabled={isSubmitting}
               />
             </div>
           )}
@@ -319,7 +333,8 @@ export default function ProductForm({
         </form>
       </CardContent>
       <CardFooter>
-        <Button onClick={handleSubmit} className="w-full">
+        <Button onClick={handleSubmit} className="w-full" disabled={isSubmitting}>
+          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {isEdit ? t('product.form.save_button') : t('product.form.publish_button')}
         </Button>
       </CardFooter>
