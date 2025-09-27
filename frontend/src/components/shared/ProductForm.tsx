@@ -20,9 +20,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useI18n } from "@/locales/provider";
 import { categories } from "@/lib/categories";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import imageCompression from "browser-image-compression";
+import { Upload, X } from "lucide-react";
+import Image from "next/image";
 
 export interface ProductData {
   name: string;
@@ -30,10 +40,22 @@ export interface ProductData {
   category: string;
   isForExchange: boolean;
   price: number | null;
+  images: File[];
+  imageUrls?: string[];
+}
+
+export interface ProductSubmitData {
+  name: string;
+  description: string;
+  category: string;
+  isForExchange: boolean;
+  price: number | null;
+  newImages: File[];
+  retainedImageUrls: string[];
 }
 
 interface ProductFormProps {
-  onSubmit: (data: ProductData) => void;
+  onSubmit: (data: ProductSubmitData) => void;
   initialData?: ProductData;
   isEdit?: boolean;
 }
@@ -51,6 +73,8 @@ export default function ProductForm({
   const [isForSale, setIsForSale] = useState(false);
   const [price, setPrice] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [imageSources, setImageSources] = useState<({ type: 'url', value: string } | { type: 'file', value: File, preview: string })[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (initialData) {
@@ -60,8 +84,41 @@ export default function ProductForm({
       setIsForExchange(initialData.isForExchange || false);
       setIsForSale(!!initialData.price);
       setPrice(initialData.price ? initialData.price.toString() : "");
+      if (initialData.imageUrls) {
+        setImageSources(initialData.imageUrls.map(url => ({ type: 'url', value: url })));
+      }
     }
   }, [initialData]);
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (imageSources.length + files.length > 4) {
+      setError(t("product.form.error.max_images"));
+      return;
+    }
+
+    const newSources: { type: 'file', value: File, preview: string }[] = [];
+    for (const file of files) {
+      try {
+        const compressedFile = await imageCompression(file, {
+          maxSizeMB: 1,
+          maxWidthOrHeight: 1920,
+          useWebWorker: true,
+        });
+        newSources.push({ type: 'file', value: compressedFile, preview: URL.createObjectURL(compressedFile) });
+      } catch (error) {
+        console.error("Error compressing image:", error);
+        setError(t("product.form.error.image_compression"));
+      }
+    }
+    setImageSources([...imageSources, ...newSources]);
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const newImageSources = [...imageSources];
+    newImageSources.splice(index, 1);
+    setImageSources(newImageSources);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,12 +143,21 @@ export default function ProductForm({
       return;
     }
 
+    const newImages = imageSources
+      .filter((s) => s.type === "file")
+      .map((s) => (s as { type: "file"; value: File }).value);
+    const retainedImageUrls = imageSources
+      .filter((s) => s.type === "url")
+      .map((s) => (s as { type: "url"; value: string }).value);
+
     onSubmit({
       name,
       description,
       category,
       isForExchange,
       price: isForSale ? parseFloat(price) : null,
+      newImages,
+      retainedImageUrls,
     });
   };
 
@@ -142,8 +208,67 @@ export default function ProductForm({
             </Select>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="picture">{t('product.form.picture_label')}</Label>
-            <Input id="picture" type="file" />
+            <Label htmlFor="picture">{t("product.form.picture_label")}</Label>
+            {imageSources.length > 0 && (
+              <Carousel className="w-full max-w-xs mx-auto">
+                <CarouselContent>
+                  {imageSources.map((source, index) => (
+                    <CarouselItem key={index}>
+                      <div className="relative">
+                        <Image
+                          src={source.type === 'url' ? source.value : source.preview}
+                          alt={`Preview ${index + 1}`}
+                          width={300}
+                          height={300}
+                          className="object-cover rounded-lg"
+                        />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-2 right-2"
+                          onClick={() => handleRemoveImage(index)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+            )}
+            {imageSources.length < 4 && (
+              <div
+                className="flex items-center justify-center w-full"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <div className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
+                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                      <span className="font-semibold">
+                        {t("product.form.upload_cta")}
+                      </span>{" "}
+                      {t("product.form.upload_drag_drop")}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {t("product.form.upload_restrictions")}
+                    </p>
+                  </div>
+                  <Input
+                    id="picture"
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                    ref={fileInputRef}
+                  />
+                </div>
+              </div>
+            )}
           </div>
           <div className="grid gap-2">
             <Label>{t('product.form.transaction_type_label')}</Label>

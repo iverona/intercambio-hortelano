@@ -1,9 +1,10 @@
 "use client";
 
-import ProductForm from "@/components/shared/ProductForm";
+import ProductForm, { ProductSubmitData } from "@/components/shared/ProductForm";
 import { useAuth } from "@/context/AuthContext";
-import { db } from "@/lib/firebase";
+import { db, storage } from "@/lib/firebase";
 import { addDoc, collection, doc, getDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -163,16 +164,9 @@ export default function PublishPage() {
     }
   }, [user, loading, router]);
 
-  const handlePublish = async (data: {
-    name: string;
-    description: string;
-    category: string;
-    imageUrl?: string;
-    isForExchange?: boolean;
-    price?: number | null;
-  }) => {
+  const handlePublish = async (data: ProductSubmitData) => {
     if (!user) {
-      setError(t('publish.error.must_be_logged_in'));
+      setError(t("publish.error.must_be_logged_in"));
       return;
     }
 
@@ -180,17 +174,30 @@ export default function PublishPage() {
     setError(null);
 
     try {
+      const imageUrls = await Promise.all(
+        data.newImages.map(async (image) => {
+          const storageRef = ref(storage, `products/${user.uid}/${Date.now()}_${image.name}`);
+          await uploadBytes(storageRef, image);
+          return await getDownloadURL(storageRef);
+        })
+      );
+
       const userRef = doc(db, "users", user.uid);
       const userDoc = await getDoc(userRef);
       const userData = userDoc.data();
 
       await addDoc(collection(db, "products"), {
-        ...data,
+        name: data.name,
+        description: data.description,
+        category: data.category,
+        isForExchange: data.isForExchange,
+        price: data.price,
+        imageUrls,
         userId: user.uid,
         location: userData?.location || null,
         createdAt: new Date(),
       });
-      
+
       setShowSuccess(true);
       setTimeout(() => {
         router.push("/");

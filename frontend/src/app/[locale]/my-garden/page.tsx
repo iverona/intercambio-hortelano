@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { db } from "@/lib/firebase";
+import { db, storage } from "@/lib/firebase";
 import {
   collection,
   query,
@@ -10,7 +10,9 @@ import {
   onSnapshot,
   deleteDoc,
   doc,
+  getDoc,
 } from "firebase/firestore";
+import { deleteObject, ref } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProductCard from "@/components/shared/ProductCard";
@@ -34,7 +36,7 @@ interface Product {
   id: string;
   name: string;
   description: string;
-  imageUrl: string;
+  imageUrls: string[];
   createdAt?: {
     seconds: number;
     nanoseconds: number;
@@ -128,8 +130,25 @@ export default function MyGardenPage() {
   }, [user, loading, router]);
 
   const handleDelete = async (id: string) => {
-    if (confirm(t('my_garden.delete_confirm'))) {
-      await deleteDoc(doc(db, "products", id));
+    if (confirm(t("my_garden.delete_confirm"))) {
+      try {
+        const productRef = doc(db, "products", id);
+        const productSnap = await getDoc(productRef);
+        if (productSnap.exists()) {
+          const productData = productSnap.data() as Product;
+          if (productData.imageUrls && productData.imageUrls.length > 0) {
+            await Promise.all(
+              productData.imageUrls.map((url) => {
+                const imageRef = ref(storage, url);
+                return deleteObject(imageRef);
+              })
+            );
+          }
+        }
+        await deleteDoc(productRef);
+      } catch (error) {
+        console.error("Error deleting product:", error);
+      }
     }
   };
 

@@ -9,7 +9,7 @@ interface ProductCardProps {
     id: string;
     name: string;
     description: string;
-    imageUrl: string;
+    imageUrls: string[];
     isForExchange?: boolean;
     price?: number;
     distance?: number;
@@ -105,7 +105,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Product image */}
         <img
-          src={product.imageUrl || `https://placehold.co/400x300/EEE/31343C?text=${encodeURIComponent(product.name)}`}
+          src={product.imageUrls?.[0] || `https://placehold.co/400x300/EEE/31343C?text=${encodeURIComponent(product.name)}`}
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />

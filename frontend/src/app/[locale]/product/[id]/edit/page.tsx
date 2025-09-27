@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, storage } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
-import ProductForm, { ProductData } from "@/components/shared/ProductForm";
+import ProductForm, { ProductData, ProductSubmitData } from "@/components/shared/ProductForm";
 import { useI18n } from "@/locales/provider";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export default function EditProductPage() {
   const t = useI18n();
@@ -36,11 +37,38 @@ export default function EditProductPage() {
     }
   }, [id, user, loading, router]);
 
-  const handleSubmit = async (data: ProductData) => {
-    if (id) {
+  const handleSubmit = async (data: ProductSubmitData) => {
+    if (id && product) {
       const docRef = doc(db, "products", id as string);
-      await updateDoc(docRef, { ...data });
-      router.push("/profile");
+
+      const originalUrls = product.imageUrls || [];
+      const retainedUrls = data.retainedImageUrls;
+      const urlsToDelete = originalUrls.filter(url => !retainedUrls.includes(url));
+
+      await Promise.all(urlsToDelete.map(url => {
+        const imageRef = ref(storage, url);
+        return deleteObject(imageRef);
+      }));
+
+      const newImageUrls = await Promise.all(
+        data.newImages.map(async (image) => {
+          const storageRef = ref(storage, `products/${user?.uid}/${Date.now()}_${image.name}`);
+          await uploadBytes(storageRef, image);
+          return await getDownloadURL(storageRef);
+        })
+      );
+
+      const finalImageUrls = [...retainedUrls, ...newImageUrls];
+
+      await updateDoc(docRef, {
+        name: data.name,
+        description: data.description,
+        category: data.category,
+        isForExchange: data.isForExchange,
+        price: data.price,
+        imageUrls: finalImageUrls,
+      });
+      router.push("/my-garden");
     }
   };
 

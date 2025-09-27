@@ -4,6 +4,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Image from "next/image";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -40,7 +48,7 @@ interface Chat {
 interface Product {
   name: string;
   description: string;
-  imageUrl: string;
+  imageUrls: string[];
   userId: string;
   isForExchange?: boolean;
   price?: number;
@@ -193,13 +201,30 @@ export default function ProductDetailPage() {
     <main className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
-          <img
-            src={`https://placehold.co/600x400/EEE/31343C?text=${encodeURIComponent(
-              product.name
-            )}`}
-            alt={product.name}
-            className="w-full rounded-lg shadow-md"
-          />
+          {product.imageUrls && product.imageUrls.length > 0 ? (
+            <Carousel className="w-full rounded-lg overflow-hidden shadow-md">
+              <CarouselContent>
+                {product.imageUrls.map((url, index) => (
+                  <CarouselItem key={index}>
+                    <div className="aspect-square relative">
+                      <Image
+                        src={url}
+                        alt={`${product.name} - image ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="absolute left-4" />
+              <CarouselNext className="absolute right-4" />
+            </Carousel>
+          ) : (
+            <div className="aspect-square bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
+              <span className="text-gray-500">{product.name}</span>
+            </div>
+          )}
         </div>
         <div>
           <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
@@ -257,7 +282,7 @@ export default function ProductDetailPage() {
             id,
             name: product.name,
             description: product.description,
-            imageUrl: product.imageUrl,
+            imageUrls: product.imageUrls,
             isForExchange: product.isForExchange,
             price: product.price,
           }}

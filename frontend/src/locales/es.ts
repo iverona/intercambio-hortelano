@@ -102,6 +102,11 @@ export default {
   "product.form.error.no_transaction_type": "Por favor, selecciona al menos un tipo de transacción.",
   "product.form.error.no_price": "Por favor, introduce un precio para el producto.",
   "product.form.error.negative_price": "El precio no puede ser un número negativo.",
+  "product.form.error.max_images": "Puedes subir un máximo de 4 imágenes.",
+  "product.form.error.image_compression": "Hubo un error al comprimir una imagen.",
+  "product.form.upload_cta": "Haz clic para subir",
+  "product.form.upload_drag_drop": "o arrastra y suelta",
+  "product.form.upload_restrictions": "SVG, PNG, JPG o GIF (MÁX. 800x400px)",
   "product.form.save_button": "Guardar Cambios",
   "product.form.publish_button": "Publicar Producto",
 
