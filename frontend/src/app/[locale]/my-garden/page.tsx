@@ -137,12 +137,22 @@ export default function MyGardenPage() {
         if (productSnap.exists()) {
           const productData = productSnap.data() as Product;
           if (productData.imageUrls && productData.imageUrls.length > 0) {
-            await Promise.all(
-              productData.imageUrls.map((url) => {
-                const imageRef = ref(storage, url);
-                return deleteObject(imageRef);
-              })
-            );
+            const deletePromises = productData.imageUrls.map((url) => {
+              // Extract the path from the URL
+              const imagePath = url.split("/o/")[1].split("?")[0];
+              const decodedPath = decodeURIComponent(imagePath);
+              const imageRef = ref(storage, decodedPath);
+              return deleteObject(imageRef).catch((error) => {
+                // If the image doesn't exist, we can ignore the error
+                if (error.code === "storage/object-not-found") {
+                  console.log(`Image not found, skipping deletion: ${url}`);
+                } else {
+                  // For other errors, we might want to throw them to stop the process
+                  throw error;
+                }
+              });
+            });
+            await Promise.all(deletePromises);
           }
         }
         await deleteDoc(productRef);
