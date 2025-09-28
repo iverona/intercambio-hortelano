@@ -24,7 +24,7 @@ interface Product {
   id: string;
   name: string;
   description: string;
-  imageUrl?: string;
+  imageUrls?: string[];
   isForExchange?: boolean;
   price?: number;
 }

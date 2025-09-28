@@ -102,6 +102,11 @@ export default {
   "product.form.error.no_transaction_type": "Please select at least one transaction type.",
   "product.form.error.no_price": "Please enter a price for the product.",
   "product.form.error.negative_price": "Price cannot be a negative number.",
+  "product.form.error.max_images": "You can upload a maximum of 4 images.",
+  "product.form.error.image_compression": "There was an error compressing an image.",
+  "product.form.upload_cta": "Click to upload",
+  "product.form.upload_drag_drop": "or drag and drop",
+  "product.form.upload_restrictions": "SVG, PNG, JPG or GIF (MAX. 800x400px)",
   "product.form.save_button": "Save Changes",
   "product.form.publish_button": "Publish Product",
 

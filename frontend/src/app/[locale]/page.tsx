@@ -27,7 +27,7 @@ interface Product {
   id: string;
   name: string;
   description: string;
-  imageUrl: string;
+  imageUrls: string[];
   category: string;
   isForExchange?: boolean;
   price?: number;
@@ -233,10 +233,14 @@ export default function Home() {
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
-      let productsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Product[];
+      let productsData = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          imageUrls: data.imageUrls || [data.imageUrl],
+        };
+      }) as Product[];
 
       if (userLocation) {
         productsData = productsData

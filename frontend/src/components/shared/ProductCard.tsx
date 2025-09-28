@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,7 +10,7 @@ interface ProductCardProps {
     id: string;
     name: string;
     description: string;
-    imageUrl: string;
+    imageUrls: string[];
     isForExchange?: boolean;
     price?: number;
     distance?: number;
@@ -104,10 +105,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
 
         {/* Product image */}
-        <img
-          src={product.imageUrl || `https://placehold.co/400x300/EEE/31343C?text=${encodeURIComponent(product.name)}`}
+        <Image
+          src={product.imageUrls?.[0] || `https://placehold.co/400x300/EEE/31343C?text=${encodeURIComponent(product.name)}`}
           alt={product.name}
+          fill={true}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+          placeholder="blur"
+          blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
         />
       </div>
 
