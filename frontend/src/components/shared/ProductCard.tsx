@@ -106,7 +106,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Product image */}
         <Image
-          src={product.imageUrls?.[0] || `https://placehold.co/400x300/EEE/31343C?text=${encodeURIComponent(product.name)}`}
+          src={product.imageUrls?.[0] || `https://placehold.co/400x300/EEE/31343C.png?text=${encodeURIComponent(product.name)}`}
           alt={product.name}
           fill={true}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
