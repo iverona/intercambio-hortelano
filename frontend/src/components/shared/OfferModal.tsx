@@ -26,7 +26,7 @@ interface Product {
   description: string;
   imageUrls?: string[];
   isForExchange?: boolean;
-  price?: number;
+  isForSale?: boolean;
 }
 
 interface OfferModalProps {
@@ -56,7 +56,7 @@ export default function OfferModal({
   const [offerType, setOfferType] = useState<"exchange" | "purchase" | "chat" | null>(null);
   const [userProducts, setUserProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [offerAmount, setOfferAmount] = useState<string>(product.price?.toString() || "");
+  const [offerAmount, setOfferAmount] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -150,7 +150,7 @@ export default function OfferModal({
     setStep("select-type");
     setOfferType(null);
     setSelectedProduct(null);
-    setOfferAmount(product.price?.toString() || "");
+    setOfferAmount("");
     setMessage("");
     setError(null);
     onClose();
@@ -188,7 +188,7 @@ export default function OfferModal({
                 </Card>
               )}
               
-              {product.price && (
+              {product.isForSale && (
                 <Card
                   className="p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   onClick={() => handleTypeSelection("purchase")}
@@ -200,7 +200,7 @@ export default function OfferModal({
                     <div className="flex-1">
                       <h3 className="font-semibold">{t('offer_modal.select_type.purchase_title')}</h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {t('offer_modal.select_type.purchase_description', { price: product.price.toFixed(2) })}
+                        {t('offer_modal.select_type.purchase_description')}
                       </p>
                     </div>
                     <ArrowRight className="w-5 h-5 text-gray-400" />
@@ -343,11 +343,6 @@ export default function OfferModal({
                   }}
                   placeholder="0.00"
                 />
-                {product.price && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {t('offer_modal.purchase_details.listed_price', { price: product.price.toFixed(2) })}
-                  </p>
-                )}
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}
               

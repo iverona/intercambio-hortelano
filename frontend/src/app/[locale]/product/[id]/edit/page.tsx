@@ -65,7 +65,7 @@ export default function EditProductPage() {
         description: data.description,
         category: data.category,
         isForExchange: data.isForExchange,
-        price: data.price,
+        isForSale: data.isForSale,
         imageUrls: finalImageUrls,
       });
       router.push("/my-garden");

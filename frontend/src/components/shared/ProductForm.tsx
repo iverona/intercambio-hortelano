@@ -39,7 +39,7 @@ export interface ProductData {
   description: string;
   category: string;
   isForExchange: boolean;
-  price: number | null;
+  isForSale: boolean;
   images: File[];
   imageUrls?: string[];
 }
@@ -49,7 +49,7 @@ export interface ProductSubmitData {
   description: string;
   category: string;
   isForExchange: boolean;
-  price: number | null;
+  isForSale: boolean;
   newImages: File[];
   retainedImageUrls: string[];
 }
@@ -73,7 +73,6 @@ export default function ProductForm({
   const [category, setCategory] = useState("");
   const [isForExchange, setIsForExchange] = useState(false);
   const [isForSale, setIsForSale] = useState(false);
-  const [price, setPrice] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [imageSources, setImageSources] = useState<({ type: 'url', value: string } | { type: 'file', value: File, preview: string })[]>([]);
   const [isCompressing, setIsCompressing] = useState(false);
@@ -85,8 +84,7 @@ export default function ProductForm({
       setDescription(initialData.description || "");
       setCategory(initialData.category || "");
       setIsForExchange(initialData.isForExchange || false);
-      setIsForSale(!!initialData.price);
-      setPrice(initialData.price ? initialData.price.toString() : "");
+      setIsForSale(initialData.isForSale || false);
       if (initialData.imageUrls) {
         setImageSources(initialData.imageUrls.map(url => ({ type: 'url', value: url })));
       }
@@ -138,16 +136,6 @@ export default function ProductForm({
       return;
     }
 
-    if (isForSale && !price) {
-      setError(t('product.form.error.no_price'));
-      return;
-    }
-
-    if (isForSale && parseFloat(price) < 0) {
-      setError(t('product.form.error.negative_price'));
-      return;
-    }
-
     const newImages = imageSources
       .filter((s) => s.type === "file")
       .map((s) => (s as { type: "file"; value: File }).value);
@@ -160,7 +148,7 @@ export default function ProductForm({
       description,
       category,
       isForExchange,
-      price: isForSale ? parseFloat(price) : null,
+      isForSale,
       newImages,
       retainedImageUrls,
     });
@@ -296,39 +284,12 @@ export default function ProductForm({
               <Checkbox
                 id="sale"
                 checked={isForSale}
-                onCheckedChange={(checked) => {
-                  setIsForSale(!!checked);
-                  if (!checked) {
-                    setPrice("");
-                  }
-                }}
+                onCheckedChange={(checked) => setIsForSale(!!checked)}
                 disabled={isSubmitting}
               />
               <Label htmlFor="sale">{t('product.form.for_sale_label')}</Label>
             </div>
           </div>
-          {isForSale && (
-            <div className="grid gap-2">
-              <Label htmlFor="price">{t('product.form.price_label')}</Label>
-              <Input
-                id="price"
-                type="number"
-                min="0"
-                placeholder={t('product.form.price_placeholder')}
-                value={price}
-                onChange={(e) => {
-                  const newPrice = e.target.value;
-                  setPrice(newPrice);
-                  if (parseFloat(newPrice) < 0) {
-                    setError(t("product.form.error.negative_price"));
-                  } else {
-                    setError(null);
-                  }
-                }}
-                disabled={isSubmitting}
-              />
-            </div>
-          )}
           {error && <p className="text-red-500 text-sm">{error}</p>}
         </form>
       </CardContent>

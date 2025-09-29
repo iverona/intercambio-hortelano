@@ -30,7 +30,7 @@ interface Product {
   imageUrls: string[];
   category: string;
   isForExchange?: boolean;
-  price?: number;
+  isForSale?: boolean;
   location?: {
     latitude: number;
     longitude: number;
@@ -267,12 +267,6 @@ export default function Home() {
           break;
         case "date_oldest":
           sortedData.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
-          break;
-        case "price_low_high":
-          sortedData.sort((a, b) => (a.price || 0) - (b.price || 0));
-          break;
-        case "price_high_low":
-          sortedData.sort((a, b) => (b.price || 0) - (a.price || 0));
           break;
         case "distance":
         default:

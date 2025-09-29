@@ -51,7 +51,7 @@ interface Product {
   imageUrls: string[];
   userId: string;
   isForExchange?: boolean;
-  price?: number;
+  isForSale?: boolean;
 }
 
 interface User {
@@ -232,8 +232,8 @@ export default function ProductDetailPage() {
             {product.isForExchange && (
               <Badge variant="secondary">{t('product.for_exchange')}</Badge>
             )}
-            {product.price && (
-              <Badge variant="default">${product.price.toFixed(2)}</Badge>
+            {product.isForSale && (
+              <Badge variant="default">{t('product.form.for_sale_label')}</Badge>
             )}
           </div>
           <p className="text-gray-600 mb-4">{product.description}</p>
@@ -284,7 +284,7 @@ export default function ProductDetailPage() {
             description: product.description,
             imageUrls: product.imageUrls,
             isForExchange: product.isForExchange,
-            price: product.price,
+            isForSale: product.isForSale,
           }}
           onOfferSubmit={handleOfferSubmit}
         />

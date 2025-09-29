@@ -191,7 +191,7 @@ export default function PublishPage() {
         description: data.description,
         category: data.category,
         isForExchange: data.isForExchange,
-        price: data.price,
+        isForSale: data.isForSale,
         imageUrls,
         userId: user.uid,
         location: userData?.location || null,

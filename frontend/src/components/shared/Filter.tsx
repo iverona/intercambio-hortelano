@@ -199,8 +199,6 @@ const Filter = ({ onFilterChange }: FilterProps) => {
                 { value: 'distance', label: t('filter.sort_options.distance') },
                 { value: 'date_newest', label: t('filter.sort_options.date_newest') },
                 { value: 'date_oldest', label: t('filter.sort_options.date_oldest') },
-                { value: 'price_low_high', label: t('filter.sort_options.price_low_high') },
-                { value: 'price_high_low', label: t('filter.sort_options.price_high_low') },
               ].map(option => (
                 <div key={option.value}>
                   <RadioGroupItem value={option.value} id={option.value} className="sr-only" />

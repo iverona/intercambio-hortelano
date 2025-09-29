@@ -1,5 +1,6 @@
 import Image from "next/image";
 import React from "react";
+import { useI18n } from "@/locales/provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,7 +13,7 @@ interface ProductCardProps {
     description: string;
     imageUrls: string[];
     isForExchange?: boolean;
-    price?: number;
+    isForSale?: boolean;
     distance?: number;
     category?: string;
     createdAt?: {
@@ -29,6 +30,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const t = useI18n();
   // Category colors mapping
   const getCategoryColor = (category?: string) => {
     const colors: { [key: string]: string } = {
@@ -96,10 +98,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
               Exchange
             </Badge>
           )}
-          {product.price && (
+          {product.isForSale && (
             <Badge className="bg-blue-500/90 text-white border-0 shadow-lg backdrop-blur-sm">
-              <DollarSign className="w-3 h-3" />
-              {product.price.toFixed(2)}
+              <DollarSign className="w-3 h-3 mr-1" />
+              {t('product.form.for_sale_label')}
             </Badge>
           )}
         </div>

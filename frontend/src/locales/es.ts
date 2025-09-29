@@ -287,7 +287,7 @@ export default {
   "offer_modal.select_type.exchange_title": "Proponer un Intercambio",
   "offer_modal.select_type.exchange_description": "Intercambia uno de tus artículos",
   "offer_modal.select_type.purchase_title": "Ofrecer Pago",
-  "offer_modal.select_type.purchase_description": "Pagar €{price}",
+  "offer_modal.select_type.purchase_description": "Ofrecer un precio por el producto",
   "offer_modal.select_type.chat_title": "Solo Chatear",
   "offer_modal.select_type.chat_description": "Discutir otros arreglos",
 

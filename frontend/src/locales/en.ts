@@ -287,7 +287,7 @@ export default {
   "offer_modal.select_type.exchange_title": "Propose an Exchange",
   "offer_modal.select_type.exchange_description": "Trade one of your items",
   "offer_modal.select_type.purchase_title": "Offer Payment",
-  "offer_modal.select_type.purchase_description": "Pay €{price}",
+  "offer_modal.select_type.purchase_description": "Offer a price for the product",
   "offer_modal.select_type.chat_title": "Just Chat",
   "offer_modal.select_type.chat_description": "Discuss other arrangements",
 
