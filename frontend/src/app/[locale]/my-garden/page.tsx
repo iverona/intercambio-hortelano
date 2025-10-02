@@ -32,6 +32,8 @@ import {
   Leaf,
 } from "lucide-react";
 import { useI18n } from "@/locales/provider";
+import { StatsCard } from "@/components/shared/StatsCard";
+import { EmptyState } from "@/components/shared/EmptyState";
 
 interface Product {
   id: string;
@@ -43,46 +45,6 @@ interface Product {
     nanoseconds: number;
   };
 }
-
-// Stats card component
-const StatsCard = ({ icon: Icon, label, value, color }: {
-  icon: React.ElementType;
-  label: string;
-  value: number | string;
-  color: string;
-}) => (
-  <Card className="p-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
-    <div className="flex items-center gap-4">
-      <div className={`p-3 ${color} rounded-xl shadow-md group-hover:scale-110 transition-transform`}>
-        <Icon className="w-6 h-6 text-white" />
-      </div>
-      <div>
-        <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{value}</p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">{label}</p>
-      </div>
-    </div>
-  </Card>
-);
-
-// Empty state component
-const EmptyState = ({ icon: Icon, title, description, action }: {
-  icon: React.ElementType;
-  title: string;
-  description: string;
-  action?: React.ReactNode;
-}) => (
-  <Card className="p-12 text-center bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border-dashed border-2 shadow-lg">
-    <div className="flex flex-col items-center">
-      <div className="relative">
-        <div className="absolute inset-0 bg-green-200 dark:bg-green-800 rounded-full blur-2xl opacity-30 animate-pulse"></div>
-        <Icon className="w-20 h-20 text-gray-400 dark:text-gray-600 relative z-10" />
-      </div>
-      <h3 className="mt-6 text-xl font-bold text-gray-900 dark:text-gray-100">{title}</h3>
-      <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 max-w-sm leading-relaxed">{description}</p>
-      {action && <div className="mt-6">{action}</div>}
-    </div>
-  </Card>
-);
 
 // Loading skeleton component
 const ProductGridSkeleton = () => (

@@ -31,12 +31,14 @@ import {
   ArrowLeft,
   Clock,
   Send,
+  ChevronRight,
 } from "lucide-react";
 import { createNotification, NotificationType } from "@/lib/notifications";
 import { useI18n } from "@/locales/provider";
 import { toast } from "sonner";
 import { ReviewSection, Review } from "@/components/shared/ReviewSection";
 import { submitReview } from "@/lib/reviewHelpers";
+import Link from "next/link";
 
 interface Message {
   id: string;
@@ -460,15 +462,64 @@ export default function ExchangeDetailsPage() {
   const partner = isOwner ? exchange.requester : exchange.owner;
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-blue-950 dark:to-purple-950">
-      {/* Animated background blobs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 dark:bg-purple-900 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-70 animate-blob"></div>
-        <div className="absolute top-0 -right-4 w-72 h-72 bg-blue-300 dark:bg-blue-900 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 dark:bg-pink-900 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
+      {/* Breadcrumb Navigation */}
+      <div className="border-b bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+            <Link href="/" className="hover:text-primary transition-colors">
+              Home
+            </Link>
+            <ChevronRight className="w-4 h-4" />
+            <Link href="/exchanges" className="hover:text-primary transition-colors">
+              Exchanges
+            </Link>
+            <ChevronRight className="w-4 h-4" />
+            <span className="text-gray-900 dark:text-gray-100 font-medium truncate max-w-[200px]">
+              {exchange.productName}
+            </span>
+          </div>
+        </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 relative">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-purple-950/20 border-b">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        </div>
+
+        <div className="relative container mx-auto px-4 py-8">
+          <div className="max-w-2xl mx-auto">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl shadow-lg">
+                {getOfferTypeIcon(exchange.offer?.type)}
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                  {exchange.productName}
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-1">
+                  {isOwner ? `Request from ${partner?.name}` : `Your request to ${partner?.name}`}
+                </p>
+              </div>
+            </div>
+            
+            {/* Status Badge */}
+            <div className="flex items-center gap-2">
+              <Badge className={`${getStatusColor(exchange.status)} border-0 shadow-md`}>
+                {exchange.status.charAt(0).toUpperCase() + exchange.status.slice(1)}
+              </Badge>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {formatDate(exchange.createdAt)}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
           {/* Back button */}
           <Button

@@ -35,6 +35,8 @@ import {
   Leaf,
 } from "lucide-react";
 import { useI18n } from "@/locales/provider";
+import { StatsCard } from "@/components/shared/StatsCard";
+import { EmptyState } from "@/components/shared/EmptyState";
 
 interface Exchange {
   id: string;
@@ -64,46 +66,6 @@ interface Exchange {
     avatarUrl: string;
   };
 }
-
-// Stats card component
-const StatsCard = ({ icon: Icon, label, value, color }: {
-  icon: React.ElementType;
-  label: string;
-  value: number | string;
-  color: string;
-}) => (
-  <Card className="p-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 group">
-    <div className="flex items-center gap-4">
-      <div className={`p-3 ${color} rounded-xl shadow-md group-hover:scale-110 transition-transform`}>
-        <Icon className="w-6 h-6 text-white" />
-      </div>
-      <div>
-        <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">{value}</p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">{label}</p>
-      </div>
-    </div>
-  </Card>
-);
-
-// Empty state component
-const EmptyState = ({ icon: Icon, title, description, action }: {
-  icon: React.ElementType;
-  title: string;
-  description: string;
-  action?: React.ReactNode;
-}) => (
-  <Card className="p-12 text-center bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border-dashed border-2 shadow-lg">
-    <div className="flex flex-col items-center">
-      <div className="relative">
-        <div className="absolute inset-0 bg-blue-200 dark:bg-blue-800 rounded-full blur-2xl opacity-30 animate-pulse"></div>
-        <Icon className="w-20 h-20 text-gray-400 dark:text-gray-600 relative z-10" />
-      </div>
-      <h3 className="mt-6 text-xl font-bold text-gray-900 dark:text-gray-100">{title}</h3>
-      <p className="mt-3 text-sm text-gray-600 dark:text-gray-400 max-w-sm leading-relaxed">{description}</p>
-      {action && <div className="mt-6">{action}</div>}
-    </div>
-  </Card>
-);
 
 // Exchange item component
 const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () => void }) => {
@@ -369,23 +331,23 @@ export default function ExchangesPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
       {/* Hero Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-purple-950/20 border-b">
+      <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950/20 dark:via-emerald-950/20 dark:to-teal-950/20 border-b">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-40 left-1/2 w-80 h-80 bg-indigo-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+          <div className="absolute top-40 left-1/2 w-80 h-80 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
 
         <div className="relative container mx-auto px-4 py-12">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center justify-between mb-8">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl shadow-lg">
+                <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl shadow-lg">
                   <ArrowRightLeft className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                  <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
                     {t('exchanges.title')}
                   </h1>
                   <p className="text-gray-600 dark:text-gray-400 mt-1">
@@ -549,9 +511,9 @@ export default function ExchangesPage() {
 
           {/* Tips Section */}
           {exchanges.length > 0 && (
-            <Card className="mt-8 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800 shadow-lg">
+            <Card className="mt-8 p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800 shadow-lg">
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg shadow-md">
+                <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg shadow-md">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
@@ -560,19 +522,19 @@ export default function ExchangesPage() {
               </div>
               <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-500 mt-0.5">•</span>
+                  <span className="text-green-500 mt-0.5">•</span>
                   <span>{t('exchanges.tips.item1')}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-500 mt-0.5">•</span>
+                  <span className="text-green-500 mt-0.5">•</span>
                   <span>{t('exchanges.tips.item2')}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-500 mt-0.5">•</span>
+                  <span className="text-green-500 mt-0.5">•</span>
                   <span>{t('exchanges.tips.item3')}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-blue-500 mt-0.5">•</span>
+                  <span className="text-green-500 mt-0.5">•</span>
                   <span>{t('exchanges.tips.item4')}</span>
                 </li>
               </ul>

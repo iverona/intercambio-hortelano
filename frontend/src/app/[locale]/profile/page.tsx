@@ -248,21 +248,22 @@ export default function ProfilePage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
       {/* Hero Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-purple-950/20 border-b">
+      <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950/20 dark:via-emerald-950/20 dark:to-teal-950/20 border-b">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+          <div className="absolute top-40 left-1/2 w-80 h-80 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
 
         <div className="relative container mx-auto px-4 py-12">
           <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl shadow-lg">
+              <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl shadow-lg">
                 <UserIcon className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
                   {t('profile.title')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1">
@@ -274,9 +275,9 @@ export default function ProfilePage() {
             {/* Profile Card in Header */}
             <Card className="p-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-2xl">
               <div className="flex items-start gap-6">
-                <Avatar className="h-28 w-28 border-4 border-white dark:border-gray-700 shadow-xl ring-4 ring-blue-100 dark:ring-blue-900">
+                <Avatar className="h-28 w-28 border-4 border-white dark:border-gray-700 shadow-xl ring-4 ring-green-100 dark:ring-green-900">
                   <AvatarImage src={userData.avatarUrl} alt={userData.name} />
-                  <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-blue-500 to-indigo-500 text-white">
+                  <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-green-500 to-emerald-500 text-white">
                     {userData.name
                       ? userData.name
                           .split(" ")
@@ -294,7 +295,7 @@ export default function ProfilePage() {
                     {userData.bio || t('profile.no_bio')}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white border-0 shadow-md">
+                    <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-md">
                       <Calendar className="w-3 h-3 mr-1" />
                       {t('profile.member_since', { date: memberSince })}
                     </Badge>

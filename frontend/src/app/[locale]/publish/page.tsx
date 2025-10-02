@@ -41,67 +41,74 @@ const LoadingSkeleton = () => (
 const PublishHero = () => {
   const t = useI18n();
   return (
-  <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950 mb-8 rounded-2xl">
+  <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950/20 dark:via-emerald-950/20 dark:to-teal-950/20 border-b">
     {/* Animated background elements */}
     <div className="absolute inset-0 overflow-hidden">
-      <div className="absolute -top-20 -right-20 w-40 h-40 bg-green-300 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob"></div>
-      <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-emerald-300 rounded-full mix-blend-multiply filter blur-2xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+      <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div className="absolute top-40 left-1/2 w-80 h-80 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
     </div>
 
-    <div className="relative px-8 py-12">
-      <div className="flex items-center justify-between mb-6">
-        <Button asChild variant="ghost" size="sm" className="group">
-          <Link href="/">
-            <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            {t('publish.back_to_home')}
-          </Link>
-        </Button>
-        
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg">
-          <Sparkles className="w-4 h-4 text-yellow-500" />
-          <span className="text-sm font-medium">{t('publish.share_with_community')}</span>
+    <div className="relative container mx-auto px-4 py-12">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl shadow-lg">
+              <Upload className="w-8 h-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
+                {t('publish.publish_your_product')}
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 mt-1">
+                {t('publish.hero_subtitle')}
+              </p>
+            </div>
+          </div>
+          
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-full shadow-lg">
+            <Sparkles className="w-4 h-4 text-yellow-500" />
+            <span className="text-sm font-medium">{t('publish.share_with_community')}</span>
+          </div>
         </div>
-      </div>
-
-      <div className="max-w-2xl">
-        <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent mb-4">
-          {t('publish.publish_your_product')}
-        </h1>
-        <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-          {t('publish.hero_subtitle')}
-        </p>
 
         {/* Quick tips */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-          <div className="flex items-center gap-3 p-3 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-lg">
-            <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
-              <Camera className="w-4 h-4 text-green-600 dark:text-green-400" />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Card className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                <Camera className="w-5 h-5 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t('publish.tip.add_photos')}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{t('publish.tip.add_photos_desc')}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t('publish.tip.add_photos')}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">{t('publish.tip.add_photos_desc')}</p>
-            </div>
-          </div>
+          </Card>
           
-          <div className="flex items-center gap-3 p-3 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-lg">
-            <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-              <MapPin className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          <Card className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t('publish.tip.location')}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{t('publish.tip.location_desc')}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t('publish.tip.location')}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">{t('publish.tip.location_desc')}</p>
-            </div>
-          </div>
+          </Card>
           
-          <div className="flex items-center gap-3 p-3 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-lg">
-            <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
-              <Leaf className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+          <Card className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                <Leaf className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t('publish.tip.exchange')}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">{t('publish.tip.exchange_desc')}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t('publish.tip.exchange')}</p>
-              <p className="text-xs text-gray-600 dark:text-gray-400">{t('publish.tip.exchange_desc')}</p>
-            </div>
-          </div>
+          </Card>
         </div>
       </div>
     </div>
@@ -211,12 +218,14 @@ export default function PublishPage() {
 
   if (loading) {
     return (
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <PublishHero />
-          <Card className="p-8 shadow-xl border-0">
-            <LoadingSkeleton />
-          </Card>
+      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
+        <PublishHero />
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            <Card className="p-8 shadow-xl border-0">
+              <LoadingSkeleton />
+            </Card>
+          </div>
         </div>
       </main>
     );
@@ -230,12 +239,23 @@ export default function PublishPage() {
     <>
       {showSuccess && <SuccessAnimation />}
       
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <PublishHero />
-          
-          {/* Form Card */}
-          <Card className="p-8 shadow-xl border-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm">
+      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
+        <PublishHero />
+        
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            {/* Back Button */}
+            <Button
+              variant="ghost"
+              onClick={() => router.back()}
+              className="mb-6 group"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+              {t('publish.back_to_home')}
+            </Button>
+
+            {/* Form Card */}
+            <Card className="p-8 shadow-xl border-0 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm">
             <div className="mb-6">
               <div className="flex items-center gap-3 mb-2">
                 <div className="p-2 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg">
@@ -270,15 +290,21 @@ export default function PublishPage() {
             {error && <ErrorMessage message={error} />}
           </Card>
 
-          {/* Help section */}
-          <Card className="mt-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 border-0">
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              {t('publish.help_title')}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              {t('publish.help_subtitle')}
-            </p>
-          </Card>
+            {/* Help section */}
+            <Card className="mt-8 p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800 shadow-lg">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg shadow-md">
+                  <Sparkles className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                  {t('publish.help_title')}
+                </h3>
+              </div>
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                {t('publish.help_subtitle')}
+              </p>
+            </Card>
+          </div>
         </div>
       </main>
     </>

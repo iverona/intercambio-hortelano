@@ -22,6 +22,7 @@ import {
   Users,
   TrendingUp
 } from "lucide-react";
+import { EmptyState } from "@/components/shared/EmptyState";
 
 interface Product {
   id: string;
@@ -52,31 +53,6 @@ const ProductSkeleton = () => (
     </div>
   </div>
 );
-
-// Empty state component
-const EmptyState = ({ user }: { user: { uid: string } | null }) => {
-  const t = useI18n();
-  return (
-    <div className="flex flex-col items-center justify-center py-20 px-4">
-      <div className="relative">
-        <div className="absolute inset-0 bg-green-100 rounded-full blur-3xl opacity-30 animate-pulse"></div>
-        <Package className="w-24 h-24 text-gray-300 relative z-10" />
-      </div>
-      <h3 className="mt-6 text-2xl font-semibold text-gray-900">{t('home.empty_state.title')}</h3>
-      <p className="mt-2 text-gray-500 text-center max-w-md">
-        {t('home.empty_state.subtitle')}
-      </p>
-      {user && (
-        <Button asChild className="mt-6 group">
-          <Link href="/publish">
-            {t('home.empty_state.cta')}
-            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-          </Link>
-        </Button>
-      )}
-    </div>
-  );
-};
 
 // Hero section component
 const HeroSection = ({ productCount, user }: { productCount: number; user: { uid: string } | null }) => {
@@ -369,7 +345,21 @@ export default function Home() {
             ))}
           </div>
         ) : products.length === 0 ? (
-          <EmptyState user={user} />
+          <EmptyState
+            icon={Package}
+            title={t('home.empty_state.title')}
+            description={t('home.empty_state.subtitle')}
+            action={
+              user ? (
+                <Button asChild className="group">
+                  <Link href="/publish">
+                    {t('home.empty_state.cta')}
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </Button>
+              ) : undefined
+            }
+          />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {products.map((product, index) => (

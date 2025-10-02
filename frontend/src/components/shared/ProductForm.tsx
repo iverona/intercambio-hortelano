@@ -31,7 +31,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import imageCompression from "browser-image-compression";
-import { Loader2, Upload, X } from "lucide-react";
+import { Loader2, Upload, X, Package, MessageSquare, Tag, Camera, Leaf, ArrowRightLeft, DollarSign } from "lucide-react";
 import Image from "next/image";
 
 export interface ProductData {
@@ -155,150 +155,326 @@ export default function ProductForm({
   };
 
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>{isEdit ? t('product.edit.title') : t('product.publish.title')}</CardTitle>
-        <CardDescription>
-          {isEdit
-            ? "Update the form below to edit your product."
-            : "Fill out the form below to list your product on the portal."}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="grid gap-6">
-          <div className="grid gap-2">
-            <Label htmlFor="name">{t('product.form.name_label')}</Label>
-            <Input
-              id="name"
-              placeholder={t('product.form.name_placeholder')}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              disabled={isEdit || isSubmitting}
-            />
+    <form onSubmit={handleSubmit} className="space-y-8">
+      {/* Product Name Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg shadow-md">
+            <Package className="w-5 h-5 text-white" />
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="description">{t('product.form.description_label')}</Label>
-            <Textarea
-              id="description"
-              placeholder={t('product.form.description_placeholder')}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              disabled={isSubmitting}
-            />
+          <div>
+            <Label htmlFor="name" className="text-base font-semibold text-gray-900 dark:text-gray-100">
+              {t('product.form.name_label')}
+            </Label>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {t('product.form.name_placeholder')}
+            </p>
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="category">{t('product.form.category_label')}</Label>
-            <Select onValueChange={setCategory} value={category} disabled={isSubmitting}>
-              <SelectTrigger>
-                <SelectValue placeholder={t('product.form.category_placeholder')} />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {(t as any)(category.translationKey)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        </div>
+        <Input
+          id="name"
+          placeholder={t('product.form.name_placeholder')}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          disabled={isEdit || isSubmitting}
+          className="text-base"
+        />
+      </div>
+
+      {/* Decorative divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-white dark:bg-gray-800 px-4">
+            <Leaf className="w-5 h-5 text-green-500" />
+          </span>
+        </div>
+      </div>
+
+      {/* Description Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg shadow-md">
+            <MessageSquare className="w-5 h-5 text-white" />
           </div>
-          <div className="grid gap-2">
-            <Label htmlFor="picture">{t("product.form.picture_label")}</Label>
-            {imageSources.length > 0 && (
-              <Carousel className="w-full max-w-xs mx-auto">
-                <CarouselContent>
-                  {imageSources.map((source, index) => (
-                    <CarouselItem key={index}>
-                      <div className="relative">
-                        <Image
-                          src={source.type === 'url' ? source.value : source.preview}
-                          alt={`Preview ${index + 1}`}
-                          width={300}
-                          height={300}
-                          className="object-cover rounded-lg"
-                        />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-2 right-2"
-                          onClick={() => handleRemoveImage(index)}
-                          disabled={isSubmitting}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-              </Carousel>
-            )}
-            {imageSources.length < 4 && (
-              <div
-                className="flex items-center justify-center w-full"
-                onClick={() => !isSubmitting && !isCompressing && fileInputRef.current?.click()}
-              >
-                <div className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg ${isSubmitting || isCompressing ? 'cursor-not-allowed bg-gray-100 dark:bg-gray-800' : 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
-                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    {isCompressing ? (
-                      <Loader2 className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400 animate-spin" />
-                    ) : (
-                      <Upload className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" />
-                    )}
-                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                      <span className="font-semibold">
-                        {t("product.form.upload_cta")}
-                      </span>{" "}
-                      {t("product.form.upload_drag_drop")}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {t("product.form.upload_restrictions")}
-                    </p>
+          <div>
+            <Label htmlFor="description" className="text-base font-semibold text-gray-900 dark:text-gray-100">
+              {t('product.form.description_label')}
+            </Label>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {t('product.form.description_placeholder')}
+            </p>
+          </div>
+        </div>
+        <Textarea
+          id="description"
+          placeholder={t('product.form.description_placeholder')}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          disabled={isSubmitting}
+          rows={5}
+          className="resize-none"
+        />
+      </div>
+
+      {/* Decorative divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-white dark:bg-gray-800 px-4">
+            <Leaf className="w-5 h-5 text-green-500" />
+          </span>
+        </div>
+      </div>
+
+      {/* Category Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg shadow-md">
+            <Tag className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <Label htmlFor="category" className="text-base font-semibold text-gray-900 dark:text-gray-100">
+              {t('product.form.category_label')}
+            </Label>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {t('product.form.category_placeholder')}
+            </p>
+          </div>
+        </div>
+        <Select onValueChange={setCategory} value={category} disabled={isSubmitting}>
+          <SelectTrigger>
+            <SelectValue placeholder={t('product.form.category_placeholder')} />
+          </SelectTrigger>
+          <SelectContent>
+            {categories.map((category) => (
+              <SelectItem key={category.id} value={category.id}>
+                {(t as any)(category.translationKey)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Decorative divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-white dark:bg-gray-800 px-4">
+            <Leaf className="w-5 h-5 text-green-500" />
+          </span>
+        </div>
+      </div>
+
+      {/* Images Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg shadow-md">
+            <Camera className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <Label htmlFor="picture" className="text-base font-semibold text-gray-900 dark:text-gray-100">
+              {t("product.form.picture_label")}
+            </Label>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              {t("product.form.upload_restrictions")}
+            </p>
+          </div>
+        </div>
+        
+        {imageSources.length > 0 && (
+          <Carousel className="w-full max-w-md mx-auto">
+            <CarouselContent>
+              {imageSources.map((source, index) => (
+                <CarouselItem key={index}>
+                  <div className="relative">
+                    <Image
+                      src={source.type === 'url' ? source.value : source.preview}
+                      alt={`Preview ${index + 1}`}
+                      width={400}
+                      height={400}
+                      className="object-cover rounded-xl shadow-lg"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2 shadow-lg"
+                      onClick={() => handleRemoveImage(index)}
+                      disabled={isSubmitting}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <Input
-                    id="picture"
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                    ref={fileInputRef}
-                  />
-                </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        )}
+        
+        {imageSources.length < 4 && (
+          <div
+            className="flex items-center justify-center w-full"
+            onClick={() => !isSubmitting && !isCompressing && fileInputRef.current?.click()}
+          >
+            <div className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl transition-all duration-300 ${
+              isSubmitting || isCompressing 
+                ? 'cursor-not-allowed bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700' 
+                : 'cursor-pointer hover:bg-gradient-to-br hover:from-green-50 hover:to-emerald-50 dark:hover:from-green-950/20 dark:hover:to-emerald-950/20 hover:border-green-300 dark:hover:border-green-700 border-gray-300 dark:border-gray-700'
+            }`}>
+              <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                {isCompressing ? (
+                  <Loader2 className="w-10 h-10 mb-4 text-green-500 animate-spin" />
+                ) : (
+                  <div className="p-3 bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900 dark:to-emerald-900 rounded-full mb-4">
+                    <Upload className="w-6 h-6 text-green-600 dark:text-green-400" />
+                  </div>
+                )}
+                <p className="mb-2 text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-semibold">
+                    {t("product.form.upload_cta")}
+                  </span>{" "}
+                  {t("product.form.upload_drag_drop")}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  PNG, JPG, WEBP (max 1MB)
+                </p>
               </div>
-            )}
-          </div>
-          <div className="grid gap-2">
-            <Label>{t('product.form.transaction_type_label')}</Label>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="exchange"
-                checked={isForExchange}
-                onCheckedChange={(checked) => setIsForExchange(!!checked)}
-                disabled={isSubmitting}
+              <Input
+                id="picture"
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+                ref={fileInputRef}
               />
-              <Label htmlFor="exchange">{t('product.form.for_exchange_label')}</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id="sale"
-                checked={isForSale}
-                onCheckedChange={(checked) => setIsForSale(!!checked)}
-                disabled={isSubmitting}
-              />
-              <Label htmlFor="sale">{t('product.form.for_sale_label')}</Label>
             </div>
           </div>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-        </form>
-      </CardContent>
-      <CardFooter>
-        <Button onClick={handleSubmit} className="w-full" disabled={isSubmitting}>
-          {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          {isEdit ? t('product.form.save_button') : t('product.form.publish_button')}
-        </Button>
-      </CardFooter>
-    </Card>
+        )}
+      </div>
+
+      {/* Decorative divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-white dark:bg-gray-800 px-4">
+            <Leaf className="w-5 h-5 text-green-500" />
+          </span>
+        </div>
+      </div>
+
+      {/* Transaction Type Section */}
+      <div className="space-y-4">
+        <div>
+          <Label className="text-base font-semibold text-gray-900 dark:text-gray-100">
+            {t('product.form.transaction_type_label')}
+          </Label>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+            {t('product.form.error.no_transaction_type')}
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Exchange Card */}
+          <Card
+            className={`p-5 cursor-pointer transition-all duration-300 border-2 ${
+              isForExchange
+                ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-green-500 dark:border-green-600 shadow-lg'
+                : 'hover:border-green-300 dark:hover:border-green-700 hover:bg-green-50/50 dark:hover:bg-green-950/10'
+            } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            onClick={() => !isSubmitting && setIsForExchange(!isForExchange)}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`p-2 rounded-lg transition-all ${
+                isForExchange 
+                  ? 'bg-gradient-to-br from-green-500 to-emerald-500 shadow-md' 
+                  : 'bg-green-100 dark:bg-green-900'
+              }`}>
+                <ArrowRightLeft className={`w-5 h-5 ${isForExchange ? 'text-white' : 'text-green-600 dark:text-green-400'}`} />
+              </div>
+              <div className="flex-1">
+                <p className={`font-semibold ${isForExchange ? 'text-green-700 dark:text-green-300' : 'text-gray-900 dark:text-gray-100'}`}>
+                  {t('product.form.for_exchange_label')}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Trade with other gardeners
+                </p>
+              </div>
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                isForExchange 
+                  ? 'border-green-500 bg-green-500' 
+                  : 'border-gray-300 dark:border-gray-600'
+              }`}>
+                {isForExchange && <div className="w-2 h-2 bg-white rounded-full"></div>}
+              </div>
+            </div>
+          </Card>
+
+          {/* Sale Card */}
+          <Card
+            className={`p-5 cursor-pointer transition-all duration-300 border-2 ${
+              isForSale
+                ? 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-500 dark:border-blue-600 shadow-lg'
+                : 'hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/50 dark:hover:bg-blue-950/10'
+            } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            onClick={() => !isSubmitting && setIsForSale(!isForSale)}
+          >
+            <div className="flex items-center gap-3">
+              <div className={`p-2 rounded-lg transition-all ${
+                isForSale 
+                  ? 'bg-gradient-to-br from-blue-500 to-indigo-500 shadow-md' 
+                  : 'bg-blue-100 dark:bg-blue-900'
+              }`}>
+                <DollarSign className={`w-5 h-5 ${isForSale ? 'text-white' : 'text-blue-600 dark:text-blue-400'}`} />
+              </div>
+              <div className="flex-1">
+                <p className={`font-semibold ${isForSale ? 'text-blue-700 dark:text-blue-300' : 'text-gray-900 dark:text-gray-100'}`}>
+                  {t('product.form.for_sale_label')}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Sell for money
+                </p>
+              </div>
+              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                isForSale 
+                  ? 'border-blue-500 bg-blue-500' 
+                  : 'border-gray-300 dark:border-gray-600'
+              }`}>
+                {isForSale && <div className="w-2 h-2 bg-white rounded-full"></div>}
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+
+      {/* Error Message */}
+      {error && (
+        <Card className="p-4 bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-950/20 dark:to-rose-950/20 border-red-200 dark:border-red-800">
+          <p className="text-sm text-red-700 dark:text-red-300 font-medium">{error}</p>
+        </Card>
+      )}
+
+      {/* Submit Button */}
+      <Button 
+        onClick={handleSubmit} 
+        className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl transition-all" 
+        disabled={isSubmitting}
+        size="lg"
+      >
+        {isSubmitting && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
+        {isEdit ? t('product.form.save_button') : t('product.form.publish_button')}
+      </Button>
+    </form>
   );
 }
