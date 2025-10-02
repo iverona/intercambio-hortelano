@@ -41,7 +41,7 @@ interface OfferModalProps {
   }) => void;
 }
 
-type Step = "select-type" | "exchange-details" | "confirmation";
+type Step = "select-type" | "exchange-details" | "chat-details" | "confirmation";
 
 export default function OfferModal({
   isOpen,
@@ -92,21 +92,20 @@ export default function OfferModal({
     if (type === "exchange") {
       setStep("exchange-details");
     } else {
-      // For chat, go directly to confirmation
-      setStep("confirmation");
+      setStep("chat-details");
     }
   };
 
   const handleBack = () => {
     setError(null);
-    if (step === "exchange-details") {
+    if (step === "exchange-details" || step === "chat-details") {
       setStep("select-type");
       setOfferType(null);
     } else if (step === "confirmation") {
       if (offerType === "exchange") {
         setStep("exchange-details");
       } else {
-        setStep("select-type");
+        setStep("chat-details");
       }
     }
   };
@@ -189,6 +188,40 @@ export default function OfferModal({
                   <ArrowRight className="w-5 h-5 text-gray-400" />
                 </div>
               </Card>
+            </div>
+          </>
+        );
+
+      case "chat-details":
+        return (
+          <>
+            <DialogHeader>
+              <DialogTitle>{t('offer_modal.chat_details.title')}</DialogTitle>
+              <DialogDescription>
+                {t('offer_modal.chat_details.description', { productName: product.name })}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-4 space-y-3">
+              <div>
+                <Label htmlFor="message">{t('offer_modal.chat_details.add_message_label')}</Label>
+                <Textarea
+                  id="message"
+                  placeholder={t('offer_modal.chat_details.add_message_placeholder')}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  rows={4}
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={handleBack} className="flex-1">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  {t('offer_modal.general.back_button')}
+                </Button>
+                <Button onClick={() => setStep("confirmation")} className="flex-1">
+                  {t('offer_modal.chat_details.continue_button')}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
             </div>
           </>
         );

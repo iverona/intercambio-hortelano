@@ -298,6 +298,12 @@ export default {
   "offer_modal.exchange_details.add_message_placeholder": "Explain why this would be a good exchange...",
   "offer_modal.exchange_details.continue_button": "Continue",
 
+  "offer_modal.chat_details.title": "Send a Message",
+  "offer_modal.chat_details.description": "Write a message to the owner of \"{productName}\"",
+  "offer_modal.chat_details.add_message_label": "Your Message",
+  "offer_modal.chat_details.add_message_placeholder": "e.g., Hi, I'm interested in your tomatoes...",
+  "offer_modal.chat_details.continue_button": "Continue",
+
   "offer_modal.confirmation.title": "Confirm Your Offer",
   "offer_modal.confirmation.description": "Review your offer before sending",
   "offer_modal.confirmation.you_want": "You want:",
