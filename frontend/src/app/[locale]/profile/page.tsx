@@ -22,7 +22,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TomatoRating } from "@/components/shared/TomatoRating";
 import {
-  User,
+  User as UserIcon,
   Edit,
   Save,
   X,
@@ -42,8 +42,11 @@ import {
   Trophy,
   Award,
   Languages,
+  Sparkles,
+  CheckCircle,
 } from "lucide-react";
 import { useChangeLocale, useCurrentLocale, useI18n } from "@/locales/provider";
+import { toast } from "sonner";
 
 interface UserData {
   name: string;
@@ -79,27 +82,28 @@ interface UserData {
 
 // Loading skeleton component
 const ProfileSkeleton = () => (
-  <div className="animate-pulse">
-    <div className="flex flex-col items-center space-y-4">
-      <div className="h-32 w-32 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded-full"></div>
-      <div className="space-y-2">
-        <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-48 mx-auto"></div>
-        <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-32 mx-auto"></div>
-      </div>
+  <div className="animate-pulse space-y-6">
+    <div className="h-48 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded-2xl"></div>
+    <div className="space-y-4">
+      <div className="h-32 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded-xl"></div>
+      <div className="h-32 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded-xl"></div>
     </div>
   </div>
 );
 
 // Profile section component
-const ProfileSection = ({ title, icon: Icon, children }: {
+const ProfileSection = ({ title, icon: Icon, children, gradient }: {
   title: string;
   icon: React.ElementType;
   children: React.ReactNode;
+  gradient?: string;
 }) => (
-  <Card className="p-6">
-    <div className="flex items-center gap-2 mb-4">
-      <Icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h2>
+  <Card className={`p-6 shadow-lg hover:shadow-xl transition-all duration-300 ${gradient || 'bg-white dark:bg-gray-800'}`}>
+    <div className="flex items-center gap-3 mb-6">
+      <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg shadow-md">
+        <Icon className="w-5 h-5 text-white" />
+      </div>
+      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100">{title}</h2>
     </div>
     {children}
   </Card>
@@ -194,6 +198,7 @@ export default function ProfilePage() {
         } : null
       );
       setIsEditing(false);
+      toast.success(t('profile.save_button'));
     }
   };
 
@@ -202,31 +207,30 @@ export default function ProfilePage() {
     if (auth.currentUser && auth.currentUser.email) {
       sendPasswordResetEmail(auth, auth.currentUser.email)
         .then(() => {
-          alert("Password reset email sent! Check your inbox.");
+          toast.success(t('profile.password_reset_sent'));
         })
         .catch((error) => {
-          alert(error.message);
+          toast.error(t('profile.password_reset_error'));
         });
     } else {
-      alert(
-        "Could not send password reset email. User not found or email is missing."
-      );
+      toast.error(t('profile.password_reset_error'));
     }
   };
 
   const handleDeleteAccount = async () => {
-    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      // Implementation would go here
-      alert("Account deletion would be implemented here");
+    if (confirm(t('profile.confirm_delete'))) {
+      toast.info(t('profile.delete_not_implemented'));
     }
   };
 
   // Show loading state while checking authentication
   if (loading) {
     return (
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-3xl mx-auto">
-          <ProfileSkeleton />
+      <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
+            <ProfileSkeleton />
+          </div>
         </div>
       </main>
     );
@@ -242,348 +246,371 @@ export default function ProfilePage() {
     : 'Recently';
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <div className="max-w-3xl mx-auto space-y-6">
-        {/* Page Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg">
-            <User className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-              {t('profile.title')}
-            </h1>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              {t('profile.subtitle')}
-            </p>
-          </div>
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
+      {/* Hero Header */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-purple-950/20 border-b">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
         </div>
 
-        {/* Profile Information Section */}
-        <ProfileSection title={t('profile.personal_info')} icon={User}>
-          <div className="space-y-6">
-            {/* Avatar and basic info */}
-            <div className="flex items-start gap-6">
-              <Avatar className="h-24 w-24 border-4 border-gray-200 dark:border-gray-700">
-                <AvatarImage src={userData.avatarUrl} alt={userData.name} />
-                <AvatarFallback className="text-2xl font-bold bg-gradient-to-br from-blue-400 to-blue-500 text-white">
-                  {userData.name
-                    ? userData.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")
-                    : ""}
-                </AvatarFallback>
-              </Avatar>
-              
-              <div className="flex-1 space-y-4">
-                {isEditing ? (
-                  <>
-                    <div>
-                      <Label htmlFor="name">{t('profile.name_label')}</Label>
-                      <Input
-                        id="name"
-                        type="text"
-                        value={newName}
-                        onChange={(e) => setNewName(e.target.value)}
-                        className="mt-1"
-                        placeholder={t('profile.name_placeholder')}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="bio">{t('profile.bio_label')}</Label>
-                      <Textarea
-                        id="bio"
-                        value={newBio}
-                        onChange={(e) => setNewBio(e.target.value)}
-                        placeholder={t('profile.bio_placeholder')}
-                        className="mt-1 resize-none"
-                        rows={4}
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div>
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                        {userData.name}
-                      </h2>
-                      <p className="text-gray-600 dark:text-gray-400 mt-2">
-                        {userData.bio || t('profile.no_bio')}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      <Badge variant="secondary" className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {t('profile.member_since', { date: memberSince })}
+        <div className="relative container mx-auto px-4 py-12">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl shadow-lg">
+                <UserIcon className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                  {t('profile.title')}
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-1">
+                  {t('profile.subtitle')}
+                </p>
+              </div>
+            </div>
+
+            {/* Profile Card in Header */}
+            <Card className="p-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-2xl">
+              <div className="flex items-start gap-6">
+                <Avatar className="h-28 w-28 border-4 border-white dark:border-gray-700 shadow-xl ring-4 ring-blue-100 dark:ring-blue-900">
+                  <AvatarImage src={userData.avatarUrl} alt={userData.name} />
+                  <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-blue-500 to-indigo-500 text-white">
+                    {userData.name
+                      ? userData.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
+                      : ""}
+                  </AvatarFallback>
+                </Avatar>
+                
+                <div className="flex-1">
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                    {userData.name}
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">
+                    {userData.bio || t('profile.no_bio')}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white border-0 shadow-md">
+                      <Calendar className="w-3 h-3 mr-1" />
+                      {t('profile.member_since', { date: memberSince })}
+                    </Badge>
+                    {userData.location && (
+                      <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-md">
+                        <MapPin className="w-3 h-3 mr-1" />
+                        {t('profile.location_verified')}
                       </Badge>
-                      {userData.location && (
-                        <Badge variant="secondary" className="flex items-center gap-1">
-                          <MapPin className="w-3 h-3" />
-                          {t('profile.location_verified')}
-                        </Badge>
-                      )}
-                      {userData.reputation && userData.reputation.totalReviews > 0 && (
-                        <div className="flex items-center gap-2">
-                          <TomatoRating 
-                            rating={userData.reputation.averageRating} 
-                            size="sm" 
-                            showNumber={true}
-                          />
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {t('profile.reviews', { count: userData.reputation.totalReviews })}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Email display */}
-            <div className="pt-4 border-t">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">{t('profile.email_label')}</span>
-                  {showEmail ? (
-                    <span className="text-sm font-medium">{userData.email}</span>
-                  ) : (
-                    <span className="text-sm font-medium">••••••••••</span>
-                  )}
+                    )}
+                    {userData.reputation && userData.reputation.totalReviews > 0 && (
+                      <div className="flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-full">
+                        <TomatoRating 
+                          rating={userData.reputation.averageRating} 
+                          size="sm" 
+                          showNumber={true}
+                        />
+                        <span className="text-sm text-gray-700 dark:text-gray-300">
+                          {t('profile.reviews', { count: userData.reputation.totalReviews })}
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowEmail(!showEmail)}
-                >
-                  {showEmail ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </Button>
               </div>
-            </div>
+            </Card>
+          </div>
+        </div>
+      </div>
 
-            {/* Action buttons */}
-            <div className="flex gap-3">
+      {/* Main Content */}
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto space-y-6">
+          {/* Personal Information Section */}
+          <ProfileSection title={t('profile.personal_info')} icon={UserIcon}>
+            <div className="space-y-6">
               {isEditing ? (
                 <>
-                  <Button onClick={handleSave}>
-                    <Save className="mr-2 h-4 w-4" />
-                    {t('profile.save_button')}
-                  </Button>
-                  <Button variant="outline" onClick={() => setIsEditing(false)}>
-                    <X className="mr-2 h-4 w-4" />
-                    {t('profile.cancel_button')}
-                  </Button>
+                  <div>
+                    <Label htmlFor="name" className="text-base font-semibold mb-2 block">
+                      {t('profile.name_label')}
+                    </Label>
+                    <Input
+                      id="name"
+                      type="text"
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      className="mt-1"
+                      placeholder={t('profile.name_placeholder')}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="bio" className="text-base font-semibold mb-2 block">
+                      {t('profile.bio_label')}
+                    </Label>
+                    <Textarea
+                      id="bio"
+                      value={newBio}
+                      onChange={(e) => setNewBio(e.target.value)}
+                      placeholder={t('profile.bio_placeholder')}
+                      className="mt-1 resize-none"
+                      rows={4}
+                    />
+                  </div>
+                  <div className="flex gap-3 pt-4">
+                    <Button 
+                      onClick={handleSave}
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg"
+                      size="lg"
+                    >
+                      <Save className="mr-2 h-4 w-4" />
+                      {t('profile.save_button')}
+                    </Button>
+                    <Button variant="outline" onClick={() => setIsEditing(false)} size="lg">
+                      <X className="mr-2 h-4 w-4" />
+                      {t('profile.cancel_button')}
+                    </Button>
+                  </div>
                 </>
               ) : (
-                <Button onClick={() => setIsEditing(true)}>
-                  <Edit className="mr-2 h-4 w-4" />
-                  {t('profile.edit_button')}
-                </Button>
-              )}
-            </div>
-          </div>
-        </ProfileSection>
-
-        {/* Reputation & Gamification Section */}
-        {userData.reputation && (
-          <ProfileSection title={t('profile.reputation_achievements')} icon={Trophy}>
-            <div className="space-y-4">
-              {/* Rating Overview */}
-              <div className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 rounded-lg">
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                    {t('profile.your_rating')}
-                  </h3>
-                  {userData.reputation.totalReviews > 0 ? (
-                    <div className="flex items-center gap-3">
-                      <TomatoRating 
-                        rating={userData.reputation.averageRating} 
-                        size="lg" 
-                        showNumber={true}
-                      />
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {userData.reputation.totalReviews === 1
-                          ? t('profile.based_on_reviews', { count: 1 })
-                          : t('profile.based_on_reviews_plural', { count: userData.reputation.totalReviews })}
-                      </span>
+                <>
+                  {/* Email display */}
+                  <Card className="p-4 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                          <Mail className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <span className="text-sm text-gray-600 dark:text-gray-400 block">{t('profile.email_label')}</span>
+                          {showEmail ? (
+                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{userData.email}</span>
+                          ) : (
+                            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">••••••••••</span>
+                          )}
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setShowEmail(!showEmail)}
+                      >
+                        {showEmail ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </Button>
                     </div>
-                  ) : (
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t('profile.no_reviews')}
-                    </p>
-                  )}
-                </div>
-              </div>
+                  </Card>
 
-              {/* Points & Level */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Star className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                    <h4 className="font-medium">{t('profile.points')}</h4>
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {userData.points || 0}
-                  </p>
-                </div>
-                <div className="p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Award className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                    <h4 className="font-medium">{t('profile.level')}</h4>
-                  </div>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                    {getLevelName(userData.level || 0)}
-                  </p>
-                </div>
-              </div>
-
-              {/* Badges (placeholder for now) */}
-              {userData.badges && userData.badges.length > 0 && (
-                <div>
-                  <h4 className="font-medium mb-2">{t('profile.badges_earned')}</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {userData.badges.map((badge) => (
-                      <Badge key={badge} variant="secondary">
-                        {badge}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
+                  <Button 
+                    onClick={() => setIsEditing(true)}
+                    className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 shadow-lg"
+                    size="lg"
+                  >
+                    <Edit className="mr-2 h-4 w-4" />
+                    {t('profile.edit_button')}
+                  </Button>
+                </>
               )}
             </div>
           </ProfileSection>
-        )}
 
-        {/* Notification Preferences */}
-        <ProfileSection title={t('profile.notification_prefs')} icon={Bell}>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="email-notif">{t('profile.email_notifs')}</Label>
-                <p className="text-sm text-gray-500">{t('profile.email_notifs_desc')}</p>
-              </div>
-              <Checkbox
-                id="email-notif"
-                checked={emailNotifications}
-                onCheckedChange={(checked) => setEmailNotifications(checked as boolean)}
-              />
-            </div>
-            <Separator />
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="message-notif" className="flex items-center gap-2">
-                  <MessageSquare className="w-4 h-4" />
-                  {t('profile.new_messages_notifs')}
-                </Label>
-                <p className="text-sm text-gray-500">{t('profile.new_messages_notifs_desc')}</p>
-              </div>
-              <Checkbox
-                id="message-notif"
-                checked={messageNotifications}
-                onCheckedChange={(checked) => setMessageNotifications(checked as boolean)}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="exchange-notif" className="flex items-center gap-2">
-                  <ArrowRightLeft className="w-4 h-4" />
-                  {t('profile.exchange_updates_notifs')}
-                </Label>
-                <p className="text-sm text-gray-500">{t('profile.exchange_updates_notifs_desc')}</p>
-              </div>
-              <Checkbox
-                id="exchange-notif"
-                checked={exchangeNotifications}
-                onCheckedChange={(checked) => setExchangeNotifications(checked as boolean)}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="product-notif" className="flex items-center gap-2">
-                  <Package className="w-4 h-4" />
-                  {t('profile.product_interest_notifs')}
-                </Label>
-                <p className="text-sm text-gray-500">{t('profile.product_interest_notifs_desc')}</p>
-              </div>
-              <Checkbox
-                id="product-notif"
-                checked={productNotifications}
-                onCheckedChange={(checked) => setProductNotifications(checked as boolean)}
-              />
-            </div>
-          </div>
-        </ProfileSection>
+          {/* Reputation & Gamification Section */}
+          {userData.reputation && (
+            <ProfileSection title={t('profile.reputation_achievements')} icon={Trophy}>
+              <div className="space-y-4">
+                {/* Rating Overview */}
+                <Card className="p-6 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 border-orange-200 dark:border-orange-800 shadow-lg">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                        <Star className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+                        {t('profile.your_rating')}
+                      </h3>
+                      {userData.reputation.totalReviews > 0 ? (
+                        <div className="flex items-center gap-4">
+                          <TomatoRating 
+                            rating={userData.reputation.averageRating} 
+                            size="lg" 
+                            showNumber={true}
+                          />
+                          <span className="text-sm text-gray-600 dark:text-gray-400">
+                            {userData.reputation.totalReviews === 1
+                              ? t('profile.based_on_reviews', { count: 1 })
+                              : t('profile.based_on_reviews_plural', { count: userData.reputation.totalReviews })}
+                          </span>
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {t('profile.no_reviews')}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </Card>
 
-        {/* Language Settings */}
-        <ProfileSection title={t('profile.language_settings')} icon={Languages}>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="language-select">{t('profile.select_language')}</Label>
-                <p className="text-sm text-gray-500">{t('profile.select_language_desc')}</p>
-              </div>
-              <LanguageSelector />
-            </div>
-          </div>
-        </ProfileSection>
+                {/* Points & Level */}
+                <div className="grid grid-cols-2 gap-4">
+                  <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800 shadow-lg hover:shadow-xl transition-shadow">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg shadow-md">
+                        <Star className="w-5 h-5 text-white" />
+                      </div>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('profile.points')}</h4>
+                    </div>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                      {userData.points || 0}
+                    </p>
+                  </Card>
+                  <Card className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border-purple-200 dark:border-purple-800 shadow-lg hover:shadow-xl transition-shadow">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg shadow-md">
+                        <Award className="w-5 h-5 text-white" />
+                      </div>
+                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('profile.level')}</h4>
+                    </div>
+                    <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                      {getLevelName(userData.level || 0)}
+                    </p>
+                  </Card>
+                </div>
 
-        {/* Privacy Settings */}
-        <ProfileSection title={t('profile.privacy_settings')} icon={Shield}>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="show-location">{t('profile.show_location')}</Label>
-                <p className="text-sm text-gray-500">{t('profile.show_location_desc')}</p>
+                {/* Badges */}
+                {userData.badges && userData.badges.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold mb-3 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-yellow-500" />
+                      {t('profile.badges_earned')}
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {userData.badges.map((badge) => (
+                        <Badge key={badge} className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0 shadow-md">
+                          {badge}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              <Checkbox
-                id="show-location"
-                checked={showLocation}
-                onCheckedChange={(checked) => setShowLocation(checked as boolean)}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="public-profile">{t('profile.public_profile')}</Label>
-                <p className="text-sm text-gray-500">{t('profile.public_profile_desc')}</p>
-              </div>
-              <Checkbox
-                id="public-profile"
-                checked={publicProfile}
-                onCheckedChange={(checked) => setPublicProfile(checked as boolean)}
-              />
-            </div>
-          </div>
-        </ProfileSection>
+            </ProfileSection>
+          )}
 
-        {/* Account Management */}
-        <ProfileSection title={t('profile.account_management')} icon={Lock}>
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-3">
-                {t('profile.password_security')}
-              </h3>
-              <Button onClick={handlePasswordChange} variant="outline">
-                <Lock className="mr-2 h-4 w-4" />
-                {t('profile.change_password')}
-              </Button>
+          {/* Notification Preferences */}
+          <ProfileSection title={t('profile.notification_prefs')} icon={Bell}>
+            <div className="space-y-4">
+              <Card className="p-4 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="email-notif" className="text-base font-semibold">
+                      {t('profile.email_notifs')}
+                    </Label>
+                    <p className="text-sm text-gray-500">{t('profile.email_notifs_desc')}</p>
+                  </div>
+                  <Checkbox
+                    id="email-notif"
+                    checked={emailNotifications}
+                    onCheckedChange={(checked) => setEmailNotifications(checked as boolean)}
+                  />
+                </div>
+              </Card>
+              <Separator />
+              <div className="space-y-3">
+                {[
+                  { id: 'message-notif', icon: MessageSquare, label: t('profile.new_messages_notifs'), desc: t('profile.new_messages_notifs_desc'), checked: messageNotifications, onChange: setMessageNotifications },
+                  { id: 'exchange-notif', icon: ArrowRightLeft, label: t('profile.exchange_updates_notifs'), desc: t('profile.exchange_updates_notifs_desc'), checked: exchangeNotifications, onChange: setExchangeNotifications },
+                  { id: 'product-notif', icon: Package, label: t('profile.product_interest_notifs'), desc: t('profile.product_interest_notifs_desc'), checked: productNotifications, onChange: setProductNotifications },
+                ].map((item) => (
+                  <div key={item.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <div className="flex items-start gap-3 flex-1">
+                      <item.icon className="w-5 h-5 text-gray-600 dark:text-gray-400 mt-0.5" />
+                      <div className="space-y-0.5">
+                        <Label htmlFor={item.id} className="font-medium cursor-pointer">
+                          {item.label}
+                        </Label>
+                        <p className="text-sm text-gray-500">{item.desc}</p>
+                      </div>
+                    </div>
+                    <Checkbox
+                      id={item.id}
+                      checked={item.checked}
+                      onCheckedChange={(checked) => item.onChange(checked as boolean)}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
-            <Separator />
-            <div>
-              <h3 className="text-sm font-medium text-red-600 dark:text-red-400 mb-3">
-                {t('profile.danger_zone')}
-              </h3>
-              <p className="text-sm text-gray-500 mb-3">
-                {t('profile.delete_account_warning')}
-              </p>
-              <Button onClick={handleDeleteAccount} variant="destructive">
-                <Trash2 className="mr-2 h-4 w-4" />
-                {t('profile.delete_account')}
-              </Button>
+          </ProfileSection>
+
+          {/* Language Settings */}
+          <ProfileSection title={t('profile.language_settings')} icon={Languages}>
+            <div className="space-y-4">
+              <div>
+                <Label className="text-base font-semibold mb-2 block">{t('profile.select_language')}</Label>
+                <p className="text-sm text-gray-500 mb-4">{t('profile.select_language_desc')}</p>
+                <LanguageSelector />
+              </div>
             </div>
-          </div>
-        </ProfileSection>
+          </ProfileSection>
+
+          {/* Privacy Settings */}
+          <ProfileSection title={t('profile.privacy_settings')} icon={Shield}>
+            <div className="space-y-4">
+              {[
+                { id: 'show-location', label: t('profile.show_location'), desc: t('profile.show_location_desc'), checked: showLocation, onChange: setShowLocation },
+                { id: 'public-profile', label: t('profile.public_profile'), desc: t('profile.public_profile_desc'), checked: publicProfile, onChange: setPublicProfile },
+              ].map((item) => (
+                <div key={item.id} className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border border-gray-200 dark:border-gray-700">
+                  <div className="space-y-0.5">
+                    <Label htmlFor={item.id} className="text-base font-semibold cursor-pointer">
+                      {item.label}
+                    </Label>
+                    <p className="text-sm text-gray-500">{item.desc}</p>
+                  </div>
+                  <Checkbox
+                    id={item.id}
+                    checked={item.checked}
+                    onCheckedChange={(checked) => item.onChange(checked as boolean)}
+                  />
+                </div>
+              ))}
+            </div>
+          </ProfileSection>
+
+          {/* Account Management */}
+          <ProfileSection title={t('profile.account_management')} icon={Lock}>
+            <div className="space-y-6">
+              <Card className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
+                <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                  <Lock className="w-4 h-4" />
+                  {t('profile.password_security')}
+                </h3>
+                <Button 
+                  onClick={handlePasswordChange} 
+                  variant="outline"
+                  className="hover:bg-blue-100 dark:hover:bg-blue-900"
+                >
+                  <Lock className="mr-2 h-4 w-4" />
+                  {t('profile.change_password')}
+                </Button>
+              </Card>
+              
+              <Separator />
+              
+              <Card className="p-5 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20 border-red-200 dark:border-red-800">
+                <h3 className="text-base font-semibold text-red-600 dark:text-red-400 mb-3 flex items-center gap-2">
+                  <Trash2 className="w-4 h-4" />
+                  {t('profile.danger_zone')}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  {t('profile.delete_account_warning')}
+                </p>
+                <Button onClick={handleDeleteAccount} variant="destructive">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  {t('profile.delete_account')}
+                </Button>
+              </Card>
+            </div>
+          </ProfileSection>
+        </div>
       </div>
     </main>
   );
@@ -607,17 +634,23 @@ const LanguageSelector = () => {
   const currentLocale = useCurrentLocale();
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-3">
       <Button
         variant={currentLocale === 'en' ? 'default' : 'outline'}
         onClick={() => changeLocale('en')}
+        className={currentLocale === 'en' ? 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 shadow-lg' : ''}
+        size="lg"
       >
+        <CheckCircle className={`mr-2 h-4 w-4 ${currentLocale === 'en' ? '' : 'opacity-0'}`} />
         English
       </Button>
       <Button
         variant={currentLocale === 'es' ? 'default' : 'outline'}
         onClick={() => changeLocale('es')}
+        className={currentLocale === 'es' ? 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 shadow-lg' : ''}
+        size="lg"
       >
+        <CheckCircle className={`mr-2 h-4 w-4 ${currentLocale === 'es' ? '' : 'opacity-0'}`} />
         Español
       </Button>
     </div>

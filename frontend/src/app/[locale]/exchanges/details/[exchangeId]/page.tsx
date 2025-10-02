@@ -460,113 +460,142 @@ export default function ExchangeDetailsPage() {
   const partner = isOwner ? exchange.requester : exchange.owner;
 
   return (
-    <main className="container mx-auto px-4 py-8">
-      <div className="max-w-2xl mx-auto">
-        {/* Back button */}
-        <Button
-          variant="ghost"
-          onClick={() => router.push("/exchanges")}
-          className="mb-4"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          {t('exchanges.details.back_to_exchanges')}
-        </Button>
+    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-blue-950 dark:to-purple-950">
+      {/* Animated background blobs */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 dark:bg-purple-900 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-70 animate-blob"></div>
+        <div className="absolute top-0 -right-4 w-72 h-72 bg-blue-300 dark:bg-blue-900 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 dark:bg-pink-900 rounded-full mix-blend-multiply dark:mix-blend-soft-light filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+      </div>
 
-        {/* Exchange Details Card */}
-        <Card className="p-6">
-          {/* Header */}
-          <div className="flex items-start justify-between mb-6">
-            <div className="flex items-center gap-3">
-              {getOfferTypeIcon(exchange.offer?.type)}
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                  {t('exchanges.details.title')}
-                </h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  {t('exchanges.details.created', { date: formatDate(exchange.createdAt) })}
-                </p>
+      <div className="container mx-auto px-4 py-8 relative">
+        <div className="max-w-2xl mx-auto">
+          {/* Back button */}
+          <Button
+            variant="ghost"
+            onClick={() => router.push("/exchanges")}
+            className="mb-6 backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all duration-300 shadow-sm hover:shadow-md"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            {t('exchanges.details.back_to_exchanges')}
+          </Button>
+
+          {/* Exchange Details Card */}
+          <Card className="p-6 backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 shadow-xl border-0 hover:shadow-2xl transition-all duration-300">
+            {/* Header */}
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg">
+                  {getOfferTypeIcon(exchange.offer?.type)}
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                    {t('exchanges.details.title')}
+                  </h1>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {t('exchanges.details.created', { date: formatDate(exchange.createdAt) })}
+                  </p>
+                </div>
               </div>
+              <Badge className={`${getStatusColor(exchange.status)} border-0 shadow-md`}>
+                {exchange.status.charAt(0).toUpperCase() + exchange.status.slice(1)}
+              </Badge>
             </div>
-            <Badge className={`${getStatusColor(exchange.status)} border-0`}>
-              {exchange.status.charAt(0).toUpperCase() + exchange.status.slice(1)}
-            </Badge>
-          </div>
 
           {/* Product Information */}
-          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-            <h2 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              {t('exchanges.details.product_info')}
-            </h2>
+          <div className="mb-6 p-5 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/50 dark:to-purple-950/50 rounded-xl border border-blue-100 dark:border-blue-900 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                <Package className="w-4 h-4" />
+              </div>
+              <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                {t('exchanges.details.product_info')}
+              </h2>
+            </div>
             {exchange.product && (
-              <div className="space-y-2">
+              <div className="space-y-3">
                 {exchange.product.images.length > 0 && (
                   <img
                     src={exchange.product.images[0]}
                     alt={exchange.productName}
-                    className="w-full h-48 object-cover rounded-lg mb-3"
+                    className="w-full h-48 object-cover rounded-lg mb-3 shadow-md hover:shadow-lg transition-shadow duration-300"
                   />
                 )}
-                <p className="text-sm">
-                  <span className="font-medium">Title:</span> {exchange.productName}
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Title:</span> {exchange.productName}
                 </p>
-                <p className="text-sm">
-                  <span className="font-medium">Category:</span> {exchange.product.category}
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Category:</span> {exchange.product.category}
                 </p>
-                <p className="text-sm">
-                  <span className="font-medium">Description:</span> {exchange.product.description}
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Description:</span> {exchange.product.description}
                 </p>
               </div>
             )}
           </div>
 
           {/* Offer Details */}
-          <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
-            <h2 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              {t('exchanges.details.offer_details')}
-            </h2>
-            <div className="space-y-2">
+          <div className="mb-6 p-5 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 rounded-xl border border-green-100 dark:border-green-900 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white">
+                {getOfferTypeIcon(exchange.offer?.type)}
+              </div>
+              <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                {t('exchanges.details.offer_details')}
+              </h2>
+            </div>
+            <div className="space-y-3">
               {exchange.offer?.type === "exchange" && exchange.offer.offeredProductName && (
-                <p className="text-sm">
-                  <span className="font-medium">Type:</span> Exchange
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Type:</span> Exchange
                 </p>
               )}
               {exchange.offer?.type === "exchange" && exchange.offer.offeredProductName && (
-                <p className="text-sm">
-                  <span className="font-medium">Offered Product:</span> {exchange.offer.offeredProductName}
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Offered Product:</span> {exchange.offer.offeredProductName}
                 </p>
               )}
               {exchange.offer?.type === "purchase" && exchange.offer.amount && (
                 <>
-                  <p className="text-sm">
-                    <span className="font-medium">Type:</span> Purchase
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    <span className="font-medium text-gray-900 dark:text-gray-100">Type:</span> Purchase
                   </p>
-                  <p className="text-sm">
-                    <span className="font-medium">Amount:</span> €{exchange.offer.amount.toFixed(2)}
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    <span className="font-medium text-gray-900 dark:text-gray-100">Amount:</span> €{exchange.offer.amount.toFixed(2)}
                   </p>
                 </>
               )}
               {exchange.offer?.type === "chat" && (
-                <p className="text-sm">
-                  <span className="font-medium">Type:</span> Chat Request
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Type:</span> Chat Request
                 </p>
               )}
               {exchange.offer?.message && (
-                <p className="text-sm">
-                  <span className="font-medium">Message:</span> {exchange.offer.message}
+                <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Message:</span> {exchange.offer.message}
                 </p>
               )}
             </div>
           </div>
 
           {/* Partner Information */}
-          <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-            <h2 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">
-              {isOwner ? t('exchanges.details.partner_info.requester') : t('exchanges.details.partner_info.owner')}
-            </h2>
+          <div className="mb-6 p-5 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/50 dark:to-amber-950/50 rounded-xl border border-orange-100 dark:border-orange-900 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 text-white">
+                <Avatar className="h-5 w-5">
+                  <AvatarFallback className="bg-transparent text-white text-xs">
+                    {partner?.name?.charAt(0) || "U"}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                {isOwner ? t('exchanges.details.partner_info.requester') : t('exchanges.details.partner_info.owner')}
+              </h2>
+            </div>
             <div className="flex items-center gap-3">
-              <Avatar className="h-12 w-12">
+              <Avatar className="h-12 w-12 ring-2 ring-orange-200 dark:ring-orange-800">
                 <AvatarImage src={partner?.avatarUrl} alt={partner?.name} />
-                <AvatarFallback className="bg-gradient-to-br from-blue-400 to-blue-500 text-white">
+                <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-500 text-white">
                   {partner?.name?.charAt(0) || "U"}
                 </AvatarFallback>
               </Avatar>
@@ -586,27 +615,28 @@ export default function ExchangeDetailsPage() {
             <div className="flex gap-3">
               <Button
                 onClick={handleAcceptOffer}
-                className="flex-1"
-                variant="default"
+                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
               >
-                <CheckCircle className="w-4 h-4 mr-2" />
+                <CheckCircle className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-300" />
                 {t('exchanges.details.accept_offer')}
               </Button>
               <Button
                 onClick={handleRejectOffer}
-                className="flex-1"
+                className="flex-1 border-2 border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-950 transition-all duration-300 group"
                 variant="outline"
               >
-                <XCircle className="w-4 h-4 mr-2" />
+                <XCircle className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-300" />
                 {t('exchanges.details.decline_offer')}
               </Button>
             </div>
           )}
 
           {exchange.status === "pending" && isRequester && (
-            <div className="p-4 bg-yellow-50 dark:bg-yellow-950 rounded-lg text-center">
-              <Clock className="w-8 h-8 text-yellow-600 mx-auto mb-2" />
-              <p className="text-sm text-gray-700 dark:text-gray-300">
+            <div className="p-6 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-950/50 dark:to-amber-950/50 rounded-xl border border-yellow-200 dark:border-yellow-800 text-center shadow-sm">
+              <div className="p-3 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 text-white w-fit mx-auto mb-3">
+                <Clock className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 {t('exchanges.details.waiting_for_owner')}
               </p>
             </div>
@@ -661,28 +691,31 @@ export default function ExchangeDetailsPage() {
                     toast.error(t('exchanges.details.toast.failed_to_complete'));
                   }
                 }}
-                className="w-full"
-                variant="outline"
+                className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
               >
-                <CheckCircle className="w-4 h-4 mr-2" />
+                <CheckCircle className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-300" />
                 {t('exchanges.details.mark_as_completed')}
               </Button>
             </div>
           )}
 
           {exchange.status === "rejected" && (
-            <div className="p-4 bg-red-50 dark:bg-red-950 rounded-lg text-center">
-              <XCircle className="w-8 h-8 text-red-600 mx-auto mb-2" />
-              <p className="text-sm text-gray-700 dark:text-gray-300">
+            <div className="p-6 bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-950/50 dark:to-rose-950/50 rounded-xl border border-red-200 dark:border-red-800 text-center shadow-sm">
+              <div className="p-3 rounded-full bg-gradient-to-br from-red-400 to-rose-500 text-white w-fit mx-auto mb-3">
+                <XCircle className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 {t('exchanges.details.offer_declined')}
               </p>
             </div>
           )}
 
           {exchange.status === "completed" && (
-            <div className="p-4 bg-green-50 dark:bg-green-950 rounded-lg text-center">
-              <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
-              <p className="text-sm text-gray-700 dark:text-gray-300">
+            <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 rounded-xl border border-green-200 dark:border-green-800 text-center shadow-sm">
+              <div className="p-3 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 text-white w-fit mx-auto mb-3 animate-pulse">
+                <CheckCircle className="w-6 h-6" />
+              </div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 {t('exchanges.details.exchange_completed')}
               </p>
             </div>
@@ -691,14 +724,21 @@ export default function ExchangeDetailsPage() {
 
         {/* Review Section - Shows for completed exchanges */}
         {exchange.status === "completed" && (
-          <Card className="mt-6 p-0 overflow-hidden">
-            <div className="p-4 border-b bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950 dark:to-red-950">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {t('exchanges.details.reviews.title')}
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                {t('exchanges.details.reviews.subtitle')}
-              </p>
+          <Card className="mt-6 p-0 overflow-hidden backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 shadow-xl border-0 hover:shadow-2xl transition-all duration-300">
+            <div className="p-6 border-b bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-950/80 dark:to-red-950/80">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-lg">
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold bg-gradient-to-r from-orange-600 to-red-600 dark:from-orange-400 dark:to-red-400 bg-clip-text text-transparent">
+                    {t('exchanges.details.reviews.title')}
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {t('exchanges.details.reviews.subtitle')}
+                  </p>
+                </div>
+              </div>
             </div>
             <div className="p-6">
               <ReviewSection
@@ -721,21 +761,25 @@ export default function ExchangeDetailsPage() {
 
         {/* Integrated Chat Section - Available for all exchanges */}
         {exchange?.chatId && (
-          <Card className="mt-6 p-0 overflow-hidden">
-            <div className="p-4 border-b bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950">
-              <div className="flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  {t('exchanges.details.chat.title', { name: partner?.name || "User" })}
-                </h2>
+          <Card className="mt-6 p-0 overflow-hidden backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 shadow-xl border-0 hover:shadow-2xl transition-all duration-300">
+            <div className="p-6 border-b bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-950/80 dark:to-purple-950/80">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg">
+                  <MessageSquare className="w-5 h-5" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                    {t('exchanges.details.chat.title', { name: partner?.name || "User" })}
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    {t('exchanges.details.chat.subtitle')}
+                  </p>
+                </div>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                {t('exchanges.details.chat.subtitle')}
-              </p>
             </div>
 
             {/* Messages Area */}
-            <div className="h-96 overflow-y-auto p-4 bg-gray-50 dark:bg-gray-900/50">
+            <div className="h-96 overflow-y-auto p-4 bg-gradient-to-br from-gray-50 to-blue-50/30 dark:from-gray-900/50 dark:to-blue-950/30">
               {messages.length === 0 ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
@@ -808,6 +852,7 @@ export default function ExchangeDetailsPage() {
             </div>
           </Card>
         )}
+        </div>
       </div>
     </main>
   );
