@@ -93,10 +93,9 @@ export default function ProductDetailPage() {
   }, [id]);
 
   const handleOfferSubmit = async (offer: {
-    type: "exchange" | "purchase" | "chat";
+    type: "exchange" | "chat";
     offeredProductId?: string;
     offeredProductName?: string;
-    amount?: number;
     message?: string;
   }) => {
     if (!user || !product || !seller) return;
@@ -126,7 +125,6 @@ export default function ProductDetailPage() {
           type: offer.type,
           ...(offer.offeredProductId && { offeredProductId: offer.offeredProductId }),
           ...(offer.offeredProductName && { offeredProductName: offer.offeredProductName }),
-          ...(offer.amount && { amount: offer.amount }),
           ...(offer.message && { message: offer.message }),
         },
         createdAt: serverTimestamp(),
@@ -166,9 +164,6 @@ export default function ProductDetailPage() {
       }
       if (offer.offeredProductId) {
         notificationMetadata.offeredProductId = offer.offeredProductId;
-      }
-      if (offer.amount !== undefined && offer.amount !== null) {
-        notificationMetadata.offerAmount = offer.amount;
       }
       if (offer.message) {
         notificationMetadata.message = offer.message;

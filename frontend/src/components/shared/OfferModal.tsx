@@ -34,15 +34,14 @@ interface OfferModalProps {
   onClose: () => void;
   product: Product;
   onOfferSubmit: (offer: {
-    type: "exchange" | "purchase" | "chat";
+    type: "exchange" | "chat";
     offeredProductId?: string;
     offeredProductName?: string;
-    amount?: number;
     message?: string;
   }) => void;
 }
 
-type Step = "select-type" | "exchange-details" | "purchase-details" | "confirmation";
+type Step = "select-type" | "exchange-details" | "confirmation";
 
 export default function OfferModal({
   isOpen,
@@ -53,10 +52,9 @@ export default function OfferModal({
   const { user } = useAuth();
   const t = useI18n();
   const [step, setStep] = useState<Step>("select-type");
-  const [offerType, setOfferType] = useState<"exchange" | "purchase" | "chat" | null>(null);
+  const [offerType, setOfferType] = useState<"exchange" | "chat" | null>(null);
   const [userProducts, setUserProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  const [offerAmount, setOfferAmount] = useState<string>("");
   const [message, setMessage] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -89,12 +87,10 @@ export default function OfferModal({
     }
   };
 
-  const handleTypeSelection = (type: "exchange" | "purchase" | "chat") => {
+  const handleTypeSelection = (type: "exchange" | "chat") => {
     setOfferType(type);
     if (type === "exchange") {
       setStep("exchange-details");
-    } else if (type === "purchase") {
-      setStep("purchase-details");
     } else {
       // For chat, go directly to confirmation
       setStep("confirmation");
@@ -103,14 +99,12 @@ export default function OfferModal({
 
   const handleBack = () => {
     setError(null);
-    if (step === "exchange-details" || step === "purchase-details") {
+    if (step === "exchange-details") {
       setStep("select-type");
       setOfferType(null);
     } else if (step === "confirmation") {
       if (offerType === "exchange") {
         setStep("exchange-details");
-      } else if (offerType === "purchase") {
-        setStep("purchase-details");
       } else {
         setStep("select-type");
       }
@@ -118,17 +112,10 @@ export default function OfferModal({
   };
 
   const handleConfirm = () => {
-    if (offerType === "purchase" && parseFloat(offerAmount) < 0) {
-      setError(t("offer_modal.purchase_details.error.negative_amount"));
-      setStep("purchase-details");
-      return;
-    }
-
     const offer: {
-      type: "exchange" | "purchase" | "chat";
+      type: "exchange" | "chat";
       offeredProductId?: string;
       offeredProductName?: string;
-      amount?: number;
       message?: string;
     } = {
       type: offerType!,
@@ -138,8 +125,6 @@ export default function OfferModal({
     if (offerType === "exchange" && selectedProduct) {
       offer.offeredProductId = selectedProduct.id;
       offer.offeredProductName = selectedProduct.name;
-    } else if (offerType === "purchase") {
-      offer.amount = parseFloat(offerAmount);
     }
 
     onOfferSubmit(offer);
@@ -150,7 +135,6 @@ export default function OfferModal({
     setStep("select-type");
     setOfferType(null);
     setSelectedProduct(null);
-    setOfferAmount("");
     setMessage("");
     setError(null);
     onClose();
@@ -181,26 +165,6 @@ export default function OfferModal({
                       <h3 className="font-semibold">{t('offer_modal.select_type.exchange_title')}</h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         {t('offer_modal.select_type.exchange_description')}
-                      </p>
-                    </div>
-                    <ArrowRight className="w-5 h-5 text-gray-400" />
-                  </div>
-                </Card>
-              )}
-              
-              {product.isForSale && (
-                <Card
-                  className="p-4 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                  onClick={() => handleTypeSelection("purchase")}
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
-                      <DollarSign className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold">{t('offer_modal.select_type.purchase_title')}</h3>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {t('offer_modal.select_type.purchase_description')}
                       </p>
                     </div>
                     <ArrowRight className="w-5 h-5 text-gray-400" />
@@ -311,70 +275,6 @@ export default function OfferModal({
           </>
         );
 
-      case "purchase-details":
-        return (
-          <>
-            <DialogHeader>
-              <DialogTitle>{t('offer_modal.purchase_details.title')}</DialogTitle>
-              <DialogDescription>
-                {t('offer_modal.purchase_details.description')}
-              </DialogDescription>
-            </DialogHeader>
-            
-            <div className="space-y-4 mt-4">
-              <div>
-                <Label htmlFor="amount">{t('offer_modal.purchase_details.amount_label')}</Label>
-                <Input
-                  id="amount"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={offerAmount}
-                  onChange={(e) => {
-                    const newAmount = e.target.value;
-                    setOfferAmount(newAmount);
-                    if (parseFloat(newAmount) < 0) {
-                      setError(
-                        t("offer_modal.purchase_details.error.negative_amount")
-                      );
-                    } else {
-                      setError(null);
-                    }
-                  }}
-                  placeholder="0.00"
-                />
-              </div>
-              {error && <p className="text-red-500 text-sm">{error}</p>}
-              
-              <div>
-                <Label htmlFor="purchase-message">{t('offer_modal.purchase_details.add_message_label')}</Label>
-                <Textarea
-                  id="purchase-message"
-                  placeholder={t('offer_modal.purchase_details.add_message_placeholder')}
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  rows={3}
-                />
-              </div>
-              
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={handleBack} className="flex-1">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  {t('offer_modal.general.back_button')}
-                </Button>
-                <Button
-                  onClick={() => setStep("confirmation")}
-                  disabled={!offerAmount || parseFloat(offerAmount) < 0}
-                  className="flex-1"
-                >
-                  {t('offer_modal.purchase_details.continue_button')}
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </div>
-            </div>
-          </>
-        );
-
       case "confirmation":
         return (
           <>
@@ -395,9 +295,6 @@ export default function OfferModal({
                 <h4 className="font-semibold mb-2">{t('offer_modal.confirmation.you_offer')}</h4>
                 {offerType === "exchange" && selectedProduct && (
                   <p className="text-gray-700 dark:text-gray-300">{t('offer_modal.confirmation.offering_exchange', { productName: selectedProduct.name })}</p>
-                )}
-                {offerType === "purchase" && (
-                  <p className="text-gray-700 dark:text-gray-300">{t('offer_modal.confirmation.offering_purchase', { amount: parseFloat(offerAmount).toFixed(2) })}</p>
                 )}
                 {offerType === "chat" && (
                   <p className="text-gray-700 dark:text-gray-300">{t('offer_modal.confirmation.offering_chat')}</p>
