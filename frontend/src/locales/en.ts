@@ -383,5 +383,11 @@ export default {
   "onboarding.loading_button": "Loading...",
   "onboarding.skip_button": "Skip",
   "onboarding.error.no_location": "Unable to retrieve your location.",
-  "onboarding.error.no_geolocation": "Geolocation is not supported by this browser."
+  "onboarding.error.no_geolocation": "Geolocation is not supported by this browser.",
+
+  "nav.home": "Home",
+  "nav.search": "Search",
+  "nav.publish": "Publish",
+  "nav.messages": "Messages",
+  "nav.profile": "Profile"
 } as const;

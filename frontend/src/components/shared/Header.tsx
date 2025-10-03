@@ -50,8 +50,9 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link href={`/${locale}`} className="text-2xl font-bold text-gray-800">
+      <div className="container mx-auto px-4 py-3 md:py-4 flex justify-between items-center gap-2 md:gap-4">
+        {/* Logo - hidden on mobile */}
+        <Link href={`/${locale}`} className="hidden md:block text-2xl font-bold text-gray-800">
           <Image
             src="/header-logo.png"
             alt="Logo"
@@ -60,8 +61,9 @@ const Header = () => {
             priority
           />
         </Link>
-        <nav className="flex items-center gap-4">
-          <div className="relative flex-1 md:grow-0">
+        <nav className="flex items-center gap-2 md:gap-4 w-full md:w-auto">
+          {/* Search bar - full width on mobile */}
+          <div className="relative flex-1 md:flex-initial">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
@@ -73,18 +75,24 @@ const Header = () => {
               }
             />
           </div>
-          <Filter onFilterChange={setFilters} />
-          <Link href={`/${locale}`} className="text-gray-600 hover:text-gray-800">
+          {/* Filter button - hidden on mobile */}
+          <div className="hidden md:block">
+            <Filter onFilterChange={setFilters} />
+          </div>
+          {/* Home link - hidden on mobile */}
+          <Link href={`/${locale}`} className="hidden md:block text-gray-600 hover:text-gray-800">
             {t('header.home')}
           </Link>
+          {/* Publish button - hidden on mobile */}
           {user && (
-            <Button asChild>
+            <Button asChild className="hidden md:inline-flex">
               <Link href={`/${locale}/publish`}>{t('header.publish')}</Link>
             </Button>
           )}
+          {/* Notification bell and user menu - hidden on mobile */}
           {!loading &&
             (user ? (
-              <>
+              <div className="hidden md:flex items-center gap-4">
                 <NotificationBell />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -124,9 +132,9 @@ const Header = () => {
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              </>
+              </div>
             ) : (
-              <Button asChild>
+              <Button asChild className="hidden md:inline-flex">
                 <Link href={`/${locale}/login`}>{t('header.login')}</Link>
               </Button>
             ))}

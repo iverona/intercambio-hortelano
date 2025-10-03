@@ -383,5 +383,11 @@ export default {
   "onboarding.loading_button": "Cargando...",
   "onboarding.skip_button": "Omitir",
   "onboarding.error.no_location": "No se pudo obtener tu ubicación.",
-  "onboarding.error.no_geolocation": "La geolocalización no es compatible con este navegador."
+  "onboarding.error.no_geolocation": "La geolocalización no es compatible con este navegador.",
+
+  "nav.home": "Inicio",
+  "nav.search": "Buscar",
+  "nav.publish": "Publicar",
+  "nav.messages": "Mensajes",
+  "nav.profile": "Perfil"
 } as const;

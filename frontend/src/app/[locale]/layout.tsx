@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "../globals.css";
 import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
+import BottomNavigation from "@/components/shared/BottomNavigation";
 import { AuthProvider } from "@/context/AuthContext";
 import { FilterProvider } from "@/context/FilterContext";
 import { NotificationProvider } from "@/context/NotificationContext";
@@ -29,8 +30,9 @@ export default async function RootLayout({
           <NotificationProvider>
             <div className="flex flex-col min-h-screen">
               <Header />
-              <main className="flex-grow">{children}</main>
+              <main className="flex-grow pb-20 md:pb-0">{children}</main>
               <Footer />
+              <BottomNavigation />
             </div>
             <NotificationToaster />
             <Toaster />
