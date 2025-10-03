@@ -389,5 +389,7 @@ export default {
   "nav.search": "Search",
   "nav.publish": "Publish",
   "nav.messages": "Messages",
-  "nav.profile": "Profile"
+  "nav.profile": "Profile",
+
+  "common.back": "Back"
 } as const;

@@ -155,18 +155,18 @@ export default function ProductForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
       {/* Product Name Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg shadow-md">
-            <Package className="w-5 h-5 text-white" />
+      <div className="space-y-3 md:space-y-4">
+        <div className="flex items-center gap-2 md:gap-3">
+          <div className="p-1.5 md:p-2 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg shadow-md flex-shrink-0">
+            <Package className="w-4 h-4 md:w-5 md:h-5 text-white" />
           </div>
-          <div>
-            <Label htmlFor="name" className="text-base font-semibold text-gray-900 dark:text-gray-100">
+          <div className="min-w-0">
+            <Label htmlFor="name" className="text-sm md:text-base font-semibold text-gray-900 dark:text-gray-100">
               {t('product.form.name_label')}
             </Label>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 truncate">
               {t('product.form.name_placeholder')}
             </p>
           </div>
@@ -194,16 +194,16 @@ export default function ProductForm({
       </div>
 
       {/* Description Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg shadow-md">
-            <MessageSquare className="w-5 h-5 text-white" />
+      <div className="space-y-3 md:space-y-4">
+        <div className="flex items-center gap-2 md:gap-3">
+          <div className="p-1.5 md:p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg shadow-md flex-shrink-0">
+            <MessageSquare className="w-4 h-4 md:w-5 md:h-5 text-white" />
           </div>
-          <div>
-            <Label htmlFor="description" className="text-base font-semibold text-gray-900 dark:text-gray-100">
+          <div className="min-w-0">
+            <Label htmlFor="description" className="text-sm md:text-base font-semibold text-gray-900 dark:text-gray-100">
               {t('product.form.description_label')}
             </Label>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 truncate">
               {t('product.form.description_placeholder')}
             </p>
           </div>
@@ -232,16 +232,16 @@ export default function ProductForm({
       </div>
 
       {/* Category Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg shadow-md">
-            <Tag className="w-5 h-5 text-white" />
+      <div className="space-y-3 md:space-y-4">
+        <div className="flex items-center gap-2 md:gap-3">
+          <div className="p-1.5 md:p-2 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg shadow-md flex-shrink-0">
+            <Tag className="w-4 h-4 md:w-5 md:h-5 text-white" />
           </div>
-          <div>
-            <Label htmlFor="category" className="text-base font-semibold text-gray-900 dark:text-gray-100">
+          <div className="min-w-0">
+            <Label htmlFor="category" className="text-sm md:text-base font-semibold text-gray-900 dark:text-gray-100">
               {t('product.form.category_label')}
             </Label>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 truncate">
               {t('product.form.category_placeholder')}
             </p>
           </div>
@@ -273,16 +273,16 @@ export default function ProductForm({
       </div>
 
       {/* Images Section */}
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg shadow-md">
-            <Camera className="w-5 h-5 text-white" />
+      <div className="space-y-3 md:space-y-4">
+        <div className="flex items-center gap-2 md:gap-3">
+          <div className="p-1.5 md:p-2 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg shadow-md flex-shrink-0">
+            <Camera className="w-4 h-4 md:w-5 md:h-5 text-white" />
           </div>
-          <div>
-            <Label htmlFor="picture" className="text-base font-semibold text-gray-900 dark:text-gray-100">
+          <div className="min-w-0">
+            <Label htmlFor="picture" className="text-sm md:text-base font-semibold text-gray-900 dark:text-gray-100">
               {t("product.form.picture_label")}
             </Label>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 truncate">
               {t("product.form.upload_restrictions")}
             </p>
           </div>
@@ -375,83 +375,83 @@ export default function ProductForm({
       </div>
 
       {/* Transaction Type Section */}
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         <div>
-          <Label className="text-base font-semibold text-gray-900 dark:text-gray-100">
+          <Label className="text-sm md:text-base font-semibold text-gray-900 dark:text-gray-100">
             {t('product.form.transaction_type_label')}
           </Label>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+          <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-1">
             {t('product.form.error.no_transaction_type')}
           </p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
           {/* Exchange Card */}
           <Card
-            className={`p-5 cursor-pointer transition-all duration-300 border-2 ${
+            className={`p-3 md:p-5 cursor-pointer transition-all duration-300 border-2 ${
               isForExchange
                 ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-green-500 dark:border-green-600 shadow-lg'
                 : 'hover:border-green-300 dark:hover:border-green-700 hover:bg-green-50/50 dark:hover:bg-green-950/10'
             } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={() => !isSubmitting && setIsForExchange(!isForExchange)}
           >
-            <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg transition-all ${
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className={`p-1.5 md:p-2 rounded-lg transition-all flex-shrink-0 ${
                 isForExchange 
                   ? 'bg-gradient-to-br from-green-500 to-emerald-500 shadow-md' 
                   : 'bg-green-100 dark:bg-green-900'
               }`}>
-                <ArrowRightLeft className={`w-5 h-5 ${isForExchange ? 'text-white' : 'text-green-600 dark:text-green-400'}`} />
+                <ArrowRightLeft className={`w-4 h-4 md:w-5 md:h-5 ${isForExchange ? 'text-white' : 'text-green-600 dark:text-green-400'}`} />
               </div>
-              <div className="flex-1">
-                <p className={`font-semibold ${isForExchange ? 'text-green-700 dark:text-green-300' : 'text-gray-900 dark:text-gray-100'}`}>
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm md:text-base font-semibold ${isForExchange ? 'text-green-700 dark:text-green-300' : 'text-gray-900 dark:text-gray-100'}`}>
                   {t('product.form.for_exchange_label')}
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
+                <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
                   Trade with other gardeners
                 </p>
               </div>
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+              <div className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                 isForExchange 
                   ? 'border-green-500 bg-green-500' 
                   : 'border-gray-300 dark:border-gray-600'
               }`}>
-                {isForExchange && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                {isForExchange && <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></div>}
               </div>
             </div>
           </Card>
 
           {/* Sale Card */}
           <Card
-            className={`p-5 cursor-pointer transition-all duration-300 border-2 ${
+            className={`p-3 md:p-5 cursor-pointer transition-all duration-300 border-2 ${
               isForSale
                 ? 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-500 dark:border-blue-600 shadow-lg'
                 : 'hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/50 dark:hover:bg-blue-950/10'
             } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={() => !isSubmitting && setIsForSale(!isForSale)}
           >
-            <div className="flex items-center gap-3">
-              <div className={`p-2 rounded-lg transition-all ${
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className={`p-1.5 md:p-2 rounded-lg transition-all flex-shrink-0 ${
                 isForSale 
                   ? 'bg-gradient-to-br from-blue-500 to-indigo-500 shadow-md' 
                   : 'bg-blue-100 dark:bg-blue-900'
               }`}>
-                <DollarSign className={`w-5 h-5 ${isForSale ? 'text-white' : 'text-blue-600 dark:text-blue-400'}`} />
+                <DollarSign className={`w-4 h-4 md:w-5 md:h-5 ${isForSale ? 'text-white' : 'text-blue-600 dark:text-blue-400'}`} />
               </div>
-              <div className="flex-1">
-                <p className={`font-semibold ${isForSale ? 'text-blue-700 dark:text-blue-300' : 'text-gray-900 dark:text-gray-100'}`}>
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm md:text-base font-semibold ${isForSale ? 'text-blue-700 dark:text-blue-300' : 'text-gray-900 dark:text-gray-100'}`}>
                   {t('product.form.for_sale_label')}
                 </p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">
+                <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
                   Sell for money
                 </p>
               </div>
-              <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+              <div className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
                 isForSale 
                   ? 'border-blue-500 bg-blue-500' 
                   : 'border-gray-300 dark:border-gray-600'
               }`}>
-                {isForSale && <div className="w-2 h-2 bg-white rounded-full"></div>}
+                {isForSale && <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></div>}
               </div>
             </div>
           </Card>
