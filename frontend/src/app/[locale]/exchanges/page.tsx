@@ -118,14 +118,14 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
   return (
     <Card 
       onClick={onClick}
-      className="p-5 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02] bg-white dark:bg-gray-800 group relative overflow-hidden"
+      className="p-4 md:p-5 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02] bg-white dark:bg-gray-800 group relative overflow-hidden"
     >
       {/* Hover glow effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-xl opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-300"></div>
       
-      <div className="flex items-start gap-4 relative z-10">
+      <div className="flex items-start gap-3 md:gap-4 relative z-10">
         {/* Avatar */}
-        <Avatar className="h-14 w-14 border-2 border-gray-200 dark:border-gray-700 shadow-md ring-2 ring-blue-100 dark:ring-blue-900">
+        <Avatar className="h-12 w-12 md:h-14 md:w-14 border-2 border-gray-200 dark:border-gray-700 shadow-md ring-2 ring-blue-100 dark:ring-blue-900 flex-shrink-0">
           <AvatarImage src={exchange.partner?.avatarUrl} alt={exchange.partner?.name} />
           <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-lg font-bold">
             {exchange.partner?.name?.charAt(0) || "U"}
@@ -134,31 +134,30 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
 
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between mb-2">
-            <div>
-              <h3 className="font-bold text-lg text-gray-900 dark:text-gray-100 truncate">
+          <div className="flex items-start justify-between mb-1 md:mb-2 gap-2">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-bold text-base md:text-lg text-gray-900 dark:text-gray-100 truncate">
                 {exchange.productName}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 truncate">
                 {isRequester ? t('exchanges.item.to', { name: exchange.partner?.name }) : t('exchanges.item.from', { name: exchange.partner?.name })}
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <Badge className={`${getStatusColor(exchange.status)} border-0 shadow-md`}>
-                {exchange.status === 'pending' && !isRequester && (
-                  <AlertCircle className="w-3 h-3 mr-1" />
-                )}
-                {exchange.status.charAt(0).toUpperCase() + exchange.status.slice(1)}
-              </Badge>
-            </div>
+            <Badge className={`${getStatusColor(exchange.status)} border-0 shadow-md text-xs flex-shrink-0`}>
+              {exchange.status === 'pending' && !isRequester && (
+                <AlertCircle className="w-3 h-3 mr-1" />
+              )}
+              <span className="hidden sm:inline">{exchange.status.charAt(0).toUpperCase() + exchange.status.slice(1)}</span>
+              <span className="sm:hidden">{exchange.status.charAt(0).toUpperCase()}</span>
+            </Badge>
           </div>
 
           {/* Offer details */}
           {exchange.offer && (
-            <div className="flex items-center gap-2 mb-3 p-2 bg-gradient-to-r from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-lg">
-              <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
-                {getOfferTypeIcon(exchange.offer.type)}
-                <span className="font-medium">
+            <div className="flex items-center gap-2 mb-2 md:mb-3 p-2 bg-gradient-to-r from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-lg">
+              <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-gray-700 dark:text-gray-300 min-w-0">
+                <span className="flex-shrink-0">{getOfferTypeIcon(exchange.offer.type)}</span>
+                <span className="font-medium truncate">
                   {exchange.offer.type === "exchange" && exchange.offer.offeredProductName
                     ? t('exchanges.item.offered', { product: exchange.offer.offeredProductName })
                     : exchange.offer.type === "purchase" && exchange.offer.amount
@@ -170,14 +169,14 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
           )}
 
           {/* Last message or status info */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-2">
             {exchange.lastMessage ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400 truncate flex-1 flex items-center gap-1">
-                <MessageSquare className="w-3 h-3" />
-                {exchange.lastMessage.text}
+              <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 truncate flex-1 flex items-center gap-1">
+                <MessageSquare className="w-3 h-3 flex-shrink-0" />
+                <span className="truncate">{exchange.lastMessage.text}</span>
               </p>
             ) : (
-              <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+              <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 italic truncate flex-1">
                 {exchange.status === 'pending' && !isRequester 
                   ? t('exchanges.item.action_required')
                   : exchange.status === 'pending' && isRequester
@@ -185,9 +184,9 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
                   : t('exchanges.item.no_messages')}
               </p>
             )}
-            <div className="flex items-center gap-2 text-xs text-gray-400">
-              <Clock className="w-3 h-3" />
-              {formatTimeAgo(exchange.lastMessage?.createdAt || exchange.updatedAt || exchange.createdAt)}
+            <div className="flex items-center gap-1 md:gap-2 text-xs text-gray-400 flex-shrink-0">
+              <Clock className="w-3 h-3 hidden sm:inline" />
+              <span className="hidden sm:inline">{formatTimeAgo(exchange.lastMessage?.createdAt || exchange.updatedAt || exchange.createdAt)}</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
@@ -199,11 +198,11 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
 
 // Loading skeleton
 const ExchangeSkeleton = () => (
-  <div className="space-y-4">
+  <div className="space-y-3 md:space-y-4">
     {[...Array(3)].map((_, i) => (
-      <Card key={i} className="p-5">
-        <div className="flex items-start gap-4 animate-pulse">
-          <div className="h-14 w-14 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded-full"></div>
+      <Card key={i} className="p-4 md:p-5">
+        <div className="flex items-start gap-3 md:gap-4 animate-pulse">
+          <div className="h-12 w-12 md:h-14 md:w-14 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded-full flex-shrink-0"></div>
           <div className="flex-1 space-y-3">
             <div className="h-5 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-1/3"></div>
             <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-1/2"></div>
@@ -329,46 +328,47 @@ export default function ExchangesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900 pb-20 md:pb-0">
       {/* Hero Header */}
       <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950/20 dark:via-emerald-950/20 dark:to-teal-950/20 border-b">
         {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
           <div className="absolute top-40 left-1/2 w-80 h-80 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
         </div>
 
-        <div className="relative container mx-auto px-4 py-12">
+        <div className="relative container mx-auto px-4 py-8 md:py-12">
           <div className="max-w-4xl mx-auto">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl shadow-lg">
-                  <ArrowRightLeft className="w-8 h-8 text-white" />
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 md:mb-8">
+              <div className="flex items-center gap-3 md:gap-4">
+                <div className="p-2 md:p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl shadow-lg flex-shrink-0">
+                  <ArrowRightLeft className="w-6 h-6 md:w-8 md:h-8 text-white" />
                 </div>
-                <div>
-                  <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
+                <div className="min-w-0">
+                  <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
                     {t('exchanges.title')}
                   </h1>
-                  <p className="text-gray-600 dark:text-gray-400 mt-1">
+                  <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1 truncate">
                     {t('exchanges.subtitle')}
                   </p>
                 </div>
               </div>
               <Button 
                 asChild
-                size="lg"
-                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg group"
+                size="default"
+                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg group w-full md:w-auto"
               >
                 <Link href="/">
-                  <Package className="mr-2 h-5 w-5" />
-                  {t('exchanges.browse_products')}
+                  <Package className="mr-2 h-4 w-4 md:h-5 md:w-5" />
+                  <span className="hidden sm:inline">{t('exchanges.browse_products')}</span>
+                  <span className="sm:hidden">Browse</span>
                 </Link>
               </Button>
             </div>
 
             {/* Stats Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               <StatsCard
                 icon={Inbox}
                 label={t('exchanges.stats.pending')}
@@ -399,32 +399,35 @@ export default function ExchangesPage() {
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6 md:py-8">
         <div className="max-w-4xl mx-auto">
           {/* Tabs for different exchange states */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-6">
-              <TabsTrigger value="active" className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4" />
-                {t('exchanges.tabs.active')}
+            <TabsList className="grid w-full grid-cols-3 mb-4 md:mb-6">
+              <TabsTrigger value="active" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm">
+                <MessageSquare className="w-3 h-3 md:w-4 md:h-4" />
+                <span className="hidden sm:inline">{t('exchanges.tabs.active')}</span>
+                <span className="sm:hidden">Active</span>
                 {activeExchanges.length > 0 && (
                   <Badge variant="secondary" className="ml-1">
                     {activeExchanges.length}
                   </Badge>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="pending" className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                {t('exchanges.tabs.pending')}
+              <TabsTrigger value="pending" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm">
+                <Clock className="w-3 h-3 md:w-4 md:h-4" />
+                <span className="hidden sm:inline">{t('exchanges.tabs.pending')}</span>
+                <span className="sm:hidden">Pending</span>
                 {pendingExchanges.length > 0 && (
                   <Badge variant="secondary" className="ml-1">
                     {pendingExchanges.length}
                   </Badge>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="completed" className="flex items-center gap-2">
-                <Archive className="w-4 h-4" />
-                {t('exchanges.tabs.history')}
+              <TabsTrigger value="completed" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm">
+                <Archive className="w-3 h-3 md:w-4 md:h-4" />
+                <span className="hidden sm:inline">{t('exchanges.tabs.history')}</span>
+                <span className="sm:hidden">History</span>
                 {completedExchanges.length > 0 && (
                   <Badge variant="secondary" className="ml-1">
                     {completedExchanges.length}
@@ -434,7 +437,7 @@ export default function ExchangesPage() {
             </TabsList>
 
             {/* Active Exchanges */}
-            <TabsContent value="active" className="space-y-4">
+            <TabsContent value="active" className="space-y-3 md:space-y-4">
               {activeExchanges.length > 0 ? (
                 activeExchanges.map((exchange) => (
                   <ExchangeItem
@@ -453,7 +456,7 @@ export default function ExchangesPage() {
             </TabsContent>
 
             {/* Pending Exchanges */}
-            <TabsContent value="pending" className="space-y-4">
+            <TabsContent value="pending" className="space-y-3 md:space-y-4">
               {pendingExchanges.length > 0 ? (
                 <>
                   {/* Show pending requests that need user's action first */}
@@ -490,7 +493,7 @@ export default function ExchangesPage() {
             </TabsContent>
 
             {/* Completed/Rejected Exchanges */}
-            <TabsContent value="completed" className="space-y-4">
+            <TabsContent value="completed" className="space-y-3 md:space-y-4">
               {completedExchanges.length > 0 ? (
                 completedExchanges.map((exchange) => (
                   <ExchangeItem
@@ -511,16 +514,16 @@ export default function ExchangesPage() {
 
           {/* Tips Section */}
           {exchanges.length > 0 && (
-            <Card className="mt-8 p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800 shadow-lg">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg shadow-md">
-                  <Sparkles className="w-5 h-5 text-white" />
+            <Card className="mt-6 md:mt-8 p-4 md:p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800 shadow-lg">
+              <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+                <div className="p-1.5 md:p-2 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg shadow-md flex-shrink-0">
+                  <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                <h3 className="text-base md:text-lg font-bold text-gray-900 dark:text-gray-100">
                   {t('exchanges.tips.title')}
                 </h3>
               </div>
-              <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+              <ul className="space-y-2 text-xs md:text-sm text-gray-700 dark:text-gray-300">
                 <li className="flex items-start gap-2">
                   <span className="text-green-500 mt-0.5">•</span>
                   <span>{t('exchanges.tips.item1')}</span>
