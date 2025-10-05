@@ -4,10 +4,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { auth, db } from "@/lib/firebase";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  fetchSignInMethodsForEmail,
+  GoogleAuthProvider,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
@@ -25,6 +35,7 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showGoogleDialog, setShowGoogleDialog] = useState(false);
   const router = useRouter();
   const { handleGoogleAuth, error: googleError, loading: googleLoading } = useGoogleAuth();
 
@@ -49,14 +60,77 @@ export default function SignupPage() {
       });
       await sendEmailVerification(user);
       setIsSubmitted(true);
-    } catch (error) {
+    } catch (error: any) {
+      // Check if email is already in use
+      if (error.code === "auth/email-already-in-use") {
+        // Check what sign-in methods are available for this email
+        try {
+          const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+          console.log("Sign-in methods for email:", signInMethods);
+          
+          // Check if the email is registered with Google
+          // Firebase returns "google.com" as the provider ID
+          const hasGoogleProvider = signInMethods.some(method => 
+            method === "google.com" || method.includes("google")
+          );
+          
+          if (hasGoogleProvider) {
+            setShowGoogleDialog(true);
+            setError(null);
+            return;
+          }
+        } catch (checkError) {
+          console.error("Error checking sign-in methods:", checkError);
+        }
+        
+        // If we couldn't determine the provider or it's not Google, 
+        // still show the dialog as a fallback with helpful message
+        setShowGoogleDialog(true);
+        setError(null);
+        return;
+      }
+      
       setError(error instanceof Error ? error.message : "An error occurred");
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setShowGoogleDialog(false);
+    await handleGoogleAuth();
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <Card className="w-full max-w-md">
+    <>
+      <Dialog open={showGoogleDialog} onOpenChange={setShowGoogleDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('signup.account_exists_title')}</DialogTitle>
+            <DialogDescription>
+              {t('signup.account_exists_description')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => router.push('/login')}
+              className="w-full sm:w-auto"
+            >
+              {t('signup.go_to_login')}
+            </Button>
+            <Button 
+              onClick={handleGoogleSignIn} 
+              disabled={googleLoading} 
+              className="flex items-center gap-2 w-full sm:w-auto"
+            >
+              <Chrome size={18} />
+              {t('signup.signin_with_google')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>{t('signup.title')}</CardTitle>
         </CardHeader>
@@ -128,7 +202,8 @@ export default function SignupPage() {
             </>
           )}
         </CardContent>
-      </Card>
-    </div>
+        </Card>
+      </div>
+    </>
   );
 }
