@@ -62,6 +62,10 @@ const Header = () => {
           />
         </Link>
         <nav className="flex items-center gap-2 md:gap-4 w-full md:w-auto">
+          {/* Home link - hidden on mobile */}
+          <Link href={`/${locale}`} className="hidden md:block text-gray-600 hover:text-gray-800">
+            {t('header.home')}
+          </Link>
           {/* Search bar - full width on mobile */}
           <div className="relative flex-1 md:flex-initial">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -79,10 +83,6 @@ const Header = () => {
           <div className="hidden md:block">
             <Filter onFilterChange={setFilters} />
           </div>
-          {/* Home link - hidden on mobile */}
-          <Link href={`/${locale}`} className="hidden md:block text-gray-600 hover:text-gray-800">
-            {t('header.home')}
-          </Link>
           {/* Publish button - hidden on mobile */}
           {user && (
             <Button asChild className="hidden md:inline-flex">
