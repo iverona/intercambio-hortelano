@@ -523,25 +523,14 @@ export default function ProductDetailPage() {
               {/* Action Buttons */}
               <div className="space-y-3">
                 {!isOwner && user && (
-                  <>
-                    <Button
-                      size="lg"
-                      className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl transition-all group"
-                      onClick={() => setShowOfferModal(true)}
-                    >
-                      <Sparkles className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" />
-                      {t('product.interested_button')}
-                    </Button>
-                    <Button
-                      size="lg"
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => setShowOfferModal(true)}
-                    >
-                      <MessageSquare className="mr-2 h-5 w-5" />
-                      {t('product.send_message')}
-                    </Button>
-                  </>
+                  <Button
+                    size="lg"
+                    className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl transition-all group"
+                    onClick={() => setShowOfferModal(true)}
+                  >
+                    <Sparkles className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" />
+                    {t('product.interested_button')}
+                  </Button>
                 )}
                 {!user && (
                   <Card className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
