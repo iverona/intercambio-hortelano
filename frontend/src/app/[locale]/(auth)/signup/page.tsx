@@ -57,6 +57,7 @@ export default function SignupPage() {
         email: user.email,
         name: name,
         onboardingComplete: false,
+        authMethod: "password",
       });
       await sendEmailVerification(user);
       setIsSubmitted(true);
@@ -66,10 +67,8 @@ export default function SignupPage() {
         // Check what sign-in methods are available for this email
         try {
           const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-          console.log("Sign-in methods for email:", signInMethods);
           
           // Check if the email is registered with Google
-          // Firebase returns "google.com" as the provider ID
           const hasGoogleProvider = signInMethods.some(method => 
             method === "google.com" || method.includes("google")
           );
@@ -83,10 +82,8 @@ export default function SignupPage() {
           console.error("Error checking sign-in methods:", checkError);
         }
         
-        // If we couldn't determine the provider or it's not Google, 
-        // still show the dialog as a fallback with helpful message
-        setShowGoogleDialog(true);
-        setError(null);
+        // If it's not Google, it must be password - show generic error
+        setError(t('signup.email_already_exists'));
         return;
       }
       

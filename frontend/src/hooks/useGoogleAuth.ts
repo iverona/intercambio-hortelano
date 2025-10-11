@@ -1,15 +1,11 @@
 "use client";
 
 import { auth, db, googleProvider } from "@/lib/firebase";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { signInWithPopup } from "firebase/auth";
+import { doc, getDoc, setDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { handleUserRedirect } from "@/lib/authUtils";
-import { 
-  handleGoogleAccountLinking, 
-  completeAccountMerge 
-} from "@/lib/accountLinking";
 
 export const useGoogleAuth = () => {
   const router = useRouter();
@@ -29,36 +25,38 @@ export const useGoogleAuth = () => {
         throw new Error("No email associated with Google account");
       }
       
-      // Get the Google credential for potential account linking
-      const credential = GoogleAuthProvider.credentialFromResult(result);
+      // Check if this email is already registered in Firestore with password method
+      const usersRef = collection(db, "users");
+      const q = query(usersRef, where("email", "==", email));
+      const querySnapshot = await getDocs(q);
       
-      if (!credential) {
-        throw new Error("Failed to get Google credential");
+      if (!querySnapshot.empty) {
+        const existingUserDoc = querySnapshot.docs[0];
+        const existingUserData = existingUserDoc.data();
+        
+        // If the existing user has authMethod "password", don't allow Google sign-in
+        if (existingUserData.authMethod === "password") {
+          // Sign out the Google user that was just created
+          await auth.signOut();
+          // Set error without throwing to avoid console error
+          setError("This email is registered with email/password. Please sign in using your password.");
+          setLoading(false);
+          return;
+        }
       }
       
-      // Check if we need to handle account linking
-      const linkingResult = await handleGoogleAccountLinking(credential, email);
-      
-      if (!linkingResult.success) {
-        throw new Error(linkingResult.message || "Failed to link accounts");
-      }
-      
-      // Check if user document exists
+      // Check if user document exists for this Google UID
       const userDoc = await getDoc(doc(db, "users", user.uid));
       
       if (!userDoc.exists()) {
-        // New user - create user document
+        // New user - create user document with authMethod
         await setDoc(doc(db, "users", user.uid), {
           uid: user.uid,
           email: user.email,
           name: user.displayName,
           onboardingComplete: false,
+          authMethod: "google",
         });
-      }
-      
-      // If we need to merge accounts, do it now
-      if (linkingResult.needsMerge && linkingResult.oldUid) {
-        await completeAccountMerge(linkingResult.oldUid, user.uid);
       }
       
       // Handle redirect for both new and existing users

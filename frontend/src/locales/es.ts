@@ -271,6 +271,7 @@ export default {
   "login.login_button": "Iniciar Sesión",
   "login.or": "O",
   "login.google_button": "Iniciar sesión con Google",
+  "login.google_account_error": "Este correo está registrado con email/contraseña. Por favor, inicia sesión usando tu contraseña.",
   "login.signup_prompt": "¿No tienes una cuenta? Regístrate",
 
   "notifications.new_offer.title": "Nueva Oferta Recibida",
@@ -369,7 +370,8 @@ export default {
   "signup.google_account_exists_title": "La Cuenta Ya Existe",
   "signup.google_account_exists_description": "Este correo electrónico ya está registrado con una cuenta de Google. Por favor, inicia sesión con Google para acceder a tu cuenta.",
   "signup.account_exists_title": "La Cuenta Ya Existe",
-  "signup.account_exists_description": "Este correo electrónico ya está registrado. Por favor, inicia sesión para acceder a tu cuenta.",
+  "signup.account_exists_description": "Este correo electrónico ya está registrado con una cuenta de Google. Por favor, inicia sesión con Google para acceder a tu cuenta.",
+  "signup.email_already_exists": "Este correo electrónico ya está registrado. Por favor, ve a la página de inicio de sesión para acceder.",
   "signup.cancel": "Cancelar",
   "signup.signin_with_google": "Iniciar sesión con Google",
   "signup.go_to_login": "Ir a Iniciar Sesión",

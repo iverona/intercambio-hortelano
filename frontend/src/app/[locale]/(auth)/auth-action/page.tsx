@@ -33,6 +33,13 @@ export default function AuthActionPage() {
   const [countdown, setCountdown] = useState(5);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Handle redirect when countdown reaches 0
+  useEffect(() => {
+    if (actionState === "success" && countdown === 0) {
+      router.push("/login");
+    }
+  }, [countdown, actionState, router]);
+
   useEffect(() => {
     const handleAction = async () => {
       const oobCode = searchParams.get("oobCode");
@@ -95,7 +102,6 @@ export default function AuthActionPage() {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          router.push("/login");
           return 0;
         }
         return prev - 1;

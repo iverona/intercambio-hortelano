@@ -271,6 +271,7 @@ export default {
   "login.login_button": "Login",
   "login.or": "Or",
   "login.google_button": "Sign in with Google",
+  "login.google_account_error": "This email is registered with email/password. Please sign in using your password.",
   "login.signup_prompt": "Don't have an account? Sign up",
 
   "notifications.new_offer.title": "New Offer Received",
@@ -369,7 +370,8 @@ export default {
   "signup.google_account_exists_title": "Account Already Exists",
   "signup.google_account_exists_description": "This email is already registered with a Google account. Please sign in with Google to access your account.",
   "signup.account_exists_title": "Account Already Exists",
-  "signup.account_exists_description": "This email address is already registered. Please sign in to access your account.",
+  "signup.account_exists_description": "This email is already registered with a Google account. Please sign in with Google to access your account.",
+  "signup.email_already_exists": "This email address is already registered. Please go to the login page to sign in.",
   "signup.cancel": "Cancel",
   "signup.signin_with_google": "Sign in with Google",
   "signup.go_to_login": "Go to Login",
