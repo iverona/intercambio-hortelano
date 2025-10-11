@@ -48,7 +48,7 @@ This simplified approach offers several benefits:
 ### Error Messages
 
 **English:**
-- Login page: "This email is registered with email/password. Please sign in using your password."
+- Login page: "This email is registered with email/password. Please sign in using your password." (Note: This message is currently hardcoded in `frontend/src/hooks/useGoogleAuth.ts` and does not use the localization files.)
 - Signup page (Google exists): "This email is already registered with a Google account. Please sign in with Google to access your account."
 - Signup page (Password exists): "This email address is already registered. Please go to the login page to sign in."
 

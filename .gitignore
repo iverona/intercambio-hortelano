@@ -45,3 +45,4 @@ firebase-debug.*.log
 firestore-debug.log
 ui-debug.log
 pubsub-debug.log
+.genkit/traces_idx/genkit.metadata

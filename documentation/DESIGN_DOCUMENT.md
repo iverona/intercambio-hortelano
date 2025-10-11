@@ -20,16 +20,53 @@ This document outlines the technical and functional specifications for the appli
 ## 2. Initial Data Model (Firestore)
 
 ### `users` collection
-*   **Description:** Stores information about each user.
-*   **Fields:** `userId`, `displayName`, `email`, `location` (GeoPoint), `bio`, `points`, `level`, `badges` (array).
+*   **Description:** Stores information about each user. Document ID is the Firebase Auth UID.
+*   **Fields:**
+    *   `userId: string` - The user's unique ID (same as Auth UID).
+    *   `displayName: string` - The user's public name.
+    *   `email: string` - The user's email address.
+    *   `authMethod: string` - The method used for registration ('password' or 'google').
+    *   `onboardingComplete: boolean` - Flag to check if the user has completed the initial location prompt.
+    *   `location: GeoPoint` - (Optional) The user's general location.
+    *   `bio: string` - (Optional) A short user biography.
+    *   `reputation: object` - Contains the user's calculated reputation.
+        *   `averageRating: number`
+        *   `totalReviews: number`
+    *   `points: number` - Gamification points.
+    *   `level: string` - Gamification level (e.g., "Seed", "Sprout").
 
 ### `listings` collection
 *   **Description:** Contains all items offered by users.
-*   **Fields:** `listingId`, `title`, `description`, `category`, `iconId`, `isForExchange` (boolean), `price`, `location` (GeoPoint), `producerId` (reference to user).
+*   **Fields:**
+    *   `listingId: string` - The unique ID for the listing.
+    *   `producerId: string` - The `userId` of the user who created the listing.
+    *   `title: string`
+    *   `description: string`
+    *   `category: string`
+    *   `isForExchange: boolean`
+    *   `isForSale: boolean`
+    *   `price: number` - (Optional) The monetary price if `isForSale` is true.
+    *   `location: GeoPoint` - The location of the product for proximity searches.
+    *   `imageUrls: array<string>` - URLs of the product images stored in Firebase Storage.
 
 ### `exchanges` collection
 *   **Description:** Tracks the lifecycle of a transaction.
-*   **Fields:** `exchangeId`, `listingId`, `producerId`, `consumerId`, `status` (e.g., "proposed", "accepted", "completed"), `createdAt`, `reviews`.
+*   **Fields:**
+    *   `exchangeId: string` - The unique ID for the exchange.
+    *   `listingId: string` - Reference to the associated listing.
+    *   `producerId: string` - The user who owns the listing.
+    *   `consumerId: string` - The user who initiated the exchange.
+    *   `status: string` - The current state (e.g., "proposed", "accepted", "completed", "declined").
+    *   `chatId: string` - A reference to the associated document in the `chats` collection.
+    *   `createdAt: Timestamp`
+    *   `reviews: map` - A map where keys are `userIds` and values are review objects.
+
+### `chats` collection
+*   **Description:** Stores metadata for a chat thread between users.
+*   **Fields:**
+    *   `participants: array<string>` - Array of `userIds` in the chat.
+    *   `lastMessage: object` - A copy of the most recent message for previews.
+    *   **Sub-collection:** `messages` - Contains all messages for the chat.
 
 ## 3. Gamification Concept
 

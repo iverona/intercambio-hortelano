@@ -12,7 +12,7 @@ This section details the primary technologies and frameworks used to build the a
 
 ### Frontend
 
-*   **Framework:** Next.js (v15) with React (v19)
+*   **Framework:** Next.js (v15.5.3) with React (v19.1.0)
 *   **Language:** TypeScript
 *   **Styling:** Tailwind CSS (v4)
 *   **UI Components:** shadcn/ui (built on Radix UI)
@@ -50,7 +50,7 @@ This directory contains the entire Next.js web application.
     *   `notifications.ts`: Logic for creating and managing notification documents in Firestore.
 *   `src/context/`: Global state management using React Context.
     *   `AuthContext.tsx`: Manages and provides the current user's authentication state.
-    *   `NotificationContext.tsx`: Listens for real-time notifications from Firestore and displays them.
+    *   `NotificationContext.tsx`: Listens for real-time notifications from Firestore and provides them to the app.
 *   `src/locales/`: Contains all files related to the internationalization setup.
     *   `en.ts` & `es.ts`: These files export objects containing the key-value pairs for English and Spanish translations, respectively.
     *   `provider.tsx`: A client-side component that wraps the application and provides the i18n context.
@@ -74,7 +74,7 @@ Authentication is managed by **Firebase Authentication**. Users can sign up and 
 1.  **Firebase Initialization:** The client-side Firebase app is initialized in `frontend/src/lib/firebase.ts`. This configuration is used by all other Firebase services on the frontend.
 2.  **State Management:** The `frontend/src/context/AuthContext.tsx` file is the heart of the frontend authentication system.
     *   It creates a React Context (`AuthContext`) to provide the user's authentication state to all components.
-    *   The `AuthProvider` component wraps the entire application in `frontend/src/app/layout.tsx`.
+    *   The `AuthProvider` component wraps the entire application in `frontend/src/app/[locale]/layout.tsx`.
     *   It uses the `onAuthStateChanged` listener from the Firebase SDK. This listener fires whenever a user logs in or out, providing the `User` object.
 3.  **Accessing User Data:** Any component that needs to know about the current user can use the `useAuth()` custom hook. This hook returns the current `user` object and a `loading` state.
 
@@ -155,11 +155,12 @@ Contains all items offered by users for sale or exchange.
 *   `title: string` - The title of the listing.
 *   `description: string` - A detailed description of the product.
 *   `category: string` - The product category (e.g., "Vegetables").
-*   `iconId: string` - An identifier for the icon representing the product.
 *   `isForExchange: boolean` - True if the item is available for trade.
+*   `isForSale: boolean` - True if the item is available for a price.
 *   `price: number` - The monetary price of the item.
 *   `location: GeoPoint` - The location of the product, for proximity searches.
 *   `producerId: string` - A reference to the `userId` of the user who created the listing.
+*   `imageUrls: array<string>` - An array of URLs for the product images.
 
 #### `exchanges`
 Tracks the lifecycle of a transaction between two users.
@@ -208,29 +209,30 @@ The user interface is built using **shadcn/ui**, which is a collection of reusab
 *   **`frontend/src/components/shared/`**: This directory contains custom components that are specific to this application. They are built by composing components from the `ui/` directory. Examples include:
     *   `ChatList.tsx`: Renders the list of a user's ongoing chats.
     *   `OfferModal.tsx`: The dialog for making an offer on a listing.
-    *   `ListingCard.tsx`: The card component used to display a product in a feed.
+    *   `ProductCard.tsx`: The card component used to display a product in a feed.
 
 When building new UI, developers should first look for an appropriate component in `shadcn/ui`. If the required functionality is more complex, they should create a new component in the `shared/` directory.
 
 ### Real-time Notifications System
 
-The application features a real-time notification system to alert users of important events. The entire system is orchestrated on the frontend using Firestore and React Context.
+The application features a real-time notification system to alert users of important events. The system is orchestrated on the frontend using Firestore and React Context.
 
-1.  **Creating Notifications:** When a significant event occurs (e.g., a user makes an offer on a listing), the client-side code calls a helper function from `frontend/src/lib/notifications.ts`. This function creates a new document in the `notifications` collection in Firestore.
+1.  **Creating Notifications:** When a significant event occurs (e.g., a user makes an offer), client-side code calls a helper function from `frontend/src/lib/notifications.ts`. This function creates a new document in the `notifications` collection in Firestore.
 
 2.  **Listening for Notifications:** The `frontend/src/context/NotificationContext.tsx` is responsible for listening for new notifications.
     *   It's wrapped around the application layout, so it's always active.
     *   It uses the `useAuth()` hook to get the current user's ID.
-    *   It sets up a Firestore `onSnapshot` listener on the `notifications` collection, querying for documents where the `recipientId` matches the current user's ID and `isRead` is `false`.
+    *   It sets up a Firestore `onSnapshot` listener on the `notifications` collection, querying for documents where `recipientId` matches the current user's ID.
 
 3.  **Displaying Notifications:**
-    *   When the listener detects a new notification document, it uses the **Sonner** library (`import { toast } from 'sonner'`) to display a toast message on the user's screen.
-    *   The content of the toast is formatted based on the notification's `type` and `message` fields.
-    *   After displaying the toast, the system should ideally mark the notification document as `isRead: true` to prevent it from being shown again.
+    *   When the listener in `NotificationContext` detects new notification data, it updates its state.
+    *   A separate UI component, `NotificationToaster.tsx`, consumes this context.
+    *   `NotificationToaster` is responsible for observing changes in the notification state and uses the **Sonner** library (`import { toast } from 'sonner'`) to display a toast message for new, unread notifications.
+    *   After displaying the toast, the system marks the notification as read to prevent it from being shown again.
 
 ### Real-time Chat System
 
-The chat system allows users to communicate directly about listings and exchanges. Like the notification system, it is built on Firestore's real-time capabilities.
+The chat system allows users to communicate directly about listings and exchanges. It is built on Firestore's real-time capabilities.
 
 1.  **Data Model:** The chat is built around the `chats` collection and a `messages` sub-collection.
     *   A single document in `/chats/{chatId}` stores the metadata for a conversation, including the participants.
@@ -327,9 +329,4 @@ The best way to run the application locally is to use the Firebase Emulator Suit
     This will start the emulators and provide you with the ports for each service. The Emulator UI will also be available at `http://localhost:4000`, which is very useful for inspecting the local database and function logs.
 
 2.  **Start the Frontend Development Server:**
-    In a separate terminal, navigate to the `frontend` directory and run:
-    ```bash
-    cd frontend
-    npm run dev
-    ```
-    The frontend application will now be running on `http://localhost:3000` and should be automatically configured to connect to the local Firebase Emulators.
+    The App Hosting emulator will automatically start your Next.js dev server. You can access the running application at the App Hosting port shown in the emulator startup logs (usually http://127.0.0.1:5003).
