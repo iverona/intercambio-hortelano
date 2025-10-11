@@ -661,6 +661,9 @@ export default function ExchangeDetailsPage() {
             </div>
           </div>
 
+          </Card>
+
+          <div className="mt-6 space-y-4">
           {/* Action Buttons */}
           {exchange.status === "pending" && isOwner && (
             <div className="flex gap-3">
@@ -771,7 +774,7 @@ export default function ExchangeDetailsPage() {
               </p>
             </div>
           )}
-        </Card>
+          </div>
 
         {/* Review Section - Shows for completed exchanges */}
         {exchange.status === "completed" && (
