@@ -55,8 +55,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
     if (diffInHours < 1) return { text: "Just now", isNew: true };
     if (diffInHours < 24) return { text: `${diffInHours}h ago`, isNew: true };
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays === 1) return { text: "Yesterday", isNew: false };
-    if (diffInDays < 7) return { text: `${diffInDays} days ago`, isNew: false };
+    if (diffInDays === 1) return { text: "Yesterday", isNew: true };
+    if (diffInDays < 7) return { text: `${diffInDays} days ago`, isNew: diffInDays <= 7 };
     if (diffInDays < 30) return { text: `${Math.floor(diffInDays / 7)} weeks ago`, isNew: false };
     return { text: `${Math.floor(diffInDays / 30)} months ago`, isNew: false };
   };
@@ -83,9 +83,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </Badge>
           )}
           {timeInfo.isNew && (
-            <Badge className="bg-red-500 text-white border-0 shadow-sm">
+            <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0 shadow-sm">
               <Clock className="w-3 h-3 mr-1" />
-              New
+              {t('home.products.new_badge')}
             </Badge>
           )}
         </div>

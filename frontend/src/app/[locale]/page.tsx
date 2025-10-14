@@ -161,24 +161,11 @@ const HeroSection = ({ productCount, user }: { productCount: number; user: { uid
 
 // Enhanced product card wrapper with animations
 const AnimatedProductCard = ({ product, index }: { product: Product; index: number }) => {
-  const t = useI18n();
-  const isNew = product.createdAt && 
-    new Date(product.createdAt.seconds * 1000) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-
   return (
     <div 
       className="group relative transform transition-all duration-300 hover:scale-105 hover:-translate-y-2"
       style={{ animationDelay: `${index * 50}ms` }}
     >
-      {/* New badge */}
-      {isNew && (
-        <div className="absolute -top-2 -right-2 z-10">
-          <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0 shadow-lg animate-pulse">
-            {t('home.products.new_badge')}
-          </Badge>
-        </div>
-      )}
-      
       {/* Hover glow effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-400 rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300"></div>
       
