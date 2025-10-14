@@ -4,7 +4,8 @@ export default {
   "home.hero.subtitle": "Conecta con hortelanos locales, intercambia productos frescos y construye una comunidad sostenible",
   "home.hero.cta.primary": "Comparte Tus Productos",
   "home.hero.cta.primary.unauthenticated": "Únete a la Comunidad",
-  "home.hero.cta.secondary": "Explorar Productos",
+'home.hero.cta.secondary': 'Explorar Productos',
+    'home.hero.cta.explore_producers': 'Explorar Productores',
   "home.hero.stats.products": "Productos",
   "home.hero.stats.gardeners": "Hortelanos",
   "home.hero.stats.exchanges": "Intercambios",
@@ -470,5 +471,38 @@ export default {
   "nav.messages": "Mensajes",
   "nav.profile": "Perfil",
 
-  "common.back": "Atrás"
+  "common.back": "Atrás",
+
+  producers: {
+    title: 'Explorar Productores',
+    subtitle: 'Descubre a las personas detrás de los productos.',
+    empty: 'Aún no se han encontrado productores.',
+    empty_description: 'Sé el primero en compartir los productos de tu huerta con la comunidad.',
+    no_bio: 'Este productor aún no ha añadido una biografía.',
+    view_shop: 'Ver Tienda',
+    unnamed: 'Productor sin nombre',
+    hero: {
+      badge: 'Conoce a nuestra comunidad',
+    },
+    stats: {
+      active: 'Productores Activos',
+      products: 'Productos Totales',
+      satisfaction: 'Satisfacción',
+    },
+    new_badge: 'Nuevo',
+    products_label: 'productos',
+    verified: 'Verificado',
+    section_title: 'Productores Destacados',
+    showing: 'Mostrando productores',
+    browse_products: 'Explorar Productos',
+  },
+
+  producer_shop: {
+    not_found: 'Productor no encontrado.',
+    products_title: 'Productos de este productor',
+    empty_state: {
+        title: 'Aún no hay productos',
+        subtitle: 'Este productor todavía no ha publicado ningún producto para la venta o el intercambio.'
+    }
+  }
 } as const;

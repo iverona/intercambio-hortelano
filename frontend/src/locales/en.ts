@@ -4,7 +4,8 @@ export default {
   "home.hero.subtitle": "Connect with local gardeners, exchange fresh produce, and build a sustainable community",
   "home.hero.cta.primary": "Share Your Produce",
   "home.hero.cta.primary.unauthenticated": "Join the Community",
-  "home.hero.cta.secondary": "Browse Products",
+'home.hero.cta.secondary': 'Explore Products',
+    'home.hero.cta.explore_producers': 'Explore Producers',
   "home.hero.stats.products": "Products",
   "home.hero.stats.gardeners": "Gardeners",
   "home.hero.stats.exchanges": "Exchanges",
@@ -470,5 +471,35 @@ export default {
   "nav.messages": "Messages",
   "nav.profile": "Profile",
 
-  "common.back": "Back"
-} as const;
+  producers: {
+    title: 'Explore Producers',
+    subtitle: 'Discover the people behind the products.',
+    empty: 'No producers found yet.',
+    empty_description: 'Be the first to share your garden produce with the community.',
+    no_bio: 'This producer has not added a bio yet.',
+    view_shop: 'View Shop',
+    unnamed: 'Unnamed Producer',
+    hero: {
+      badge: 'Meet our community',
+    },
+    stats: {
+      active: 'Active Producers',
+      products: 'Total Products',
+      satisfaction: 'Satisfaction',
+    },
+    new_badge: 'New',
+    products_label: 'products',
+    verified: 'Verified',
+    section_title: 'Featured Producers',
+    showing: 'Showing producers',
+    browse_products: 'Browse Products',
+  },
+  producer_shop: {
+    not_found: 'Producer not found.',
+    products_title: 'Products from this producer',
+    empty_state: {
+        title: 'No products yet',
+        subtitle: 'This producer has not listed any products for sale or exchange yet.',
+    },
+  },
+};

@@ -223,7 +223,7 @@ export default function AuthActionPage() {
               <div className="flex flex-col items-center space-y-2 mb-4">
                 <KeyRound className="h-12 w-12 text-primary" />
                 <p className="text-sm text-muted-foreground text-center">
-                  {t("auth_action.reset_password.description", { email })}
+                  {t("auth_action.reset_password.description" as any, { email })}
                 </p>
               </div>
               

@@ -107,6 +107,12 @@ const HeroSection = ({ productCount, user }: { productCount: number; user: { uid
                 <Package className="ml-2 h-5 w-5" />
               </Link>
             </Button>
+            <Button asChild size="lg" variant="outline" className="group">
+              <Link href="/producers">
+                {t('home.hero.cta.explore_producers')}
+                <Users className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
           </div>
 
           {/* Stats */}
