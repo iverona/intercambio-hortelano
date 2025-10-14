@@ -134,7 +134,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {product.distance !== undefined && (
               <div className="flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
-                <span>{product.distance.toFixed(1)} km</span>
+                <span>{Math.round(product.distance)} km</span>
               </div>
             )}
             {timeInfo.text && (
