@@ -47,6 +47,8 @@ import {
 } from "lucide-react";
 import { useChangeLocale, useCurrentLocale, useI18n } from "@/locales/provider";
 import { toast } from "sonner";
+import LocationSearchInput from "@/components/shared/LocationSearchInput";
+import { useGeolocation } from "@/hooks/useGeolocation";
 
 interface UserData {
   name: string;
@@ -56,6 +58,12 @@ interface UserData {
   location?: {
     latitude: number;
     longitude: number;
+  };
+  geohash?: string;
+  address?: string;
+  locationUpdatedAt?: {
+    seconds: number;
+    nanoseconds: number;
   };
   joinedDate?: {
     seconds: number;
@@ -118,6 +126,9 @@ export default function ProfilePage() {
   const [newName, setNewName] = useState("");
   const [newBio, setNewBio] = useState("");
   const [showEmail, setShowEmail] = useState(false);
+  const [showLocationUpdate, setShowLocationUpdate] = useState(false);
+  const [updatingLocation, setUpdatingLocation] = useState(false);
+  const { getCurrentLocation, loading: geoLoading, error: geoError, clearError } = useGeolocation();
   
   // Notification settings
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -412,6 +423,181 @@ export default function ProfilePage() {
                   </Button>
                 </>
               )}
+            </div>
+          </ProfileSection>
+
+          {/* Location Settings Section */}
+          <ProfileSection title={t('profile.location_settings')} icon={MapPin}>
+            <div className="space-y-4">
+              {/* Current Location Display */}
+              <Card className="p-4 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-green-100 dark:bg-green-900 rounded-lg">
+                      <MapPin className="w-4 h-4 text-green-600 dark:text-green-400" />
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-600 dark:text-gray-400 block">{t('profile.current_location')}</span>
+                      {userData?.address ? (
+                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{userData.address}</span>
+                      ) : userData?.location ? (
+                        <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                          {t('profile.location_coordinates', { 
+                            lat: userData.location.latitude.toFixed(4), 
+                            lng: userData.location.longitude.toFixed(4) 
+                          })}
+                        </span>
+                      ) : (
+                        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                          {t('profile.no_location_set')}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                {userData?.locationUpdatedAt && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                    {t('profile.location_last_updated', {
+                      date: new Date(userData.locationUpdatedAt.seconds * 1000).toLocaleDateString()
+                    })}
+                  </p>
+                )}
+              </Card>
+
+              {/* Update Location Options */}
+              {!showLocationUpdate ? (
+                <div className="flex gap-3">
+                  <Button
+                    onClick={async () => {
+                      clearError();
+                      const locationData = await getCurrentLocation();
+                      
+                      if (locationData && user) {
+                        setUpdatingLocation(true);
+                        try {
+                          const userRef = doc(db, "users", user.uid);
+                          await updateDoc(userRef, {
+                            location: {
+                              latitude: locationData.latitude,
+                              longitude: locationData.longitude,
+                            },
+                            geohash: locationData.geohash,
+                            locationUpdatedAt: new Date(),
+                          });
+                          
+                          // Update local state
+                          setUserData(prev => prev ? {
+                            ...prev,
+                            location: {
+                              latitude: locationData.latitude,
+                              longitude: locationData.longitude,
+                            },
+                            geohash: locationData.geohash,
+                            locationUpdatedAt: {
+                              seconds: Date.now() / 1000,
+                              nanoseconds: 0,
+                            }
+                          } : null);
+                          
+                          toast.success(t('profile.location_updated'));
+                        } catch (error) {
+                          toast.error(t('profile.location_update_failed'));
+                        } finally {
+                          setUpdatingLocation(false);
+                        }
+                      }
+                    }}
+                    disabled={geoLoading || updatingLocation}
+                    className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                  >
+                    <MapPin className="mr-2 h-4 w-4" />
+                    {geoLoading || updatingLocation ? t('profile.updating_location') : t('profile.use_current_location')}
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setShowLocationUpdate(true);
+                      clearError();
+                    }}
+                    variant="outline"
+                    disabled={updatingLocation}
+                  >
+                    {t('profile.enter_location_manually')}
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {t('profile.manual_location_description')}
+                  </p>
+                  <LocationSearchInput
+                    onLocationSelect={async (location) => {
+                      if (user) {
+                        setUpdatingLocation(true);
+                        try {
+                          const userRef = doc(db, "users", user.uid);
+                          await updateDoc(userRef, {
+                            location: {
+                              latitude: location.latitude,
+                              longitude: location.longitude,
+                            },
+                            geohash: location.geohash,
+                            address: location.address,
+                            locationUpdatedAt: new Date(),
+                          });
+                          
+                          // Update local state
+                          setUserData(prev => prev ? {
+                            ...prev,
+                            location: {
+                              latitude: location.latitude,
+                              longitude: location.longitude,
+                            },
+                            geohash: location.geohash,
+                            address: location.address,
+                            locationUpdatedAt: {
+                              seconds: Date.now() / 1000,
+                              nanoseconds: 0,
+                            }
+                          } : null);
+                          
+                          setShowLocationUpdate(false);
+                          toast.success(t('profile.location_updated'));
+                        } catch (error) {
+                          toast.error(t('profile.location_update_failed'));
+                        } finally {
+                          setUpdatingLocation(false);
+                        }
+                      }
+                    }}
+                    placeholder={t('profile.location_search_placeholder')}
+                    className="w-full"
+                  />
+                  <Button
+                    onClick={() => {
+                      setShowLocationUpdate(false);
+                      clearError();
+                    }}
+                    variant="outline"
+                    className="w-full"
+                    disabled={updatingLocation}
+                  >
+                    {t('common.back')}
+                  </Button>
+                </div>
+              )}
+
+              {/* Error Display */}
+              {geoError && (
+                <p className="text-sm text-red-500 dark:text-red-400">{geoError}</p>
+              )}
+
+              {/* Privacy Note */}
+              <Card className="p-3 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
+                <p className="text-xs text-blue-700 dark:text-blue-300 flex items-start gap-2">
+                  <Shield className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  {t('profile.location_privacy_note')}
+                </p>
+              </Card>
             </div>
           </ProfileSection>
 

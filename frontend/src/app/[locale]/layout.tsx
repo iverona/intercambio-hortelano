@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { I18nProviderClient } from "@/locales/provider";
 import { getCurrentLocale } from "@/locales/server";
 import { ReactNode } from "react";
+import GoogleMapsProvider from "@/components/shared/GoogleMapsProvider";
 
 export const metadata: Metadata = {
   title: "Portal de Intercambio Hortelano",
@@ -23,22 +24,25 @@ export default async function RootLayout({
   children: ReactNode;
 }>) {
   const locale = await getCurrentLocale();
+  
   return (
     <I18nProviderClient locale={locale}>
-      <AuthProvider>
-        <FilterProvider>
-          <NotificationProvider>
-            <div className="flex flex-col min-h-screen">
-              <Header />
-              <main className="flex-grow pb-20 md:pb-0">{children}</main>
-              <Footer />
-              <BottomNavigation />
-            </div>
-            <NotificationToaster />
-            <Toaster />
-          </NotificationProvider>
-        </FilterProvider>
-      </AuthProvider>
+      <GoogleMapsProvider>
+        <AuthProvider>
+          <FilterProvider>
+            <NotificationProvider>
+              <div className="flex flex-col min-h-screen">
+                <Header />
+                <main className="flex-grow pb-20 md:pb-0">{children}</main>
+                <Footer />
+                <BottomNavigation />
+              </div>
+              <NotificationToaster />
+              <Toaster />
+            </NotificationProvider>
+          </FilterProvider>
+        </AuthProvider>
+      </GoogleMapsProvider>
     </I18nProviderClient>
   );
 }
