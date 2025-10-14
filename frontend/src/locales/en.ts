@@ -502,4 +502,4 @@ export default {
         subtitle: 'This producer has not listed any products for sale or exchange yet.',
     },
   },
-};
+} as const;

@@ -252,7 +252,7 @@ export default function PublishPage() {
             >
               <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
               <span className="hidden sm:inline">{t('publish.back_to_home')}</span>
-              <span className="sm:hidden">{t('common.back')}</span>
+              <span className="sm:hidden">{t('product.back')}</span>
             </Button>
 
             {/* Form Card */}

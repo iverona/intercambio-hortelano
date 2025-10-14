@@ -37,7 +37,7 @@ const ProducerProfile = ({
   t,
 }: {
   producer: Producer;
-  t: (key: string) => string;
+  t: ReturnType<typeof useI18n>;
 }) => {
   const producerName = producer.name || t("producers.unnamed");
   return (
@@ -61,7 +61,7 @@ const ProducerProfile = ({
 export default function ProducerShopPage({
   params,
 }: {
-  params: { producerId: string };
+  params: Promise<{ producerId: string }>;
 }) {
   const t = useI18n();
   const { producerId } = use(params);

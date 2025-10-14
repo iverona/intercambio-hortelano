@@ -581,7 +581,7 @@ export default function ProfilePage() {
                     className="w-full"
                     disabled={updatingLocation}
                   >
-                    {t('common.back')}
+                    {t('onboarding.back_button')}
                   </Button>
                 </div>
               )}
