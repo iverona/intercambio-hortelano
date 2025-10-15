@@ -46,3 +46,5 @@ firestore-debug.log
 ui-debug.log
 pubsub-debug.log
 .genkit/traces_idx/genkit.metadata
+
+temp_frontend_mockups/
