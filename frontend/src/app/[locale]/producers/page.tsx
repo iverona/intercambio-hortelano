@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import Link from "next/link";
 import { useI18n } from "@/locales/provider";
@@ -10,6 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { useAuth } from "@/context/AuthContext";
+import { getDistance } from "@/lib/geolocation";
 import { 
   ArrowRight, 
   Users, 
@@ -27,10 +29,13 @@ interface Producer {
   name: string;
   photoURL?: string;
   bio?: string;
+  address?: string;
   location?: {
-    city?: string;
+    latitude?: number;
+    longitude?: number;
   };
   productsCount?: number;
+  distance?: number;
 }
 
 // Skeleton loader component
@@ -132,6 +137,7 @@ const ProducerCard = ({ producer, index }: { producer: Producer; index: number }
   const t = useI18n();
   const producerName = producer.name || t('producers.unnamed');
   const isNew = Math.random() > 0.7; // Mock new producer logic
+  const hasLocation = producer.address || producer.distance !== undefined;
 
   return (
     <div 
@@ -171,10 +177,13 @@ const ProducerCard = ({ producer, index }: { producer: Producer; index: number }
               <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                 {producerName}
               </h3>
-              {producer.location?.city && (
-                <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400 mt-1">
+              {hasLocation && (
+                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mt-1">
                   <MapPin className="w-3 h-3" />
-                  <span>{producer.location.city}</span>
+                  <span>
+                    {producer.address}
+                    {producer.distance !== undefined && ` • ${Math.round(producer.distance)} km`}
+                  </span>
                 </div>
               )}
             </div>
@@ -214,6 +223,28 @@ export default function ProducersPage() {
   const t = useI18n();
   const [producers, setProducers] = useState<Producer[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+
+  useEffect(() => {
+    const fetchUserLocation = async () => {
+      if (user) {
+        // Fetch user's stored location from Firebase
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.location?.latitude && userData.location?.longitude) {
+            setUserLocation({
+              latitude: userData.location.latitude,
+              longitude: userData.location.longitude
+            });
+          }
+        }
+      }
+    };
+    fetchUserLocation();
+  }, [user]);
 
   useEffect(() => {
     const fetchProducers = async () => {
@@ -237,10 +268,26 @@ export default function ProducersPage() {
             where("uid", "in", Array.from(producerIds))
           );
           const usersSnapshot = await getDocs(usersQuery);
-          const producersData = usersSnapshot.docs.map((doc) => ({
-            ...doc.data(),
-            productsCount: producerProductCounts.get(doc.data().uid) || 0
-          } as Producer));
+          const producersData = usersSnapshot.docs.map((doc) => {
+            const data = doc.data();
+            let distance: number | undefined;
+            
+            // Calculate distance if user location and producer location are available
+            if (userLocation && data.location?.latitude && data.location?.longitude) {
+              distance = getDistance(
+                userLocation.latitude,
+                userLocation.longitude,
+                data.location.latitude,
+                data.location.longitude
+              );
+            }
+            
+            return {
+              ...data,
+              productsCount: producerProductCounts.get(data.uid) || 0,
+              distance
+            } as Producer;
+          });
           setProducers(producersData);
         }
       } catch (error) {
@@ -251,7 +298,7 @@ export default function ProducersPage() {
     };
 
     fetchProducers();
-  }, []);
+  }, [userLocation]);
 
   return (
     <>

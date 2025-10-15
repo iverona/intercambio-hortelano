@@ -14,7 +14,9 @@ import { useI18n } from "@/locales/provider";
 import ProductCard from "@/components/shared/ProductCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { Package } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { getDistance } from "@/lib/geolocation";
+import { Package, MapPin } from "lucide-react";
 import Link from "next/link";
 
 interface Producer {
@@ -22,6 +24,12 @@ interface Producer {
   name: string;
   photoURL?: string;
   bio?: string;
+  address?: string;
+  location?: {
+    latitude?: number;
+    longitude?: number;
+  };
+  distance?: number;
 }
 
 interface Product {
@@ -40,6 +48,8 @@ const ProducerProfile = ({
   t: ReturnType<typeof useI18n>;
 }) => {
   const producerName = producer.name || t("producers.unnamed");
+  const hasLocation = producer.address || producer.distance !== undefined;
+  
   return (
     <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950 p-8 rounded-lg mb-12 flex flex-col md:flex-row items-center gap-8">
       <Avatar className="w-32 h-32 border-4 border-white shadow-lg">
@@ -48,8 +58,17 @@ const ProducerProfile = ({
           {producerName.charAt(0).toUpperCase()}
         </AvatarFallback>
       </Avatar>
-      <div className="text-center md:text-left">
+      <div className="text-center md:text-left flex-1">
         <h1 className="text-4xl font-bold">{producerName}</h1>
+        {hasLocation && (
+          <div className="flex items-center justify-center md:justify-start gap-2 text-gray-600 dark:text-gray-400 mt-2">
+            <MapPin className="w-4 h-4" />
+            <span className="text-sm">
+              {producer.address}
+              {producer.distance !== undefined && ` • ${Math.round(producer.distance)} km away`}
+            </span>
+          </div>
+        )}
         <p className="text-gray-600 dark:text-gray-400 mt-2 max-w-2xl">
           {producer.bio || t("producers.no_bio")}
         </p>
@@ -68,6 +87,28 @@ export default function ProducerShopPage({
   const [producer, setProducer] = useState<Producer | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+
+  useEffect(() => {
+    const fetchUserLocation = async () => {
+      if (user) {
+        // Fetch user's stored location from Firebase
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          if (userData.location?.latitude && userData.location?.longitude) {
+            setUserLocation({
+              latitude: userData.location.latitude,
+              longitude: userData.location.longitude
+            });
+          }
+        }
+      }
+    };
+    fetchUserLocation();
+  }, [user]);
 
   useEffect(() => {
     const fetchProducerData = async () => {
@@ -78,7 +119,20 @@ export default function ProducerShopPage({
         const userDocRef = doc(db, "users", producerId);
         const userDoc = await getDoc(userDocRef);
         if (userDoc.exists()) {
-          setProducer(userDoc.data() as Producer);
+          const producerData = userDoc.data();
+          let distance: number | undefined;
+          
+          // Calculate distance if user location and producer location are available
+          if (userLocation && producerData.location?.latitude && producerData.location?.longitude) {
+            distance = getDistance(
+              userLocation.latitude,
+              userLocation.longitude,
+              producerData.location.latitude,
+              producerData.location.longitude
+            );
+          }
+          
+          setProducer({ ...producerData, distance } as Producer);
         }
 
         // Fetch producer's products
@@ -100,7 +154,7 @@ export default function ProducerShopPage({
     };
 
     fetchProducerData();
-  }, [producerId]);
+  }, [producerId, userLocation]);
 
   if (loading) {
     return (
