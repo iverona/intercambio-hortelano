@@ -249,12 +249,10 @@ export default function ProfilePage() {
   };
 
   const handleDeleteAccount = async () => {
-    if (confirm(t('profile.confirm_delete'))) {
-      // Show re-authentication dialog
-      setShowReauthDialog(true);
-      setReauthError("");
-      setReauthPassword("");
-    }
+    // Show re-authentication dialog
+    setShowReauthDialog(true);
+    setReauthError("");
+    setReauthPassword("");
   };
 
   const handleReauthAndDelete = async () => {
@@ -870,7 +868,7 @@ export default function ProfilePage() {
       <Dialog open={showReauthDialog} onOpenChange={setShowReauthDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('profile.reauth_required')}</DialogTitle>
+            <DialogTitle>{t('profile.delete_account')}</DialogTitle>
             <DialogDescription>
               {t('profile.reauth_description')}
             </DialogDescription>
@@ -879,9 +877,6 @@ export default function ProfilePage() {
           <div className="space-y-4 py-4">
             {isGoogleSignInUser() ? (
               <div className="space-y-3">
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {t('profile.reauth_description')}
-                </p>
                 <Button
                   onClick={handleReauthAndDelete}
                   disabled={isDeletingAccount}
