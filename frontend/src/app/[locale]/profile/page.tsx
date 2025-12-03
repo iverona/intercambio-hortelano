@@ -49,6 +49,20 @@ import { useChangeLocale, useCurrentLocale, useI18n } from "@/locales/provider";
 import { toast } from "sonner";
 import LocationSearchInput from "@/components/shared/LocationSearchInput";
 import { useGeolocation } from "@/hooks/useGeolocation";
+import { 
+  reauthenticateUser, 
+  softDeleteUserAccount, 
+  isGoogleSignInUser 
+} from "@/lib/accountDeletion";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { signOut } from "firebase/auth";
 
 interface UserData {
   name: string;
@@ -129,6 +143,12 @@ export default function ProfilePage() {
   const [showLocationUpdate, setShowLocationUpdate] = useState(false);
   const [updatingLocation, setUpdatingLocation] = useState(false);
   const { getCurrentLocation, loading: geoLoading, error: geoError, clearError } = useGeolocation();
+  
+  // Account deletion states
+  const [showReauthDialog, setShowReauthDialog] = useState(false);
+  const [reauthPassword, setReauthPassword] = useState("");
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [reauthError, setReauthError] = useState("");
   
   // Notification settings
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -230,7 +250,53 @@ export default function ProfilePage() {
 
   const handleDeleteAccount = async () => {
     if (confirm(t('profile.confirm_delete'))) {
-      toast.info(t('profile.delete_not_implemented'));
+      // Show re-authentication dialog
+      setShowReauthDialog(true);
+      setReauthError("");
+      setReauthPassword("");
+    }
+  };
+
+  const handleReauthAndDelete = async () => {
+    if (!user || !userData) return;
+
+    setIsDeletingAccount(true);
+    setReauthError("");
+
+    try {
+      // Step 1: Re-authenticate user
+      const reauthResult = await reauthenticateUser(
+        userData.email,
+        isGoogleSignInUser() ? undefined : reauthPassword
+      );
+
+      if (!reauthResult.success) {
+        setReauthError(reauthResult.error || t('profile.reauth_error'));
+        setIsDeletingAccount(false);
+        return;
+      }
+
+      // Step 2: Soft delete the account
+      const deleteResult = await softDeleteUserAccount(user.uid);
+
+      if (!deleteResult.success) {
+        setReauthError(deleteResult.error || t('profile.delete_error'));
+        setIsDeletingAccount(false);
+        return;
+      }
+
+      // Step 3: Success - account has been deleted and user is signed out
+      setShowReauthDialog(false);
+      toast.success(t('profile.delete_success'));
+      
+      // Redirect to home after a brief delay
+      setTimeout(() => {
+        router.push("/");
+      }, 1500);
+    } catch (error: any) {
+      console.error("Error during account deletion:", error);
+      setReauthError(error.message || t('profile.delete_error'));
+      setIsDeletingAccount(false);
     }
   };
 
@@ -799,6 +865,90 @@ export default function ProfilePage() {
           </ProfileSection>
         </div>
       </div>
+
+      {/* Re-authentication Dialog */}
+      <Dialog open={showReauthDialog} onOpenChange={setShowReauthDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('profile.reauth_required')}</DialogTitle>
+            <DialogDescription>
+              {t('profile.reauth_description')}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {isGoogleSignInUser() ? (
+              <div className="space-y-3">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {t('profile.reauth_description')}
+                </p>
+                <Button
+                  onClick={handleReauthAndDelete}
+                  disabled={isDeletingAccount}
+                  className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
+                  size="lg"
+                >
+                  {isDeletingAccount ? (
+                    <>{t('profile.deleting_account')}</>
+                  ) : (
+                    <>{t('profile.reauth_google_button')}</>
+                  )}
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div>
+                  <Label htmlFor="reauth-password">{t('profile.reauth_password_label')}</Label>
+                  <Input
+                    id="reauth-password"
+                    type="password"
+                    value={reauthPassword}
+                    onChange={(e) => setReauthPassword(e.target.value)}
+                    placeholder={t('profile.reauth_password_placeholder')}
+                    disabled={isDeletingAccount}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && reauthPassword) {
+                        handleReauthAndDelete();
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {reauthError && (
+              <p className="text-sm text-red-500 dark:text-red-400">{reauthError}</p>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowReauthDialog(false);
+                setReauthPassword("");
+                setReauthError("");
+              }}
+              disabled={isDeletingAccount}
+            >
+              {t('profile.reauth_cancel_button')}
+            </Button>
+            {!isGoogleSignInUser() && (
+              <Button
+                onClick={handleReauthAndDelete}
+                disabled={isDeletingAccount || !reauthPassword}
+                variant="destructive"
+              >
+                {isDeletingAccount ? (
+                  <>{t('profile.deleting_account')}</>
+                ) : (
+                  <>{t('profile.reauth_confirm_button')}</>
+                )}
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
