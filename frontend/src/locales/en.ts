@@ -85,7 +85,7 @@ export default {
   "profile.delete_confirm_title": "Delete Your Account?",
   "profile.delete_confirm_description": "This will permanently delete your account. Your products will be removed and active exchanges will be rejected. This action cannot be undone.",
   "profile.reauth_required": "Re-authentication Required",
-  "profile.reauth_description": "For security, please confirm your identity to delete your account",
+  "profile.reauth_description": "For security, please confirm your identity as {email} to delete your account",
   "profile.reauth_password_label": "Password",
   "profile.reauth_password_placeholder": "Enter your password",
   "profile.reauth_google_button": "Confirm with Google",

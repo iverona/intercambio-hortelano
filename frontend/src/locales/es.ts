@@ -85,7 +85,7 @@ export default {
   "profile.delete_confirm_title": "¿Eliminar Tu Cuenta?",
   "profile.delete_confirm_description": "Esto eliminará permanentemente tu cuenta. Tus productos serán eliminados y los intercambios activos serán rechazados. Esta acción no se puede deshacer.",
   "profile.reauth_required": "Re-autenticación Requerida",
-  "profile.reauth_description": "Por seguridad, por favor confirma tu identidad para eliminar tu cuenta",
+  "profile.reauth_description": "Por seguridad, por favor confirma tu identidad como {email} para eliminar tu cuenta",
   "profile.reauth_password_label": "Contraseña",
   "profile.reauth_password_placeholder": "Introduce tu contraseña",
   "profile.reauth_google_button": "Confirmar con Google",

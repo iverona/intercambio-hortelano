@@ -1027,7 +1027,7 @@ export default function ProfilePage() {
           <DialogHeader>
             <DialogTitle>{t('profile.delete_account')}</DialogTitle>
             <DialogDescription>
-              {t('profile.reauth_description')}
+              {t('profile.reauth_description', { email: userData?.email || '' })}
             </DialogDescription>
           </DialogHeader>
 
