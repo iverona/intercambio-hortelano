@@ -41,6 +41,7 @@ interface Product {
     seconds: number;
     nanoseconds: number;
   };
+  deleted?: boolean;
 }
 
 // Skeleton loader component
@@ -210,6 +211,9 @@ export default function Home() {
           imageUrls: data.imageUrls || [data.imageUrl],
         };
       }) as Product[];
+
+      // Filter out deleted products
+      productsData = productsData.filter(product => !product.deleted);
 
       if (userLocation) {
         productsData = productsData

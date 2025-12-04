@@ -114,6 +114,7 @@ export default {
   "product.your_product": "This is your product",
   "product.loading": "Loading...",
   "product.not_found": "Product not found",
+  "product.unavailable": "Product Unavailable",
   "product.back_to_home": "Back to Home",
   "product.back": "Back",
   "product.breadcrumb.home": "Home",

@@ -76,12 +76,14 @@ interface Product {
     seconds: number;
     nanoseconds: number;
   };
+  deleted?: boolean;
 }
 
 interface User {
   name: string;
   avatarUrl: string;
   bio?: string;
+  deleted?: boolean;
 }
 
 // Category colors mapping
@@ -125,6 +127,7 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isUnavailable, setIsUnavailable] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -133,12 +136,25 @@ export default function ProductDetailPage() {
 
       if (docSnap.exists()) {
         const productData = docSnap.data() as Product;
+        
+        if (productData.deleted) {
+          setIsUnavailable(true);
+          setLoading(false);
+          return;
+        }
+
         setProduct(productData);
 
         const userRef = doc(db, "users", productData.userId);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
-          setSeller(userSnap.data() as User);
+          const userData = userSnap.data() as User;
+          if (userData.deleted) {
+            setIsUnavailable(true);
+            setLoading(false);
+            return;
+          }
+          setSeller(userData);
         }
       }
       setLoading(false);
@@ -273,14 +289,19 @@ export default function ProductDetailPage() {
     );
   }
 
-  if (!product) {
+  if (!product || isUnavailable) {
     return (
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto text-center py-20">
           <Package className="w-24 h-24 text-gray-300 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            {t('product.not_found')}
+            {isUnavailable ? t('product.unavailable') || "Product Unavailable" : t('product.not_found')}
           </h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            {isUnavailable 
+              ? "This product is no longer available because it has been removed or the user is no longer active."
+              : "The product you are looking for does not exist."}
+          </p>
           <Button asChild className="mt-4">
             <Link href="/">
               <ArrowLeft className="mr-2 h-4 w-4" />
