@@ -2,14 +2,20 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/context/AuthContext";
-import { db } from "@/lib/firebase";
+import { db, storage } from "@/lib/firebase";
 import {
   doc,
   getDoc,
   updateDoc,
 } from "firebase/firestore";
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";
-import { useEffect, useState } from "react";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
+import { getAuth, sendPasswordResetEmail, updateProfile } from "firebase/auth";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,6 +50,8 @@ import {
   Languages,
   Sparkles,
   CheckCircle,
+  Camera,
+  Loader2,
 } from "lucide-react";
 import { useChangeLocale, useCurrentLocale, useI18n } from "@/locales/provider";
 import { toast } from "sonner";
@@ -63,6 +71,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { signOut } from "firebase/auth";
+import imageCompression from "browser-image-compression";
 
 interface UserData {
   name: string;
@@ -133,7 +142,7 @@ const ProfileSection = ({ title, icon: Icon, children, gradient }: {
 
 export default function ProfilePage() {
   const t = useI18n();
-  const { user, loading } = useAuth();
+  const { user, loading, refreshUser } = useAuth();
   const router = useRouter();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -144,6 +153,10 @@ export default function ProfilePage() {
   const [updatingLocation, setUpdatingLocation] = useState(false);
   const { getCurrentLocation, loading: geoLoading, error: geoError, clearError } = useGeolocation();
   
+  // Avatar state
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   // Account deletion states
   const [showReauthDialog, setShowReauthDialog] = useState(false);
   const [reauthPassword, setReauthPassword] = useState("");
@@ -194,26 +207,108 @@ export default function ProfilePage() {
     }
   }, [user, loading, router]);
 
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error(t('profile.avatar_error_size'));
+      return;
+    }
+
+    setIsUploadingAvatar(true);
+    try {
+      const compressedFile = await imageCompression(file, {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 512,
+        useWebWorker: true,
+      });
+
+      // 1. Upload new avatar
+      const storageRef = ref(storage, `avatars/${user.uid}/${Date.now()}_${compressedFile.name}`);
+      await uploadBytes(storageRef, compressedFile);
+      const newAvatarUrl = await getDownloadURL(storageRef);
+
+      // 2. Delete old avatar if exists and is a firebase storage url
+      if (userData?.avatarUrl && userData.avatarUrl.includes("firebasestorage")) {
+        try {
+          const oldAvatarRef = ref(storage, userData.avatarUrl);
+          await deleteObject(oldAvatarRef);
+        } catch (error) {
+          console.warn("Could not delete old avatar", error);
+        }
+      }
+
+      // 3. Update Firestore
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        avatarUrl: newAvatarUrl
+      });
+
+      // 4. Update Auth Profile & Refresh
+      await updateProfile(user, { photoURL: newAvatarUrl });
+      await refreshUser();
+
+      // 5. Update local state
+      setUserData(prev => prev ? { ...prev, avatarUrl: newAvatarUrl } : null);
+      
+      toast.success(t('profile.save_button')); // Reusing "Save Changes" or could add specific "Avatar Updated"
+    } catch (error) {
+      console.error("Error uploading avatar:", error);
+      toast.error(t('profile.upload_error'));
+    } finally {
+      setIsUploadingAvatar(false);
+      // Reset input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleRemoveAvatar = async (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering the upload input
+    if (!user) return;
+
+    setIsUploadingAvatar(true);
+    try {
+      // 1. Delete old avatar if exists
+      if (userData?.avatarUrl && userData.avatarUrl.includes("firebasestorage")) {
+        try {
+          const oldAvatarRef = ref(storage, userData.avatarUrl);
+          await deleteObject(oldAvatarRef);
+        } catch (error) {
+          console.warn("Could not delete old avatar", error);
+        }
+      }
+
+      // 2. Update Firestore
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        avatarUrl: ""
+      });
+
+      // 3. Update Auth Profile & Refresh
+      await updateProfile(user, { photoURL: "" });
+      await refreshUser();
+
+      // 4. Update local state
+      setUserData(prev => prev ? { ...prev, avatarUrl: "" } : null);
+      
+      toast.success(t('profile.delete_photo_success'));
+    } catch (error) {
+      console.error("Error removing avatar:", error);
+      toast.error(t('profile.delete_photo_error'));
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  };
+
   const handleSave = async () => {
     if (user) {
       const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, { 
-        name: newName, 
-        bio: newBio,
-        notifications: {
-          email: emailNotifications,
-          messages: messageNotifications,
-          exchanges: exchangeNotifications,
-          products: productNotifications,
-        },
-        privacy: {
-          showLocation,
-          publicProfile,
-        }
-      });
-      setUserData((prev) =>
-        prev ? { 
-          ...prev, 
+      
+      try {
+        await updateDoc(userRef, { 
           name: newName, 
           bio: newBio,
           notifications: {
@@ -226,10 +321,32 @@ export default function ProfilePage() {
             showLocation,
             publicProfile,
           }
-        } : null
-      );
-      setIsEditing(false);
-      toast.success(t('profile.save_button'));
+        });
+        
+        setUserData((prev) =>
+          prev ? { 
+            ...prev, 
+            name: newName, 
+            bio: newBio,
+            notifications: {
+              email: emailNotifications,
+              messages: messageNotifications,
+              exchanges: exchangeNotifications,
+              products: productNotifications,
+            },
+            privacy: {
+              showLocation,
+              publicProfile,
+            }
+          } : null
+        );
+        
+        setIsEditing(false);
+        toast.success(t('profile.save_button'));
+      } catch (error) {
+        console.error("Error saving profile:", error);
+        toast.error(t('profile.save_error') || "Error saving profile");
+      }
     }
   };
 
@@ -249,7 +366,6 @@ export default function ProfilePage() {
   };
 
   const handleDeleteAccount = async () => {
-    // Show re-authentication dialog
     setShowReauthDialog(true);
     setReauthError("");
     setReauthPassword("");
@@ -262,7 +378,6 @@ export default function ProfilePage() {
     setReauthError("");
 
     try {
-      // Step 1: Re-authenticate user
       const reauthResult = await reauthenticateUser(
         userData.email,
         isGoogleSignInUser() ? undefined : reauthPassword
@@ -274,7 +389,6 @@ export default function ProfilePage() {
         return;
       }
 
-      // Step 2: Soft delete the account
       const deleteResult = await softDeleteUserAccount(user.uid);
 
       if (!deleteResult.success) {
@@ -283,11 +397,9 @@ export default function ProfilePage() {
         return;
       }
 
-      // Step 3: Success - account has been deleted and user is signed out
       setShowReauthDialog(false);
       toast.success(t('profile.delete_success'));
       
-      // Redirect to home after a brief delay
       setTimeout(() => {
         router.push("/");
       }, 1500);
@@ -298,7 +410,6 @@ export default function ProfilePage() {
     }
   };
 
-  // Show loading state while checking authentication
   if (loading) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
@@ -311,7 +422,6 @@ export default function ProfilePage() {
     );
   }
 
-  // Don't render content if no user (will redirect)
   if (!user || !userData) {
     return null;
   }
@@ -319,6 +429,8 @@ export default function ProfilePage() {
   const memberSince = userData.joinedDate 
     ? new Date(userData.joinedDate.seconds * 1000).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
     : 'Recently';
+
+  const showAvatar = !!userData.avatarUrl;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
@@ -350,17 +462,50 @@ export default function ProfilePage() {
             {/* Profile Card in Header */}
             <Card className="p-6 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-2xl">
               <div className="flex items-start gap-6">
-                <Avatar className="h-28 w-28 border-4 border-white dark:border-gray-700 shadow-xl ring-4 ring-green-100 dark:ring-green-900">
-                  <AvatarImage src={userData.avatarUrl} alt={userData.name} />
-                  <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-green-500 to-emerald-500 text-white">
-                    {userData.name
-                      ? userData.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                      : ""}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative group">
+                  <Avatar className="h-28 w-28 border-4 border-white dark:border-gray-700 shadow-xl ring-4 ring-green-100 dark:ring-green-900">
+                    <AvatarImage src={userData.avatarUrl || undefined} alt={userData.name} className="object-cover" />
+                    <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-green-500 to-emerald-500 text-white">
+                      {userData.name
+                        ? userData.name
+                            .split(" ")
+                            .map((n) => n[0])
+                            .join("")
+                        : ""}
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  {/* Always enable editing by clicking or hovering */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-10"
+                       onClick={() => !isUploadingAvatar && fileInputRef.current?.click()}
+                  >
+                    {isUploadingAvatar ? (
+                      <Loader2 className="w-8 h-8 text-white animate-spin" />
+                    ) : (
+                      <Camera className="w-8 h-8 text-white" />
+                    )}
+                  </div>
+                  
+                  {showAvatar && !isUploadingAvatar && (
+                    <Button
+                      size="icon"
+                      variant="destructive"
+                      className="absolute -bottom-2 -right-2 h-8 w-8 rounded-full shadow-lg z-20 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={handleRemoveAvatar}
+                      title={t('profile.delete_photo')}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  )}
+                  
+                  <Input
+                    ref={fileInputRef}
+                    type="file"
+                    className="hidden"
+                    accept="image/png, image/jpeg, image/webp"
+                    onChange={handleAvatarChange}
+                  />
+                </div>
                 
                 <div className="flex-1">
                   <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
@@ -369,6 +514,7 @@ export default function ProfilePage() {
                   <p className="text-gray-600 dark:text-gray-400 mb-4">
                     {userData.bio || t('profile.no_bio')}
                   </p>
+                  
                   <div className="flex flex-wrap gap-2">
                     <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-md">
                       <Calendar className="w-3 h-3 mr-1" />
@@ -490,6 +636,7 @@ export default function ProfilePage() {
             </div>
           </ProfileSection>
 
+          {/* ... Other sections remain unchanged ... */}
           {/* Location Settings Section */}
           <ProfileSection title={t('profile.location_settings')} icon={MapPin}>
             <div className="space-y-4">

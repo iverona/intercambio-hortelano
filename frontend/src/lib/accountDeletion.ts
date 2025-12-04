@@ -1,4 +1,5 @@
-import { auth, db } from "@/lib/firebase";
+import { auth, db, storage } from "@/lib/firebase";
+import { ref, deleteObject } from "firebase/storage";
 import {
   deleteUser,
   EmailAuthProvider,
@@ -11,6 +12,7 @@ import {
   query,
   where,
   getDocs,
+  getDoc,
   updateDoc,
   doc,
   writeBatch,
@@ -101,7 +103,23 @@ export async function softDeleteUserAccount(
     };
 
     // 1. Update user document - soft delete and anonymize
+    // 1. Delete avatar from storage if exists
     const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      const userData = userSnap.data();
+      if (userData?.avatarUrl && userData.avatarUrl.includes("firebasestorage")) {
+        try {
+          const avatarRef = ref(storage, userData.avatarUrl);
+          await deleteObject(avatarRef);
+        } catch (error) {
+          console.warn("Failed to delete avatar from storage:", error);
+          // Continue with account deletion even if avatar deletion fails
+        }
+      }
+    }
+
+    // 2. Update user document - soft delete and anonymize
     batch.update(userRef, {
       deleted: true,
       deletedAt: serverTimestamp(),

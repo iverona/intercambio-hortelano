@@ -26,7 +26,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       await auth.currentUser.reload();
       const refreshedUser = auth.currentUser;
       if (refreshedUser && refreshedUser.emailVerified) {
-        setUser(refreshedUser);
+        // Force state update by creating a new object reference
+        setUser(Object.assign(Object.create(Object.getPrototypeOf(refreshedUser)), refreshedUser));
       } else {
         setUser(null);
       }
