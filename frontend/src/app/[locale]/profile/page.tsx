@@ -163,6 +163,7 @@ export default function ProfilePage() {
   const [reauthPassword, setReauthPassword] = useState("");
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const [reauthError, setReauthError] = useState("");
+  const [isGoogleUser, setIsGoogleUser] = useState(false);
   
   // Notification settings
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -182,6 +183,9 @@ export default function ProfilePage() {
     }
 
     if (user) {
+      // Check if user is a Google user
+      setIsGoogleUser(isGoogleSignInUser());
+      
       const userRef = doc(db, "users", user.uid);
       getDoc(userRef).then((doc) => {
         if (doc.exists()) {
@@ -977,22 +981,27 @@ export default function ProfilePage() {
           {/* Account Management */}
           <ProfileSection title={t('profile.account_management')} icon={Lock}>
             <div className="space-y-6">
-              <Card className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
-                <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
-                  <Lock className="w-4 h-4" />
-                  {t('profile.password_security')}
-                </h3>
-                <Button 
-                  onClick={handlePasswordChange} 
-                  variant="outline"
-                  className="hover:bg-blue-100 dark:hover:bg-blue-900"
-                >
-                  <Lock className="mr-2 h-4 w-4" />
-                  {t('profile.change_password')}
-                </Button>
-              </Card>
-              
-              <Separator />
+              {/* Only show password change option for non-Google users */}
+              {!isGoogleUser && (
+                <>
+                  <Card className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                      <Lock className="w-4 h-4" />
+                      {t('profile.password_security')}
+                    </h3>
+                    <Button 
+                      onClick={handlePasswordChange} 
+                      variant="outline"
+                      className="hover:bg-blue-100 dark:hover:bg-blue-900"
+                    >
+                      <Lock className="mr-2 h-4 w-4" />
+                      {t('profile.change_password')}
+                    </Button>
+                  </Card>
+                  
+                  <Separator />
+                </>
+              )}
               
               <Card className="p-5 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20 border-red-200 dark:border-red-800">
                 <h3 className="text-base font-semibold text-red-600 dark:text-red-400 mb-3 flex items-center gap-2">
