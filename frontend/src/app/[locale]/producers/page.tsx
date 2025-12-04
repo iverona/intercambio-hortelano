@@ -158,30 +158,35 @@ const ProducerCard = ({ producer, index }: { producer: Producer; index: number }
       <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-400 rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300"></div>
       
       <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-white dark:bg-gray-800">
-        {/* Gradient header background */}
-        <div className="h-24 bg-gradient-to-br from-emerald-100 via-green-100 to-teal-100 dark:from-emerald-900 dark:via-green-900 dark:to-teal-900 relative">
-          {/* Favorite button */}
-          <button className="absolute top-3 right-3 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white dark:hover:bg-gray-700">
-            <Heart className="w-4 h-4 text-gray-600 dark:text-gray-300 hover:text-red-500 transition-colors" />
+        {/* Header - Light Green */}
+        <div className="h-24 bg-emerald-100/50 dark:bg-emerald-900/20 relative">
+          {/* Favorite button - White Circle */}
+          <button className="absolute top-3 right-3 p-2 rounded-full bg-white dark:bg-gray-800 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-gray-50 dark:hover:bg-gray-700">
+            <Heart className="w-4 h-4 text-gray-400 dark:text-gray-300 hover:text-red-500 transition-colors" />
           </button>
         </div>
 
-        <CardHeader className="relative -mt-8 pb-0">
-          <div className="flex items-center gap-4">
-            <ProducerAvatar 
-              avatarUrl={producer.avatarUrl}
-              name={producerName}
-              size="md"
-              className="border-4 border-white dark:border-gray-800 shadow-xl"
-            />
-            <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+        <CardContent className="relative pt-0">
+          <div className="flex gap-4 mb-4">
+            {/* Avatar - Floating */}
+            <div className="-mt-10 relative z-10 shrink-0">
+              <ProducerAvatar 
+                avatarUrl={producer.avatarUrl}
+                name={producerName}
+                size="md"
+                className="border-4 border-white dark:border-gray-800 shadow-md h-20 w-20"
+              />
+            </div>
+            
+            {/* Name & Location - Right Side */}
+            <div className="pt-2 min-w-0 flex-1">
+              <h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-400 leading-tight pr-2">
                 {producerName}
               </h3>
               {hasLocation && (
-                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mt-1">
-                  <MapPin className="w-3 h-3" />
-                  <span>
+                <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mt-1 truncate">
+                  <MapPin className="w-3 h-3 shrink-0" />
+                  <span className="truncate">
                     {producer.address}
                     {producer.distance !== undefined && ` • ${Math.round(producer.distance)} km`}
                   </span>
@@ -189,28 +194,28 @@ const ProducerCard = ({ producer, index }: { producer: Producer; index: number }
               )}
             </div>
           </div>
-        </CardHeader>
 
-        <CardContent className="pt-4">
-          <p className="text-gray-600 dark:text-gray-400 line-clamp-3 min-h-[4.5rem] leading-relaxed">
+          {/* Bio */}
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 line-clamp-2 min-h-[2.5rem]">
             {producer.bio || t('producers.no_bio')}
           </p>
           
-          {/* Stats badges */}
-          <div className="flex gap-2 mt-4 mb-4">
-            <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-0">
-              <Package className="w-3 h-3 mr-1" />
+          {/* Stats Badges */}
+          <div className="flex flex-wrap gap-2 mb-6">
+            <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-0 font-normal hover:bg-emerald-100 px-3">
+              <Package className="w-3.5 h-3.5 mr-1.5" />
               {producer.productsCount || 0} {t('producers.products_label')}
             </Badge>
-            <Badge variant="secondary" className="bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-0">
-              <Store className="w-3 h-3 mr-1" />
+            <Badge variant="secondary" className="bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-0 font-normal hover:bg-blue-100 px-3">
+              <Store className="w-3.5 h-3.5 mr-1.5" />
               {t('producers.verified')}
             </Badge>
           </div>
 
-          <Button asChild className="w-full group/button">
+          {/* Button - Dark */}
+          <Button asChild className="w-full bg-gray-900 hover:bg-black dark:bg-gray-100 dark:hover:bg-white dark:text-gray-900 text-white shadow-sm group/button">
             <Link href={`/producers/${producer.uid}`}>
-              <span>{t('producers.view_shop')}</span>
+              <span className="font-medium">{t('producers.view_shop')}</span>
               <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/button:translate-x-1" />
             </Link>
           </Button>
