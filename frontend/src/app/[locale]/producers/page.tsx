@@ -36,6 +36,7 @@ interface Producer {
   };
   productsCount?: number;
   distance?: number;
+  deleted?: boolean;
 }
 
 // Skeleton loader component
@@ -268,7 +269,7 @@ export default function ProducersPage() {
             where("uid", "in", Array.from(producerIds))
           );
           const usersSnapshot = await getDocs(usersQuery);
-          const producersData = usersSnapshot.docs.map((doc) => {
+          let producersData = usersSnapshot.docs.map((doc) => {
             const data = doc.data();
             let distance: number | undefined;
             
@@ -288,6 +289,10 @@ export default function ProducersPage() {
               distance
             } as Producer;
           });
+          
+          // Filter out deleted users
+          producersData = producersData.filter(producer => !producer.deleted);
+          
           setProducers(producersData);
         }
       } catch (error) {
