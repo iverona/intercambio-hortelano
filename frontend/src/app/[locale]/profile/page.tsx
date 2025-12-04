@@ -109,6 +109,7 @@ interface UserData {
   points?: number;
   level?: number;
   badges?: string[];
+  preferredLocale?: string;
 }
 
 // Loading skeleton component
@@ -1111,12 +1112,35 @@ function getLevelName(level: number): string {
 const LanguageSelector = () => {
   const changeLocale = useChangeLocale();
   const currentLocale = useCurrentLocale();
+  const { user } = useAuth();
+  const t = useI18n();
+
+  const handleLocaleChange = (newLocale: 'en' | 'es') => {
+    // Also save to Firebase if user is authenticated
+    if (user) {
+      const userRef = doc(db, "users", user.uid);
+      updateDoc(userRef, {
+        preferredLocale: newLocale
+      }).then(() => {
+        // Change locale in cookie after successful Firebase update
+        changeLocale(newLocale);
+        toast.success(t('profile.language_updated'));
+      }).catch((error) => {
+        console.error("Error saving language preference:", error);
+        // Change locale anyway - at least cookie will be updated
+        changeLocale(newLocale);
+      });
+    } else {
+      // Change locale in cookie for non-authenticated users
+      changeLocale(newLocale);
+    }
+  };
 
   return (
     <div className="flex gap-3">
       <Button
         variant={currentLocale === 'en' ? 'default' : 'outline'}
-        onClick={() => changeLocale('en')}
+        onClick={() => handleLocaleChange('en')}
         className={currentLocale === 'en' ? 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 shadow-lg' : ''}
         size="lg"
       >
@@ -1125,7 +1149,7 @@ const LanguageSelector = () => {
       </Button>
       <Button
         variant={currentLocale === 'es' ? 'default' : 'outline'}
-        onClick={() => changeLocale('es')}
+        onClick={() => handleLocaleChange('es')}
         className={currentLocale === 'es' ? 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 shadow-lg' : ''}
         size="lg"
       >

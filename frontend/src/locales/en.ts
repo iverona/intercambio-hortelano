@@ -66,6 +66,7 @@ export default {
   "profile.language_settings": "Language",
   "profile.select_language": "Select Language",
   "profile.select_language_desc": "Choose your preferred language for the interface",
+  "profile.language_updated": "Language preference saved successfully",
   "profile.privacy_settings": "Privacy Settings",
   "profile.show_location": "Show My Location",
   "profile.show_location_desc": "Display approximate location on your profile",
