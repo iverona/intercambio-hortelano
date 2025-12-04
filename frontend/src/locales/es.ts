@@ -35,6 +35,7 @@ export default {
   "profile.show_email_button": "Mostrar",
   "profile.hide_email_button": "Ocultar",
   "profile.save_button": "Guardar Cambios",
+  "profile.save_error": "Error al guardar el perfil",
   "profile.cancel_button": "Cancelar",
   "profile.edit_button": "Editar Perfil",
   "profile.change_photo": "Cambiar Foto",
