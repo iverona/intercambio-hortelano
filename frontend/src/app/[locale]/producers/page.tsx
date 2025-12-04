@@ -6,10 +6,10 @@ import { db } from "@/lib/firebase";
 import Link from "next/link";
 import { useI18n } from "@/locales/provider";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { ProducerAvatar } from "@/components/shared/ProducerAvatar";
 import { useAuth } from "@/context/AuthContext";
 import { getDistance } from "@/lib/geolocation";
 import { 
@@ -27,7 +27,7 @@ import {
 interface Producer {
   uid: string;
   name: string;
-  photoURL?: string;
+  avatarUrl?: string;
   bio?: string;
   address?: string;
   location?: {
@@ -168,12 +168,12 @@ const ProducerCard = ({ producer, index }: { producer: Producer; index: number }
 
         <CardHeader className="relative -mt-8 pb-0">
           <div className="flex items-center gap-4">
-            <Avatar className="w-20 h-20 border-4 border-white dark:border-gray-800 shadow-xl">
-              <AvatarImage src={producer.photoURL} alt={producerName} />
-              <AvatarFallback className="bg-gradient-to-br from-emerald-400 to-green-500 text-white text-2xl font-bold">
-                {producerName.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+            <ProducerAvatar 
+              avatarUrl={producer.avatarUrl}
+              name={producerName}
+              size="md"
+              className="border-4 border-white dark:border-gray-800 shadow-xl"
+            />
             <div className="flex-1">
               <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                 {producerName}

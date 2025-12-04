@@ -12,8 +12,8 @@ import {
 import { db } from "@/lib/firebase";
 import { useI18n } from "@/locales/provider";
 import ProductCard from "@/components/shared/ProductCard";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { ProducerAvatar } from "@/components/shared/ProducerAvatar";
 import { useAuth } from "@/context/AuthContext";
 import { getDistance } from "@/lib/geolocation";
 import { Package, MapPin } from "lucide-react";
@@ -22,7 +22,7 @@ import Link from "next/link";
 interface Producer {
   uid: string;
   name: string;
-  photoURL?: string;
+  avatarUrl?: string;
   bio?: string;
   address?: string;
   location?: {
@@ -52,12 +52,12 @@ const ProducerProfile = ({
   
   return (
     <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950 p-8 rounded-lg mb-12 flex flex-col md:flex-row items-center gap-8">
-      <Avatar className="w-32 h-32 border-4 border-white shadow-lg">
-        <AvatarImage src={producer.photoURL} alt={producerName} />
-        <AvatarFallback className="text-4xl">
-          {producerName.charAt(0).toUpperCase()}
-        </AvatarFallback>
-      </Avatar>
+      <ProducerAvatar 
+        avatarUrl={producer.avatarUrl}
+        name={producerName}
+        size="xl"
+        className="border-4 border-white shadow-lg"
+      />
       <div className="text-center md:text-left flex-1">
         <h1 className="text-4xl font-bold">{producerName}</h1>
         {hasLocation && (
