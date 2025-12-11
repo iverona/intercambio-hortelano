@@ -1,10 +1,14 @@
 import Image from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { useI18n } from "@/locales/provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Leaf, DollarSign, Clock, Heart } from "lucide-react";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { ProducerAvatar } from "@/components/shared/ProducerAvatar";
 
 interface ProductCardProps {
   product: {
@@ -16,6 +20,7 @@ interface ProductCardProps {
     isForSale?: boolean;
     distance?: number;
     category?: string;
+    userId?: string;
     createdAt?: {
       seconds: number;
       nanoseconds: number;
@@ -31,6 +36,29 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onDelete,
 }) => {
   const t = useI18n();
+  const [producer, setProducer] = useState<{ name: string; avatarUrl?: string; address?: string } | null>(null);
+
+  useEffect(() => {
+    if (product.userId) {
+      const fetchProducer = async () => {
+        try {
+          const userDoc = await getDoc(doc(db, "users", product.userId!));
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            setProducer({
+              name: data.name || "Anonymous",
+              avatarUrl: data.avatarUrl,
+              address: data.address,
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching producer:", error);
+        }
+      };
+      fetchProducer();
+    }
+  }, [product.userId]);
+
   // Category colors mapping
   const getCategoryColor = (category?: string) => {
     const colors: { [key: string]: string } = {
@@ -71,7 +99,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       </button>
 
       {/* Image container with overlay */}
-      <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
+      <Link href={`/product/${product.id}`} className="block relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
         {/* Gradient overlay - lighter and only at bottom */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent z-10"></div>
         
@@ -116,17 +144,48 @@ const ProductCard: React.FC<ProductCardProps> = ({
           placeholder="blur"
           blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
         />
-      </div>
+      </Link>
 
       {/* Content */}
       <CardContent className="p-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-1 group-hover:text-primary transition-colors">
-          {product.name}
-        </h3>
+        <Link href={`/product/${product.id}`}>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-1 group-hover:text-primary transition-colors">
+            {product.name}
+          </h3>
+        </Link>
         
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2 min-h-[2.5rem]">
           {product.description}
         </p>
+
+        {/* Producer Info */}
+        {producer && (
+          <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+            <div className="flex items-center gap-3">
+              <Link href={`/producers/${product.userId}`} className="shrink-0 group/avatar">
+                <ProducerAvatar 
+                  avatarUrl={producer.avatarUrl} 
+                  name={producer.name} 
+                  size="sm" 
+                  className="w-8 h-8 ring-2 ring-white dark:ring-gray-800 shadow-sm group-hover/avatar:ring-green-500/50 transition-all" 
+                />
+              </Link>
+              <div className="min-w-0 flex-1">
+                <Link href={`/producers/${product.userId}`} className="block group/name">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover/name:text-green-600 dark:group-hover/name:text-green-400 truncate transition-colors">
+                    {producer.name}
+                  </p>
+                </Link>
+                {producer.address && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate flex items-center gap-1">
+                    <MapPin className="w-3 h-3 shrink-0" />
+                    {producer.address}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Footer info */}
         <div className="mt-3 flex items-center justify-between">
