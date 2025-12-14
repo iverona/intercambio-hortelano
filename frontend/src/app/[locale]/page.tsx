@@ -6,43 +6,23 @@ import ProductCard from "@/components/shared/ProductCard";
 import { useAuth } from "@/context/AuthContext";
 import { useFilters } from "@/context/FilterContext";
 import { db } from "@/lib/firebase";
-import { getDistance } from "@/lib/geolocation";
-import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Sparkles, 
-  MapPin, 
-  Package, 
+import {
+  Sparkles,
+  MapPin,
+  Package,
   ArrowRight,
   Leaf,
-  Heart,
   Users,
   TrendingUp
 } from "lucide-react";
 import { EmptyState } from "@/components/shared/EmptyState";
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  imageUrls: string[];
-  category: string;
-  isForExchange?: boolean;
-  isForSale?: boolean;
-  location?: {
-    latitude: number;
-    longitude: number;
-  };
-  distance?: number;
-  createdAt?: {
-    seconds: number;
-    nanoseconds: number;
-  };
-  deleted?: boolean;
-}
+import { Product } from "@/types/product";
+import { useProducts } from "@/hooks/useProducts";
 
 // Skeleton loader component
 const ProductSkeleton = () => (
@@ -79,7 +59,7 @@ const HeroSection = ({ productCount, user }: { productCount: number; user: { uid
           <h1 className="text-5xl lg:text-7xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent mb-6">
             {t('home.hero.title')}
           </h1>
-          
+
           {/* Subtitle */}
           <p className="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
             {t('home.hero.subtitle')}
@@ -129,7 +109,7 @@ const HeroSection = ({ productCount, user }: { productCount: number; user: { uid
                 </div>
               </div>
             </Card>
-            
+
             <Card className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg">
               <div className="flex items-center justify-center gap-3">
                 <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
@@ -141,7 +121,7 @@ const HeroSection = ({ productCount, user }: { productCount: number; user: { uid
                 </div>
               </div>
             </Card>
-            
+
             <Card className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg">
               <div className="flex items-center justify-center gap-3">
                 <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
@@ -163,13 +143,13 @@ const HeroSection = ({ productCount, user }: { productCount: number; user: { uid
 // Enhanced product card wrapper with animations
 const AnimatedProductCard = ({ product, index }: { product: Product; index: number }) => {
   return (
-    <div 
+    <div
       className="group relative transform transition-all duration-300 hover:scale-105 hover:-translate-y-2"
       style={{ animationDelay: `${index * 50}ms` }}
     >
       {/* Hover glow effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-400 rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300"></div>
-      
+
       <ProductCard product={product} />
     </div>
   );
@@ -179,102 +159,25 @@ export default function Home() {
   const t = useI18n();
   const { user } = useAuth();
   const { filters } = useFilters();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<{
     latitude: number;
     longitude: number;
   } | null>(null);
 
+  // Fetch user location
   useEffect(() => {
     if (user) {
       const userRef = doc(db, "users", user.uid);
       getDoc(userRef).then((doc) => {
         if (doc.exists() && doc.data().location) {
           setUserLocation(doc.data().location);
-        } else {
-          setLoading(false);
         }
       });
-    } else {
-      setLoading(false);
     }
   }, [user]);
 
-  useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "products"), (snapshot) => {
-      let productsData = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          ...data,
-          imageUrls: data.imageUrls || [data.imageUrl],
-        };
-      }) as Product[];
-
-      // Filter out deleted products
-      productsData = productsData.filter(product => !product.deleted);
-
-      if (userLocation) {
-        productsData = productsData
-          .map((product) => {
-            if (product.location) {
-              const distance = getDistance(
-                userLocation.latitude,
-                userLocation.longitude,
-                product.location.latitude,
-                product.location.longitude
-              );
-              return { ...product, distance };
-            }
-            return product;
-          })
-          .sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity));
-      }
-
-      // Apply sorting
-      let sortedData = [...productsData];
-      switch (filters.sortBy) {
-        case "date_newest":
-          sortedData.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-          break;
-        case "date_oldest":
-          sortedData.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
-          break;
-        case "distance":
-        default:
-          if (userLocation) {
-            sortedData.sort((a, b) => (a.distance || Infinity) - (b.distance || Infinity));
-          }
-          break;
-      }
-
-      // Apply filters
-      let filteredData = sortedData;
-      if (filters.categories.length > 0) {
-        filteredData = filteredData.filter((product) =>
-          filters.categories.includes(product.category)
-        );
-      }
-
-      if (filters.distance < 100) {
-        filteredData = filteredData.filter(
-          (product) => (product.distance || Infinity) <= filters.distance
-        );
-      }
-
-      if (filters.searchTerm) {
-        filteredData = filteredData.filter((product) =>
-          product.name.toLowerCase().includes(filters.searchTerm.toLowerCase())
-        );
-      }
-
-      setProducts(filteredData);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [userLocation, filters]);
+  // Use custom hook for product data logic
+  const { products, loading } = useProducts(userLocation, filters);
 
   return (
     <>
@@ -295,14 +198,14 @@ export default function Home() {
                   <span className="inline-block w-32 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></span>
                 ) : (
                   <>
-                    {filters.searchTerm 
+                    {filters.searchTerm
                       ? t('home.products.showing_with_search', { count: products.length, searchTerm: filters.searchTerm })
                       : t('home.products.showing', { count: products.length })}
                   </>
                 )}
               </p>
             </div>
-            
+
             {/* Filter badges */}
             {(filters.categories.length > 0 || filters.distance < 100) && (
               <div className="flex gap-2">
