@@ -18,73 +18,27 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useAuth } from "@/context/AuthContext";
-import { db } from "@/lib/firebase";
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  updateDoc,
-  serverTimestamp,
-  Timestamp,
-} from "firebase/firestore";
 import { useRouter, useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import OfferModal from "@/components/shared/OfferModal";
 import { useI18n } from "@/locales/provider";
-import { createNotification, NotificationMetadata } from "@/lib/notifications";
 import {
   ArrowLeft,
   Calendar,
   Eye,
   Heart,
-  MapPin,
-  MessageSquare,
   Package,
   Share2,
   Sparkles,
   Star,
-  TrendingUp,
   User as UserIcon,
   Leaf,
   DollarSign,
   ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
-
-interface Chat {
-  id: string;
-  listingId: string;
-  listingTitle: string;
-  participants: string[];
-  createdAt?: Timestamp;
-  lastMessage?: {
-    text: string;
-    createdAt: Timestamp;
-  } | null;
-}
-
-interface Product {
-  name: string;
-  description: string;
-  imageUrls: string[];
-  userId: string;
-  category?: string;
-  isForExchange?: boolean;
-  isForSale?: boolean;
-  createdAt?: {
-    seconds: number;
-    nanoseconds: number;
-  };
-  deleted?: boolean;
-}
-
-interface User {
-  name: string;
-  avatarUrl: string;
-  bio?: string;
-  deleted?: boolean;
-}
+import { useProduct, useProductMutations } from "@/hooks/useProduct";
+import { useUserProfile } from "@/hooks/useUser";
 
 // Category colors mapping
 const getCategoryColor = (category?: string) => {
@@ -106,7 +60,7 @@ const getTimeAgo = (createdAt: { seconds: number; nanoseconds: number } | undefi
   const date = new Date(createdAt.seconds * 1000);
   const now = new Date();
   const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-  
+
   if (diffInHours < 1) return "Just now";
   if (diffInHours < 24) return `${diffInHours}h ago`;
   const diffInDays = Math.floor(diffInHours / 24);
@@ -120,139 +74,39 @@ export default function ProductDetailPage() {
   const t = useI18n();
   const params = useParams();
   const id = params.id as string;
-  const { user } = useAuth();
+  const { user: currentUser } = useAuth();
   const router = useRouter();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [seller, setSeller] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+
+  const { product, loading: productLoading } = useProduct(id);
+  const { user: seller, loading: sellerLoading } = useUserProfile(product?.userId);
+  const { createOffer } = useProductMutations();
+
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isUnavailable, setIsUnavailable] = useState(false);
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      const docRef = doc(db, "products", id);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        const productData = docSnap.data() as Product;
-        
-        if (productData.deleted) {
-          setIsUnavailable(true);
-          setLoading(false);
-          return;
-        }
-
-        setProduct(productData);
-
-        const userRef = doc(db, "users", productData.userId);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          const userData = userSnap.data() as User;
-          if (userData.deleted) {
-            setIsUnavailable(true);
-            setLoading(false);
-            return;
-          }
-          setSeller(userData);
-        }
-      }
-      setLoading(false);
-    };
-
-    fetchProduct();
-  }, [id]);
+  // Combine loading states for initial render, BUT handle case where product loads but seller is still loading
+  // Better to show product and seller skeleton
+  const loading = productLoading;
+  const isUnavailable = !loading && (!product || product.deleted);
 
   const handleOfferSubmit = async (offer: {
-    type: "exchange" | "chat";
+    type: "exchange" | "chat" | "purchase";
     offeredProductId?: string;
     offeredProductName?: string;
     message?: string;
   }) => {
-    if (!user || !product || !seller) return;
+    if (!currentUser || !product || !seller) return;
 
-    try {
-      // Create a chat for this exchange immediately
-      const chatData = {
-        participants: [user.uid, product.userId],
-        listingId: id,
-        listingTitle: product.name,
-        createdAt: serverTimestamp(),
-        lastMessage: null,
-      };
-
-      const chatRef = await addDoc(collection(db, "chats"), chatData);
-
-      // Create an exchange record with the chat already linked
-      const exchangesRef = collection(db, "exchanges");
-      const exchangeData = {
-        productId: id,
-        productName: product.name,
-        requesterId: user.uid,
-        ownerId: product.userId,
-        status: "pending",
-        chatId: chatRef.id, // Link the chat immediately
-        offer: {
-          type: offer.type,
-          ...(offer.offeredProductId && { offeredProductId: offer.offeredProductId }),
-          ...(offer.offeredProductName && { offeredProductName: offer.offeredProductName }),
-          ...(offer.message && { message: offer.message }),
-        },
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      };
-
-      const exchangeDoc = await addDoc(exchangesRef, exchangeData);
-
-      // If there's an initial message, add it to the chat
-      if (offer.message) {
-        const messagesRef = collection(db, "chats", chatRef.id, "messages");
-        await addDoc(messagesRef, {
-          text: offer.message,
-          senderId: user.uid,
-          createdAt: serverTimestamp(),
-        });
-
-        // Update the lastMessage field on the chat
-        await updateDoc(doc(db, "chats", chatRef.id), {
-          lastMessage: {
-            text: offer.message,
-            createdAt: serverTimestamp(),
-          },
-        });
+    await createOffer({
+      productId: product.id,
+      productName: product.name,
+      requesterId: currentUser.uid,
+      ownerId: product.userId,
+      offer: {
+        ...offer,
+        amount: undefined // OfferModal doesn't seem to pass amount for purchase yet based on interface, but createOffer supports it.
       }
-
-      // Create notification for the product owner with detailed metadata
-      const notificationMetadata: NotificationMetadata = {
-        productName: product.name,
-        productId: id,
-        offerType: offer.type,
-        exchangeId: exchangeDoc.id,
-      };
-
-      if (offer.offeredProductName) {
-        notificationMetadata.offeredProductName = offer.offeredProductName;
-      }
-      if (offer.offeredProductId) {
-        notificationMetadata.offeredProductId = offer.offeredProductId;
-      }
-      if (offer.message) {
-        notificationMetadata.message = offer.message;
-      }
-
-      await createNotification({
-        recipientId: product.userId,
-        senderId: user.uid,
-        type: "NEW_OFFER",
-        entityId: exchangeDoc.id,
-        metadata: notificationMetadata,
-      });
-
-      // Navigate to the exchange details page
-      router.push(`/exchanges/details/${exchangeDoc.id}`);
-    } catch (error) {
-      console.error("Error submitting offer:", error);
-    }
+    }); // createOffer handles navigation and notifications
   };
 
   const handleShare = async () => {
@@ -289,7 +143,7 @@ export default function ProductDetailPage() {
     );
   }
 
-  if (!product || isUnavailable) {
+  if (isUnavailable || !product) {
     return (
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto text-center py-20">
@@ -298,7 +152,7 @@ export default function ProductDetailPage() {
             {isUnavailable ? t('product.unavailable') || "Product Unavailable" : t('product.not_found')}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            {isUnavailable 
+            {isUnavailable
               ? "This product is no longer available because it has been removed or the user is no longer active."
               : "The product you are looking for does not exist."}
           </p>
@@ -313,7 +167,7 @@ export default function ProductDetailPage() {
     );
   }
 
-  const isOwner = user && product.userId === user.uid;
+  const isOwner = currentUser && product.userId === currentUser.uid;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
@@ -391,9 +245,8 @@ export default function ProductDetailPage() {
                     onClick={() => setIsFavorite(!isFavorite)}
                   >
                     <Heart
-                      className={`h-5 w-5 ${
-                        isFavorite ? "fill-red-500 text-red-500" : ""
-                      }`}
+                      className={`h-5 w-5 ${isFavorite ? "fill-red-500 text-red-500" : ""
+                        }`}
                     />
                   </Button>
                   <Button
@@ -462,14 +315,16 @@ export default function ProductDetailPage() {
               </Card>
 
               {/* Seller Information */}
-              {seller && (
+              {sellerLoading ? (
+                <Card className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border-0 shadow-lg animate-pulse h-24" />
+              ) : seller && (
                 <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800 shadow-lg">
                   <CardContent className="p-6">
                     <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
                       <UserIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
                       {t('product.seller_info')}
                     </h2>
-                    
+
                     <Popover>
                       <PopoverTrigger asChild>
                         <div className="flex items-center gap-4 cursor-pointer hover:bg-white/50 dark:hover:bg-gray-800/50 p-3 rounded-lg transition-colors">
@@ -478,9 +333,9 @@ export default function ProductDetailPage() {
                             <AvatarFallback className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
                               {seller.name
                                 ? seller.name
-                                    .split(" ")
-                                    .map((n) => n[0])
-                                    .join("")
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")
                                 : ""}
                             </AvatarFallback>
                           </Avatar>
@@ -503,9 +358,9 @@ export default function ProductDetailPage() {
                               <AvatarFallback>
                                 {seller.name
                                   ? seller.name
-                                      .split(" ")
-                                      .map((n) => n[0])
-                                      .join("")
+                                    .split(" ")
+                                    .map((n) => n[0])
+                                    .join("")
                                   : ""}
                               </AvatarFallback>
                             </Avatar>
@@ -543,7 +398,7 @@ export default function ProductDetailPage() {
 
               {/* Action Buttons */}
               <div className="space-y-3">
-                {!isOwner && user && (
+                {!isOwner && currentUser && (
                   <Button
                     size="lg"
                     className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl transition-all group"
@@ -553,7 +408,7 @@ export default function ProductDetailPage() {
                     {t('product.interested_button')}
                   </Button>
                 )}
-                {!user && (
+                {!currentUser && (
                   <Card className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
                     <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
                       {t('product.login_to_contact')}
@@ -596,7 +451,7 @@ export default function ProductDetailPage() {
           isOpen={showOfferModal}
           onClose={() => setShowOfferModal(false)}
           product={{
-            id,
+            id: product.id,
             name: product.name,
             description: product.description,
             imageUrls: product.imageUrls,

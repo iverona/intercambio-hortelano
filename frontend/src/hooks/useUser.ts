@@ -112,3 +112,33 @@ export const useUser = () => {
         refreshUserData: fetchUserData
     };
 };
+
+export const useUserProfile = (userId: string | null | undefined) => {
+    const [user, setUser] = useState<UserData | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (!userId) {
+            setUser(null);
+            setLoading(false);
+            return;
+        }
+
+        const fetchUser = async () => {
+            setLoading(true);
+            try {
+                const data = await UserService.getUserProfile(userId);
+                setUser(data);
+            } catch (error) {
+                console.error("Error fetching user profile:", error);
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUser();
+    }, [userId]);
+
+    return { user, loading };
+};

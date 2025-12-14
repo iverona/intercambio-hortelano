@@ -4,6 +4,7 @@ export interface Product {
     description: string;
     imageUrls: string[];
     category: string;
+    userId: string;
     isForExchange?: boolean;
     isForSale?: boolean;
     location?: {

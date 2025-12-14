@@ -199,5 +199,74 @@ export const ExchangeService = {
             updateData.completedAt = serverTimestamp();
         }
         await updateDoc(exchangeRef, updateData);
+    },
+
+    /**
+     * Create a new exchange offer
+     */
+    createOffer: async (data: {
+        productId: string;
+        productName: string;
+        requesterId: string;
+        ownerId: string;
+        offer: {
+            type: "exchange" | "chat" | "purchase";
+            offeredProductId?: string;
+            offeredProductName?: string;
+            message?: string;
+            amount?: number;
+        };
+    }): Promise<string> => {
+        try {
+            // Create a chat for this exchange immediately
+            const chatData = {
+                participants: [data.requesterId, data.ownerId],
+                listingId: data.productId,
+                listingTitle: data.productName,
+                createdAt: serverTimestamp(),
+                lastMessage: null,
+            };
+
+            const chatRef = await addDoc(collection(db, "chats"), chatData);
+
+            // Create an exchange record with the chat already linked
+            const exchangesRef = collection(db, "exchanges");
+            const exchangeData = {
+                productId: data.productId,
+                productName: data.productName,
+                requesterId: data.requesterId,
+                ownerId: data.ownerId,
+                status: "pending",
+                chatId: chatRef.id,
+                offer: data.offer,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp(),
+            };
+
+            const exchangeDoc = await addDoc(exchangesRef, exchangeData);
+
+            // If there's an initial message, add it to the chat
+            if (data.offer.message) {
+                const messagesRef = collection(db, "chats", chatRef.id, "messages");
+                await addDoc(messagesRef, {
+                    text: data.offer.message,
+                    senderId: data.requesterId,
+                    createdAt: serverTimestamp(),
+                });
+
+                // Update the lastMessage field on the chat
+                await updateDoc(doc(db, "chats", chatRef.id), {
+                    lastMessage: {
+                        text: data.offer.message,
+                        createdAt: serverTimestamp(),
+                    },
+                });
+            }
+
+            return exchangeDoc.id;
+        } catch (error) {
+            console.error("Error creating offer:", error);
+            throw error;
+        }
     }
 };
