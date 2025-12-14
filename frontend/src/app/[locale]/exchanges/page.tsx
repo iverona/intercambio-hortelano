@@ -1,18 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { db } from "@/lib/firebase";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  doc,
-  getDoc,
-  Timestamp,
-  or,
-} from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -32,47 +21,20 @@ import {
   AlertCircle,
   ChevronRight,
   Sparkles,
-  Leaf,
 } from "lucide-react";
 import { useI18n } from "@/locales/provider";
 import { StatsCard } from "@/components/shared/StatsCard";
 import { EmptyState } from "@/components/shared/EmptyState";
-
-interface Exchange {
-  id: string;
-  productId: string;
-  productName: string;
-  status: "pending" | "accepted" | "rejected" | "completed";
-  requesterId: string;
-  ownerId: string;
-  chatId?: string;
-  createdAt?: Timestamp;
-  updatedAt?: Timestamp;
-  completedAt?: Timestamp;
-  offer?: {
-    type: "exchange" | "purchase" | "chat";
-    offeredProductId?: string;
-    offeredProductName?: string;
-    amount?: number;
-    message?: string;
-  };
-  lastMessage?: {
-    text: string;
-    createdAt: Timestamp;
-  };
-  partner?: {
-    id: string;
-    name: string;
-    avatarUrl: string;
-  };
-}
+import { useExchanges } from "@/hooks/useExchanges";
+import { Exchange } from "@/types/exchange";
+import { Timestamp } from "firebase/firestore";
 
 // Exchange item component
 const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () => void }) => {
   const t = useI18n();
   const { user } = useAuth();
   const isRequester = user?.uid === exchange.requesterId;
-  
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
@@ -106,7 +68,7 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
     const date = timestamp.toDate();
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) return 'Just now';
     if (diffInHours < 24) return `${diffInHours}h ago`;
     const diffInDays = Math.floor(diffInHours / 24);
@@ -116,13 +78,13 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
   };
 
   return (
-    <Card 
+    <Card
       onClick={onClick}
       className="p-4 md:p-5 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02] bg-white dark:bg-gray-800 group relative overflow-hidden"
     >
       {/* Hover glow effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-xl opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-300"></div>
-      
+
       <div className="flex items-start gap-3 md:gap-4 relative z-10">
         {/* Avatar */}
         <Avatar className="h-12 w-12 md:h-14 md:w-14 border-2 border-gray-200 dark:border-gray-700 shadow-md ring-2 ring-blue-100 dark:ring-blue-900 flex-shrink-0">
@@ -161,8 +123,8 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
                   {exchange.offer.type === "exchange" && exchange.offer.offeredProductName
                     ? t('exchanges.item.offered', { product: exchange.offer.offeredProductName })
                     : exchange.offer.type === "purchase" && exchange.offer.amount
-                    ? `€${exchange.offer.amount.toFixed(2)}`
-                    : t('exchanges.item.chat_request')}
+                      ? `\u20AC${exchange.offer.amount.toFixed(2)}`
+                      : t('exchanges.item.chat_request')}
                 </span>
               </div>
             </div>
@@ -177,11 +139,11 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
               </p>
             ) : (
               <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 italic truncate flex-1">
-                {exchange.status === 'pending' && !isRequester 
+                {exchange.status === 'pending' && !isRequester
                   ? t('exchanges.item.action_required')
                   : exchange.status === 'pending' && isRequester
-                  ? t('exchanges.item.waiting_for_response')
-                  : t('exchanges.item.no_messages')}
+                    ? t('exchanges.item.waiting_for_response')
+                    : t('exchanges.item.no_messages')}
               </p>
             )}
             <div className="flex items-center gap-1 md:gap-2 text-xs text-gray-400 flex-shrink-0">
@@ -218,76 +180,8 @@ export default function ExchangesPage() {
   const t = useI18n();
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [exchanges, setExchanges] = useState<Exchange[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { exchanges, loading: exchangesLoading } = useExchanges();
   const [activeTab, setActiveTab] = useState("active");
-
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/");
-      return;
-    }
-
-    if (!user) return;
-
-    // Query for exchanges where user is either requester or owner
-    const exchangesQuery = query(
-      collection(db, "exchanges"),
-      or(
-        where("requesterId", "==", user.uid),
-        where("ownerId", "==", user.uid)
-      )
-    );
-
-    const unsubscribe = onSnapshot(exchangesQuery, async (snapshot) => {
-      const exchangesData: Exchange[] = [];
-      
-      for (const docSnap of snapshot.docs) {
-        const data = docSnap.data();
-        const exchange: Exchange = {
-          id: docSnap.id,
-          ...data,
-        } as Exchange;
-
-        // Get partner information
-        const partnerId = data.requesterId === user.uid ? data.ownerId : data.requesterId;
-        const partnerDoc = await getDoc(doc(db, "users", partnerId));
-        if (partnerDoc.exists()) {
-          const partnerData = partnerDoc.data();
-          exchange.partner = {
-            id: partnerId,
-            name: partnerData.name || partnerData.displayName || "Unknown User",
-            avatarUrl: partnerData.avatarUrl || "",
-          };
-        }
-
-        // Get chat information if chatId exists
-        if (data.chatId) {
-          const chatDoc = await getDoc(doc(db, "chats", data.chatId));
-          if (chatDoc.exists()) {
-            const chatData = chatDoc.data();
-            if (chatData.lastMessage) {
-              exchange.lastMessage = chatData.lastMessage;
-            }
-          }
-        }
-
-        exchangesData.push(exchange);
-      }
-
-      // Sort by most recent activity
-      exchangesData.sort((a, b) => {
-        const timeA = (a.lastMessage?.createdAt || a.updatedAt || a.createdAt)?.toMillis() || 0;
-        const timeB = (b.lastMessage?.createdAt || b.updatedAt || b.createdAt)?.toMillis() || 0;
-        return timeB - timeA;
-      });
-
-      setExchanges(exchangesData);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [user, authLoading, router]);
 
   const handleExchangeClick = (exchange: Exchange) => {
     router.push(`/exchanges/details/${exchange.id}`);
@@ -296,7 +190,7 @@ export default function ExchangesPage() {
   // Filter exchanges by status
   const pendingExchanges = exchanges.filter(e => e.status === "pending");
   const activeExchanges = exchanges.filter(e => e.status === "accepted");
-  const completedExchanges = exchanges.filter(e => 
+  const completedExchanges = exchanges.filter(e =>
     e.status === "completed" || e.status === "rejected"
   );
 
@@ -304,11 +198,11 @@ export default function ExchangesPage() {
   const pendingCount = pendingExchanges.filter(e => e.ownerId === user?.uid).length;
   const totalExchanges = exchanges.length;
   const completedCount = exchanges.filter(e => e.status === "completed").length;
-  const successRate = totalExchanges > 0 
-    ? Math.round((completedCount / totalExchanges) * 100) 
+  const successRate = totalExchanges > 0
+    ? Math.round((completedCount / totalExchanges) * 100)
     : 0;
 
-  if (authLoading || loading) {
+  if (authLoading || exchangesLoading) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
         <div className="container mx-auto px-4 py-8">
@@ -324,6 +218,8 @@ export default function ExchangesPage() {
   }
 
   if (!user) {
+    // Should be handled by AuthContext redirect or middleware but logic kept for safety
+    if (!authLoading) router.push("/");
     return null;
   }
 
@@ -354,7 +250,7 @@ export default function ExchangesPage() {
                   </p>
                 </div>
               </div>
-              <Button 
+              <Button
                 asChild
                 size="default"
                 className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg group w-full md:w-auto"
@@ -471,7 +367,7 @@ export default function ExchangesPage() {
                         />
                       </div>
                     ))}
-                  
+
                   {/* Then show pending requests user is waiting for */}
                   {pendingExchanges
                     .filter(e => e.requesterId === user?.uid)
