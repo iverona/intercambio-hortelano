@@ -2,20 +2,8 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/context/AuthContext";
-import { db, storage } from "@/lib/firebase";
-import {
-  doc,
-  getDoc,
-  updateDoc,
-} from "firebase/firestore";
-import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
-import { getAuth, sendPasswordResetEmail, updateProfile } from "firebase/auth";
-import { useEffect, useState, useRef } from "react";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,10 +11,15 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TomatoRating } from "@/components/shared/TomatoRating";
+import { useI18n, useChangeLocale, useCurrentLocale } from "@/locales/provider";
+import { toast } from "sonner";
+import LocationSearchInput from "@/components/shared/LocationSearchInput";
+import { useGeolocation } from "@/hooks/useGeolocation";
+import {
+  reauthenticateUser,
+  softDeleteUserAccount,
+  isGoogleSignInUser
+} from "@/lib/accountDeletion";
 import {
   User as UserIcon,
   Edit,
@@ -35,33 +28,16 @@ import {
   Mail,
   MapPin,
   Calendar,
-  Shield,
-  Bell,
-  Lock,
   Eye,
   EyeOff,
-  MessageSquare,
-  ArrowRightLeft,
-  Package,
   Trash2,
-  Star,
-  Trophy,
-  Award,
-  Languages,
-  Sparkles,
-  CheckCircle,
   Camera,
   Loader2,
+  Languages,
 } from "lucide-react";
-import { useChangeLocale, useCurrentLocale, useI18n } from "@/locales/provider";
-import { toast } from "sonner";
-import LocationSearchInput from "@/components/shared/LocationSearchInput";
-import { useGeolocation } from "@/hooks/useGeolocation";
-import { 
-  reauthenticateUser, 
-  softDeleteUserAccount, 
-  isGoogleSignInUser 
-} from "@/lib/accountDeletion";
+import { TomatoRating } from "@/components/shared/TomatoRating";
+import { useUser } from "@/hooks/useUser";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -70,47 +46,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { signOut } from "firebase/auth";
-import imageCompression from "browser-image-compression";
-
-interface UserData {
-  name: string;
-  email: string;
-  avatarUrl: string;
-  bio?: string;
-  location?: {
-    latitude: number;
-    longitude: number;
-  };
-  geohash?: string;
-  address?: string;
-  locationUpdatedAt?: {
-    seconds: number;
-    nanoseconds: number;
-  };
-  joinedDate?: {
-    seconds: number;
-    nanoseconds: number;
-  };
-  notifications?: {
-    email?: boolean;
-    messages?: boolean;
-    exchanges?: boolean;
-    products?: boolean;
-  };
-  privacy?: {
-    showLocation?: boolean;
-    publicProfile?: boolean;
-  };
-  reputation?: {
-    averageRating: number;
-    totalReviews: number;
-  };
-  points?: number;
-  level?: number;
-  badges?: string[];
-  preferredLocale?: string;
-}
 
 // Loading skeleton component
 const ProfileSkeleton = () => (
@@ -143,19 +78,38 @@ const ProfileSection = ({ title, icon: Icon, children, gradient }: {
 
 export default function ProfilePage() {
   const t = useI18n();
-  const { user, loading, refreshUser } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
-  const [userData, setUserData] = useState<UserData | null>(null);
+
+  // Use custom hook
+  const {
+    userData,
+    loading: userLoading,
+    isUploading: isUploadingAvatar,
+    updateProfileData,
+    uploadAvatar,
+    deleteAvatar
+  } = useUser();
+
   const [isEditing, setIsEditing] = useState(false);
+
+  // Local state for editing fields
   const [newName, setNewName] = useState("");
   const [newBio, setNewBio] = useState("");
+
+  // Settings state
   const [showEmail, setShowEmail] = useState(false);
+  const [emailNotifications, setEmailNotifications] = useState(true);
+  const [messageNotifications, setMessageNotifications] = useState(true);
+  const [exchangeNotifications, setExchangeNotifications] = useState(true);
+  const [productNotifications, setProductNotifications] = useState(true);
+  const [showLocation, setShowLocation] = useState(true);
+  const [publicProfile, setPublicProfile] = useState(true);
+
   const [showLocationUpdate, setShowLocationUpdate] = useState(false);
   const [updatingLocation, setUpdatingLocation] = useState(false);
   const { getCurrentLocation, loading: geoLoading, error: geoError, clearError } = useGeolocation();
-  
-  // Avatar state
-  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Account deletion states
@@ -164,106 +118,53 @@ export default function ProfilePage() {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const [reauthError, setReauthError] = useState("");
   const [isGoogleUser, setIsGoogleUser] = useState(false);
-  
-  // Notification settings
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [messageNotifications, setMessageNotifications] = useState(true);
-  const [exchangeNotifications, setExchangeNotifications] = useState(true);
-  const [productNotifications, setProductNotifications] = useState(true);
-  
-  // Privacy settings
-  const [showLocation, setShowLocation] = useState(true);
-  const [publicProfile, setPublicProfile] = useState(true);
 
+  // Initialize state from userData
   useEffect(() => {
-    // Redirect to home if not authenticated
-    if (!loading && !user) {
+    if (userData) {
+      setNewName(userData.name);
+      setNewBio(userData.bio || "");
+
+      if (userData.notifications) {
+        setEmailNotifications(userData.notifications.email ?? true);
+        setMessageNotifications(userData.notifications.messages ?? true);
+        setExchangeNotifications(userData.notifications.exchanges ?? true);
+        setProductNotifications(userData.notifications.products ?? true);
+      }
+
+      if (userData.privacy) {
+        setShowLocation(userData.privacy.showLocation ?? true);
+        setPublicProfile(userData.privacy.publicProfile ?? true);
+      }
+    }
+  }, [userData]);
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
       router.push("/");
-      return;
     }
 
     if (user) {
-      // Check if user is a Google user
       setIsGoogleUser(isGoogleSignInUser());
-      
-      const userRef = doc(db, "users", user.uid);
-      getDoc(userRef).then((doc) => {
-        if (doc.exists()) {
-          const data = doc.data() as UserData;
-          setUserData(data);
-          setNewName(data.name);
-          setNewBio(data.bio || "");
-          
-          // Load notification preferences
-          if (data.notifications) {
-            setEmailNotifications(data.notifications.email ?? true);
-            setMessageNotifications(data.notifications.messages ?? true);
-            setExchangeNotifications(data.notifications.exchanges ?? true);
-            setProductNotifications(data.notifications.products ?? true);
-          }
-          
-          // Load privacy preferences
-          if (data.privacy) {
-            setShowLocation(data.privacy.showLocation ?? true);
-            setPublicProfile(data.privacy.publicProfile ?? true);
-          }
-        }
-      });
     }
-  }, [user, loading, router]);
+  }, [user, authLoading, router]);
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !user) return;
+    if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
       toast.error(t('profile.avatar_error_size'));
       return;
     }
 
-    setIsUploadingAvatar(true);
     try {
-      const compressedFile = await imageCompression(file, {
-        maxSizeMB: 0.5,
-        maxWidthOrHeight: 512,
-        useWebWorker: true,
-      });
-
-      // 1. Upload new avatar
-      const storageRef = ref(storage, `avatars/${user.uid}/${Date.now()}_${compressedFile.name}`);
-      await uploadBytes(storageRef, compressedFile);
-      const newAvatarUrl = await getDownloadURL(storageRef);
-
-      // 2. Delete old avatar if exists and is a firebase storage url
-      if (userData?.avatarUrl && userData.avatarUrl.includes("firebasestorage")) {
-        try {
-          const oldAvatarRef = ref(storage, userData.avatarUrl);
-          await deleteObject(oldAvatarRef);
-        } catch (error) {
-          console.warn("Could not delete old avatar", error);
-        }
-      }
-
-      // 3. Update Firestore
-      const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, {
-        avatarUrl: newAvatarUrl
-      });
-
-      // 4. Update Auth Profile & Refresh
-      await updateProfile(user, { photoURL: newAvatarUrl });
-      await refreshUser();
-
-      // 5. Update local state
-      setUserData(prev => prev ? { ...prev, avatarUrl: newAvatarUrl } : null);
-      
-      toast.success(t('profile.save_button')); // Reusing "Save Changes" or could add specific "Avatar Updated"
+      await uploadAvatar(file);
+      toast.success(t('profile.save_button'));
     } catch (error) {
-      console.error("Error uploading avatar:", error);
       toast.error(t('profile.upload_error'));
     } finally {
-      setIsUploadingAvatar(false);
-      // Reset input
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -271,87 +172,60 @@ export default function ProfilePage() {
   };
 
   const handleRemoveAvatar = async (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering the upload input
-    if (!user) return;
-
-    setIsUploadingAvatar(true);
+    e.stopPropagation();
     try {
-      // 1. Delete old avatar if exists
-      if (userData?.avatarUrl && userData.avatarUrl.includes("firebasestorage")) {
-        try {
-          const oldAvatarRef = ref(storage, userData.avatarUrl);
-          await deleteObject(oldAvatarRef);
-        } catch (error) {
-          console.warn("Could not delete old avatar", error);
-        }
-      }
-
-      // 2. Update Firestore
-      const userRef = doc(db, "users", user.uid);
-      await updateDoc(userRef, {
-        avatarUrl: ""
-      });
-
-      // 3. Update Auth Profile & Refresh
-      await updateProfile(user, { photoURL: "" });
-      await refreshUser();
-
-      // 4. Update local state
-      setUserData(prev => prev ? { ...prev, avatarUrl: "" } : null);
-      
+      await deleteAvatar();
       toast.success(t('profile.delete_photo_success'));
     } catch (error) {
-      console.error("Error removing avatar:", error);
       toast.error(t('profile.delete_photo_error'));
-    } finally {
-      setIsUploadingAvatar(false);
     }
   };
 
   const handleSave = async () => {
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      
-      try {
-        await updateDoc(userRef, { 
-          name: newName, 
-          bio: newBio,
-          notifications: {
-            email: emailNotifications,
-            messages: messageNotifications,
-            exchanges: exchangeNotifications,
-            products: productNotifications,
-          },
-          privacy: {
-            showLocation,
-            publicProfile,
-          }
-        });
-        
-        setUserData((prev) =>
-          prev ? { 
-            ...prev, 
-            name: newName, 
-            bio: newBio,
-            notifications: {
-              email: emailNotifications,
-              messages: messageNotifications,
-              exchanges: exchangeNotifications,
-              products: productNotifications,
-            },
-            privacy: {
-              showLocation,
-              publicProfile,
-            }
-          } : null
-        );
-        
-        setIsEditing(false);
-        toast.success(t('profile.save_button'));
-      } catch (error) {
-        console.error("Error saving profile:", error);
-        toast.error(t('profile.save_error') || "Error saving profile");
-      }
+    try {
+      await updateProfileData({
+        name: newName,
+        bio: newBio,
+        notifications: {
+          email: emailNotifications,
+          messages: messageNotifications,
+          exchanges: exchangeNotifications,
+          products: productNotifications,
+        },
+        privacy: {
+          showLocation,
+          publicProfile,
+        }
+      });
+      setIsEditing(false);
+      toast.success(t('profile.save_button'));
+    } catch (error) {
+      toast.error(t('profile.save_error'));
+    }
+  };
+
+  const handleLocationUpdate = async (locationData: { latitude: number; longitude: number; geohash?: string; address?: string }) => {
+    setUpdatingLocation(true);
+    try {
+      await updateProfileData({
+        location: {
+          latitude: locationData.latitude,
+          longitude: locationData.longitude,
+        },
+        geohash: locationData.geohash,
+        address: locationData.address || userData?.address,
+        locationUpdatedAt: {
+          seconds: Date.now() / 1000,
+          nanoseconds: 0,
+        }
+      });
+
+      setShowLocationUpdate(false);
+      toast.success(t('profile.location_updated'));
+    } catch (error) {
+      toast.error(t('profile.location_update_failed'));
+    } finally {
+      setUpdatingLocation(false);
     }
   };
 
@@ -404,7 +278,7 @@ export default function ProfilePage() {
 
       setShowReauthDialog(false);
       toast.success(t('profile.delete_success'));
-      
+
       setTimeout(() => {
         router.push("/");
       }, 1500);
@@ -415,7 +289,28 @@ export default function ProfilePage() {
     }
   };
 
-  if (loading) {
+  const LanguageSelector = () => {
+    const changeLocale = useChangeLocale();
+    const currentLocale = useCurrentLocale();
+
+    const handleLocaleChange = (newLocale: string) => {
+      changeLocale(newLocale as "en" | "es");
+      // Optionally save to user preferences in Firestore
+      updateProfileData({ preferredLocale: newLocale });
+      toast.success(t('profile.language_updated'));
+    };
+
+    return (
+      <Tabs value={currentLocale} onValueChange={handleLocaleChange} className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="en">{t('profile.language_english')}</TabsTrigger>
+          <TabsTrigger value="es">{t('profile.language_spanish')}</TabsTrigger>
+        </TabsList>
+      </Tabs>
+    );
+  };
+
+  if (authLoading || userLoading) {
     return (
       <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
         <div className="container mx-auto px-4 py-8">
@@ -431,7 +326,7 @@ export default function ProfilePage() {
     return null;
   }
 
-  const memberSince = userData.joinedDate 
+  const memberSince = userData.joinedDate
     ? new Date(userData.joinedDate.seconds * 1000).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
     : 'Recently';
 
@@ -473,16 +368,16 @@ export default function ProfilePage() {
                     <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-green-500 to-emerald-500 text-white">
                       {userData.name
                         ? userData.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")
                         : ""}
                     </AvatarFallback>
                   </Avatar>
-                  
+
                   {/* Always enable editing by clicking or hovering */}
                   <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer z-10"
-                       onClick={() => !isUploadingAvatar && fileInputRef.current?.click()}
+                    onClick={() => !isUploadingAvatar && fileInputRef.current?.click()}
                   >
                     {isUploadingAvatar ? (
                       <Loader2 className="w-8 h-8 text-white animate-spin" />
@@ -490,7 +385,7 @@ export default function ProfilePage() {
                       <Camera className="w-8 h-8 text-white" />
                     )}
                   </div>
-                  
+
                   {showAvatar && !isUploadingAvatar && (
                     <Button
                       size="icon"
@@ -502,7 +397,7 @@ export default function ProfilePage() {
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   )}
-                  
+
                   <Input
                     ref={fileInputRef}
                     type="file"
@@ -511,7 +406,7 @@ export default function ProfilePage() {
                     onChange={handleAvatarChange}
                   />
                 </div>
-                
+
                 <div className="flex-1">
                   <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
                     {userData.name}
@@ -519,7 +414,7 @@ export default function ProfilePage() {
                   <p className="text-gray-600 dark:text-gray-400 mb-4">
                     {userData.bio || t('profile.no_bio')}
                   </p>
-                  
+
                   <div className="flex flex-wrap gap-2">
                     <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 shadow-md">
                       <Calendar className="w-3 h-3 mr-1" />
@@ -533,9 +428,9 @@ export default function ProfilePage() {
                     )}
                     {userData.reputation && userData.reputation.totalReviews > 0 && (
                       <div className="flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900/30 dark:to-red-900/30 rounded-full">
-                        <TomatoRating 
-                          rating={userData.reputation.averageRating} 
-                          size="sm" 
+                        <TomatoRating
+                          rating={userData.reputation.averageRating}
+                          size="sm"
                           showNumber={true}
                         />
                         <span className="text-sm text-gray-700 dark:text-gray-300">
@@ -586,7 +481,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   <div className="flex gap-3 pt-4">
-                    <Button 
+                    <Button
                       onClick={handleSave}
                       className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg"
                       size="lg"
@@ -628,7 +523,7 @@ export default function ProfilePage() {
                     </div>
                   </Card>
 
-                  <Button 
+                  <Button
                     onClick={() => setIsEditing(true)}
                     className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 shadow-lg"
                     size="lg"
@@ -641,7 +536,6 @@ export default function ProfilePage() {
             </div>
           </ProfileSection>
 
-          {/* ... Other sections remain unchanged ... */}
           {/* Location Settings Section */}
           <ProfileSection title={t('profile.location_settings')} icon={MapPin}>
             <div className="space-y-4">
@@ -658,9 +552,9 @@ export default function ProfilePage() {
                         <span className="text-sm font-medium text-gray-900 dark:text-gray-100">{userData.address}</span>
                       ) : userData?.location ? (
                         <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {t('profile.location_coordinates', { 
-                            lat: userData.location.latitude.toFixed(4), 
-                            lng: userData.location.longitude.toFixed(4) 
+                          {t('profile.location_coordinates', {
+                            lat: userData.location.latitude.toFixed(4),
+                            lng: userData.location.longitude.toFixed(4)
                           })}
                         </span>
                       ) : (
@@ -687,40 +581,12 @@ export default function ProfilePage() {
                     onClick={async () => {
                       clearError();
                       const locationData = await getCurrentLocation();
-                      
-                      if (locationData && user) {
-                        setUpdatingLocation(true);
-                        try {
-                          const userRef = doc(db, "users", user.uid);
-                          await updateDoc(userRef, {
-                            location: {
-                              latitude: locationData.latitude,
-                              longitude: locationData.longitude,
-                            },
-                            geohash: locationData.geohash,
-                            locationUpdatedAt: new Date(),
-                          });
-                          
-                          // Update local state
-                          setUserData(prev => prev ? {
-                            ...prev,
-                            location: {
-                              latitude: locationData.latitude,
-                              longitude: locationData.longitude,
-                            },
-                            geohash: locationData.geohash,
-                            locationUpdatedAt: {
-                              seconds: Date.now() / 1000,
-                              nanoseconds: 0,
-                            }
-                          } : null);
-                          
-                          toast.success(t('profile.location_updated'));
-                        } catch (error) {
-                          toast.error(t('profile.location_update_failed'));
-                        } finally {
-                          setUpdatingLocation(false);
-                        }
+                      if (locationData) {
+                        handleLocationUpdate({
+                          latitude: locationData.latitude,
+                          longitude: locationData.longitude,
+                          geohash: locationData.geohash
+                        });
                       }
                     }}
                     disabled={geoLoading || updatingLocation}
@@ -746,44 +612,13 @@ export default function ProfilePage() {
                     {t('profile.manual_location_description')}
                   </p>
                   <LocationSearchInput
-                    onLocationSelect={async (location) => {
-                      if (user) {
-                        setUpdatingLocation(true);
-                        try {
-                          const userRef = doc(db, "users", user.uid);
-                          await updateDoc(userRef, {
-                            location: {
-                              latitude: location.latitude,
-                              longitude: location.longitude,
-                            },
-                            geohash: location.geohash,
-                            address: location.address,
-                            locationUpdatedAt: new Date(),
-                          });
-                          
-                          // Update local state
-                          setUserData(prev => prev ? {
-                            ...prev,
-                            location: {
-                              latitude: location.latitude,
-                              longitude: location.longitude,
-                            },
-                            geohash: location.geohash,
-                            address: location.address,
-                            locationUpdatedAt: {
-                              seconds: Date.now() / 1000,
-                              nanoseconds: 0,
-                            }
-                          } : null);
-                          
-                          setShowLocationUpdate(false);
-                          toast.success(t('profile.location_updated'));
-                        } catch (error) {
-                          toast.error(t('profile.location_update_failed'));
-                        } finally {
-                          setUpdatingLocation(false);
-                        }
-                      }
+                    onLocationSelect={(location) => {
+                      handleLocationUpdate({
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                        geohash: location.geohash,
+                        address: location.address
+                      });
                     }}
                     placeholder={t('profile.location_search_placeholder')}
                     className="w-full"
@@ -801,370 +636,84 @@ export default function ProfilePage() {
                   </Button>
                 </div>
               )}
-
-              {/* Error Display */}
-              {geoError && (
-                <p className="text-sm text-red-500 dark:text-red-400">{geoError}</p>
-              )}
-
-              {/* Privacy Note */}
-              <Card className="p-3 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
-                <p className="text-xs text-blue-700 dark:text-blue-300 flex items-start gap-2">
-                  <Shield className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                  {t('profile.location_privacy_note')}
-                </p>
-              </Card>
             </div>
           </ProfileSection>
 
-          {/* Reputation & Gamification Section */}
-          {userData.reputation && (
-            <ProfileSection title={t('profile.reputation_achievements')} icon={Trophy}>
-              <div className="space-y-4">
-                {/* Rating Overview */}
-                <Card className="p-6 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20 border-orange-200 dark:border-orange-800 shadow-lg">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="font-semibold text-lg text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
-                        <Star className="w-5 h-5 text-orange-600 dark:text-orange-400" />
-                        {t('profile.your_rating')}
-                      </h3>
-                      {userData.reputation.totalReviews > 0 ? (
-                        <div className="flex items-center gap-4">
-                          <TomatoRating 
-                            rating={userData.reputation.averageRating} 
-                            size="lg" 
-                            showNumber={true}
-                          />
-                          <span className="text-sm text-gray-600 dark:text-gray-400">
-                            {userData.reputation.totalReviews === 1
-                              ? t('profile.based_on_reviews', { count: 1 })
-                              : t('profile.based_on_reviews_plural', { count: userData.reputation.totalReviews })}
-                          </span>
-                        </div>
-                      ) : (
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                          {t('profile.no_reviews')}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </Card>
+          {/* Language Settings Section */}
+          <ProfileSection title={t('profile.section_language')} icon={Languages}>
+            <LanguageSelector />
+          </ProfileSection>
 
-                {/* Points & Level */}
-                <div className="grid grid-cols-2 gap-4">
-                  <Card className="p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800 shadow-lg hover:shadow-xl transition-shadow">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg shadow-md">
-                        <Star className="w-5 h-5 text-white" />
-                      </div>
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('profile.points')}</h4>
-                    </div>
-                    <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                      {userData.points || 0}
-                    </p>
-                  </Card>
-                  <Card className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border-purple-200 dark:border-purple-800 shadow-lg hover:shadow-xl transition-shadow">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg shadow-md">
-                        <Award className="w-5 h-5 text-white" />
-                      </div>
-                      <h4 className="font-semibold text-gray-900 dark:text-gray-100">{t('profile.level')}</h4>
-                    </div>
-                    <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                      {getLevelName(userData.level || 0)}
-                    </p>
-                  </Card>
-                </div>
-
-                {/* Badges */}
-                {userData.badges && userData.badges.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold mb-3 flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-yellow-500" />
-                      {t('profile.badges_earned')}
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {userData.badges.map((badge) => (
-                        <Badge key={badge} className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0 shadow-md">
-                          {badge}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </ProfileSection>
-          )}
-
-          {/* Notification Preferences */}
-          <ProfileSection title={t('profile.notification_prefs')} icon={Bell}>
+          {/* Account Deletion Section */}
+          <ProfileSection title={t('profile.section_danger_zone')} icon={Trash2} gradient="bg-red-50 dark:bg-red-900/10 border-red-200 dark:border-red-900">
             <div className="space-y-4">
-              <Card className="p-4 bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border-gray-200 dark:border-gray-700">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="email-notif" className="text-base font-semibold">
-                      {t('profile.email_notifs')}
-                    </Label>
-                    <p className="text-sm text-gray-500">{t('profile.email_notifs_desc')}</p>
-                  </div>
-                  <Checkbox
-                    id="email-notif"
-                    checked={emailNotifications}
-                    onCheckedChange={(checked) => setEmailNotifications(checked as boolean)}
-                  />
-                </div>
-              </Card>
-              <Separator />
-              <div className="space-y-3">
-                {[
-                  { id: 'message-notif', icon: MessageSquare, label: t('profile.new_messages_notifs'), desc: t('profile.new_messages_notifs_desc'), checked: messageNotifications, onChange: setMessageNotifications },
-                  { id: 'exchange-notif', icon: ArrowRightLeft, label: t('profile.exchange_updates_notifs'), desc: t('profile.exchange_updates_notifs_desc'), checked: exchangeNotifications, onChange: setExchangeNotifications },
-                  { id: 'product-notif', icon: Package, label: t('profile.product_interest_notifs'), desc: t('profile.product_interest_notifs_desc'), checked: productNotifications, onChange: setProductNotifications },
-                ].map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                    <div className="flex items-start gap-3 flex-1">
-                      <item.icon className="w-5 h-5 text-gray-600 dark:text-gray-400 mt-0.5" />
-                      <div className="space-y-0.5">
-                        <Label htmlFor={item.id} className="font-medium cursor-pointer">
-                          {item.label}
-                        </Label>
-                        <p className="text-sm text-gray-500">{item.desc}</p>
-                      </div>
-                    </div>
-                    <Checkbox
-                      id={item.id}
-                      checked={item.checked}
-                      onCheckedChange={(checked) => item.onChange(checked as boolean)}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </ProfileSection>
-
-          {/* Language Settings */}
-          <ProfileSection title={t('profile.language_settings')} icon={Languages}>
-            <div className="space-y-4">
-              <div>
-                <Label className="text-base font-semibold mb-2 block">{t('profile.select_language')}</Label>
-                <p className="text-sm text-gray-500 mb-4">{t('profile.select_language_desc')}</p>
-                <LanguageSelector />
-              </div>
-            </div>
-          </ProfileSection>
-
-          {/* Privacy Settings */}
-          <ProfileSection title={t('profile.privacy_settings')} icon={Shield}>
-            <div className="space-y-4">
-              {[
-                { id: 'show-location', label: t('profile.show_location'), desc: t('profile.show_location_desc'), checked: showLocation, onChange: setShowLocation },
-                { id: 'public-profile', label: t('profile.public_profile'), desc: t('profile.public_profile_desc'), checked: publicProfile, onChange: setPublicProfile },
-              ].map((item) => (
-                <div key={item.id} className="flex items-center justify-between p-4 rounded-lg bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border border-gray-200 dark:border-gray-700">
-                  <div className="space-y-0.5">
-                    <Label htmlFor={item.id} className="text-base font-semibold cursor-pointer">
-                      {item.label}
-                    </Label>
-                    <p className="text-sm text-gray-500">{item.desc}</p>
-                  </div>
-                  <Checkbox
-                    id={item.id}
-                    checked={item.checked}
-                    onCheckedChange={(checked) => item.onChange(checked as boolean)}
-                  />
-                </div>
-              ))}
-            </div>
-          </ProfileSection>
-
-          {/* Account Management */}
-          <ProfileSection title={t('profile.account_management')} icon={Lock}>
-            <div className="space-y-6">
-              {/* Only show password change option for non-Google users */}
-              {!isGoogleUser && (
-                <>
-                  <Card className="p-5 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
-                      <Lock className="w-4 h-4" />
-                      {t('profile.password_security')}
-                    </h3>
-                    <Button 
-                      onClick={handlePasswordChange} 
-                      variant="outline"
-                      className="hover:bg-blue-100 dark:hover:bg-blue-900"
-                    >
-                      <Lock className="mr-2 h-4 w-4" />
-                      {t('profile.change_password')}
-                    </Button>
-                  </Card>
-                  
-                  <Separator />
-                </>
-              )}
-              
-              <Card className="p-5 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20 border-red-200 dark:border-red-800">
-                <h3 className="text-base font-semibold text-red-600 dark:text-red-400 mb-3 flex items-center gap-2">
-                  <Trash2 className="w-4 h-4" />
-                  {t('profile.danger_zone')}
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                  {t('profile.delete_account_warning')}
-                </p>
-                <Button onClick={handleDeleteAccount} variant="destructive">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  {t('profile.delete_account')}
-                </Button>
-              </Card>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {t('profile.delete_account_description')}
+              </p>
+              <Button
+                variant="destructive"
+                onClick={handleDeleteAccount}
+                className="w-full sm:w-auto"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                {t('profile.delete_account_button')}
+              </Button>
             </div>
           </ProfileSection>
         </div>
       </div>
 
-      {/* Re-authentication Dialog */}
+      {/* Reauthentication & Delete Dialog */}
       <Dialog open={showReauthDialog} onOpenChange={setShowReauthDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('profile.delete_account')}</DialogTitle>
+            <DialogTitle>{t('profile.delete_account_title')}</DialogTitle>
             <DialogDescription>
-              {t('profile.reauth_description', { email: userData?.email || '' })}
+              {t('profile.delete_account_confirmation')}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="space-y-4 py-4">
-            {isGoogleSignInUser() ? (
-              <div className="space-y-3">
-                <Button
-                  onClick={handleReauthAndDelete}
-                  disabled={isDeletingAccount}
-                  className="w-full bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600"
-                  size="lg"
-                >
-                  {isDeletingAccount ? (
-                    <>{t('profile.deleting_account')}</>
-                  ) : (
-                    <>{t('profile.reauth_google_button')}</>
-                  )}
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <div>
-                  <Label htmlFor="reauth-password">{t('profile.reauth_password_label')}</Label>
-                  <Input
-                    id="reauth-password"
-                    type="password"
-                    value={reauthPassword}
-                    onChange={(e) => setReauthPassword(e.target.value)}
-                    placeholder={t('profile.reauth_password_placeholder')}
-                    disabled={isDeletingAccount}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && reauthPassword) {
-                        handleReauthAndDelete();
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-            )}
+          {!isGoogleUser && (
+            <div className="py-4">
+              <Label htmlFor="password">{t('profile.password_label')}</Label>
+              <Input
+                id="password"
+                type="password"
+                value={reauthPassword}
+                onChange={(e) => setReauthPassword(e.target.value)}
+                placeholder={t('profile.password_placeholder')}
+                className="mt-2"
+              />
+            </div>
+          )}
 
-            {reauthError && (
-              <p className="text-sm text-red-500 dark:text-red-400">{reauthError}</p>
-            )}
-          </div>
+          {reauthError && (
+            <div className="text-red-500 text-sm py-2">
+              {reauthError}
+            </div>
+          )}
 
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setShowReauthDialog(false);
-                setReauthPassword("");
-                setReauthError("");
-              }}
-              disabled={isDeletingAccount}
-            >
-              {t('profile.reauth_cancel_button')}
+            <Button variant="outline" onClick={() => setShowReauthDialog(false)}>
+              {t('profile.cancel_button')}
             </Button>
-            {!isGoogleSignInUser() && (
-              <Button
-                onClick={handleReauthAndDelete}
-                disabled={isDeletingAccount || !reauthPassword}
-                variant="destructive"
-              >
-                {isDeletingAccount ? (
-                  <>{t('profile.deleting_account')}</>
-                ) : (
-                  <>{t('profile.reauth_confirm_button')}</>
-                )}
-              </Button>
-            )}
+            <Button
+              variant="destructive"
+              onClick={handleReauthAndDelete}
+              disabled={isDeletingAccount || (!isGoogleUser && !reauthPassword)}
+            >
+              {isDeletingAccount ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {t('profile.deleting_button')}
+                </>
+              ) : (
+                t('profile.confirm_delete_button')
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </main>
   );
 }
-
-// Helper function to get level name
-function getLevelName(level: number): string {
-  const levels = [
-    "Seed",
-    "Sprout",
-    "Gardener",
-    "Harvester",
-    "Master Grower"
-  ];
-  return levels[Math.min(level, levels.length - 1)] || "Seed";
-}
-
-// Language selector component
-const LanguageSelector = () => {
-  const changeLocale = useChangeLocale();
-  const currentLocale = useCurrentLocale();
-  const { user } = useAuth();
-  const t = useI18n();
-
-  const handleLocaleChange = (newLocale: 'en' | 'es') => {
-    // Also save to Firebase if user is authenticated
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      updateDoc(userRef, {
-        preferredLocale: newLocale
-      }).then(() => {
-        // Change locale in cookie after successful Firebase update
-        changeLocale(newLocale);
-        toast.success(t('profile.language_updated'));
-      }).catch((error) => {
-        console.error("Error saving language preference:", error);
-        // Change locale anyway - at least cookie will be updated
-        changeLocale(newLocale);
-      });
-    } else {
-      // Change locale in cookie for non-authenticated users
-      changeLocale(newLocale);
-    }
-  };
-
-  return (
-    <div className="flex gap-3">
-      <Button
-        variant={currentLocale === 'en' ? 'default' : 'outline'}
-        onClick={() => handleLocaleChange('en')}
-        className={currentLocale === 'en' ? 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 shadow-lg' : ''}
-        size="lg"
-      >
-        <CheckCircle className={`mr-2 h-4 w-4 ${currentLocale === 'en' ? '' : 'opacity-0'}`} />
-        English
-      </Button>
-      <Button
-        variant={currentLocale === 'es' ? 'default' : 'outline'}
-        onClick={() => handleLocaleChange('es')}
-        className={currentLocale === 'es' ? 'bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 shadow-lg' : ''}
-        size="lg"
-      >
-        <CheckCircle className={`mr-2 h-4 w-4 ${currentLocale === 'es' ? '' : 'opacity-0'}`} />
-        Español
-      </Button>
-    </div>
-  );
-};

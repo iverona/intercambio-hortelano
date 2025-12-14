@@ -4,8 +4,8 @@ export default {
   "home.hero.subtitle": "Conecta con hortelanos locales, intercambia productos frescos y construye una comunidad sostenible",
   "home.hero.cta.primary": "Comparte Tus Productos",
   "home.hero.cta.primary.unauthenticated": "Únete a la Comunidad",
-'home.hero.cta.secondary': 'Explorar Productos',
-    'home.hero.cta.explore_producers': 'Explorar Productores',
+  'home.hero.cta.secondary': 'Explorar Productos',
+  'home.hero.cta.explore_producers': 'Explorar Productores',
   "home.hero.stats.products": "Productos",
   "home.hero.stats.gardeners": "Hortelanos",
   "home.hero.stats.exchanges": "Intercambios",
@@ -67,6 +67,18 @@ export default {
   "profile.select_language": "Seleccionar Idioma",
   "profile.select_language_desc": "Elige tu idioma preferido para la interfaz",
   "profile.language_updated": "Preferencia de idioma guardada exitosamente",
+  "profile.section_language": "Configuración de Idioma",
+  "profile.section_danger_zone": "Zona de Peligro",
+  "profile.delete_account_description": "Eliminar permanentemente tu cuenta y datos",
+  "profile.delete_account_button": "Eliminar Cuenta",
+  "profile.delete_account_title": "Eliminar Cuenta",
+  "profile.delete_account_confirmation": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
+  "profile.password_label": "Contraseña",
+  "profile.password_placeholder": "Introduce tu contraseña",
+  "profile.deleting_button": "Eliminando...",
+  "profile.confirm_delete_button": "Confirmar Eliminación",
+  "profile.language_english": "Inglés",
+  "profile.language_spanish": "Español",
   "profile.privacy_settings": "Configuración de Privacidad",
   "profile.show_location": "Mostrar Mi Ubicación",
   "profile.show_location_desc": "Mostrar ubicación aproximada en tu perfil",
@@ -318,27 +330,27 @@ export default {
   "notifications.new_offer.purchase": "Ofreció €{amount} por tu \"{productName}\"",
   "notifications.new_offer.chat": "Quiere chatear sobre tu \"{productName}\"",
   "notifications.new_offer.simple": "Nueva oferta por tu \"{productName}\"",
-  
+
   "notifications.offer_accepted.title": "Oferta Aceptada",
   "notifications.offer_accepted.with_product": "Tu oferta por \"{productName}\" fue aceptada",
   "notifications.offer_accepted.default": "Tu oferta ha sido aceptada",
-  
+
   "notifications.offer_declined.title": "Oferta Rechazada",
   "notifications.offer_declined.with_product": "Tu oferta por \"{productName}\" fue rechazada",
   "notifications.offer_declined.default": "Tu oferta fue rechazada",
-  
+
   "notifications.message_received.title": "Nuevo Mensaje",
   "notifications.message_received.with_sender": "Mensaje de {senderName}",
   "notifications.message_received.default": "Tienes un nuevo mensaje en tu intercambio",
-  
+
   "notifications.exchange_completed.title": "Intercambio Completado",
   "notifications.exchange_completed.with_product": "Intercambio completado para \"{productName}\"",
   "notifications.exchange_completed.default": "Tu intercambio ha sido marcado como completado",
-  
+
   "notifications.review_received.title": "Nueva Reseña Recibida",
   "notifications.review_received.with_sender": "{senderName} te dejó una reseña",
   "notifications.review_received.default": "Has recibido una nueva reseña por un intercambio reciente",
-  
+
   "notifications.default.title": "Nueva Notificación",
   "notifications.default.description": "Tienes una nueva notificación",
   "notifications.time.recently": "Recientemente",
@@ -441,9 +453,9 @@ export default {
   "auth_action.title.recovering_email": "Recuperando Email",
   "auth_action.title.email_changed": "¡Email Cambiado!",
   "auth_action.title.changing_email": "Cambiando Email",
-  
+
   "auth_action.loading_message": "Por favor espera mientras procesamos tu solicitud...",
-  
+
   "auth_action.reset_password.description": "Introduce una nueva contraseña para {email}",
   "auth_action.reset_password.new_password_label": "Nueva Contraseña",
   "auth_action.reset_password.new_password_placeholder": "Introduce tu nueva contraseña",
@@ -451,7 +463,7 @@ export default {
   "auth_action.reset_password.confirm_password_placeholder": "Confirma tu nueva contraseña",
   "auth_action.reset_password.submit_button": "Restablecer Contraseña",
   "auth_action.reset_password.submitting": "Restableciendo...",
-  
+
   "auth_action.success.email_verified": "¡Email verificado exitosamente!",
   "auth_action.success.email_verified_description": "Tu cuenta ha sido verificada. Ahora puedes iniciar sesión para acceder a todas las funciones.",
   "auth_action.success.password_reset": "¡Contraseña restablecida exitosamente!",
@@ -463,7 +475,7 @@ export default {
   "auth_action.success.redirect": "Redirigiendo al inicio de sesión en {seconds} segundos...",
   "auth_action.success.login_button": "Ir a Iniciar Sesión",
   "auth_action.success.home_button": "Volver al Inicio",
-  
+
   "auth_action.error.title": "Acción Fallida",
   "auth_action.error.invalid_link": "Enlace inválido o expirado. Por favor, revisa tu email para obtener el enlace correcto.",
   "auth_action.error.invalid_code": "Este enlace es inválido o ya ha sido utilizado.",
@@ -544,8 +556,8 @@ export default {
     not_found: 'Productor no encontrado.',
     products_title: 'Productos de este productor',
     empty_state: {
-        title: 'Aún no hay productos',
-        subtitle: 'Este productor todavía no ha publicado ningún producto para la venta o el intercambio.'
+      title: 'Aún no hay productos',
+      subtitle: 'Este productor todavía no ha publicado ningún producto para la venta o el intercambio.'
     }
   }
 } as const;

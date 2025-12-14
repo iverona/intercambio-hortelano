@@ -1,43 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { collection, getDocs, query, where, doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@/locales/provider";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { ProducerAvatar } from "@/components/shared/ProducerAvatar";
-import { useAuth } from "@/context/AuthContext";
-import { getDistance } from "@/lib/geolocation";
-import { 
-  ArrowRight, 
-  Users, 
-  Sparkles, 
-  Store, 
+import { useProducers } from "@/hooks/useProducers";
+import { Producer } from "@/types/user";
+import {
+  ArrowRight,
+  Users,
+  Sparkles,
+  Store,
   Heart,
   MapPin,
   Package,
-  Leaf,
   TrendingUp
 } from "lucide-react";
-
-interface Producer {
-  uid: string;
-  name: string;
-  avatarUrl?: string;
-  bio?: string;
-  address?: string;
-  location?: {
-    latitude?: number;
-    longitude?: number;
-  };
-  productsCount?: number;
-  distance?: number;
-  deleted?: boolean;
-}
 
 // Skeleton loader component
 const ProducerSkeleton = () => (
@@ -83,7 +65,7 @@ const HeroSection = ({ producerCount }: { producerCount: number }) => {
           <h1 className="text-5xl lg:text-7xl font-bold bg-gradient-to-r from-emerald-600 to-green-600 dark:from-emerald-400 dark:to-green-400 bg-clip-text text-transparent mb-6">
             {t('producers.title')}
           </h1>
-          
+
           {/* Subtitle */}
           <p className="text-xl lg:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
             {t('producers.subtitle')}
@@ -102,7 +84,7 @@ const HeroSection = ({ producerCount }: { producerCount: number }) => {
                 </div>
               </div>
             </Card>
-            
+
             <Card className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg">
               <div className="flex items-center justify-center gap-3">
                 <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
@@ -114,7 +96,7 @@ const HeroSection = ({ producerCount }: { producerCount: number }) => {
                 </div>
               </div>
             </Card>
-            
+
             <Card className="p-4 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-0 shadow-lg">
               <div className="flex items-center justify-center gap-3">
                 <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
@@ -141,7 +123,7 @@ const ProducerCard = ({ producer, index }: { producer: Producer; index: number }
   const hasLocation = producer.address || producer.distance !== undefined;
 
   return (
-    <div 
+    <div
       className="group relative transform transition-all duration-300 hover:scale-105 hover:-translate-y-2"
       style={{ animationDelay: `${index * 50}ms` }}
     >
@@ -153,10 +135,10 @@ const ProducerCard = ({ producer, index }: { producer: Producer; index: number }
           </Badge>
         </div>
       )}
-      
+
       {/* Hover glow effect */}
       <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-400 rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300"></div>
-      
+
       <Card className="relative overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-all duration-300 bg-white dark:bg-gray-800">
         {/* Header - Light Green */}
         <div className="h-24 bg-emerald-100/50 dark:bg-emerald-900/20 relative">
@@ -170,14 +152,14 @@ const ProducerCard = ({ producer, index }: { producer: Producer; index: number }
           <div className="flex gap-4 mb-4">
             {/* Avatar - Floating */}
             <div className="-mt-10 relative z-10 shrink-0">
-              <ProducerAvatar 
+              <ProducerAvatar
                 avatarUrl={producer.avatarUrl}
                 name={producerName}
                 size="md"
                 className="border-4 border-white dark:border-gray-800 shadow-md h-20 w-20"
               />
             </div>
-            
+
             {/* Name & Location - Right Side */}
             <div className="pt-2 min-w-0 flex-1">
               <h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-400 leading-tight pr-2">
@@ -199,7 +181,7 @@ const ProducerCard = ({ producer, index }: { producer: Producer; index: number }
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 line-clamp-2 min-h-[2.5rem]">
             {producer.bio || t('producers.no_bio')}
           </p>
-          
+
           {/* Stats Badges */}
           <div className="flex flex-wrap gap-2 mb-6">
             <Badge variant="secondary" className="bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-0 font-normal hover:bg-emerald-100 px-3">
@@ -227,88 +209,7 @@ const ProducerCard = ({ producer, index }: { producer: Producer; index: number }
 
 export default function ProducersPage() {
   const t = useI18n();
-  const [producers, setProducers] = useState<Producer[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
-  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
-
-  useEffect(() => {
-    const fetchUserLocation = async () => {
-      if (user) {
-        // Fetch user's stored location from Firebase
-        const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          if (userData.location?.latitude && userData.location?.longitude) {
-            setUserLocation({
-              latitude: userData.location.latitude,
-              longitude: userData.location.longitude
-            });
-          }
-        }
-      }
-    };
-    fetchUserLocation();
-  }, [user]);
-
-  useEffect(() => {
-    const fetchProducers = async () => {
-      setLoading(true);
-      try {
-        const productsSnapshot = await getDocs(collection(db, "products"));
-        const producerIds = new Set<string>();
-        const producerProductCounts = new Map<string, number>();
-        
-        productsSnapshot.forEach((doc) => {
-          const userId = doc.data().userId;
-          if (userId) {
-            producerIds.add(userId);
-            producerProductCounts.set(userId, (producerProductCounts.get(userId) || 0) + 1);
-          }
-        });
-
-        if (producerIds.size > 0) {
-          const usersQuery = query(
-            collection(db, "users"),
-            where("uid", "in", Array.from(producerIds))
-          );
-          const usersSnapshot = await getDocs(usersQuery);
-          let producersData = usersSnapshot.docs.map((doc) => {
-            const data = doc.data();
-            let distance: number | undefined;
-            
-            // Calculate distance if user location and producer location are available
-            if (userLocation && data.location?.latitude && data.location?.longitude) {
-              distance = getDistance(
-                userLocation.latitude,
-                userLocation.longitude,
-                data.location.latitude,
-                data.location.longitude
-              );
-            }
-            
-            return {
-              ...data,
-              productsCount: producerProductCounts.get(data.uid) || 0,
-              distance
-            } as Producer;
-          });
-          
-          // Filter out deleted users
-          producersData = producersData.filter(producer => !producer.deleted);
-          
-          setProducers(producersData);
-        }
-      } catch (error) {
-        console.error("Error fetching producers:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducers();
-  }, [userLocation]);
+  const { producers, loading } = useProducers();
 
   return (
     <>

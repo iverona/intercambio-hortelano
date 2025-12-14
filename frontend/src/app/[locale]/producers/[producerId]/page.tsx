@@ -1,44 +1,17 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
 import { useI18n } from "@/locales/provider";
 import ProductCard from "@/components/shared/ProductCard";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { ProducerAvatar } from "@/components/shared/ProducerAvatar";
-import { useAuth } from "@/context/AuthContext";
+import { useUser } from "@/hooks/useUser";
 import { getDistance } from "@/lib/geolocation";
 import { Package, MapPin } from "lucide-react";
-import Link from "next/link";
-
-interface Producer {
-  uid: string;
-  name: string;
-  avatarUrl?: string;
-  bio?: string;
-  address?: string;
-  location?: {
-    latitude?: number;
-    longitude?: number;
-  };
-  distance?: number;
-}
-
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  imageUrls: string[];
-  category: string;
-}
+import { UserService } from "@/services/user.service";
+import { ProductService } from "@/services/product.service";
+import { UserData, Producer } from "@/types/user";
+import { Product } from "@/types/product";
 
 const ProducerProfile = ({
   producer,
@@ -49,10 +22,10 @@ const ProducerProfile = ({
 }) => {
   const producerName = producer.name || t("producers.unnamed");
   const hasLocation = producer.address || producer.distance !== undefined;
-  
+
   return (
     <div className="bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950 dark:via-emerald-950 dark:to-teal-950 p-8 rounded-lg mb-12 flex flex-col md:flex-row items-center gap-8">
-      <ProducerAvatar 
+      <ProducerAvatar
         avatarUrl={producer.avatarUrl}
         name={producerName}
         size="xl"
@@ -87,74 +60,46 @@ export default function ProducerShopPage({
   const [producer, setProducer] = useState<Producer | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
-  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+
+  // Use useUser hook to get current user's location
+  const { userData: currentUser } = useUser();
 
   useEffect(() => {
-    const fetchUserLocation = async () => {
-      if (user) {
-        // Fetch user's stored location from Firebase
-        const userDocRef = doc(db, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          if (userData.location?.latitude && userData.location?.longitude) {
-            setUserLocation({
-              latitude: userData.location.latitude,
-              longitude: userData.location.longitude
-            });
-          }
-        }
-      }
-    };
-    fetchUserLocation();
-  }, [user]);
-
-  useEffect(() => {
-    const fetchProducerData = async () => {
+    const fetchData = async () => {
       if (!producerId) return;
       setLoading(true);
       try {
-        // Fetch producer details
-        const userDocRef = doc(db, "users", producerId);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          const producerData = userDoc.data();
+        // Fetch producer details using UserService
+        const producerData = await UserService.getUserProfile(producerId);
+
+        if (producerData) {
           let distance: number | undefined;
-          
+
           // Calculate distance if user location and producer location are available
-          if (userLocation && producerData.location?.latitude && producerData.location?.longitude) {
+          if (currentUser?.location && producerData.location) {
             distance = getDistance(
-              userLocation.latitude,
-              userLocation.longitude,
+              currentUser.location.latitude,
+              currentUser.location.longitude,
               producerData.location.latitude,
               producerData.location.longitude
             );
           }
-          
+
           setProducer({ ...producerData, distance } as Producer);
         }
 
-        // Fetch producer's products
-        const productsQuery = query(
-          collection(db, "products"),
-          where("userId", "==", producerId)
-        );
-        const productsSnapshot = await getDocs(productsQuery);
-        const productsData = productsSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Product[];
+        // Fetch producer's products using ProductService
+        const productsData = await ProductService.getProductsByUserId(producerId);
         setProducts(productsData);
       } catch (error) {
-        console.error("Error fetching producer data:", error);
+        console.error("Error fetching producer shop data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProducerData();
-  }, [producerId, userLocation]);
+    fetchData();
+  }, [producerId, currentUser]); // Re-fetch if currentUser location changes (e.g. loaded later)
 
   if (loading) {
     return (
@@ -191,9 +136,10 @@ export default function ProducerShopPage({
       {products.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {products.map((product) => (
-            <Link href={`/product/${product.id}`} key={product.id}>
+            <div key={product.id}>
               <ProductCard product={product} />
-            </Link>
+            </div>
+            /* Link removed to prevent nested <a> tags, handled inside ProductCard */
           ))}
         </div>
       ) : (

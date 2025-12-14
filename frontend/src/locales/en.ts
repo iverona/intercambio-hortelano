@@ -4,8 +4,8 @@ export default {
   "home.hero.subtitle": "Connect with local gardeners, exchange fresh produce, and build a sustainable community",
   "home.hero.cta.primary": "Share Your Produce",
   "home.hero.cta.primary.unauthenticated": "Join the Community",
-'home.hero.cta.secondary': 'Explore Products',
-    'home.hero.cta.explore_producers': 'Explore Producers',
+  'home.hero.cta.secondary': 'Explore Products',
+  'home.hero.cta.explore_producers': 'Explore Producers',
   "home.hero.stats.products": "Products",
   "home.hero.stats.gardeners": "Gardeners",
   "home.hero.stats.exchanges": "Exchanges",
@@ -67,6 +67,18 @@ export default {
   "profile.select_language": "Select Language",
   "profile.select_language_desc": "Choose your preferred language for the interface",
   "profile.language_updated": "Language preference saved successfully",
+  "profile.section_language": "Language Settings",
+  "profile.section_danger_zone": "Danger Zone",
+  "profile.delete_account_description": "Permanently remove your account and data",
+  "profile.delete_account_button": "Delete Account",
+  "profile.delete_account_title": "Delete Account",
+  "profile.delete_account_confirmation": "Are you sure you want to delete your account? This action cannot be undone.",
+  "profile.password_label": "Password",
+  "profile.password_placeholder": "Enter your password",
+  "profile.deleting_button": "Deleting...",
+  "profile.confirm_delete_button": "Confirm Deletion",
+  "profile.language_english": "English",
+  "profile.language_spanish": "Spanish",
   "profile.privacy_settings": "Privacy Settings",
   "profile.show_location": "Show My Location",
   "profile.show_location_desc": "Display approximate location on your profile",
@@ -318,27 +330,27 @@ export default {
   "notifications.new_offer.purchase": "Offered €{amount} for your \"{productName}\"",
   "notifications.new_offer.chat": "Wants to chat about your \"{productName}\"",
   "notifications.new_offer.simple": "New offer for your \"{productName}\"",
-  
+
   "notifications.offer_accepted.title": "Offer Accepted",
   "notifications.offer_accepted.with_product": "Your offer for \"{productName}\" was accepted",
   "notifications.offer_accepted.default": "Your offer has been accepted",
-  
+
   "notifications.offer_declined.title": "Offer Declined",
   "notifications.offer_declined.with_product": "Your offer for \"{productName}\" was declined",
   "notifications.offer_declined.default": "Your offer was declined",
-  
+
   "notifications.message_received.title": "New Message",
   "notifications.message_received.with_sender": "Message from {senderName}",
   "notifications.message_received.default": "You have a new message in your exchange",
-  
+
   "notifications.exchange_completed.title": "Exchange Completed",
   "notifications.exchange_completed.with_product": "Exchange completed for \"{productName}\"",
   "notifications.exchange_completed.default": "Your exchange has been marked as complete",
-  
+
   "notifications.review_received.title": "New Review Received",
   "notifications.review_received.with_sender": "{senderName} left you a review",
   "notifications.review_received.default": "You have received a new review for a recent exchange",
-  
+
   "notifications.default.title": "New Notification",
   "notifications.default.description": "You have a new notification",
   "notifications.time.recently": "Recently",
@@ -441,9 +453,9 @@ export default {
   "auth_action.title.recovering_email": "Recovering Email",
   "auth_action.title.email_changed": "Email Changed!",
   "auth_action.title.changing_email": "Changing Email",
-  
+
   "auth_action.loading_message": "Please wait while we process your request...",
-  
+
   "auth_action.reset_password.description": "Enter a new password for {email}",
   "auth_action.reset_password.new_password_label": "New Password",
   "auth_action.reset_password.new_password_placeholder": "Enter your new password",
@@ -451,7 +463,7 @@ export default {
   "auth_action.reset_password.confirm_password_placeholder": "Confirm your new password",
   "auth_action.reset_password.submit_button": "Reset Password",
   "auth_action.reset_password.submitting": "Resetting...",
-  
+
   "auth_action.success.email_verified": "Email verified successfully!",
   "auth_action.success.email_verified_description": "Your account has been verified. You can now log in to access all features.",
   "auth_action.success.password_reset": "Password reset successfully!",
@@ -463,7 +475,7 @@ export default {
   "auth_action.success.redirect": "Redirecting to login in {seconds} seconds...",
   "auth_action.success.login_button": "Go to Login",
   "auth_action.success.home_button": "Return to Home",
-  
+
   "auth_action.error.title": "Action Failed",
   "auth_action.error.invalid_link": "Invalid or expired link. Please check your email for the correct link.",
   "auth_action.error.invalid_code": "This link is invalid or has already been used.",
@@ -541,8 +553,8 @@ export default {
     not_found: 'Producer not found.',
     products_title: 'Products from this producer',
     empty_state: {
-        title: 'No products yet',
-        subtitle: 'This producer has not listed any products for sale or exchange yet.',
+      title: 'No products yet',
+      subtitle: 'This producer has not listed any products for sale or exchange yet.',
     },
   },
 } as const;
