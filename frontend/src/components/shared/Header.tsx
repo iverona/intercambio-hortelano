@@ -4,7 +4,6 @@ import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,12 +14,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { 
-  User, 
-  LogOut, 
-  Search, 
-  Flower2, 
-  ArrowRightLeft 
+import {
+  User,
+  LogOut,
+  Search,
+  Flower2,
+  ArrowRightLeft,
+  Menu,
+  Leaf
 } from "lucide-react";
 import Filter from "./Filter";
 import { useFilters } from "@/context/FilterContext";
@@ -49,83 +50,71 @@ const Header = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
-      <div className="container mx-auto px-4 py-3 md:py-4 flex justify-between items-center gap-2 md:gap-4">
-        {/* Logo - hidden on mobile */}
-        <Link href={`/${locale}`} className="hidden md:block text-2xl font-bold text-gray-800">
-          <Image
-            src="/header-logo.png"
-            alt="Logo"
-            width={52}
-            height={40}
-            priority
-          />
+    <header className="sticky top-0 z-50 w-full border-b border-[#879385]/20 dark:border-[#879385]/10 bg-white/50 dark:bg-black/20 backdrop-blur-sm">
+      <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+
+        {/* Logo Section */}
+        <Link href={`/${locale}`} className="flex items-center gap-2 group">
+          <Leaf className="text-[#879385] w-8 h-8 group-hover:rotate-12 transition-transform" />
+          <span className="font-display font-bold text-3xl text-gray-700 dark:text-gray-100">EcoAnuncios</span>
         </Link>
-        <nav className="flex items-center gap-2 md:gap-4 w-full md:w-auto">
-          {/* Home link - hidden on mobile */}
-          <Link href={`/${locale}`} className="hidden md:block text-gray-600 hover:text-gray-800">
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex gap-8 items-center">
+          <Link href={`/${locale}`} className="text-gray-600 dark:text-gray-300 hover:text-[#879385] font-semibold text-lg font-sans">
             {t('header.home')}
           </Link>
-          {/* Search bar - full width on mobile */}
-          <div className="relative flex-1 md:flex-initial">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder={t('header.search_placeholder')}
-              className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
-              value={filters.searchTerm}
-              onChange={(e) =>
-                setFilters({ ...filters, searchTerm: e.target.value })
-              }
-            />
-          </div>
-          {/* Filter button - hidden on mobile */}
-          <div className="hidden md:block">
-            <Filter onFilterChange={setFilters} />
-          </div>
-          {/* Publish button - hidden on mobile */}
-          {user && (
-            <Button asChild className="hidden md:inline-flex">
-              <Link href={`/${locale}/publish`}>{t('header.publish')}</Link>
-            </Button>
-          )}
-          {/* Notification bell and user menu - hidden on mobile */}
-          {!loading &&
-            (user ? (
-              <div className="hidden md:flex items-center gap-4">
+          <Link href={`/${locale}/products`} className="text-gray-600 dark:text-gray-300 hover:text-[#879385] font-semibold text-lg font-sans">
+            Anuncios
+          </Link>
+          <Link href={`/${locale}/producers`} className="text-gray-600 dark:text-gray-300 hover:text-[#879385] font-semibold text-lg font-sans">
+            Comunidad
+          </Link>
+
+          {/* User Section or Login Button */}
+          {!loading && (
+            user ? (
+              <div className="flex items-center gap-4 ml-4">
                 <NotificationBell />
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Avatar className="cursor-pointer hover:opacity-80 transition-opacity">
+                    <Avatar className="cursor-pointer hover:opacity-80 transition-opacity border-2 border-[#879385]/20">
                       <AvatarImage src={user.photoURL || undefined} alt={user.email || "User"} />
-                      <AvatarFallback className="bg-primary text-primary-foreground">
+                      <AvatarFallback className="bg-[#879385] text-white font-hand text-xl pt-1">
                         {getUserInitials()}
                       </AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuContent align="end" className="w-56 bg-[#FDFBF7] dark:bg-[#3E3B34] border-[#879385]/20">
                     <DropdownMenuItem asChild>
-                      <Link href={`/${locale}/profile`} className="flex items-center cursor-pointer">
+                      <Link href={`/${locale}/profile`} className="flex items-center cursor-pointer font-sans">
                         <User className="mr-2 h-4 w-4" />
                         <span>{t('header.profile')}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href={`/${locale}/my-garden`} className="flex items-center cursor-pointer">
+                      <Link href={`/${locale}/my-garden`} className="flex items-center cursor-pointer font-sans">
                         <Flower2 className="mr-2 h-4 w-4" />
                         <span>{t('header.my_garden')}</span>
                       </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <Link href={`/${locale}/exchanges`} className="flex items-center cursor-pointer">
+                      <Link href={`/${locale}/exchanges`} className="flex items-center cursor-pointer font-sans">
                         <ArrowRightLeft className="mr-2 h-4 w-4" />
                         <span>{t('header.my_exchanges')}</span>
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem 
+                    {/* Publish Option in Menu for Quick Access */}
+                    <DropdownMenuItem asChild>
+                      <Link href={`/${locale}/publish`} className="flex items-center cursor-pointer font-sans text-[#879385] font-bold">
+                        <Leaf className="mr-2 h-4 w-4" />
+                        <span>{t('header.publish')}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-[#879385]/20" />
+                    <DropdownMenuItem
                       onClick={handleLogout}
-                      className="flex items-center cursor-pointer text-red-600 focus:text-red-600"
+                      className="flex items-center cursor-pointer text-red-600 focus:text-red-600 font-sans"
                     >
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>{t('header.logout')}</span>
@@ -134,11 +123,19 @@ const Header = () => {
                 </DropdownMenu>
               </div>
             ) : (
-              <Button asChild className="hidden md:inline-flex">
-                <Link href={`/${locale}/login`}>{t('header.login')}</Link>
+              <Button asChild className="bg-[#879385] text-white px-6 py-2 rounded-full font-display text-2xl hover:bg-[#7a8578] shadow-md transition-all h-auto pb-1">
+                <Link href={`/${locale}/login`}>
+                  Login
+                </Link>
               </Button>
-            ))}
+            )
+          )}
         </nav>
+
+        {/* Mobile Menu Button */}
+        <button className="md:hidden text-gray-600 dark:text-gray-300">
+          <Menu className="w-8 h-8" />
+        </button>
       </div>
     </header>
   );
