@@ -177,7 +177,7 @@ export default function Home() {
   }, [user]);
 
   // Use custom hook for product data logic
-  const { products, loading } = useProducts(userLocation, filters);
+  const { products, loading } = useProducts(userLocation, filters, user?.uid);
 
   return (
     <>

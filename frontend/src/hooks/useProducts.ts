@@ -10,15 +10,18 @@ export const useProducts = (
         categories: string[];
         distance: number;
         sortBy: string;
-    }
+    },
+    excludeUserId?: string
 ) => {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const unsubscribe = ProductService.subscribeToProducts((productsData) => {
-            // Filter out deleted products
-            let processedData = productsData.filter((product) => !product.deleted);
+            // Filter out deleted products and excluded user's products
+            let processedData = productsData.filter((product) =>
+                !product.deleted && (!excludeUserId || product.userId !== excludeUserId)
+            );
 
             // Add distance calculation if userLocation is available
             if (userLocation) {
