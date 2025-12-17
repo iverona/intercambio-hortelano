@@ -252,6 +252,8 @@ export default {
   "exchanges.details.partner_info.owner": "Información del Propietario",
   "exchanges.details.partner_info.requested": "Solicitó este intercambio",
   "exchanges.details.partner_info.owns": "Es dueño de este producto",
+  "exchanges.details.partner_info.requested_by": "Solicitado por",
+  "exchanges.details.partner_info.you": "Tú",
   "exchanges.details.accept_offer": "Aceptar Oferta",
   "exchanges.details.decline_offer": "Rechazar Oferta",
   "exchanges.details.waiting_for_owner": "Esperando a que el propietario responda a tu oferta",
