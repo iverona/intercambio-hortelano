@@ -194,13 +194,13 @@ export default function ExchangeDetailsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+        return 'bg-[#EFEAC6] text-[#594a42] dark:bg-[#4a463a] dark:text-[#EFEAC6] border border-[#D4CFAE] dark:border-[#5e5a4b]';
       case 'accepted':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+        return 'bg-[#6B8E23]/20 text-[#3a4d13] dark:bg-[#556B2F]/40 dark:text-[#d6c7b0] border border-[#6B8E23]/30';
       case 'rejected':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+        return 'bg-[#A88C8F]/20 text-[#5e4043] dark:bg-[#7a6466]/40 dark:text-[#d6c7b0] border border-[#A88C8F]/30';
       case 'completed':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+        return 'bg-[#879385]/20 text-[#3d453c] dark:bg-[#525b51]/40 dark:text-[#d6c7b0] border border-[#879385]/30';
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
     }
@@ -219,9 +219,9 @@ export default function ExchangeDetailsPage() {
 
   if (loading) {
     return (
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 bg-[#FFFBE6] dark:bg-[#2C2A25] min-h-screen">
         <div className="max-w-2xl mx-auto">
-          <Card className="p-8">
+          <Card className="p-8 bg-[#FDFBF7] dark:bg-[#2e2c28]">
             <div className="animate-pulse space-y-4">
               <div className="h-8 bg-gray-200 rounded w-1/3"></div>
               <div className="h-4 bg-gray-200 rounded w-2/3"></div>
@@ -235,11 +235,11 @@ export default function ExchangeDetailsPage() {
 
   if (!exchange) {
     return (
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 bg-[#FFFBE6] dark:bg-[#2C2A25] min-h-screen">
         <div className="max-w-2xl mx-auto">
-          <Card className="p-8 text-center">
-            <p className="text-gray-500">{t('exchanges.details.toast.exchange_not_found')}</p>
-            <Button onClick={() => router.push("/exchanges")} className="mt-4">
+          <Card className="p-8 text-center bg-[#FDFBF7] dark:bg-[#2e2c28]">
+            <p className="text-[#879385] dark:text-[#998676]">{t('exchanges.details.toast.exchange_not_found')}</p>
+            <Button onClick={() => router.push("/exchanges")} className="mt-4 bg-[#A88C8F] hover:bg-[#997b7e] text-white">
               {t('exchanges.details.back_to_exchanges')}
             </Button>
           </Card>
@@ -253,20 +253,20 @@ export default function ExchangeDetailsPage() {
   const partner = isOwner ? exchange.requester : exchange.owner;
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
+    <main className="min-h-screen bg-[#FFFBE6] dark:bg-[#2C2A25]">
       {/* Breadcrumb Navigation */}
-      <div className="border-b bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm sticky top-0 z-10">
+      <div className="border-b border-[#EFEAC6] dark:border-[#4a463a] bg-[#FFFBE6]/50 dark:bg-[#2C2A25]/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <Link href="/" className="hover:text-primary transition-colors">
+          <div className="flex items-center gap-2 text-sm text-[#879385] dark:text-[#998676]">
+            <Link href="/" className="hover:text-[#594a42] dark:hover:text-[#d6c7b0] transition-colors">
               Home
             </Link>
             <ChevronRight className="w-4 h-4" />
-            <Link href="/exchanges" className="hover:text-primary transition-colors">
+            <Link href="/exchanges" className="hover:text-[#594a42] dark:hover:text-[#d6c7b0] transition-colors">
               Exchanges
             </Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-gray-900 dark:text-gray-100 font-medium truncate max-w-[200px]">
+            <span className="text-[#594a42] dark:text-[#d6c7b0] font-medium truncate max-w-[200px]">
               {exchange.productName}
             </span>
           </div>
@@ -274,24 +274,24 @@ export default function ExchangeDetailsPage() {
       </div>
 
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-purple-950/20 border-b">
+      <div className="relative overflow-hidden bg-[#FDFBF7] dark:bg-[#2e2c28] border-b border-[#EFEAC6] dark:border-[#4a463a]">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#A6C6B9] dark:bg-[#4A5D54] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#A88C8F] dark:bg-[#6b585a] rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
         </div>
 
         <div className="relative container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto">
             <div className="flex items-center gap-4 mb-4">
-              <div className="p-3 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl shadow-lg">
+              <div className="p-3 bg-[#6B8E23] dark:bg-[#556B2F] rounded-xl shadow-lg text-white">
                 {getOfferTypeIcon(exchange.offer?.type)}
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold text-[#594a42] dark:text-[#d6c7b0]">
                   {exchange.productName}
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400 mt-1">
+                <p className="text-[#879385] dark:text-[#998676] mt-1">
                   {isOwner ? `Request from ${partner?.name}` : `Your request to ${partner?.name}`}
                 </p>
               </div>
@@ -299,10 +299,10 @@ export default function ExchangeDetailsPage() {
 
             {/* Status Badge */}
             <div className="flex items-center gap-2">
-              <Badge className={`${getStatusColor(exchange.status)} border-0 shadow-md`}>
+              <Badge className={`${getStatusColor(exchange.status)} shadow-md`}>
                 {exchange.status.charAt(0).toUpperCase() + exchange.status.slice(1)}
               </Badge>
-              <span className="text-sm text-gray-600 dark:text-gray-400">
+              <span className="text-sm text-[#879385] dark:text-[#998676]">
                 {formatDate(exchange.createdAt)}
               </span>
             </div>
@@ -316,41 +316,41 @@ export default function ExchangeDetailsPage() {
           <Button
             variant="ghost"
             onClick={() => router.push("/exchanges")}
-            className="mb-6 backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all duration-300 shadow-sm hover:shadow-md"
+            className="mb-6 backdrop-blur-sm bg-white/50 dark:bg-gray-800/50 hover:bg-white/80 dark:hover:bg-gray-800/80 transition-all duration-300 shadow-sm hover:shadow-md text-[#594a42] dark:text-[#d6c7b0]"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             {t('exchanges.details.back_to_exchanges')}
           </Button>
 
           {/* Exchange Details Card */}
-          <Card className="p-6 backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 shadow-xl border-0 hover:shadow-2xl transition-all duration-300">
+          <Card className="p-6 backdrop-blur-sm bg-[#FDFBF7]/80 dark:bg-[#2e2c28]/80 shadow-xl border border-[#EFEAC6] dark:border-[#4a463a] hover:shadow-2xl transition-all duration-300">
             {/* Header */}
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center gap-3">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg">
+                <div className="p-3 rounded-xl bg-[#A88C8F] dark:bg-[#7a6466] text-white shadow-lg">
                   {getOfferTypeIcon(exchange.offer?.type)}
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                  <h1 className="text-2xl font-bold text-[#594a42] dark:text-[#d6c7b0]">
                     {t('exchanges.details.title')}
                   </h1>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  <p className="text-sm text-[#879385] dark:text-[#998676] mt-1">
                     {t('exchanges.details.created', { date: formatDate(exchange.createdAt) })}
                   </p>
                 </div>
               </div>
-              <Badge className={`${getStatusColor(exchange.status)} border-0 shadow-md`}>
+              <Badge className={`${getStatusColor(exchange.status)} shadow-md`}>
                 {exchange.status.charAt(0).toUpperCase() + exchange.status.slice(1)}
               </Badge>
             </div>
 
             {/* Product Information */}
-            <div className="mb-6 p-5 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/50 dark:to-purple-950/50 rounded-xl border border-blue-100 dark:border-blue-900 shadow-sm">
+            <div className="mb-6 p-5 bg-[#FFFBE6] dark:bg-[#2C2A25] rounded-xl border border-[#EFEAC6] dark:border-[#4a463a] shadow-sm">
               <div className="flex items-center gap-2 mb-4">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 text-white">
+                <div className="p-2 rounded-lg bg-[#A88C8F] dark:bg-[#7a6466] text-white">
                   <Package className="w-4 h-4" />
                 </div>
-                <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                <h2 className="font-semibold text-[#594a42] dark:text-[#d6c7b0]">
                   {t('exchanges.details.product_info')}
                 </h2>
               </div>
@@ -363,89 +363,89 @@ export default function ExchangeDetailsPage() {
                       className="w-full h-48 object-cover rounded-lg mb-3 shadow-md hover:shadow-lg transition-shadow duration-300"
                     />
                   )}
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    <span className="font-medium text-gray-900 dark:text-gray-100">Title:</span> {exchange.productName}
+                  <p className="text-sm text-[#3e3b34] dark:text-[#998676]">
+                    <span className="font-medium text-[#594a42] dark:text-[#d6c7b0]">Title:</span> {exchange.productName}
                   </p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    <span className="font-medium text-gray-900 dark:text-gray-100">Category:</span> {exchange.product.category}
+                  <p className="text-sm text-[#3e3b34] dark:text-[#998676]">
+                    <span className="font-medium text-[#594a42] dark:text-[#d6c7b0]">Category:</span> {exchange.product.category}
                   </p>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    <span className="font-medium text-gray-900 dark:text-gray-100">Description:</span> {exchange.product.description}
+                  <p className="text-sm text-[#3e3b34] dark:text-[#998676]">
+                    <span className="font-medium text-[#594a42] dark:text-[#d6c7b0]">Description:</span> {exchange.product.description}
                   </p>
                 </div>
               )}
             </div>
 
             {/* Offer Details */}
-            <div className="mb-6 p-5 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 rounded-xl border border-green-100 dark:border-green-900 shadow-sm">
+            <div className="mb-6 p-5 bg-[#FDFBF7] dark:bg-[#2e2c28] rounded-xl border border-[#EFEAC6] dark:border-[#4a463a] shadow-sm">
               <div className="flex items-center gap-2 mb-4">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 text-white">
+                <div className="p-2 rounded-lg bg-[#6B8E23] dark:bg-[#556B2F] text-white">
                   {getOfferTypeIcon(exchange.offer?.type)}
                 </div>
-                <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                <h2 className="font-semibold text-[#594a42] dark:text-[#d6c7b0]">
                   {t('exchanges.details.offer_details')}
                 </h2>
               </div>
               <div className="space-y-3">
                 {exchange.offer?.type === "exchange" && exchange.offer.offeredProductName && (
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    <span className="font-medium text-gray-900 dark:text-gray-100">Type:</span> Exchange
+                  <p className="text-sm text-[#3e3b34] dark:text-[#998676]">
+                    <span className="font-medium text-[#594a42] dark:text-[#d6c7b0]">Type:</span> Exchange
                   </p>
                 )}
                 {exchange.offer?.type === "exchange" && exchange.offer.offeredProductName && (
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    <span className="font-medium text-gray-900 dark:text-gray-100">Offered Product:</span> {exchange.offer.offeredProductName}
+                  <p className="text-sm text-[#3e3b34] dark:text-[#998676]">
+                    <span className="font-medium text-[#594a42] dark:text-[#d6c7b0]">Offered Product:</span> {exchange.offer.offeredProductName}
                   </p>
                 )}
                 {exchange.offer?.type === "purchase" && exchange.offer.amount && (
                   <>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <span className="font-medium text-gray-900 dark:text-gray-100">Type:</span> Purchase
+                    <p className="text-sm text-[#3e3b34] dark:text-[#998676]">
+                      <span className="font-medium text-[#594a42] dark:text-[#d6c7b0]">Type:</span> Purchase
                     </p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      <span className="font-medium text-gray-900 dark:text-gray-100">Amount:</span> \u20AC{exchange.offer.amount.toFixed(2)}
+                    <p className="text-sm text-[#3e3b34] dark:text-[#998676]">
+                      <span className="font-medium text-[#594a42] dark:text-[#d6c7b0]">Amount:</span> \u20AC{exchange.offer.amount.toFixed(2)}
                     </p>
                   </>
                 )}
                 {exchange.offer?.type === "chat" && (
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    <span className="font-medium text-gray-900 dark:text-gray-100">Type:</span> Chat Request
+                  <p className="text-sm text-[#3e3b34] dark:text-[#998676]">
+                    <span className="font-medium text-[#594a42] dark:text-[#d6c7b0]">Type:</span> Chat Request
                   </p>
                 )}
                 {exchange.offer?.message && (
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
-                    <span className="font-medium text-gray-900 dark:text-gray-100">Message:</span> {exchange.offer.message}
+                  <p className="text-sm text-[#3e3b34] dark:text-[#998676]">
+                    <span className="font-medium text-[#594a42] dark:text-[#d6c7b0]">Message:</span> {exchange.offer.message}
                   </p>
                 )}
               </div>
             </div>
 
             {/* Partner Information */}
-            <div className="mb-6 p-5 bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-950/50 dark:to-amber-950/50 rounded-xl border border-orange-100 dark:border-orange-900 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="mb-6 p-5 bg-[#FFFBE6] dark:bg-[#2C2A25] rounded-xl border border-[#EFEAC6] dark:border-[#4a463a] shadow-sm hover:shadow-md transition-shadow duration-300">
               <div className="flex items-center gap-2 mb-4">
-                <div className="p-2 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 text-white">
+                <div className="p-2 rounded-lg bg-[#A88C8F] dark:bg-[#7a6466] text-white">
                   <Avatar className="h-5 w-5">
                     <AvatarFallback className="bg-transparent text-white text-xs">
                       {partner?.name?.charAt(0) || "U"}
                     </AvatarFallback>
                   </Avatar>
                 </div>
-                <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                <h2 className="font-semibold text-[#594a42] dark:text-[#d6c7b0]">
                   {isOwner ? t('exchanges.details.partner_info.requester') : t('exchanges.details.partner_info.owner')}
                 </h2>
               </div>
               <div className="flex items-center gap-3">
-                <Avatar className="h-12 w-12 ring-2 ring-orange-200 dark:ring-orange-800">
+                <Avatar className="h-12 w-12 border border-[#EFEAC6] dark:border-[#4a463a]">
                   <AvatarImage src={partner?.avatarUrl} alt={partner?.name} />
-                  <AvatarFallback className="bg-gradient-to-br from-orange-400 to-amber-500 text-white">
+                  <AvatarFallback className="bg-[#A88C8F] dark:bg-[#6b585a] text-white">
                     {partner?.name?.charAt(0) || "U"}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-gray-100">
+                  <p className="font-medium text-[#594a42] dark:text-[#d6c7b0]">
                     {partner?.name || "Unknown User"}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-[#879385] dark:text-[#998676]">
                     {isOwner ? t('exchanges.details.partner_info.requested') : t('exchanges.details.partner_info.owns')}
                   </p>
                 </div>
@@ -460,14 +460,14 @@ export default function ExchangeDetailsPage() {
               <div className="flex gap-3">
                 <Button
                   onClick={handleAcceptOffer}
-                  className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
+                  className="flex-1 bg-[#6B8E23] hover:bg-[#556B2F] text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
                 >
                   <CheckCircle className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-300" />
                   {t('exchanges.details.accept_offer')}
                 </Button>
                 <Button
                   onClick={handleRejectOffer}
-                  className="flex-1 border-2 border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-950 transition-all duration-300 group"
+                  className="flex-1 border-2 border-[#A88C8F] text-[#A88C8F] hover:bg-[#A88C8F]/10 transition-all duration-300 group"
                   variant="outline"
                 >
                   <XCircle className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-300" />
@@ -477,11 +477,11 @@ export default function ExchangeDetailsPage() {
             )}
 
             {exchange.status === "pending" && isRequester && (
-              <div className="p-6 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-950/50 dark:to-amber-950/50 rounded-xl border border-yellow-200 dark:border-yellow-800 text-center shadow-sm">
-                <div className="p-3 rounded-full bg-gradient-to-br from-yellow-400 to-amber-500 text-white w-fit mx-auto mb-3">
+              <div className="p-6 bg-[#FFFBE6] dark:bg-[#2C2A25] rounded-xl border border-[#EFEAC6] dark:border-[#4a463a] text-center shadow-sm">
+                <div className="p-3 rounded-full bg-[#EFEAC6] dark:bg-[#4a463a] text-[#594a42] w-fit mx-auto mb-3">
                   <Clock className="w-6 h-6" />
                 </div>
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <p className="text-sm font-medium text-[#594a42] dark:text-[#d6c7b0]">
                   {t('exchanges.details.waiting_for_owner')}
                 </p>
               </div>
@@ -530,7 +530,7 @@ export default function ExchangeDetailsPage() {
                       toast.error(t('exchanges.details.toast.failed_to_complete'));
                     }
                   }}
-                  className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
+                  className="w-full bg-[#A88C8F] hover:bg-[#997b7e] text-white shadow-lg hover:shadow-xl transition-all duration-300 group"
                 >
                   <CheckCircle className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform duration-300" />
                   {t('exchanges.details.mark_as_completed')}
@@ -539,22 +539,22 @@ export default function ExchangeDetailsPage() {
             )}
 
             {exchange.status === "rejected" && (
-              <div className="p-6 bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-950/50 dark:to-rose-950/50 rounded-xl border border-red-200 dark:border-red-800 text-center shadow-sm">
-                <div className="p-3 rounded-full bg-gradient-to-br from-red-400 to-rose-500 text-white w-fit mx-auto mb-3">
+              <div className="p-6 bg-[#FFFBE6] dark:bg-[#2C2A25] rounded-xl border border-[#A88C8F] dark:border-[#7a6466] text-center shadow-sm">
+                <div className="p-3 rounded-full bg-[#A88C8F] dark:bg-[#7a6466] text-white w-fit mx-auto mb-3">
                   <XCircle className="w-6 h-6" />
                 </div>
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <p className="text-sm font-medium text-[#594a42] dark:text-[#d6c7b0]">
                   {t('exchanges.details.offer_declined')}
                 </p>
               </div>
             )}
 
             {exchange.status === "completed" && (
-              <div className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 rounded-xl border border-green-200 dark:border-green-800 text-center shadow-sm">
-                <div className="p-3 rounded-full bg-gradient-to-br from-green-400 to-emerald-500 text-white w-fit mx-auto mb-3 animate-pulse">
+              <div className="p-6 bg-[#FDFBF7] dark:bg-[#2e2c28] rounded-xl border border-[#6B8E23] dark:border-[#556B2F] text-center shadow-sm">
+                <div className="p-3 rounded-full bg-[#6B8E23] dark:bg-[#556B2F] text-white w-fit mx-auto mb-3 animate-pulse">
                   <CheckCircle className="w-6 h-6" />
                 </div>
-                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                <p className="text-sm font-medium text-[#594a42] dark:text-[#d6c7b0]">
                   {t('exchanges.details.exchange_completed')}
                 </p>
               </div>
@@ -563,17 +563,17 @@ export default function ExchangeDetailsPage() {
 
           {/* Review Section - Shows for completed exchanges */}
           {exchange.status === "completed" && (
-            <Card className="mt-6 p-0 overflow-hidden backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 shadow-xl border-0 hover:shadow-2xl transition-all duration-300">
-              <div className="p-6 border-b bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-950/80 dark:to-red-950/80">
+            <Card className="mt-6 p-0 overflow-hidden backdrop-blur-sm bg-[#FDFBF7]/80 dark:bg-[#2e2c28]/80 shadow-xl border border-[#EFEAC6] dark:border-[#4a463a] hover:shadow-2xl transition-all duration-300">
+              <div className="p-6 border-b border-[#EFEAC6] dark:border-[#4a463a] bg-[#FFFBE6] dark:bg-[#2C2A25]">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-orange-500 to-red-600 text-white shadow-lg">
+                  <div className="p-2 rounded-lg bg-[#A88C8F] dark:bg-[#7a6466] text-white shadow-lg">
                     <CheckCircle className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold bg-gradient-to-r from-orange-600 to-red-600 dark:from-orange-400 dark:to-red-400 bg-clip-text text-transparent">
+                    <h2 className="text-lg font-semibold text-[#594a42] dark:text-[#d6c7b0]">
                       {t('exchanges.details.reviews.title')}
                     </h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <p className="text-sm text-[#879385] dark:text-[#998676] mt-1">
                       {t('exchanges.details.reviews.subtitle')}
                     </p>
                   </div>
@@ -593,28 +593,28 @@ export default function ExchangeDetailsPage() {
 
           {/* Chat Section - Show if accepted or completed */}
           {(exchange.status === "accepted" || exchange.status === "completed") && (
-            <Card className="mt-6 p-0 overflow-hidden backdrop-blur-sm bg-white/80 dark:bg-gray-800/80 shadow-xl border-0 hover:shadow-2xl transition-all duration-300">
-              <div className="p-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50">
+            <Card className="mt-6 p-0 overflow-hidden backdrop-blur-sm bg-[#FDFBF7]/80 dark:bg-[#2e2c28]/80 shadow-xl border border-[#EFEAC6] dark:border-[#4a463a] hover:shadow-2xl transition-all duration-300">
+              <div className="p-6 border-b border-[#EFEAC6] dark:border-[#4a463a] bg-[#FFFBE6] dark:bg-[#2C2A25]">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg">
+                  <div className="p-2 rounded-lg bg-[#879385] dark:bg-[#525b51] text-white shadow-lg">
                     <MessageSquare className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 bg-clip-text text-transparent">
+                    <h2 className="text-lg font-semibold text-[#594a42] dark:text-[#d6c7b0]">
                       {t('exchanges.details.chat.title', { name: partner?.name })}
                     </h2>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    <p className="text-sm text-[#879385] dark:text-[#998676] mt-1">
                       {t('exchanges.details.chat.subtitle')}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="h-[400px] overflow-y-auto p-4 space-y-4 bg-gray-50/50 dark:bg-gray-900/50">
+              <div className="h-[400px] overflow-y-auto p-4 space-y-4 bg-[#FDFBF7]/50 dark:bg-[#2e2c28]/50">
                 {messages.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400 space-y-3">
-                    <div className="p-4 rounded-full bg-blue-100 dark:bg-blue-900/30">
-                      <MessageSquare className="w-8 h-8 text-blue-500 dark:text-blue-400" />
+                  <div className="flex flex-col items-center justify-center h-full text-[#879385] dark:text-[#998676] space-y-3">
+                    <div className="p-4 rounded-full bg-[#EFEAC6] dark:bg-[#4a463a]">
+                      <MessageSquare className="w-8 h-8 text-[#594a42] dark:text-[#d6c7b0]" />
                     </div>
                     <p className="font-medium">{t('exchanges.details.chat.no_messages')}</p>
                     <p className="text-sm">{t('exchanges.details.chat.start_conversation')}</p>
@@ -629,12 +629,12 @@ export default function ExchangeDetailsPage() {
                       >
                         <div
                           className={`max-w-[75%] p-3 rounded-2xl shadow-sm ${isMe
-                            ? "bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-tr-none"
-                            : "bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-tl-none border border-gray-100 dark:border-gray-700"
+                            ? "bg-[#A88C8F] dark:bg-[#7a6466] text-white rounded-tr-none"
+                            : "bg-white dark:bg-[#4a463a] text-[#594a42] dark:text-[#d6c7b0] rounded-tl-none border border-[#EFEAC6] dark:border-[#5e5a4b]"
                             }`}
                         >
                           <p className="text-sm">{msg.text}</p>
-                          <p className={`text-[10px] mt-1 ${isMe ? "text-blue-100" : "text-gray-400"}`}>
+                          <p className={`text-[10px] mt-1 ${isMe ? "text-white/80" : "text-[#879385] dark:text-[#998676]"}`}>
                             {formatDate(msg.createdAt)}
                           </p>
                         </div>
@@ -645,18 +645,18 @@ export default function ExchangeDetailsPage() {
                 <div ref={messagesEndRef} />
               </div>
 
-              <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700">
+              <div className="p-4 bg-[#FDFBF7] dark:bg-[#2e2c28] border-t border-[#EFEAC6] dark:border-[#4a463a]">
                 <form onSubmit={handleSendMessage} className="flex gap-2">
                   <Input
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     placeholder={t('exchanges.details.chat.placeholder')}
-                    className="flex-1"
+                    className="flex-1 bg-white dark:bg-[#4a463a] border-[#EFEAC6] dark:border-[#5e5a4b] text-[#594a42] dark:text-[#d6c7b0]"
                   />
                   <Button
                     type="submit"
                     disabled={!newMessage.trim()}
-                    className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
+                    className="bg-[#A88C8F] hover:bg-[#997b7e] text-white shadow-md hover:shadow-lg transition-all duration-300"
                   >
                     <Send className="w-4 h-4" />
                   </Button>

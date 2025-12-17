@@ -38,13 +38,13 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
-        return 'bg-gradient-to-r from-yellow-400 to-orange-400 text-white';
+        return 'bg-[#EFEAC6] text-[#594a42] dark:bg-[#4a463a] dark:text-[#EFEAC6] border-[#D4CFAE] dark:border-[#5e5a4b]';
       case 'accepted':
-        return 'bg-gradient-to-r from-green-500 to-emerald-500 text-white';
+        return 'bg-[#6B8E23]/20 text-[#3a4d13] dark:bg-[#556B2F]/40 dark:text-[#d6c7b0] border-[#6B8E23]/30';
       case 'rejected':
-        return 'bg-gradient-to-r from-red-500 to-pink-500 text-white';
+        return 'bg-[#A88C8F]/20 text-[#5e4043] dark:bg-[#7a6466]/40 dark:text-[#d6c7b0] border-[#A88C8F]/30';
       case 'completed':
-        return 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white';
+        return 'bg-[#879385]/20 text-[#3d453c] dark:bg-[#525b51]/40 dark:text-[#d6c7b0] border-[#879385]/30';
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
     }
@@ -80,16 +80,16 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
   return (
     <Card
       onClick={onClick}
-      className="p-4 md:p-5 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02] bg-white dark:bg-gray-800 group relative overflow-hidden"
+      className="p-4 md:p-5 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02] bg-[#FDFBF7] dark:bg-[#2e2c28] border-gray-100 dark:border-gray-700 group relative overflow-hidden"
     >
       {/* Hover glow effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-xl opacity-0 group-hover:opacity-10 blur-xl transition-opacity duration-300"></div>
+      <div className="absolute inset-0 bg-[#A6C6B9]/10 dark:bg-[#4A5D54]/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
 
       <div className="flex items-start gap-3 md:gap-4 relative z-10">
         {/* Avatar */}
-        <Avatar className="h-12 w-12 md:h-14 md:w-14 border-2 border-gray-200 dark:border-gray-700 shadow-md ring-2 ring-blue-100 dark:ring-blue-900 flex-shrink-0">
+        <Avatar className="h-12 w-12 md:h-14 md:w-14 border-2 border-[#EFEAC6] dark:border-[#4a463a] shadow-md flex-shrink-0">
           <AvatarImage src={exchange.partner?.avatarUrl} alt={exchange.partner?.name} />
-          <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-lg font-bold">
+          <AvatarFallback className="bg-[#A88C8F] dark:bg-[#6b585a] text-white text-lg font-bold">
             {exchange.partner?.name?.charAt(0) || "U"}
           </AvatarFallback>
         </Avatar>
@@ -98,14 +98,14 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between mb-1 md:mb-2 gap-2">
             <div className="min-w-0 flex-1">
-              <h3 className="font-bold text-base md:text-lg text-gray-900 dark:text-gray-100 truncate">
+              <h3 className="font-bold text-base md:text-lg text-[#594a42] dark:text-[#d6c7b0] truncate">
                 {exchange.productName}
               </h3>
-              <p className="text-xs md:text-sm text-gray-600 dark:text-gray-400 truncate">
+              <p className="text-xs md:text-sm text-[#879385] dark:text-[#998676] truncate">
                 {isRequester ? t('exchanges.item.to', { name: exchange.partner?.name }) : t('exchanges.item.from', { name: exchange.partner?.name })}
               </p>
             </div>
-            <Badge className={`${getStatusColor(exchange.status)} border-0 shadow-md text-xs flex-shrink-0`}>
+            <Badge className={`${getStatusColor(exchange.status)} border shadow-sm text-xs flex-shrink-0`}>
               {exchange.status === 'pending' && !isRequester && (
                 <AlertCircle className="w-3 h-3 mr-1" />
               )}
@@ -116,9 +116,9 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
 
           {/* Offer details */}
           {exchange.offer && (
-            <div className="flex items-center gap-2 mb-2 md:mb-3 p-2 bg-gradient-to-r from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 rounded-lg">
-              <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-gray-700 dark:text-gray-300 min-w-0">
-                <span className="flex-shrink-0">{getOfferTypeIcon(exchange.offer.type)}</span>
+            <div className="flex items-center gap-2 mb-2 md:mb-3 p-2 bg-[#FFFBE6] dark:bg-[#2C2A25] rounded-lg border border-[#EFEAC6] dark:border-[#4a463a]">
+              <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm text-[#594a42] dark:text-[#d6c7b0] min-w-0">
+                <span className="flex-shrink-0 text-[#6B8E23] dark:text-[#556B2F]">{getOfferTypeIcon(exchange.offer.type)}</span>
                 <span className="font-medium truncate">
                   {exchange.offer.type === "exchange" && exchange.offer.offeredProductName
                     ? t('exchanges.item.offered', { product: exchange.offer.offeredProductName })
@@ -133,12 +133,12 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
           {/* Last message or status info */}
           <div className="flex items-center justify-between gap-2">
             {exchange.lastMessage ? (
-              <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 truncate flex-1 flex items-center gap-1">
+              <p className="text-xs md:text-sm text-[#879385] dark:text-[#998676] truncate flex-1 flex items-center gap-1">
                 <MessageSquare className="w-3 h-3 flex-shrink-0" />
                 <span className="truncate">{exchange.lastMessage.text}</span>
               </p>
             ) : (
-              <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 italic truncate flex-1">
+              <p className="text-xs md:text-sm text-[#879385] dark:text-[#998676] italic truncate flex-1">
                 {exchange.status === 'pending' && !isRequester
                   ? t('exchanges.item.action_required')
                   : exchange.status === 'pending' && isRequester
@@ -146,7 +146,7 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
                     : t('exchanges.item.no_messages')}
               </p>
             )}
-            <div className="flex items-center gap-1 md:gap-2 text-xs text-gray-400 flex-shrink-0">
+            <div className="flex items-center gap-1 md:gap-2 text-xs text-[#A88C8F] dark:text-[#7a6466] flex-shrink-0">
               <Clock className="w-3 h-3 hidden sm:inline" />
               <span className="hidden sm:inline">{formatTimeAgo(exchange.lastMessage?.createdAt || exchange.updatedAt || exchange.createdAt)}</span>
               <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -224,28 +224,28 @@ export default function ExchangesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900 pb-20 md:pb-0">
+    <main className="min-h-screen bg-[#FFFBE6] dark:bg-[#2C2A25] pb-20 md:pb-0">
       {/* Hero Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 dark:from-green-950/20 dark:via-emerald-950/20 dark:to-teal-950/20 border-b">
+      <div className="relative overflow-hidden bg-[#FDFBF7] dark:bg-[#2e2c28] border-b border-[#EFEAC6] dark:border-[#4a463a]">
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
-          <div className="absolute top-40 left-1/2 w-80 h-80 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#A6C6B9] dark:bg-[#4A5D54] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#A88C8F] dark:bg-[#6b585a] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+          <div className="absolute top-40 left-1/2 w-80 h-80 bg-[#879385] dark:bg-[#525b51] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000"></div>
         </div>
 
         <div className="relative container mx-auto px-4 py-8 md:py-12">
           <div className="max-w-4xl mx-auto">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6 md:mb-8">
               <div className="flex items-center gap-3 md:gap-4">
-                <div className="p-2 md:p-3 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl shadow-lg flex-shrink-0">
+                <div className="p-2 md:p-3 bg-[#6B8E23] dark:bg-[#556B2F] rounded-xl shadow-lg flex-shrink-0">
                   <ArrowRightLeft className="w-6 h-6 md:w-8 md:h-8 text-white" />
                 </div>
                 <div className="min-w-0">
-                  <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent">
+                  <h1 className="text-2xl md:text-4xl font-bold text-[#594a42] dark:text-[#d6c7b0]">
                     {t('exchanges.title')}
                   </h1>
-                  <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-1 truncate">
+                  <p className="text-sm md:text-base text-[#879385] dark:text-[#998676] mt-1 truncate">
                     {t('exchanges.subtitle')}
                   </p>
                 </div>
@@ -253,7 +253,7 @@ export default function ExchangesPage() {
               <Button
                 asChild
                 size="default"
-                className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg group w-full md:w-auto"
+                className="bg-[#A88C8F] dark:bg-[#7a6466] hover:bg-[#997b7e] dark:hover:bg-[#8f7577] text-white shadow-lg group w-full md:w-auto"
               >
                 <Link href="/">
                   <Package className="mr-2 h-4 w-4 md:h-5 md:w-5" />
@@ -269,25 +269,25 @@ export default function ExchangesPage() {
                 icon={Inbox}
                 label={t('exchanges.stats.pending')}
                 value={pendingCount}
-                color="bg-gradient-to-br from-yellow-500 to-orange-500"
+                color="bg-[#EFEAC6] text-[#594a42] dark:bg-[#4a463a] dark:text-[#EFEAC6]"
               />
               <StatsCard
                 icon={MessageSquare}
                 label={t('exchanges.stats.active')}
                 value={activeExchanges.length}
-                color="bg-gradient-to-br from-green-500 to-emerald-500"
+                color="bg-[#6B8E23] text-white dark:bg-[#556B2F]"
               />
               <StatsCard
                 icon={Archive}
                 label={t('exchanges.stats.total')}
                 value={totalExchanges}
-                color="bg-gradient-to-br from-blue-500 to-indigo-500"
+                color="bg-[#879385] text-white dark:bg-[#525b51]"
               />
               <StatsCard
                 icon={CheckCircle}
                 label={t('exchanges.stats.success_rate')}
                 value={`${successRate}%`}
-                color="bg-gradient-to-br from-purple-500 to-pink-500"
+                color="bg-[#A88C8F] text-white dark:bg-[#7a6466]"
               />
             </div>
           </div>
@@ -299,33 +299,33 @@ export default function ExchangesPage() {
         <div className="max-w-4xl mx-auto">
           {/* Tabs for different exchange states */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-4 md:mb-6">
-              <TabsTrigger value="active" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm">
+            <TabsList className="grid w-full grid-cols-3 mb-4 md:mb-6 bg-[#FDFBF7] dark:bg-[#2e2c28] border border-[#EFEAC6] dark:border-[#4a463a]">
+              <TabsTrigger value="active" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm data-[state=active]:bg-[#A88C8F] data-[state=active]:text-white dark:data-[state=active]:bg-[#7a6466]">
                 <MessageSquare className="w-3 h-3 md:w-4 md:h-4" />
                 <span className="hidden sm:inline">{t('exchanges.tabs.active')}</span>
                 <span className="sm:hidden">Active</span>
                 {activeExchanges.length > 0 && (
-                  <Badge variant="secondary" className="ml-1">
+                  <Badge variant="secondary" className="ml-1 bg-white/20 text-white">
                     {activeExchanges.length}
                   </Badge>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="pending" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm">
+              <TabsTrigger value="pending" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm data-[state=active]:bg-[#EFEAC6] data-[state=active]:text-[#594a42] dark:data-[state=active]:bg-[#4a463a] dark:data-[state=active]:text-[#EFEAC6]">
                 <Clock className="w-3 h-3 md:w-4 md:h-4" />
                 <span className="hidden sm:inline">{t('exchanges.tabs.pending')}</span>
                 <span className="sm:hidden">Pending</span>
                 {pendingExchanges.length > 0 && (
-                  <Badge variant="secondary" className="ml-1">
+                  <Badge variant="secondary" className="ml-1 bg-black/10 dark:bg-white/10">
                     {pendingExchanges.length}
                   </Badge>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="completed" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm">
+              <TabsTrigger value="completed" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm data-[state=active]:bg-[#879385] data-[state=active]:text-white dark:data-[state=active]:bg-[#525b51]">
                 <Archive className="w-3 h-3 md:w-4 md:h-4" />
                 <span className="hidden sm:inline">{t('exchanges.tabs.history')}</span>
                 <span className="sm:hidden">History</span>
                 {completedExchanges.length > 0 && (
-                  <Badge variant="secondary" className="ml-1">
+                  <Badge variant="secondary" className="ml-1 bg-white/20 text-white">
                     {completedExchanges.length}
                   </Badge>
                 )}
@@ -360,7 +360,7 @@ export default function ExchangesPage() {
                     .filter(e => e.ownerId === user?.uid)
                     .map((exchange) => (
                       <div key={exchange.id} className="relative">
-                        <div className="absolute -left-2 top-0 bottom-0 w-1 bg-gradient-to-b from-yellow-400 to-orange-400 rounded-full shadow-lg"></div>
+                        <div className="absolute -left-2 top-0 bottom-0 w-1 bg-[#EFEAC6] dark:bg-[#4a463a] rounded-full shadow-lg"></div>
                         <ExchangeItem
                           exchange={exchange}
                           onClick={() => handleExchangeClick(exchange)}
@@ -410,30 +410,30 @@ export default function ExchangesPage() {
 
           {/* Tips Section */}
           {exchanges.length > 0 && (
-            <Card className="mt-6 md:mt-8 p-4 md:p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800 shadow-lg">
+            <Card className="mt-6 md:mt-8 p-4 md:p-6 bg-[#FDFBF7] dark:bg-[#2e2c28] border-[#EFEAC6] dark:border-[#4a463a] shadow-lg">
               <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
-                <div className="p-1.5 md:p-2 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg shadow-md flex-shrink-0">
+                <div className="p-1.5 md:p-2 bg-[#6B8E23] dark:bg-[#556B2F] rounded-lg shadow-md flex-shrink-0">
                   <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-white" />
                 </div>
-                <h3 className="text-base md:text-lg font-bold text-gray-900 dark:text-gray-100">
+                <h3 className="text-base md:text-lg font-bold text-[#594a42] dark:text-[#d6c7b0]">
                   {t('exchanges.tips.title')}
                 </h3>
               </div>
-              <ul className="space-y-2 text-xs md:text-sm text-gray-700 dark:text-gray-300">
+              <ul className="space-y-2 text-xs md:text-sm text-[#3e3b34] dark:text-[#998676]">
                 <li className="flex items-start gap-2">
-                  <span className="text-green-500 mt-0.5">•</span>
+                  <span className="text-[#6B8E23] mt-0.5">•</span>
                   <span>{t('exchanges.tips.item1')}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-500 mt-0.5">•</span>
+                  <span className="text-[#6B8E23] mt-0.5">•</span>
                   <span>{t('exchanges.tips.item2')}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-500 mt-0.5">•</span>
+                  <span className="text-[#6B8E23] mt-0.5">•</span>
                   <span>{t('exchanges.tips.item3')}</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="text-green-500 mt-0.5">•</span>
+                  <span className="text-[#6B8E23] mt-0.5">•</span>
                   <span>{t('exchanges.tips.item4')}</span>
                 </li>
               </ul>
