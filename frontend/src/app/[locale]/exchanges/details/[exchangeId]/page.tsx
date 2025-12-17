@@ -252,6 +252,13 @@ export default function ExchangeDetailsPage() {
   const isRequester = user?.uid === exchange.requesterId;
   const partner = isOwner ? exchange.requester : exchange.owner;
 
+  // Extract reviews if they exist
+  // We need to cast to any first because of type mismatches between the Review types
+  // defined in different files. Ideally these should be unified.
+  const reviews = exchange.reviews as Record<string, any> | undefined;
+  const existingReviewByUser = user ? reviews?.[user.uid] : undefined;
+  const existingReviewByPartner = partner ? reviews?.[partner.id] : undefined;
+
   return (
     <main className="min-h-screen bg-[#FFFBE6] dark:bg-[#2C2A25]">
       {/* Breadcrumb Navigation */}
@@ -585,6 +592,9 @@ export default function ExchangeDetailsPage() {
                   currentUserId={user?.uid || ""}
                   partnerId={partner?.id || ""}
                   partnerName={partner?.name || "Unknown"}
+                  partnerAvatar={partner?.avatarUrl}
+                  existingReviewByUser={existingReviewByUser}
+                  existingReviewByPartner={existingReviewByPartner}
                   onReviewSubmit={handleReviewSubmit}
                 />
               </div>
