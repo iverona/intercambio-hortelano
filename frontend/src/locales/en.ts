@@ -144,6 +144,8 @@ export default {
   "product.login_button": "Sign In",
   "product.edit_button": "Edit Product",
   "product.view_garden": "View My Garden",
+  "product.similar_products": "Similar Products",
+  "product.view_all": "View All",
   "product.edit.loading": "Loading...",
   "product.edit.title": "Edit Product",
   "product.publish.title": "Publish a New Product",

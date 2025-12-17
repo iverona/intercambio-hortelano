@@ -39,8 +39,10 @@ import {
 import Link from "next/link";
 import { useProduct, useProductMutations } from "@/hooks/useProduct";
 import { useUserProfile } from "@/hooks/useUser";
+import { useProducts } from "@/hooks/useProducts";
+import ProductCard from "@/components/shared/ProductCard";
 
-// Category colors mapping
+// Category colors mapping - updated to match earthy theme better if needed, but keeping logic
 const getCategoryColor = (category?: string) => {
   const colors: { [key: string]: string } = {
     vegetables: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
@@ -81,11 +83,22 @@ export default function ProductDetailPage() {
   const { user: seller, loading: sellerLoading } = useUserProfile(product?.userId);
   const { createOffer } = useProductMutations();
 
+  // Fetch similar products
+  const { products: allSimilarProducts } = useProducts(null, {
+    searchTerm: "",
+    categories: product?.category ? [product.category] : [],
+    distance: 10000,
+    sortBy: "date_newest"
+  });
+
+  // Filter out current product and limit to 4
+  const similarProducts = allSimilarProducts
+    .filter(p => p.id !== id)
+    .slice(0, 4);
+
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  // Combine loading states for initial render, BUT handle case where product loads but seller is still loading
-  // Better to show product and seller skeleton
   const loading = productLoading;
   const isUnavailable = !loading && (!product || product.deleted);
 
@@ -104,9 +117,9 @@ export default function ProductDetailPage() {
       ownerId: product.userId,
       offer: {
         ...offer,
-        amount: undefined // OfferModal doesn't seem to pass amount for purchase yet based on interface, but createOffer supports it.
+        amount: undefined
       }
-    }); // createOffer handles navigation and notifications
+    });
   };
 
   const handleShare = async () => {
@@ -125,19 +138,9 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-48"></div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <div className="aspect-square bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded-xl"></div>
-              <div className="space-y-4">
-                <div className="h-10 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-full"></div>
-                <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-5/6"></div>
-              </div>
-            </div>
-          </div>
+      <main className="min-h-screen bg-[#FFFBE6] dark:bg-[#2C2A25] p-4 flex items-center justify-center">
+        <div className="animate-spin text-[#879385]">
+          <Leaf className="w-12 h-12" />
         </div>
       </main>
     );
@@ -145,23 +148,26 @@ export default function ProductDetailPage() {
 
   if (isUnavailable || !product) {
     return (
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto text-center py-20">
-          <Package className="w-24 h-24 text-gray-300 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            {isUnavailable ? t('product.unavailable') || "Product Unavailable" : t('product.not_found')}
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
-            {isUnavailable
-              ? "This product is no longer available because it has been removed or the user is no longer active."
-              : "The product you are looking for does not exist."}
-          </p>
-          <Button asChild className="mt-4">
-            <Link href="/">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              {t('product.back_to_home')}
-            </Link>
-          </Button>
+      <main className="min-h-screen bg-[#FFFBE6] dark:bg-[#2C2A25] p-4 flex flex-col items-center justify-center">
+        <div className="relative w-full max-w-lg mx-auto">
+          <div className="absolute inset-0 bg-[#879385] dark:bg-[#5a6359] transform -rotate-1 rounded-sm shadow-lg opacity-20" style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}></div>
+          <div className="relative bg-[#FDFBF7] dark:bg-[#2e2c28] p-10 transform rotate-1 shadow-xl flex flex-col items-center justify-center border border-gray-100 dark:border-gray-700 text-center" style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}>
+            <Package className="w-24 h-24 text-[#A88C8F] mx-auto mb-4" />
+            <h2 className="text-4xl font-display font-bold text-[#594a42] dark:text-[#d6c7b0] mb-2">
+              {isUnavailable ? t('product.unavailable') || "Product Unavailable" : t('product.not_found')}
+            </h2>
+            <p className="font-sans text-gray-600 dark:text-gray-400 mb-6">
+              {isUnavailable
+                ? "This product is no longer available because it has been removed or the user is no longer active."
+                : "The product you are looking for does not exist."}
+            </p>
+            <Button asChild className="mt-4 bg-[#879385] hover:bg-[#7a8578] text-white rounded-full">
+              <Link href="/">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                {t('product.back_to_home')}
+              </Link>
+            </Button>
+          </div>
         </div>
       </main>
     );
@@ -170,279 +176,248 @@ export default function ProductDetailPage() {
   const isOwner = currentUser && product.userId === currentUser.uid;
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-950 dark:to-gray-900">
-      {/* Breadcrumb Navigation */}
-      <div className="border-b bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm sticky top-0 z-10">
+    <main className="min-h-screen bg-[#FFFBE6] dark:bg-[#2C2A25] overflow-x-hidden">
+      {/* Breadcrumb Navigation - Simplified and styled */}
+      <div className="bg-[#FFFBE6]/90 dark:bg-[#2C2A25]/90 backdrop-blur-sm sticky top-0 z-20 border-b border-[#879385]/20">
         <div className="container mx-auto px-4 py-3">
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            <Link href="/" className="hover:text-primary transition-colors">
+          <div className="flex items-center gap-2 text-sm font-serif text-[#594a42]/60 dark:text-[#d6c7b0]/60">
+            <Link href="/" className="hover:text-[#879385] transition-colors">
               {t('product.breadcrumb.home')}
             </Link>
             <ChevronRight className="w-4 h-4" />
-            <Link href="/" className="hover:text-primary transition-colors">
+            <Link href="/products" className="hover:text-[#879385] transition-colors">
               {t('product.breadcrumb.products')}
             </Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-gray-900 dark:text-gray-100 font-medium truncate max-w-[200px]">
+            <span className="text-[#594a42] dark:text-[#d6c7b0] font-medium truncate max-w-[200px]">
               {product.name}
             </span>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 md:py-12">
         <div className="max-w-6xl mx-auto">
-          {/* Back Button */}
-          <Button
-            variant="ghost"
-            onClick={() => router.back()}
-            className="mb-6 group"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            {t('product.back')}
-          </Button>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-            {/* Image Gallery */}
-            <div className="space-y-4">
-              <div className="relative">
-                {product.imageUrls && product.imageUrls.length > 0 ? (
-                  <Carousel className="w-full rounded-2xl overflow-hidden shadow-2xl">
-                    <CarouselContent>
-                      {product.imageUrls.map((url, index) => (
-                        <CarouselItem key={index}>
-                          <div className="aspect-square relative bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900">
-                            <Image
-                              src={url}
-                              alt={`${product.name} - image ${index + 1}`}
-                              fill
-                              className="object-cover"
-                              priority={index === 0}
-                            />
-                          </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    {product.imageUrls.length > 1 && (
-                      <>
-                        <CarouselPrevious className="left-4" />
-                        <CarouselNext className="right-4" />
-                      </>
-                    )}
-                  </Carousel>
-                ) : (
-                  <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl flex items-center justify-center shadow-2xl">
-                    <Package className="w-24 h-24 text-gray-400" />
-                  </div>
-                )}
+          {/* Main Content Card with Organic Shape */}
+          <div className="relative group mb-16">
+            {/* Shadow/Border Element */}
+            <div className="absolute inset-0 bg-[#879385] dark:bg-[#5a6359] transform -rotate-1 rounded-sm shadow-lg pointer-events-none" style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}></div>
 
-                {/* Floating Action Buttons */}
-                <div className="absolute top-4 right-4 flex gap-2">
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    className="rounded-full bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-lg hover:scale-110 transition-transform"
-                    onClick={() => setIsFavorite(!isFavorite)}
-                  >
-                    <Heart
-                      className={`h-5 w-5 ${isFavorite ? "fill-red-500 text-red-500" : ""
-                        }`}
-                    />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="secondary"
-                    className="rounded-full bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm shadow-lg hover:scale-110 transition-transform"
-                    onClick={handleShare}
-                  >
-                    <Share2 className="h-5 w-5" />
-                  </Button>
-                </div>
-              </div>
-            </div>
+            {/* Content Container */}
+            <div
+              className="relative bg-[#FDFBF7] dark:bg-[#2e2c28] p-6 md:p-12 transform rotate-1 shadow-xl border border-[#A6C6B9]/30 dark:border-[#4A5D54]/30"
+              style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}
+            >
+              {/* Back Button inside card */}
+              <Button
+                variant="ghost"
+                onClick={() => router.back()}
+                className="absolute top-8 left-8 hidden md:flex hover:bg-transparent hover:text-[#879385] text-[#594a42]/60 dark:text-[#d6c7b0]/60"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                {t('product.back')}
+              </Button>
 
-            {/* Product Information */}
-            <div className="space-y-6">
-              {/* Title and Badges */}
-              <div>
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {product.category && (
-                    <Badge className={`${getCategoryColor(product.category)} border-0`}>
-                      {product.category}
-                    </Badge>
-                  )}
-                  {product.isForExchange && (
-                    <Badge className="bg-emerald-500 text-white border-0">
-                      <Leaf className="w-3 h-3 mr-1" />
-                      {t('product.for_exchange')}
-                    </Badge>
-                  )}
-                  {product.isForSale && (
-                    <Badge className="bg-blue-500 text-white border-0">
-                      <DollarSign className="w-3 h-3 mr-1" />
-                      {t('product.form.for_sale_label')}
-                    </Badge>
-                  )}
-                </div>
-                <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                  {product.name}
-                </h1>
 
-                {/* Metadata */}
-                <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>{getTimeAgo(product.createdAt)}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Eye className="w-4 h-4" />
-                    <span>234 {t('product.views')}</span>
-                  </div>
-                </div>
-              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-4">
+                {/* Left Column: Images */}
+                <div className="space-y-6">
+                  <div className="relative mx-auto max-w-md lg:max-w-none">
+                    {/* Decorative elements behind image */}
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#A88C8F]/20 rounded-full blur-2xl -translate-y-10 translate-x-10 pointer-events-none"></div>
 
-              {/* Description */}
-              <Card className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border-0 shadow-lg">
-                <CardContent className="p-6">
-                  <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <Package className="w-5 h-5 text-primary" />
-                    {t('product.description')}
-                  </h2>
-                  <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    {product.description}
-                  </p>
-                </CardContent>
-              </Card>
-
-              {/* Seller Information */}
-              {sellerLoading ? (
-                <Card className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:to-gray-800 border-0 shadow-lg animate-pulse h-24" />
-              ) : seller && (
-                <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 border-green-200 dark:border-green-800 shadow-lg">
-                  <CardContent className="p-6">
-                    <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                      <UserIcon className="w-5 h-5 text-green-600 dark:text-green-400" />
-                      {t('product.seller_info')}
-                    </h2>
-
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <div className="flex items-center gap-4 cursor-pointer hover:bg-white/50 dark:hover:bg-gray-800/50 p-3 rounded-lg transition-colors">
-                          <Avatar className="h-14 w-14 ring-2 ring-green-200 dark:ring-green-800">
-                            <AvatarImage src={seller.avatarUrl} alt={seller.name} />
-                            <AvatarFallback className="bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">
-                              {seller.name
-                                ? seller.name
-                                  .split(" ")
-                                  .map((n) => n[0])
-                                  .join("")
-                                : ""}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="flex-1">
-                            <p className="font-semibold text-gray-900 dark:text-gray-100">
-                              {seller.name}
-                            </p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">
-                              {t('product.seller')}
-                            </p>
-                          </div>
-                          <ChevronRight className="w-5 h-5 text-gray-400" />
-                        </div>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-80">
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-12 w-12">
-                              <AvatarImage src={seller.avatarUrl} alt={seller.name} />
-                              <AvatarFallback>
-                                {seller.name
-                                  ? seller.name
-                                    .split(" ")
-                                    .map((n) => n[0])
-                                    .join("")
-                                  : ""}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="font-semibold">{seller.name}</p>
-                              <div className="flex items-center gap-1 text-sm text-yellow-600">
-                                <Star className="w-3 h-3 fill-yellow-600" />
-                                <span>4.8</span>
+                    {product.imageUrls && product.imageUrls.length > 0 ? (
+                      <Carousel className="w-full">
+                        <CarouselContent>
+                          {product.imageUrls.map((url, index) => (
+                            <CarouselItem key={index}>
+                              <div className="aspect-square relative overflow-hidden shadow-md" style={{ borderRadius: '20px 225px 20px 225px / 225px 20px 225px 20px' }}>
+                                <Image
+                                  src={url}
+                                  alt={`${product.name} - image ${index + 1}`}
+                                  fill
+                                  className="object-cover"
+                                  priority={index === 0}
+                                />
                               </div>
-                            </div>
-                          </div>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {seller.bio || t('product.no_bio')}
+                            </CarouselItem>
+                          ))}
+                        </CarouselContent>
+                        {product.imageUrls.length > 1 && (
+                          <>
+                            <CarouselPrevious className="left-2 bg-white/80 hover:bg-white text-[#594a42]" />
+                            <CarouselNext className="right-2 bg-white/80 hover:bg-white text-[#594a42]" />
+                          </>
+                        )}
+                      </Carousel>
+                    ) : (
+                      <div className="aspect-square bg-[#EFEAC6] dark:bg-[#3E3B34] flex items-center justify-center shadow-inner" style={{ borderRadius: '20px 225px 20px 225px / 225px 20px 225px 20px' }}>
+                        <Package className="w-24 h-24 text-[#879385] opacity-50" />
+                      </div>
+                    )}
+
+                    {/* Action Buttons Overlay */}
+                    <div className="absolute top-4 right-4 flex gap-2 z-10">
+                      <Button
+                        size="icon"
+                        className="rounded-full bg-white/90 dark:bg-black/40 backdrop-blur-sm shadow-sm hover:scale-110 transition-transform text-[#A88C8F] hover:text-[#8b6b6e]"
+                        onClick={() => setIsFavorite(!isFavorite)}
+                      >
+                        <Heart
+                          className={`h-5 w-5 ${isFavorite ? "fill-[#A88C8F]" : ""}`}
+                        />
+                      </Button>
+                      <Button
+                        size="icon"
+                        className="rounded-full bg-white/90 dark:bg-black/40 backdrop-blur-sm shadow-sm hover:scale-110 transition-transform text-[#879385] hover:text-[#6f7a6d]"
+                        onClick={handleShare}
+                      >
+                        <Share2 className="h-5 w-5" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right Column: Details */}
+                <div className="flex flex-col h-full">
+                  {/* Title & Category */}
+                  <div className="mb-6">
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {product.category && (
+                        <Badge className={`${getCategoryColor(product.category)} border-0 rounded-full px-3 py-1 text-xs font-serif uppercase tracking-wider`}>
+                          {product.category}
+                        </Badge>
+                      )}
+                      {product.isForExchange && (
+                        <Badge className="bg-[#879385] text-white border-0 rounded-full px-3 py-1 text-xs font-serif uppercase tracking-wider">
+                          <Leaf className="w-3 h-3 mr-1" />
+                          {t('product.for_exchange')}
+                        </Badge>
+                      )}
+                      {product.isForSale && (
+                        <Badge className="bg-[#A88C8F] text-white border-0 rounded-full px-3 py-1 text-xs font-serif uppercase tracking-wider">
+                          <DollarSign className="w-3 h-3 mr-1" />
+                          {t('product.form.for_sale_label')}
+                        </Badge>
+                      )}
+                    </div>
+
+                    <h1 className="text-6xl font-display font-bold text-[#594a42] dark:text-[#d6c7b0] mb-2 leading-none">
+                      {product.name}
+                    </h1>
+
+                    <div className="flex flex-wrap gap-4 text-sm font-sans text-[#594a42]/70 dark:text-[#d6c7b0]/70 mt-4">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        <span>{getTimeAgo(product.createdAt)}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Eye className="w-4 h-4" />
+                        <span>234 {t('product.views')}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Busco a cambio / Description */}
+                  <div className="flex-grow space-y-6">
+                    {/* Exchange/Description Section */}
+                    <div className="bg-[#FFFBE6] dark:bg-[#3E3B34] p-6 rounded-xl border border-[#EFEAC6] dark:border-[#4a463a] shadow-sm relative">
+                      {/* Tape effect */}
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-24 h-6 bg-[#EFEAC6]/80 dark:bg-[#4a463a]/80 rotate-1 backdrop-blur-sm shadow-sm z-10"></div>
+
+                      <h2 className="text-2xl font-serif font-bold text-[#A88C8F] mb-3">
+                        {t('product.description')}
+                      </h2>
+                      <p className="font-sans text-lg text-[#594a42] dark:text-[#d6c7b0] leading-relaxed">
+                        {product.description}
+                      </p>
+                    </div>
+
+                    {/* Seller Snippet */}
+                    {seller && (
+                      <div className="flex items-center gap-4 p-4 rounded-xl hover:bg-[#EFEAC6]/30 transition-colors cursor-pointer group"
+                        onClick={() => {/* Navigate to profile maybe? */ }}>
+                        <Avatar className="h-16 w-16 ring-2 ring-[#879385] ring-offset-2 ring-offset-[#FDFBF7] dark:ring-offset-[#2e2c28]">
+                          <AvatarImage src={seller.avatarUrl} alt={seller.name} />
+                          <AvatarFallback className="bg-[#A6C6B9] text-[#2C2A25] font-display font-bold text-xl">
+                            {seller.name?.slice(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-serif font-bold text-lg text-[#594a42] dark:text-[#d6c7b0] group-hover:text-[#879385] transition-colors">
+                            {seller.name}
                           </p>
-                          <div className="grid grid-cols-3 gap-2 pt-2 border-t">
-                            <div className="text-center">
-                              <p className="text-lg font-bold">12</p>
-                              <p className="text-xs text-gray-500">{t('product.seller_stats.products')}</p>
-                            </div>
-                            <div className="text-center">
-                              <p className="text-lg font-bold">8</p>
-                              <p className="text-xs text-gray-500">{t('product.seller_stats.exchanges')}</p>
-                            </div>
-                            <div className="text-center">
-                              <p className="text-lg font-bold">95%</p>
-                              <p className="text-xs text-gray-500">{t('product.seller_stats.response')}</p>
-                            </div>
+                          <div className="flex items-center gap-1 text-[#A88C8F]">
+                            <Star className="w-4 h-4 fill-current" />
+                            <span className="font-sans font-medium">4.8</span>
+                            <span className="text-xs opacity-70">({t('product.seller_stats.response')}: 95%)</span>
                           </div>
                         </div>
-                      </PopoverContent>
-                    </Popover>
-                  </CardContent>
-                </Card>
-              )}
+                      </div>
+                    )}
+                  </div>
 
-              {/* Action Buttons */}
-              <div className="space-y-3">
-                {!isOwner && currentUser && (
-                  <Button
-                    size="lg"
-                    className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl transition-all group"
-                    onClick={() => setShowOfferModal(true)}
-                  >
-                    <Sparkles className="mr-2 h-5 w-5 group-hover:rotate-12 transition-transform" />
-                    {t('product.interested_button')}
-                  </Button>
-                )}
-                {!currentUser && (
-                  <Card className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20 border-blue-200 dark:border-blue-800">
-                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-                      {t('product.login_to_contact')}
-                    </p>
-                    <Button asChild className="w-full">
-                      <Link href="/login">
-                        {t('product.login_button')}
-                      </Link>
-                    </Button>
-                  </Card>
-                )}
-                {isOwner && (
-                  <Card className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/20 dark:to-pink-950/20 border-purple-200 dark:border-purple-800">
-                    <div className="flex items-center gap-2 text-purple-700 dark:text-purple-300 mb-3">
-                      <Sparkles className="w-5 h-5" />
-                      <p className="font-medium">{t('product.your_product')}</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button asChild variant="outline" className="flex-1">
-                        <Link href={`/product/${id}/edit`}>
-                          {t('product.edit_button')}
-                        </Link>
-                      </Button>
-                      <Button asChild className="flex-1">
-                        <Link href="/my-garden">
-                          {t('product.view_garden')}
-                        </Link>
-                      </Button>
-                    </div>
-                  </Card>
-                )}
+                  {/* Action Button */}
+                  <div className="pt-6 mt-6 border-t border-[#A6C6B9]/20">
+                    {isOwner ? (
+                      <div className="flex gap-4">
+                        <Button asChild variant="outline" className="flex-1 border-[#879385] text-[#879385] hover:bg-[#879385] hover:text-white font-serif text-lg h-12 rounded-full">
+                          <Link href={`/product/${id}/edit`}>
+                            {t('product.edit_button')}
+                          </Link>
+                        </Button>
+                        <Button asChild className="flex-1 bg-[#879385] hover:bg-[#7a8578] text-white font-serif text-lg h-12 rounded-full shadow-md hover:shadow-lg transition-all">
+                          <Link href="/my-garden">
+                            {t('product.view_garden')}
+                          </Link>
+                        </Button>
+                      </div>
+                    ) : (
+                      currentUser ? (
+                        <Button
+                          size="lg"
+                          className="w-full bg-[#879385] hover:bg-[#7a8578] text-white font-serif text-xl h-14 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1"
+                          onClick={() => setShowOfferModal(true)}
+                        >
+                          <Sparkles className="mr-2 h-6 w-6" />
+                          {t('product.interested_button')}
+                        </Button>
+                      ) : (
+                        <Button asChild className="w-full bg-[#A88C8F] hover:bg-[#8b6b6e] text-white font-serif text-lg h-12 rounded-full">
+                          <Link href="/login">
+                            {t('product.login_button')}
+                          </Link>
+                        </Button>
+                      )
+                    )}
+                  </div>
+
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Similar Products */}
+          {similarProducts.length > 0 && (
+            <div className="space-y-6 animate-fade-in-up">
+              <div className="flex items-center justify-between">
+                <h2 className="text-3xl font-display font-bold text-[#594a42] dark:text-[#d6c7b0]">
+                  {t('product.similar_products') || "Productos Similares"}
+                </h2>
+                <Link href="/products" className="text-[#879385] hover:underline font-serif">
+                  {t('product.view_all') || "Ver todos"}
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                {similarProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            </div>
+          )}
+
         </div>
       </div>
 
@@ -458,6 +433,7 @@ export default function ProductDetailPage() {
             isForExchange: product.isForExchange,
             isForSale: product.isForSale,
           }}
+          //   @ts-ignore
           onOfferSubmit={handleOfferSubmit}
         />
       )}

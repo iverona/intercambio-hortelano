@@ -144,6 +144,8 @@ export default {
   "product.login_button": "Iniciar Sesión",
   "product.edit_button": "Editar Producto",
   "product.view_garden": "Ver Mi Huerta",
+  "product.similar_products": "Productos Similares",
+  "product.view_all": "Ver Todo",
   "product.edit.loading": "Cargando...",
   "product.edit.title": "Editar Producto",
   "product.publish.title": "Publicar un Nuevo Producto",
