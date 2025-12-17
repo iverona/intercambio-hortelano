@@ -195,7 +195,7 @@ export default function ExchangesPage() {
   );
 
   // Calculate stats
-  const pendingCount = pendingExchanges.filter(e => e.ownerId === user?.uid).length;
+  const pendingCount = pendingExchanges.length;
   const totalExchanges = exchanges.length;
   const completedCount = exchanges.filter(e => e.status === "completed").length;
   const successRate = totalExchanges > 0
