@@ -4,7 +4,7 @@
 
 export default function Footer() {
   return (
-    <footer className="w-full py-8 px-6 flex flex-col md:flex-row justify-between items-end relative z-10 bg-[#FFFBE6] dark:bg-[#2C2A25] border-t border-[#879385]/20">
+    <footer className="w-full py-8 px-6 flex flex-col md:flex-row justify-between items-end relative z-10 bg-[#FFFBE6] dark:bg-[#2C2A25]">
       <div className="text-xs text-gray-500 dark:text-gray-400 font-sans mb-4 md:mb-0">
         © 2025 EcoAnuncios. Portal de Intercambio Hortelano.
       </div>

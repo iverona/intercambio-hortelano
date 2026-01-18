@@ -8,7 +8,7 @@ export default function Home() {
   const t = useI18n();
 
   return (
-    <div className="relative overflow-hidden bg-[#FFFBE6] dark:bg-[#2C2A25] min-h-[calc(100vh-64px)] flex flex-col items-center justify-center p-4 transition-colors duration-300">
+    <div className="relative overflow-hidden bg-[#FFFBE6] dark:bg-[#2C2A25] flex flex-col items-center py-8 px-4 transition-colors duration-300">
       {/* Background Blobs */}
       <div className="absolute top-0 left-0 w-64 h-64 bg-[#A6C6B9] dark:bg-[#4A5D54] rounded-full filter blur-3xl opacity-30 -translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#A88C8F] dark:bg-[#998676] rounded-full filter blur-3xl opacity-20 translate-x-1/3 translate-y-1/3 pointer-events-none"></div>
@@ -17,7 +17,7 @@ export default function Home() {
       <div className="max-w-4xl w-full flex flex-col items-center z-10 relative">
 
         {/* Organic Card Header */}
-        <div className="relative w-full max-w-2xl mx-auto mb-16 group">
+        <div className="relative w-full max-w-2xl mx-auto mb-10 group">
           {/* Shadow/Border Element */}
           <div className="absolute inset-0 bg-[#879385] dark:bg-[#5a6359] transform -rotate-2 rounded-sm shadow-lg" style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}></div>
 
@@ -58,7 +58,7 @@ export default function Home() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-col md:flex-row gap-6 mt-8 mb-16 items-center justify-center w-full">
+        <div className="flex flex-col md:flex-row gap-6 mt-8 mb-10 items-center justify-center w-full">
           <Link href="/publish" className="relative group">
             <div className="absolute inset-0 bg-[#A88C8F] rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
             <div
@@ -83,7 +83,7 @@ export default function Home() {
         </div>
 
         {/* Info Cards (Sticky Notes) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full px-4 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full px-4 mb-8">
           {/* Manifiesto */}
           <div className="bg-[#EFEAC6] dark:bg-[#4a463a] p-6 h-64 flex flex-col items-center justify-center text-center relative shadow-lg transform rotate-[-2deg] hover:rotate-0 hover:scale-105 transition-all duration-200">
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-24 h-8 bg-white/40 dark:bg-white/10 rotate-1 backdrop-blur-sm shadow-sm"></div>
