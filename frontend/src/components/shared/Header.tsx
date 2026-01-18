@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -55,7 +56,13 @@ const Header = () => {
 
         {/* Logo Section */}
         <Link href={`/${locale}`} className="flex items-center gap-2 group">
-          <Leaf className="text-[#879385] w-8 h-8 group-hover:rotate-12 transition-transform" />
+          <Image
+            src="/LogoEcoAnuncios.png"
+            alt="EcoAnuncios Logo"
+            width={50}
+            height={50}
+            className="h-10 w-auto object-contain group-hover:scale-105 transition-transform"
+          />
           <span className="font-display font-bold text-3xl text-gray-700 dark:text-gray-100">EcoAnuncios</span>
         </Link>
 

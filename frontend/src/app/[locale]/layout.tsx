@@ -40,7 +40,7 @@ export default async function RootLayout({
             <NotificationProvider>
               <div className="flex flex-col min-h-screen">
                 <Header />
-                <main className="flex-grow pb-20 md:pb-0">{children}</main>
+                <main className="flex-grow flex flex-col pb-20 md:pb-0">{children}</main>
                 <Footer />
                 <BottomNavigation />
               </div>

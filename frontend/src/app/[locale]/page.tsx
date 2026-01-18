@@ -48,10 +48,17 @@ export default function Home() {
           className="absolute -top-10 -right-8 md:-right-14 w-28 md:w-36 h-auto drop-shadow-xl transform rotate-12"
         />
 
-        {/* Title */}
-        <h1 className="font-display font-bold text-6xl md:text-8xl text-[#594a42] dark:text-[#d6c7b0] tracking-wide mb-2 text-center">
-          EcoAnuncios
-        </h1>
+        {/* Logo */}
+        <div className="flex justify-center mb-6">
+          <Image
+            src="/LogoEcoAnuncios.png"
+            alt="EcoAnuncios Logo"
+            width={400}
+            height={160}
+            className="w-3/4 max-w-sm h-auto object-contain"
+            priority
+          />
+        </div>
       </OrganicCard>
 
       {/* Action Buttons */}
