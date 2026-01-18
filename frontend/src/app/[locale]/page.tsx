@@ -2,7 +2,8 @@
 
 import { useI18n } from "@/locales/provider";
 import Link from "next/link";
-import { Leaf, User } from "lucide-react";
+
+import Image from "next/image";
 
 export default function Home() {
   const t = useI18n();
@@ -28,17 +29,23 @@ export default function Home() {
           >
             {/* Decorative Icons */}
             <div className="absolute -top-6 -left-8 md:-left-12 opacity-90 transform -rotate-12 pointer-events-none">
-              <Leaf className="w-20 h-20 text-[#6B8E23] dark:text-[#556B2F]" />
-              <Leaf className="w-16 h-16 text-[#556B2F] dark:text-[#384a1e] absolute top-4 left-4" />
+              <Image
+                src="/hojasolivo.png"
+                alt="Hojas de olivo"
+                width={100}
+                height={100}
+                className="w-24 h-auto object-contain"
+              />
             </div>
 
             {/* Badge */}
-            <div className="absolute -top-10 -right-8 md:-right-14 w-28 md:w-36 h-28 md:h-36 bg-[#A6C6B9] dark:bg-[#4A5D54] rounded-full flex items-center justify-center shadow-lg border-4 border-white dark:border-gray-800 transform rotate-12">
-              <div className="text-center p-2 flex flex-col items-center">
-                <Leaf className="text-white w-10 h-10 mb-1" />
-                <span className="text-[0.6rem] text-white uppercase tracking-widest font-bold block leading-tight">Sostenibilidad</span>
-              </div>
-            </div>
+            <Image
+              src="/SelloSostenibilidad.png"
+              alt="Sello de Sostenibilidad"
+              width={150}
+              height={150}
+              className="absolute -top-10 -right-8 md:-right-14 w-28 md:w-36 h-auto drop-shadow-xl transform rotate-12"
+            />
 
             {/* Title */}
             <h1 className="font-display font-bold text-6xl md:text-8xl text-[#594a42] dark:text-[#d6c7b0] tracking-wide mb-2 text-center">
@@ -88,8 +95,14 @@ export default function Home() {
           <div className="bg-[#EFEAC6] dark:bg-[#4a463a] p-6 h-64 flex flex-col items-center justify-center text-center relative shadow-lg transform rotate-[-2deg] hover:rotate-0 hover:scale-105 transition-all duration-200">
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-24 h-8 bg-white/40 dark:bg-white/10 rotate-1 backdrop-blur-sm shadow-sm"></div>
             <h3 className="font-serif text-2xl font-bold text-[#3E3B34] dark:text-[#EFEAC6] mb-2">Nuestro <br /> Manifiesto</h3>
-            <div className="mt-4 text-[#556B2F] dark:text-[#9FB380]">
-              <Leaf className="w-12 h-12 transform -rotate-12" />
+            <div className="mt-4">
+              <Image
+                src="/hojas.png"
+                alt="Manifiesto"
+                width={100}
+                height={100}
+                className="w-24 h-24 object-contain transform -rotate-12 opacity-90"
+              />
             </div>
           </div>
 
@@ -97,8 +110,14 @@ export default function Home() {
           <div className="bg-[#A88C8F] dark:bg-[#6b585a] p-6 h-64 flex flex-col items-center justify-center text-center relative shadow-lg text-white transform rotate-1 hover:rotate-0 hover:scale-105 transition-all duration-200">
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-24 h-8 bg-white/40 dark:bg-white/10 -rotate-1 backdrop-blur-sm shadow-sm"></div>
             <h3 className="font-serif text-2xl font-bold text-white mb-2">Cómo <br /> participar</h3>
-            <div className="mt-4 text-white">
-              <User className="w-12 h-12" />
+            <div className="mt-4">
+              <Image
+                src="/participar.png"
+                alt="Participar"
+                width={100}
+                height={100}
+                className="w-24 h-24 object-contain opacity-90"
+              />
             </div>
           </div>
 
@@ -106,8 +125,14 @@ export default function Home() {
           <div className="bg-[#879385] dark:bg-[#525b51] p-6 h-64 flex flex-col items-center justify-center text-center relative shadow-lg text-white transform rotate-2 hover:rotate-0 hover:scale-105 transition-all duration-200">
             <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-24 h-8 bg-white/40 dark:bg-white/10 rotate-2 backdrop-blur-sm shadow-sm"></div>
             <h3 className="font-serif text-2xl font-bold text-white mb-2">Nuestra <br /> Comunidad</h3>
-            <div className="mt-4 text-white flex gap-1 justify-center">
-              <User className="w-12 h-12" />
+            <div className="mt-4 flex gap-1 justify-center">
+              <Image
+                src="/gente.png"
+                alt="Comunidad"
+                width={100}
+                height={100}
+                className="w-24 h-24 object-contain opacity-90"
+              />
             </div>
           </div>
         </div>
