@@ -1,6 +1,6 @@
 "use client";
 
-import { Flower2 } from "lucide-react";
+
 
 export default function Footer() {
   return (
@@ -9,21 +9,23 @@ export default function Footer() {
         © 2025 EcoAnuncios. Portal de Intercambio Hortelano.
       </div>
 
-      <div className="flex flex-col items-center gap-4">
-        {/* Agroforja Badge */}
-        <div className="bg-white dark:bg-gray-200 px-4 py-2 shadow-sm rounded-sm flex items-center gap-2">
-          <Flower2 className="text-black w-4 h-4" />
-          <span className="font-serif text-black text-sm font-bold tracking-widest">agroforja</span>
+      <div className="flex flex-row items-center gap-4">
+        {/* Agroforja Logo */}
+        <div className="bg-white/80 dark:bg-white/90 p-2 rounded-lg shadow-sm backdrop-blur-sm hover:scale-105 transition-transform duration-300">
+          <img
+            src="/LogoAgroforja.png"
+            alt="Agroforja"
+            className="h-12 w-auto object-contain"
+          />
         </div>
 
-        {/* Animated Circle Element */}
-        <div className="relative w-24 h-24 bg-white dark:bg-gray-200 rounded-full shadow-lg flex items-center justify-center overflow-hidden border-2 border-gray-100">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-16 h-16 bg-blue-400 rounded-full relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-full bg-green-500 rounded-full transform scale-110 opacity-70" style={{ clipPath: 'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)' }}></div>
-            </div>
-          </div>
-
+        {/* Amigos de la Tierra Logo */}
+        <div className="bg-white/80 dark:bg-white/90 p-2 rounded-lg shadow-sm backdrop-blur-sm hover:scale-105 transition-transform duration-300">
+          <img
+            src="/LogoAmigosTierra.png"
+            alt="Amigos de la Tierra"
+            className="h-24 w-auto object-contain"
+          />
         </div>
       </div>
     </footer>
