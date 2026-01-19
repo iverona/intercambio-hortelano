@@ -5,20 +5,20 @@ import {
     onSnapshot,
     QuerySnapshot,
     DocumentData,
-    query,
-    where,
     getDocs,
     doc,
     addDoc,
     serverTimestamp,
     updateDoc
 } from "firebase/firestore";
+import { query, where } from "firebase/firestore";
 import { storage } from "@/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export const ProductService = {
     subscribeToProducts: (callback: (products: Product[]) => void) => {
-        const unsubscribe = onSnapshot(collection(db, "products"), (snapshot: QuerySnapshot<DocumentData>) => {
+        const q = query(collection(db, "products"), where("deleted", "==", false));
+        const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
             const productsData = snapshot.docs.map((doc) => {
                 const data = doc.data();
                 return {
