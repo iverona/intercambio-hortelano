@@ -17,7 +17,6 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   fetchSignInMethodsForEmail,
-  GoogleAuthProvider,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
@@ -26,6 +25,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useI18n } from "@/locales/provider";
+import { OrganicBackground } from "@/components/shared/OrganicBackground";
 
 export default function SignupPage() {
   const t = useI18n();
@@ -97,12 +97,12 @@ export default function SignupPage() {
   };
 
   return (
-    <>
+    <OrganicBackground className="justify-center">
       <Dialog open={showGoogleDialog} onOpenChange={setShowGoogleDialog}>
-        <DialogContent>
+        <DialogContent className="bg-card text-card-foreground border-border">
           <DialogHeader>
             <DialogTitle>{t('signup.account_exists_title')}</DialogTitle>
-            <DialogDescription>
+            <DialogDescription className="text-muted-foreground">
               {t('signup.account_exists_description')}
             </DialogDescription>
           </DialogHeader>
@@ -117,7 +117,7 @@ export default function SignupPage() {
             <Button 
               onClick={handleGoogleSignIn} 
               disabled={googleLoading} 
-              className="flex items-center gap-2 w-full sm:w-auto"
+              className="flex items-center gap-2 w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <Chrome size={18} />
               {t('signup.signin_with_google')}
@@ -126,15 +126,14 @@ export default function SignupPage() {
         </DialogContent>
       </Dialog>
 
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md shadow-xl border-border bg-card text-card-foreground">
         <CardHeader>
-          <CardTitle>{t('signup.title')}</CardTitle>
+          <CardTitle className="text-foreground font-display text-2xl">{t('signup.title')}</CardTitle>
         </CardHeader>
         <CardContent>
           {isSubmitted ? (
             <div className="text-center">
-              <p>
+              <p className="text-foreground">
                 {t('signup.success_message')}
               </p>
             </div>
@@ -142,65 +141,68 @@ export default function SignupPage() {
             <>
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">{t('signup.name_label')}</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder={t('signup.name_placeholder')}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">{t('signup.email_label')}</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="m@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">{t('signup.password_label')}</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password">{t('signup.confirm_password_label')}</Label>
-              <Input
-                id="confirm-password"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-            </div>
-            {(error || googleError) && <p className="text-red-500 text-sm">{error || googleError}</p>}
-            <Button type="submit" className="w-full">
-              {t('signup.signup_button')}
-            </Button>
-          </form>
-          <div className="mt-4 text-center text-sm">
-            {t('signup.or')}
-          </div>
-          <Button onClick={handleGoogleAuth} disabled={googleLoading} className="w-full mt-4 flex items-center gap-2">
-            <Chrome size={18} />
-            {t('signup.google_button')}
-          </Button>
-          <div className="mt-4 text-center">
-            <Link href="/login" className="text-sm text-blue-600 hover:underline">
-              {t('signup.login_prompt')}
-            </Link>
-          </div>
+                  <Label htmlFor="name" className="text-foreground">{t('signup.name_label')}</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder={t('signup.name_placeholder')}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="bg-background/50 border-input"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-foreground">{t('signup.email_label')}</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-background/50 border-input"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-foreground">{t('signup.password_label')}</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-background/50 border-input"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="confirm-password" className="text-foreground">{t('signup.confirm_password_label')}</Label>
+                  <Input
+                    id="confirm-password"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="bg-background/50 border-input"
+                  />
+                </div>
+                {(error || googleError) && <p className="text-destructive text-sm">{error || googleError}</p>}
+                <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+                  {t('signup.signup_button')}
+                </Button>
+              </form>
+              <div className="mt-4 text-center text-sm text-muted-foreground">
+                {t('signup.or')}
+              </div>
+              <Button onClick={handleGoogleAuth} disabled={googleLoading} className="w-full mt-4 flex items-center gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/90">
+                <Chrome size={18} />
+                {t('signup.google_button')}
+              </Button>
+              <div className="mt-4 text-center">
+                <Link href="/login" className="text-sm text-primary hover:underline font-semibold">
+                  {t('signup.login_prompt')}
+                </Link>
+              </div>
             </>
           )}
         </CardContent>
-        </Card>
-      </div>
-    </>
+      </Card>
+    </OrganicBackground>
   );
 }
