@@ -17,6 +17,7 @@ export default function Home() {
       <OrganicCard
         className="w-full max-w-2xl mx-auto mb-10"
         rotate={1}
+        showOverflow={true}
         overlay={
           <div
             className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-11/12 md:w-full bg-[#FFFBE6] dark:bg-[#e0dcc7] py-3 px-6 shadow-md text-center rotate-[-1deg] transition-transform duration-300"

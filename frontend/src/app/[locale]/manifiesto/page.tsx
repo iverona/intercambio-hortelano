@@ -20,12 +20,13 @@ export default function Manifest() {
             <OrganicCard
                 className="w-full max-w-3xl mx-auto mb-10"
                 rotate={1}
+                showOverflow={true}
             >
                 {/* Decorative Icons */}
                 <div className="absolute -top-6 -right-6 md:-right-10 opacity-90 transform rotate-12 pointer-events-none">
                     <Image
-                        src="/hojasolivo.png"
-                        alt="Hojas de olivo"
+                        src="/hojas.png"
+                        alt="Hojas decorativas"
                         width={100}
                         height={100}
                         className="w-24 h-auto object-contain"

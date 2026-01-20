@@ -20,6 +20,7 @@ export default function ComoParticipar() {
             <OrganicCard
                 className="w-full max-w-3xl mx-auto mb-10"
                 rotate={-1}
+                showOverflow={true}
             >
                 {/* Decorative Icons */}
                 <div className="absolute -top-6 -left-6 md:-left-10 opacity-90 transform -rotate-12 pointer-events-none">

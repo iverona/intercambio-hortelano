@@ -9,6 +9,7 @@ interface OrganicCardProps {
   shadowColor?: string;
   rotate?: number;
   overlay?: React.ReactNode;
+  showOverflow?: boolean;
 }
 
 export function OrganicCard({
@@ -17,7 +18,8 @@ export function OrganicCard({
   contentClassName,
   shadowColor = "bg-primary ",
   rotate = 1,
-  overlay
+  overlay,
+  showOverflow = false
 }: OrganicCardProps) {
   const organicRadius = '255px 15px 225px 15px / 15px 225px 15px 255px';
 
@@ -35,7 +37,8 @@ export function OrganicCard({
       {/* Main Card Content */}
       <div
         className={cn(
-          "relative bg-card p-10 md:p-16 shadow-xl flex flex-col items-center justify-center border border-gray-100 dark:border-gray-700 transition-transform duration-300 overflow-hidden",
+          "relative bg-card p-10 md:p-16 shadow-xl flex flex-col items-center justify-center border border-gray-100 dark:border-gray-700 transition-transform duration-300",
+          !showOverflow && "overflow-hidden",
           contentClassName
         )}
         style={{
