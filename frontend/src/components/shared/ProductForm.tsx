@@ -159,7 +159,7 @@ export default function ProductForm({
       {/* Product Name Section */}
       <div className="space-y-3 md:space-y-4">
         <div className="flex items-center gap-2 md:gap-3">
-          <div className="p-1.5 md:p-2 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-lg shadow-md flex-shrink-0">
+          <div className="p-1.5 md:p-2 bg-primary rounded-lg shadow-md flex-shrink-0">
             <Package className="w-4 h-4 md:w-5 md:h-5 text-white" />
           </div>
           <div className="min-w-0">
@@ -184,11 +184,11 @@ export default function ProductForm({
       {/* Decorative divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+          <div className="w-full border-t border-primary/20"></div>
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-white dark:bg-gray-800 px-4">
-            <Leaf className="w-5 h-5 text-green-500" />
+          <span className="bg-background px-4">
+            <Leaf className="w-5 h-5 text-primary" />
           </span>
         </div>
       </div>
@@ -196,7 +196,7 @@ export default function ProductForm({
       {/* Description Section */}
       <div className="space-y-3 md:space-y-4">
         <div className="flex items-center gap-2 md:gap-3">
-          <div className="p-1.5 md:p-2 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg shadow-md flex-shrink-0">
+          <div className="p-1.5 md:p-2 bg-secondary rounded-lg shadow-md flex-shrink-0">
             <MessageSquare className="w-4 h-4 md:w-5 md:h-5 text-white" />
           </div>
           <div className="min-w-0">
@@ -222,11 +222,11 @@ export default function ProductForm({
       {/* Decorative divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+          <div className="w-full border-t border-primary/20"></div>
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-white dark:bg-gray-800 px-4">
-            <Leaf className="w-5 h-5 text-green-500" />
+          <span className="bg-background px-4">
+            <Leaf className="w-5 h-5 text-primary" />
           </span>
         </div>
       </div>
@@ -234,7 +234,7 @@ export default function ProductForm({
       {/* Category Section */}
       <div className="space-y-3 md:space-y-4">
         <div className="flex items-center gap-2 md:gap-3">
-          <div className="p-1.5 md:p-2 bg-gradient-to-br from-orange-500 to-red-500 rounded-lg shadow-md flex-shrink-0">
+          <div className="p-1.5 md:p-2 bg-tertiary rounded-lg shadow-md flex-shrink-0">
             <Tag className="w-4 h-4 md:w-5 md:h-5 text-white" />
           </div>
           <div className="min-w-0">
@@ -263,11 +263,11 @@ export default function ProductForm({
       {/* Decorative divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+          <div className="w-full border-t border-primary/20"></div>
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-white dark:bg-gray-800 px-4">
-            <Leaf className="w-5 h-5 text-green-500" />
+          <span className="bg-background px-4">
+            <Leaf className="w-5 h-5 text-primary" />
           </span>
         </div>
       </div>
@@ -275,7 +275,7 @@ export default function ProductForm({
       {/* Images Section */}
       <div className="space-y-3 md:space-y-4">
         <div className="flex items-center gap-2 md:gap-3">
-          <div className="p-1.5 md:p-2 bg-gradient-to-br from-green-500 to-emerald-500 rounded-lg shadow-md flex-shrink-0">
+          <div className="p-1.5 md:p-2 bg-accent rounded-lg shadow-md flex-shrink-0">
             <Camera className="w-4 h-4 md:w-5 md:h-5 text-white" />
           </div>
           <div className="min-w-0">
@@ -287,7 +287,7 @@ export default function ProductForm({
             </p>
           </div>
         </div>
-        
+
         {imageSources.length > 0 && (
           <Carousel className="w-full max-w-md mx-auto">
             <CarouselContent>
@@ -319,23 +319,22 @@ export default function ProductForm({
             <CarouselNext />
           </Carousel>
         )}
-        
+
         {imageSources.length < 4 && (
           <div
             className="flex items-center justify-center w-full"
             onClick={() => !isSubmitting && !isCompressing && fileInputRef.current?.click()}
           >
-            <div className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl transition-all duration-300 ${
-              isSubmitting || isCompressing 
-                ? 'cursor-not-allowed bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700' 
-                : 'cursor-pointer hover:bg-gradient-to-br hover:from-green-50 hover:to-emerald-50 dark:hover:from-green-950/20 dark:hover:to-emerald-950/20 hover:border-green-300 dark:hover:border-green-700 border-gray-300 dark:border-gray-700'
-            }`}>
+            <div className={`flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl transition-all duration-300 ${isSubmitting || isCompressing
+              ? 'cursor-not-allowed bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700'
+              : 'cursor-pointer hover:bg-gradient-to-br hover:from-green-50 hover:to-emerald-50 dark:hover:from-green-950/20 dark:hover:to-emerald-950/20 hover:border-green-300 dark:hover:border-green-700 border-gray-300 dark:border-gray-700'
+              }`}>
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 {isCompressing ? (
-                  <Loader2 className="w-10 h-10 mb-4 text-green-500 animate-spin" />
+                  <Loader2 className="w-10 h-10 mb-4 text-primary animate-spin" />
                 ) : (
-                  <div className="p-3 bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900 dark:to-emerald-900 rounded-full mb-4">
-                    <Upload className="w-6 h-6 text-green-600 dark:text-green-400" />
+                  <div className="p-3 bg-primary/10 dark:bg-primary/20 rounded-full mb-4">
+                    <Upload className="w-6 h-6 text-primary" />
                   </div>
                 )}
                 <p className="mb-2 text-sm text-gray-700 dark:text-gray-300">
@@ -365,11 +364,11 @@ export default function ProductForm({
       {/* Decorative divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
+          <div className="w-full border-t border-primary/20"></div>
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-white dark:bg-gray-800 px-4">
-            <Leaf className="w-5 h-5 text-green-500" />
+          <span className="bg-background px-4">
+            <Leaf className="w-5 h-5 text-primary" />
           </span>
         </div>
       </div>
@@ -384,24 +383,22 @@ export default function ProductForm({
             {t('product.form.error.no_transaction_type')}
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
           {/* Exchange Card */}
           <Card
-            className={`p-3 md:p-5 cursor-pointer transition-all duration-300 border-2 ${
-              isForExchange
-                ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-green-500 dark:border-green-600 shadow-lg'
-                : 'hover:border-green-300 dark:hover:border-green-700 hover:bg-green-50/50 dark:hover:bg-green-950/10'
-            } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`p-3 md:p-5 cursor-pointer transition-all duration-300 border-2 ${isForExchange
+              ? 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-green-500 dark:border-green-600 shadow-lg'
+              : 'hover:border-green-300 dark:hover:border-green-700 hover:bg-green-50/50 dark:hover:bg-green-950/10'
+              } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={() => !isSubmitting && setIsForExchange(!isForExchange)}
           >
             <div className="flex items-center gap-2 md:gap-3">
-              <div className={`p-1.5 md:p-2 rounded-lg transition-all flex-shrink-0 ${
-                isForExchange 
-                  ? 'bg-gradient-to-br from-green-500 to-emerald-500 shadow-md' 
-                  : 'bg-green-100 dark:bg-green-900'
-              }`}>
-                <ArrowRightLeft className={`w-4 h-4 md:w-5 md:h-5 ${isForExchange ? 'text-white' : 'text-green-600 dark:text-green-400'}`} />
+              <div className={`p-1.5 md:p-2 rounded-lg transition-all flex-shrink-0 ${isForExchange
+                ? 'bg-primary shadow-md'
+                : 'bg-primary/10'
+                }`}>
+                <ArrowRightLeft className={`w-4 h-4 md:w-5 md:h-5 ${isForExchange ? 'text-white' : 'text-primary'}`} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className={`text-sm md:text-base font-semibold ${isForExchange ? 'text-green-700 dark:text-green-300' : 'text-gray-900 dark:text-gray-100'}`}>
@@ -411,11 +408,10 @@ export default function ProductForm({
                   Trade with other gardeners
                 </p>
               </div>
-              <div className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                isForExchange 
-                  ? 'border-green-500 bg-green-500' 
-                  : 'border-gray-300 dark:border-gray-600'
-              }`}>
+              <div className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isForExchange
+                ? 'border-primary bg-primary'
+                : 'border-primary/30'
+                }`}>
                 {isForExchange && <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></div>}
               </div>
             </div>
@@ -423,20 +419,18 @@ export default function ProductForm({
 
           {/* Sale Card */}
           <Card
-            className={`p-3 md:p-5 cursor-pointer transition-all duration-300 border-2 ${
-              isForSale
-                ? 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-500 dark:border-blue-600 shadow-lg'
-                : 'hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/50 dark:hover:bg-blue-950/10'
-            } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`p-3 md:p-5 cursor-pointer transition-all duration-300 border-2 ${isForSale
+              ? 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-500 dark:border-blue-600 shadow-lg'
+              : 'hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/50 dark:hover:bg-blue-950/10'
+              } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
             onClick={() => !isSubmitting && setIsForSale(!isForSale)}
           >
             <div className="flex items-center gap-2 md:gap-3">
-              <div className={`p-1.5 md:p-2 rounded-lg transition-all flex-shrink-0 ${
-                isForSale 
-                  ? 'bg-gradient-to-br from-blue-500 to-indigo-500 shadow-md' 
-                  : 'bg-blue-100 dark:bg-blue-900'
-              }`}>
-                <DollarSign className={`w-4 h-4 md:w-5 md:h-5 ${isForSale ? 'text-white' : 'text-blue-600 dark:text-blue-400'}`} />
+              <div className={`p-1.5 md:p-2 rounded-lg transition-all flex-shrink-0 ${isForSale
+                ? 'bg-secondary'
+                : 'bg-secondary/10'
+                }`}>
+                <DollarSign className={`w-4 h-4 md:w-5 md:h-5 ${isForSale ? 'text-white' : 'text-secondary'}`} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className={`text-sm md:text-base font-semibold ${isForSale ? 'text-blue-700 dark:text-blue-300' : 'text-gray-900 dark:text-gray-100'}`}>
@@ -446,11 +440,10 @@ export default function ProductForm({
                   Sell for money
                 </p>
               </div>
-              <div className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                isForSale 
-                  ? 'border-blue-500 bg-blue-500' 
-                  : 'border-gray-300 dark:border-gray-600'
-              }`}>
+              <div className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isForSale
+                ? 'border-secondary bg-secondary'
+                : 'border-secondary/30'
+                }`}>
                 {isForSale && <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></div>}
               </div>
             </div>
@@ -466,15 +459,21 @@ export default function ProductForm({
       )}
 
       {/* Submit Button */}
-      <Button 
-        onClick={handleSubmit} 
-        className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg hover:shadow-xl transition-all" 
-        disabled={isSubmitting}
-        size="lg"
-      >
-        {isSubmitting && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-        {isEdit ? t('product.form.save_button') : t('product.form.publish_button')}
-      </Button>
+      <div className="relative group pt-4">
+        <div
+          className="absolute inset-0 bg-secondary/30 blur-xl opacity-0 group-hover:opacity-100 transition-opacity"
+          style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}
+        ></div>
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full bg-secondary hover:bg-secondary/90 text-white shadow-lg hover:shadow-xl transition-all py-6 md:py-8 h-auto font-serif text-xl md:text-2xl font-bold relative z-10"
+          style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}
+        >
+          {isSubmitting && <Loader2 className="mr-3 h-6 w-6 animate-spin" />}
+          {isEdit ? t('product.form.save_button') : t('product.form.publish_button')}
+        </Button>
+      </div>
     </form>
   );
 }
