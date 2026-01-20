@@ -10,6 +10,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { ProducerAvatar } from "@/components/shared/ProducerAvatar";
 
+import { cn } from "@/lib/utils";
+
 interface ProductCardProps {
   product: {
     id: string;
@@ -28,12 +30,14 @@ interface ProductCardProps {
   };
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
+  className?: string; // Allow style overrides
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
   product,
   onEdit,
   onDelete,
+  className,
 }) => {
   const t = useI18n();
   const [producer, setProducer] = useState<{ name: string; avatarUrl?: string; address?: string } | null>(null);
@@ -99,7 +103,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const timeInfo = getTimeAgo(product.createdAt);
 
   return (
-    <Card className="group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800">
+    <Card className={cn("group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800", className)}>
       {/* Favorite button */}
       <button className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white dark:hover:bg-gray-700">
         <Heart className="w-4 h-4 text-gray-600 dark:text-gray-300 hover:text-red-500 transition-colors" />
