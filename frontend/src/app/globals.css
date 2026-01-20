@@ -29,9 +29,9 @@
   --color-sage-dark: #4A5D54;
 
   /* Fonts */
-  --font-display: "Amatic SC", cursive;
+  --font-display: "Nunito", sans-serif;
   --font-sans: "Nunito", sans-serif;
-  --font-serif: "Merriweather", serif;
+  --font-serif: "Nunito", sans-serif;
 
   /* Standard Tailwind Overrides for shadcn/ui mapped to new palette */
   --color-background: var(--background);
