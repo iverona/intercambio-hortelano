@@ -1,11 +1,5 @@
 import type { Metadata } from "next";
 import "../globals.css";
-// Load Google Fonts
-import { Inter } from 'next/font/google';
-
-// Note: In Next.js 13+ with App Router, we should ideally use next/font, but for speed with multiple weights/styles from Stitch, 
-// and to match the HTML exactly, we can inject the link in the layout or use the font optimization. 
-// However, adding the link tag to the head is a quick way to ensure all styles are available as per the design.
 
 import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
