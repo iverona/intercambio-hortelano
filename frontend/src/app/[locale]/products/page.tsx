@@ -20,6 +20,7 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { Product } from "@/types/product";
 import { useProducts } from "@/hooks/useProducts";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
+import { OrganicCard } from "@/components/shared/OrganicCard";
 
 // Skeleton loader component
 const ProductSkeleton = () => (
@@ -75,63 +76,57 @@ export default function ProductsPage() {
     <OrganicBackground className="py-12">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="mb-10">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 gap-4">
-            <div>
-              <h1 className="text-4xl font-hand font-bold text-gray-900 dark:text-gray-100">
+        <div className="flex justify-center mb-16">
+          <OrganicCard
+            className="w-full max-w-3xl"
+            rotate={-1}
+            overlay={
+              <div
+                className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-11/12 md:w-full bg-[#FFFBE6] dark:bg-[#e0dcc7] py-3 px-6 shadow-md text-center rotate-[1deg] transition-transform duration-300"
+                style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}
+              >
+                <p className="font-serif text-[#3e3b34] text-lg md:text-xl italic">
+                  {loading ? (
+                    <span className="inline-block w-32 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></span>
+                  ) : (
+                    <>
+                      {filters.searchTerm
+                        ? t('home.products.showing_with_search', { count: products.length, searchTerm: filters.searchTerm })
+                        : t('home.products.showing', { count: products.length })}
+                    </>
+                  )}
+                </p>
+              </div>
+            }
+          >
+            <div className="text-center">
+              <h1 className="text-4xl md:text-5xl font-hand font-bold text-gray-900 dark:text-gray-100 mb-4">
                 {t('home.products.title')}
               </h1>
-              <p className="mt-2 text-gray-600 dark:text-gray-400 font-sans">
-                {loading ? (
-                  <span className="inline-block w-32 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></span>
-                ) : (
-                  <>
-                    {filters.searchTerm
-                      ? t('home.products.showing_with_search', { count: products.length, searchTerm: filters.searchTerm })
-                      : t('home.products.showing', { count: products.length })}
-                  </>
-                )}
-              </p>
-            </div>
 
-            <div className="flex gap-4 items-center w-full md:w-auto">
-              {/* Filter component handled in Header */}
-            </div>
-          </div>
-
-          {/* Filter badges */}
-          {(filters.categories.length > 0 || filters.distance < 100) && (
-            <div className="flex gap-2 flex-wrap mb-6">
-              {filters.categories.map(cat => (
-                <Badge key={cat} variant="secondary" className="capitalize">
-                  {cat}
-                </Badge>
-              ))}
-              {filters.distance < 100 && (
-                <Badge variant="secondary" className="flex items-center gap-1">
-                  <MapPin className="w-3 h-3" />
-                  {t('home.products.filters.within', { distance: filters.distance })}
-                </Badge>
+              {/* Filter badges */}
+              {(filters.categories.length > 0 || filters.distance < 100) && (
+                <div className="flex gap-2 flex-wrap justify-center mt-4">
+                  {filters.categories.map(cat => (
+                    <Badge key={cat} variant="secondary" className="capitalize bg-green-100/50 text-green-800 border-green-200">
+                      {cat}
+                    </Badge>
+                  ))}
+                  {filters.distance < 100 && (
+                    <Badge variant="secondary" className="flex items-center gap-1 bg-green-100/50 text-green-800 border-green-200">
+                      <MapPin className="w-3 h-3" />
+                      {t('home.products.filters.within', { distance: filters.distance })}
+                    </Badge>
+                  )}
+                </div>
               )}
             </div>
-          )}
-
-          {/* Decorative divider */}
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
-            </div>
-            <div className="relative flex justify-center">
-              <span className="bg-background px-4">
-                <Leaf className="w-5 h-5 text-primary" />
-              </span>
-            </div>
-          </div>
+          </OrganicCard>
         </div>
 
         {/* Products Grid or Loading State */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4">
             {[...Array(8)].map((_, i) => (
               <ProductSkeleton key={i} />
             ))}
@@ -153,9 +148,17 @@ export default function ProductsPage() {
             }
           />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12 px-4">
             {products.map((product, index) => (
-              <AnimatedProductCard key={product.id} product={product} index={index} />
+              <OrganicCard
+                key={product.id}
+                className="h-full"
+                contentClassName="p-0 border-0"
+                rotate={index % 2 === 0 ? 1 : -1}
+                shadowColor="bg-[#A88C8F]" // Using the organic color from homepage
+              >
+                <ProductCard product={product} />
+              </OrganicCard>
             ))}
           </div>
         )}

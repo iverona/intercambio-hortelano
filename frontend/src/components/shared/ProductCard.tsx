@@ -62,13 +62,20 @@ const ProductCard: React.FC<ProductCardProps> = ({
   // Category colors mapping
   const getCategoryColor = (category?: string) => {
     const colors: { [key: string]: string } = {
-      vegetables: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-      fruits: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
-      herbs: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
-      flowers: "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200",
-      seeds: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
-      tools: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200",
-      other: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+      // Vegetables / Herbs -> Sage Green
+      vegetables: "bg-[#879385] text-white",
+      herbs: "bg-[#879385] text-white",
+
+      // Fruits / Flowers -> Dusty Rose
+      fruits: "bg-[#A88C8F] text-white",
+      flowers: "bg-[#A88C8F] text-white",
+
+      // Seeds / Other -> Pale Yellow (needs dark text)
+      seeds: "bg-[#EFEAC6] text-[#3E3B34]",
+      other: "bg-[#EFEAC6] text-[#3E3B34]",
+
+      // Tools -> Muted Stone/Grey
+      tools: "bg-[#9CA3AF] text-white",
     };
     return colors[category?.toLowerCase() || "other"] || colors.other;
   };
@@ -79,7 +86,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     const date = new Date(createdAt.seconds * 1000);
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) return { text: "Just now", isNew: true };
     if (diffInHours < 24) return { text: `${diffInHours}h ago`, isNew: true };
     const diffInDays = Math.floor(diffInHours / 24);
@@ -102,7 +109,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <Link href={`/product/${product.id}`} className="block relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
         {/* Gradient overlay - lighter and only at bottom */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent z-10"></div>
-        
+
         {/* Badges positioned on image */}
         <div className="absolute top-3 left-3 z-20 flex flex-wrap gap-2">
           {product.category && (
@@ -111,7 +118,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </Badge>
           )}
           {timeInfo.isNew && (
-            <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white border-0 shadow-sm">
+            <Badge className="bg-[#EFEAC6] text-[#3E3B34] border-0 shadow-sm">
               <Clock className="w-3 h-3 mr-1" />
               {t('home.products.new_badge')}
             </Badge>
@@ -121,13 +128,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
         {/* Price/Exchange badges in bottom right of image */}
         <div className="absolute bottom-3 right-3 z-20 flex gap-2">
           {product.isForExchange && (
-            <Badge className="bg-emerald-500/90 text-white border-0 shadow-lg backdrop-blur-sm">
+            <Badge className="bg-[#879385] text-white border-0 shadow-lg backdrop-blur-sm">
               <Leaf className="w-3 h-3 mr-1" />
               Exchange
             </Badge>
           )}
           {product.isForSale && (
-            <Badge className="bg-blue-500/90 text-white border-0 shadow-lg backdrop-blur-sm">
+            <Badge className="bg-[#A88C8F] text-white border-0 shadow-lg backdrop-blur-sm">
               <DollarSign className="w-3 h-3 mr-1" />
               {t('product.form.for_sale_label')}
             </Badge>
@@ -153,7 +160,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {product.name}
           </h3>
         </Link>
-        
+
         <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2 min-h-[2.5rem]">
           {product.description}
         </p>
@@ -163,11 +170,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
             <div className="flex items-center gap-3">
               <Link href={`/producers/${product.userId}`} className="shrink-0 group/avatar">
-                <ProducerAvatar 
-                  avatarUrl={producer.avatarUrl} 
-                  name={producer.name} 
-                  size="sm" 
-                  className="w-8 h-8 ring-2 ring-white dark:ring-gray-800 shadow-sm group-hover/avatar:ring-green-500/50 transition-all" 
+                <ProducerAvatar
+                  avatarUrl={producer.avatarUrl}
+                  name={producer.name}
+                  size="sm"
+                  className="w-8 h-8 ring-2 ring-white dark:ring-gray-800 shadow-sm group-hover/avatar:ring-green-500/50 transition-all"
                 />
               </Link>
               <div className="min-w-0 flex-1">

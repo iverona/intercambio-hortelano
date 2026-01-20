@@ -163,7 +163,7 @@ export default {
   "product.form.picture_label": "Foto del Producto",
   "product.form.transaction_type_label": "Tipo de Transacción",
   "product.form.for_exchange_label": "Para Intercambio",
-  "product.form.for_sale_label": "En Venta",
+  "product.form.for_sale_label": "Venta",
   "product.form.price_label": "Precio",
   "product.form.price_placeholder": "ej., 5.00",
   "product.form.error.no_category": "Por favor, selecciona una categoría.",

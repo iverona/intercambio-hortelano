@@ -1,8 +1,11 @@
 import React from "react";
 
+import { cn } from "@/lib/utils";
+
 interface OrganicCardProps {
   children: React.ReactNode;
   className?: string;
+  contentClassName?: string;
   shadowColor?: string;
   rotate?: number;
   overlay?: React.ReactNode;
@@ -10,7 +13,8 @@ interface OrganicCardProps {
 
 export function OrganicCard({
   children,
-  className = "",
+  className,
+  contentClassName,
   shadowColor = "bg-primary ",
   rotate = 1,
   overlay
@@ -18,10 +22,10 @@ export function OrganicCard({
   const organicRadius = '255px 15px 225px 15px / 15px 225px 15px 255px';
 
   return (
-    <div className={`relative group ${className}`}>
+    <div className={cn("relative group", className)}>
       {/* Shadow/Border Element */}
       <div
-        className={`absolute inset-0 ${shadowColor} rounded-sm shadow-lg transition-transform duration-300`}
+        className={cn("absolute inset-0 rounded-sm shadow-lg transition-transform duration-300", shadowColor)}
         style={{
           borderRadius: organicRadius,
           transform: `rotate(-${rotate * 2}deg)`
@@ -30,7 +34,10 @@ export function OrganicCard({
 
       {/* Main Card Content */}
       <div
-        className="relative bg-card p-10 md:p-16 shadow-xl flex flex-col items-center justify-center border border-gray-100 dark:border-gray-700 transition-transform duration-300"
+        className={cn(
+          "relative bg-card p-10 md:p-16 shadow-xl flex flex-col items-center justify-center border border-gray-100 dark:border-gray-700 transition-transform duration-300 overflow-hidden",
+          contentClassName
+        )}
         style={{
           borderRadius: organicRadius,
           transform: `rotate(${rotate}deg)`
