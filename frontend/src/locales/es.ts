@@ -574,5 +574,7 @@ export default {
       title: 'Aún no hay productos',
       subtitle: 'Este productor todavía no ha publicado ningún producto para la venta o el intercambio.'
     }
-  }
+  },
+  "footer.privacy": "Privacidad",
+  "privacy.title": "Política de Privacidad"
 } as const;

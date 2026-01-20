@@ -572,4 +572,6 @@ export default {
       subtitle: 'This producer has not listed any products for sale or exchange yet.',
     },
   },
+  "footer.privacy": "Privacy",
+  "privacy.title": "Privacy Policy"
 } as const;
