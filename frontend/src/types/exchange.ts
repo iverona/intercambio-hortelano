@@ -1,7 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 
 export type ExchangeStatus = "pending" | "accepted" | "rejected" | "completed";
-export type OfferType = "exchange" | "purchase" | "chat";
+export type OfferType = "exchange" | "chat";
 
 export interface Message {
     id: string;
@@ -14,7 +14,6 @@ export interface ExchangeOffer {
     type: OfferType;
     offeredProductId?: string;
     offeredProductName?: string;
-    amount?: number;
     message?: string;
 }
 
@@ -35,9 +34,9 @@ export interface ExchangeUser {
 
 export interface ExchangeProduct {
     id: string;
-    title: string;
+    name: string;
     description: string;
-    images: string[];
+    imageUrls: string[];
     category: string;
     condition: string;
 }

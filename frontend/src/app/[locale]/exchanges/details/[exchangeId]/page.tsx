@@ -68,9 +68,6 @@ export default function ExchangeDetailsPage() {
         if (exchange.offer.offeredProductName) {
           acceptMetadata.offeredProductName = exchange.offer.offeredProductName;
         }
-        if (exchange.offer.amount) {
-          acceptMetadata.offerAmount = exchange.offer.amount;
-        }
       }
 
       await createNotification({
@@ -106,9 +103,6 @@ export default function ExchangeDetailsPage() {
         rejectMetadata.offerType = exchange.offer.type;
         if (exchange.offer.offeredProductName) {
           rejectMetadata.offeredProductName = exchange.offer.offeredProductName;
-        }
-        if (exchange.offer.amount) {
-          rejectMetadata.offerAmount = exchange.offer.amount;
         }
       }
 
@@ -186,8 +180,6 @@ export default function ExchangeDetailsPage() {
     switch (type) {
       case 'exchange':
         return <ArrowRightLeft className="w-5 h-5" />;
-      case 'purchase':
-        return <DollarSign className="w-5 h-5" />;
       case 'chat':
         return <MessageSquare className="w-5 h-5" />;
       default:
@@ -325,10 +317,10 @@ export default function ExchangeDetailsPage() {
             {/* Product Card */}
             <Card className="bg-[#FDFBF7] dark:bg-[#2e2c28] border-[#EFEAC6] dark:border-[#4a463a] shadow-sm overflow-hidden">
               <div className="aspect-video w-full bg-[#EFEAC6] dark:bg-[#4a463a] relative">
-                {exchange.product?.images?.[0] ? (
+                {exchange.product?.imageUrls?.[0] ? (
                   <img
-                    src={exchange.product.images[0]}
-                    alt={exchange.productName}
+                    src={exchange.product.imageUrls[0]}
+                    alt={exchange.product.name || exchange.productName}
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -351,7 +343,7 @@ export default function ExchangeDetailsPage() {
                     {exchange.product.description}
                   </p>
                 )}
-                
+
                 {/* Show Owner Info ONLY if current user is NOT the owner (i.e. I am the requester looking at someone else's product) */}
                 {!isOwner && (
                   <>
@@ -398,9 +390,6 @@ export default function ExchangeDetailsPage() {
                       {exchange.offer?.type === "exchange" && exchange.offer.offeredProductName && (
                         <p>Swapping for: <span className="font-medium text-[#594a42] dark:text-[#d6c7b0]">{exchange.offer.offeredProductName}</span></p>
                       )}
-                      {exchange.offer?.type === "purchase" && exchange.offer.amount && (
-                        <p>Offering: <span className="font-medium text-[#594a42] dark:text-[#d6c7b0]">\u20AC{exchange.offer.amount.toFixed(2)}</span></p>
-                      )}
                       {exchange.offer?.message && (
                         <p className="italic">"{exchange.offer.message}"</p>
                       )}
@@ -440,20 +429,18 @@ export default function ExchangeDetailsPage() {
 
             {/* Status & Action Banner */}
             <Card className="border-none shadow-md overflow-hidden">
-              <div className={`p-6 ${
-                exchange.status === 'pending' ? 'bg-[#FFFBE6] dark:bg-[#3d382d]' :
+              <div className={`p-6 ${exchange.status === 'pending' ? 'bg-[#FFFBE6] dark:bg-[#3d382d]' :
                 exchange.status === 'accepted' ? 'bg-[#F0F7E6] dark:bg-[#2d3326]' :
-                exchange.status === 'completed' ? 'bg-[#F4F5F4] dark:bg-[#2e302e]' :
-                'bg-[#FCF4F4] dark:bg-[#332b2b]'
-              }`}>
+                  exchange.status === 'completed' ? 'bg-[#F4F5F4] dark:bg-[#2e302e]' :
+                    'bg-[#FCF4F4] dark:bg-[#332b2b]'
+                }`}>
                 <div className="flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
                   <div className="flex items-start gap-4">
-                    <div className={`p-3 rounded-full ${
-                      exchange.status === 'pending' ? 'bg-[#EFEAC6] text-[#594a42]' :
+                    <div className={`p-3 rounded-full ${exchange.status === 'pending' ? 'bg-[#EFEAC6] text-[#594a42]' :
                       exchange.status === 'accepted' ? 'bg-[#6B8E23] text-white' :
-                      exchange.status === 'completed' ? 'bg-[#879385] text-white' :
-                      'bg-[#A88C8F] text-white'
-                    }`}>
+                        exchange.status === 'completed' ? 'bg-[#879385] text-white' :
+                          'bg-[#A88C8F] text-white'
+                      }`}>
                       {exchange.status === 'pending' && <Clock className="w-6 h-6" />}
                       {exchange.status === 'accepted' && <ArrowRightLeft className="w-6 h-6" />}
                       {exchange.status === 'completed' && <CheckCircle className="w-6 h-6" />}
@@ -462,16 +449,16 @@ export default function ExchangeDetailsPage() {
                     <div>
                       <h2 className="text-xl font-bold text-[#594a42] dark:text-[#d6c7b0] mb-1">
                         {exchange.status === 'pending' ? t('exchanges.tabs.pending') :
-                         exchange.status === 'accepted' ? t('exchanges.tabs.active') :
-                         exchange.status === 'completed' ? t('exchanges.tabs.history') :
-                         'Declined'}
+                          exchange.status === 'accepted' ? t('exchanges.tabs.active') :
+                            exchange.status === 'completed' ? t('exchanges.tabs.history') :
+                              'Declined'}
                       </h2>
                       <p className="text-sm text-[#879385] dark:text-[#998676]">
                         {exchange.status === 'pending' && isOwner ? t('exchanges.item.action_required') :
-                         exchange.status === 'pending' && isRequester ? t('exchanges.item.waiting_for_response') :
-                         exchange.status === 'accepted' ? "Exchange in progress. Use chat to coordinate." :
-                         exchange.status === 'completed' ? "This exchange has been completed successfully." :
-                         "This offer was declined."}
+                          exchange.status === 'pending' && isRequester ? t('exchanges.item.waiting_for_response') :
+                            exchange.status === 'accepted' ? "Exchange in progress. Use chat to coordinate." :
+                              exchange.status === 'completed' ? "This exchange has been completed successfully." :
+                                "This offer was declined."}
                       </p>
                     </div>
                   </div>
@@ -572,11 +559,10 @@ export default function ExchangeDetailsPage() {
                       const isMe = msg.senderId === user?.uid;
                       return (
                         <div key={msg.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
-                          <div className={`max-w-[80%] rounded-2xl p-3 shadow-sm ${
-                            isMe
-                              ? "bg-[#A88C8F] text-white rounded-tr-none"
-                              : "bg-white dark:bg-[#3d382d] text-[#594a42] dark:text-[#d6c7b0] rounded-tl-none border border-[#EFEAC6] dark:border-[#5e5a4b]"
-                          }`}>
+                          <div className={`max-w-[80%] rounded-2xl p-3 shadow-sm ${isMe
+                            ? "bg-[#A88C8F] text-white rounded-tr-none"
+                            : "bg-white dark:bg-[#3d382d] text-[#594a42] dark:text-[#d6c7b0] rounded-tl-none border border-[#EFEAC6] dark:border-[#5e5a4b]"
+                            }`}>
                             <p className="text-sm leading-relaxed">{msg.text}</p>
                             <p className={`text-[10px] mt-1 text-right ${isMe ? "text-white/80" : "text-[#879385] dark:text-[#998676]"}`}>
                               {formatDate(msg.createdAt)}

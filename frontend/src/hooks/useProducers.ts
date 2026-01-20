@@ -3,8 +3,6 @@ import { Producer } from "@/types/user";
 import { UserService } from "@/services/user.service";
 import { getDistance } from "@/lib/geolocation";
 import { useAuth } from "@/context/AuthContext";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
 
 export const useProducers = () => {
     const [producers, setProducers] = useState<Producer[]>([]);
@@ -16,16 +14,12 @@ export const useProducers = () => {
     useEffect(() => {
         const fetchUserLocation = async () => {
             if (user) {
-                const userDocRef = doc(db, "users", user.uid);
-                const userDoc = await getDoc(userDocRef);
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    if (userData.location?.latitude && userData.location?.longitude) {
-                        setUserLocation({
-                            latitude: userData.location.latitude,
-                            longitude: userData.location.longitude
-                        });
-                    }
+                const userData = await UserService.getUserProfile(user.uid);
+                if (userData && userData.location?.latitude && userData.location?.longitude) {
+                    setUserLocation({
+                        latitude: userData.location.latitude,
+                        longitude: userData.location.longitude
+                    });
                 }
             }
         };

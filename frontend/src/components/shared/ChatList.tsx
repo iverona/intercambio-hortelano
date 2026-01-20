@@ -2,28 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { db } from "@/lib/firebase";
-import {
-  collection,
-  query,
-  where,
-  onSnapshot,
-  doc,
-  getDoc,
-  Timestamp,
-} from "firebase/firestore";
+import { ChatService } from "@/services/chat.service";
+import { UserService } from "@/services/user.service";
+import { Chat } from "@/types/chat";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
-interface Chat {
-  id: string;
-  listingTitle: string;
-  participants: string[];
-  lastMessage?: {
-    text: string;
-    createdAt: Timestamp;
-  };
-}
 
 interface ChatPartner {
   id: string;
@@ -39,14 +22,12 @@ function ChatListItem({ chat }: { chat: Chat }) {
   useEffect(() => {
     const partnerId = chat.participants.find((p) => p !== user?.uid);
     if (partnerId) {
-      const userRef = doc(db, "users", partnerId);
-      getDoc(userRef).then((userSnap) => {
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
+      UserService.getUserProfile(partnerId).then((userData) => {
+        if (userData) {
           setPartner({
-            id: userSnap.id,
-            displayName: userData.displayName,
-            avatarUrl: userData.avatarUrl,
+            id: partnerId,
+            displayName: userData.name || "Unknown User",
+            avatarUrl: userData.avatarUrl || "",
           });
         }
       });
@@ -67,9 +48,9 @@ function ChatListItem({ chat }: { chat: Chat }) {
         <AvatarFallback>
           {partner.displayName
             ? partner.displayName
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
             : ""}
         </AvatarFallback>
       </Avatar>
@@ -98,22 +79,7 @@ export default function ChatList() {
   useEffect(() => {
     if (!user) return;
 
-    const chatsQuery = query(
-      collection(db, "chats"),
-      where("participants", "array-contains", user.uid)
-    );
-
-    const unsubscribe = onSnapshot(chatsQuery, (snapshot) => {
-      const chatsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Chat[];
-      // Sort by last message timestamp
-      chatsData.sort((a, b) => {
-        const timeA = a.lastMessage?.createdAt?.toMillis() || 0;
-        const timeB = b.lastMessage?.createdAt?.toMillis() || 0;
-        return timeB - timeA;
-      });
+    const unsubscribe = ChatService.subscribeToUserChats(user.uid, (chatsData) => {
       setChats(chatsData);
     });
 

@@ -15,6 +15,7 @@ import {
 } from "firebase/firestore";
 import { Exchange, Message, ExchangeStatus } from "@/types/exchange";
 import { UserData } from "@/types/user";
+import { ChatService } from "@/services/chat.service";
 
 export const ExchangeService = {
     /**
@@ -131,9 +132,9 @@ export const ExchangeService = {
                         const pData = productDoc.data();
                         exchangeInfo.product = {
                             id: exchangeData.productId,
-                            title: pData.title,
+                            name: pData.name || pData.title || "",
                             description: pData.description,
-                            images: pData.images || [],
+                            imageUrls: pData.imageUrls || [pData.imageUrl] || [],
                             category: pData.category,
                             condition: pData.condition,
                         };
@@ -153,37 +154,14 @@ export const ExchangeService = {
      * Subscribe to messages for a specific exchange chat
      */
     subscribeToMessages: (chatId: string, callback: (messages: Message[]) => void): Unsubscribe => {
-        const messagesRef = collection(db, "chats", chatId, "messages");
-        const q = query(messagesRef, orderBy("createdAt", "asc"));
-
-        return onSnapshot(q, (querySnapshot) => {
-            const msgs = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            })) as Message[];
-            callback(msgs);
-        });
+        return ChatService.subscribeToMessages(chatId, callback);
     },
 
     /**
      * Send a message in a chat
      */
     sendMessage: async (chatId: string, text: string, senderId: string): Promise<void> => {
-        const messagesRef = collection(db, "chats", chatId, "messages");
-        const chatRef = doc(db, "chats", chatId);
-
-        await addDoc(messagesRef, {
-            text,
-            senderId,
-            createdAt: serverTimestamp(),
-        });
-
-        await updateDoc(chatRef, {
-            lastMessage: {
-                text,
-                createdAt: serverTimestamp(),
-            },
-        });
+        return ChatService.sendMessage(chatId, text, senderId);
     },
 
     /**
@@ -210,11 +188,10 @@ export const ExchangeService = {
         requesterId: string;
         ownerId: string;
         offer: {
-            type: "exchange" | "chat" | "purchase";
+            type: "exchange" | "chat";
             offeredProductId?: string;
             offeredProductName?: string;
             message?: string;
-            amount?: number;
         };
     }): Promise<string> => {
         try {

@@ -12,13 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { auth, db } from "@/lib/firebase";
-import {
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  fetchSignInMethodsForEmail,
-} from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { AuthService } from "@/services/auth.service";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 import { Chrome } from "lucide-react";
 import Link from "next/link";
@@ -42,37 +36,35 @@ export default function SignupPage() {
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      setError(t('signup.passwords_no_match'));
+      setError(t('signup.passwords_no_match') || null);
       return;
     }
     try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      const userCredential = await AuthService.signupWithEmail(email, password);
       const user = userCredential.user;
-      await setDoc(doc(db, "users", user.uid), {
+
+      await AuthService.createUserDoc(user.uid, {
         uid: user.uid,
-        email: user.email,
+        email: user.email || email,
         name: name,
         onboardingComplete: false,
         authMethod: "password",
       });
-      await sendEmailVerification(user);
+
+      await AuthService.sendEmailVerification(user);
       setIsSubmitted(true);
     } catch (error: any) {
       // Check if email is already in use
       if (error.code === "auth/email-already-in-use") {
         // Check what sign-in methods are available for this email
         try {
-          const signInMethods = await fetchSignInMethodsForEmail(auth, email);
-          
+          const signInMethods = await AuthService.fetchSignInMethods(email);
+
           // Check if the email is registered with Google
-          const hasGoogleProvider = signInMethods.some(method => 
+          const hasGoogleProvider = signInMethods.some(method =>
             method === "google.com" || method.includes("google")
           );
-          
+
           if (hasGoogleProvider) {
             setShowGoogleDialog(true);
             setError(null);
@@ -81,12 +73,12 @@ export default function SignupPage() {
         } catch (checkError) {
           console.error("Error checking sign-in methods:", checkError);
         }
-        
+
         // If it's not Google, it must be password - show generic error
-        setError(t('signup.email_already_exists'));
+        setError(t('signup.email_already_exists') || null);
         return;
       }
-      
+
       setError(error instanceof Error ? error.message : "An error occurred");
     }
   };
@@ -107,16 +99,16 @@ export default function SignupPage() {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => router.push('/login')}
               className="w-full sm:w-auto"
             >
               {t('signup.go_to_login')}
             </Button>
-            <Button 
-              onClick={handleGoogleSignIn} 
-              disabled={googleLoading} 
+            <Button
+              onClick={handleGoogleSignIn}
+              disabled={googleLoading}
               className="flex items-center gap-2 w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90"
             >
               <Chrome size={18} />

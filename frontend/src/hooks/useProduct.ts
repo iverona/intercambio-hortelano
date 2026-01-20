@@ -89,11 +89,10 @@ export function useProductMutations() {
         requesterId: string;
         ownerId: string;
         offer: {
-            type: "exchange" | "chat" | "purchase";
+            type: "exchange" | "chat";
             offeredProductId?: string;
             offeredProductName?: string;
             message?: string;
-            amount?: number;
         };
     }) => {
         setLoading(true);

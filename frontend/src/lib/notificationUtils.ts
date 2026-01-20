@@ -1,10 +1,10 @@
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-import { 
-  Package, 
-  MessageCircle, 
-  CheckCircle, 
-  XCircle, 
+import {
+  Package,
+  MessageCircle,
+  CheckCircle,
+  XCircle,
   ArrowRightLeft,
   Bell,
   LucideIcon,
@@ -17,8 +17,7 @@ export interface NotificationMetadata {
   productId?: string;
   offeredProductName?: string;
   offeredProductId?: string;
-  offerAmount?: number;
-  offerType?: "exchange" | "purchase" | "chat";
+  offerType?: "exchange" | "chat";
   senderName?: string;
   message?: string;
   chatId?: string;
@@ -48,7 +47,7 @@ export const getNotificationDisplay = (
     case "NEW_PROPOSAL": { // Handle old type for backward compatibility
       let offerDescription = t("notifications.new_offer.default");
       let offerIcon = Package;
-      
+
       if (metadata) {
         if (metadata.offerType === "exchange" && metadata.offeredProductName) {
           offerDescription = t("notifications.new_offer.exchange", {
@@ -56,12 +55,6 @@ export const getNotificationDisplay = (
             productName: metadata.productName || ""
           });
           offerIcon = ArrowRightLeft;
-        } else if (metadata.offerType === "purchase" && metadata.offerAmount) {
-          offerDescription = t("notifications.new_offer.purchase", {
-            amount: metadata.offerAmount.toFixed(2),
-            productName: metadata.productName || ""
-          });
-          offerIcon = DollarSign;
         } else if (metadata.offerType === "chat" && metadata.productName) {
           offerDescription = t("notifications.new_offer.chat", {
             productName: metadata.productName
@@ -73,7 +66,7 @@ export const getNotificationDisplay = (
           });
         }
       }
-      
+
       return {
         title: t("notifications.new_offer.title"),
         description: offerDescription,
@@ -82,19 +75,19 @@ export const getNotificationDisplay = (
         route: `/exchanges/details/${entityId}`,
       };
     }
-    
+
     case "OFFER_ACCEPTED":
     case "PROPOSAL_ACCEPTED": // Handle old type for backward compatibility
       return {
         title: t("notifications.offer_accepted.title"),
-        description: metadata?.productName 
+        description: metadata?.productName
           ? t("notifications.offer_accepted.with_product", { productName: metadata.productName })
           : t("notifications.offer_accepted.default"),
         icon: CheckCircle,
         iconColor: "text-green-500",
         route: `/exchanges/details/${entityId}`,
       };
-    
+
     case "OFFER_REJECTED":
     case "PROPOSAL_REJECTED": // Handle old type for backward compatibility
       return {
@@ -106,7 +99,7 @@ export const getNotificationDisplay = (
         iconColor: "text-red-500",
         route: `/exchanges/details/${entityId}`,
       };
-    
+
     case "MESSAGE_RECEIVED":
     case "NEW_MESSAGE": // Handle old type for backward compatibility
       return {
@@ -118,7 +111,7 @@ export const getNotificationDisplay = (
         iconColor: "text-purple-500",
         route: `/exchanges/details/${entityId}`,
       };
-    
+
     case "EXCHANGE_COMPLETED":
       return {
         title: t("notifications.exchange_completed.title"),
@@ -140,7 +133,7 @@ export const getNotificationDisplay = (
         iconColor: "text-yellow-500",
         route: `/exchanges/details/${entityId}`,
       };
-    
+
     default:
       return {
         title: t("notifications.default.title"),
@@ -154,9 +147,9 @@ export const getNotificationDisplay = (
 
 export const formatNotificationTime = (date: Date, locale?: string): string => {
   try {
-    return formatDistanceToNow(date, { 
+    return formatDistanceToNow(date, {
       addSuffix: true,
-      locale: locale === 'es' ? es : undefined 
+      locale: locale === 'es' ? es : undefined
     });
   } catch {
     return "Recently";

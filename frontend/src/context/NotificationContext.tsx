@@ -10,10 +10,11 @@ interface NotificationMetadata {
   productId?: string;
   offeredProductName?: string;
   offeredProductId?: string;
-  offerAmount?: number;
-  offerType?: "exchange" | "purchase" | "chat";
+  offerType?: "exchange" | "chat";
   senderName?: string;
   message?: string;
+  chatId?: string;
+  exchangeId?: string;
 }
 
 interface Notification {
@@ -48,7 +49,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       setUnreadCount(0);
       return;
     }
-    
+
     // Set up the query for the logged-in user
     const q = query(
       collection(db, "notifications"),
@@ -57,11 +58,11 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     );
 
     const unsubscribe = onSnapshot(
-      q, 
+      q,
       (snapshot) => {
         const newNotifications: Notification[] = [];
         let newUnreadCount = 0;
-        
+
         snapshot.forEach((doc) => {
           const data = doc.data();
           const notification: Notification = {
@@ -71,8 +72,8 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
             type: data.type,
             entityId: data.entityId,
             isRead: data.isRead || false,
-            createdAt: data.createdAt instanceof Timestamp 
-              ? data.createdAt.toDate() 
+            createdAt: data.createdAt instanceof Timestamp
+              ? data.createdAt.toDate()
               : new Date(data.createdAt),
             metadata: data.metadata || {},
           };
@@ -87,7 +88,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       },
       (error) => {
         console.error("Error fetching notifications:", error);
-        
+
         // Handle permission errors gracefully
         if (error.code === 'permission-denied') {
           // This can happen during auth state changes, ignore silently
@@ -116,7 +117,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       const batch = writeBatch(db);
-      
+
       notifications.forEach((notification) => {
         if (!notification.isRead) {
           const notificationRef = doc(db, "notifications", notification.id);

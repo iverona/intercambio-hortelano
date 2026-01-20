@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { UserData } from "@/types/user";
 import { UserService } from "@/services/user.service";
+import { AuthService } from "@/services/auth.service";
 import { useAuth } from "@/context/AuthContext";
 import imageCompression from "browser-image-compression";
-import { updateProfile } from "firebase/auth";
 
 export const useUser = () => {
     const { user, refreshUser } = useAuth();
@@ -66,7 +66,7 @@ export const useUser = () => {
             await UserService.updateUserProfile(user.uid, { avatarUrl: newAvatarUrl });
 
             // Update Auth Profile
-            await updateProfile(user, { photoURL: newAvatarUrl });
+            await AuthService.updateUserProfileAuth(user, { photoURL: newAvatarUrl });
             await refreshUser();
 
             // Update Local State
@@ -89,7 +89,7 @@ export const useUser = () => {
             await UserService.updateUserProfile(user.uid, { avatarUrl: "" });
 
             // Update Auth Profile
-            await updateProfile(user, { photoURL: "" });
+            await AuthService.updateUserProfileAuth(user, { photoURL: "" });
             await refreshUser();
 
             setUserData(prev => prev ? { ...prev, avatarUrl: "" } : null);
