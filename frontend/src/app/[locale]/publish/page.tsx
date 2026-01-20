@@ -20,6 +20,7 @@ import { useI18n } from "@/locales/provider";
 import { useProductMutations } from "@/hooks/useProduct";
 import { useUser as useUserHook } from "@/hooks/useUser";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
+import Image from "next/image";
 
 // Loading skeleton component
 const LoadingSkeleton = () => (
@@ -235,8 +236,14 @@ export default function PublishPage() {
 
             <div className="mb-4 md:mb-6">
               <div className="flex items-center gap-2 md:gap-3 mb-2">
-                <div className="p-1.5 md:p-2 bg-primary rounded-lg shadow-sm">
-                  <Upload className="w-4 h-4 md:w-5 md:h-5 text-white" />
+                <div className="p-0 flex-shrink-0">
+                  <Image
+                    src="/product_details.png"
+                    alt={t('publish.product_details')}
+                    width={32}
+                    height={32}
+                    className="w-7 h-7 md:w-8 md:h-8 object-contain"
+                  />
                 </div>
                 <h2 className="text-xl md:text-2xl font-bold font-display text-foreground ">
                   {t('publish.product_details')}

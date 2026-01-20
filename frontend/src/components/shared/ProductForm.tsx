@@ -159,8 +159,14 @@ export default function ProductForm({
       {/* Product Name Section */}
       <div className="space-y-3 md:space-y-4">
         <div className="flex items-center gap-2 md:gap-3">
-          <div className="p-1.5 md:p-2 bg-primary rounded-lg shadow-md flex-shrink-0">
-            <Package className="w-4 h-4 md:w-5 md:h-5 text-white" />
+          <div className="p-0 flex-shrink-0">
+            <Image
+              src="/product_name.png"
+              alt={t('product.form.name_label')}
+              width={32}
+              height={32}
+              className="w-7 h-7 md:w-8 md:h-8 object-contain"
+            />
           </div>
           <div className="min-w-0">
             <Label htmlFor="name" className="text-sm md:text-base font-semibold text-gray-900 dark:text-gray-100">
@@ -234,8 +240,14 @@ export default function ProductForm({
       {/* Category Section */}
       <div className="space-y-3 md:space-y-4">
         <div className="flex items-center gap-2 md:gap-3">
-          <div className="p-1.5 md:p-2 bg-tertiary rounded-lg shadow-md flex-shrink-0">
-            <Tag className="w-4 h-4 md:w-5 md:h-5 text-white" />
+          <div className="p-0 flex-shrink-0">
+            <Image
+              src="/category.png"
+              alt={t('product.form.category_label')}
+              width={32}
+              height={32}
+              className="w-7 h-7 md:w-8 md:h-8 object-contain"
+            />
           </div>
           <div className="min-w-0">
             <Label htmlFor="category" className="text-sm md:text-base font-semibold text-gray-900 dark:text-gray-100">
@@ -275,8 +287,14 @@ export default function ProductForm({
       {/* Images Section */}
       <div className="space-y-3 md:space-y-4">
         <div className="flex items-center gap-2 md:gap-3">
-          <div className="p-1.5 md:p-2 bg-accent rounded-lg shadow-md flex-shrink-0">
-            <Camera className="w-4 h-4 md:w-5 md:h-5 text-white" />
+          <div className="p-0 flex-shrink-0">
+            <Image
+              src="/product_pictures.png"
+              alt={t("product.form.picture_label")}
+              width={32}
+              height={32}
+              className="w-7 h-7 md:w-8 md:h-8 object-contain"
+            />
           </div>
           <div className="min-w-0">
             <Label htmlFor="picture" className="text-sm md:text-base font-semibold text-gray-900 dark:text-gray-100">
