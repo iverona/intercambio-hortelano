@@ -40,16 +40,22 @@ export default function Manifest() {
                 {/* Content */}
                 <div className="font-serif text-[#3e3b34] dark:text-[#e0dcc7] text-lg leading-relaxed space-y-6">
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                        Creemos en un futuro donde la sostenibilidad guía cada decisión.
                     </p>
                     <p>
-                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                        Actuamos con profundo respeto por el planeta, las personas y todas las formas de vida.
                     </p>
                     <p>
-                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                        La ética es el corazón de nuestro compromiso, impulsando prácticas responsables y transparentes.
                     </p>
                     <p>
-                        Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit.
+                        Fomentamos la colaboración como herramienta para generar impacto colectivo y duradero.
+                    </p>
+                    <p>
+                        Cada anuncio promueve un consumo consciente y una vida más saludable.
+                    </p>
+                    <p>
+                        Juntos, construimos un mundo en equilibrio con la naturaleza y con nosotros mismos.
                     </p>
                 </div>
 

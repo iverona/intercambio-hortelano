@@ -105,6 +105,7 @@ export default function Home() {
           iconSrc="/participar.png"
           colorClass="bg-[#A88C8F] dark:bg-[#6b585a]"
           rotate={1}
+          href="/como-participar"
         />
 
         {/* Comunidad */}
@@ -113,6 +114,7 @@ export default function Home() {
           iconSrc="/gente.png"
           colorClass="bg-[#879385] dark:bg-[#525b51]"
           rotate={2}
+          href="/nuestra-comunidad"
         />
       </div>
 
