@@ -11,22 +11,42 @@ import {
     doc,
     addDoc,
     serverTimestamp,
-    updateDoc
+    updateDoc,
+    limit
 } from "firebase/firestore";
 import { storage } from "@/lib/firebase";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 export const ProductService = {
-    subscribeToProducts: (callback: (products: Product[]) => void) => {
-        const unsubscribe = onSnapshot(collection(db, "products"), (snapshot: QuerySnapshot<DocumentData>) => {
-            const productsData = snapshot.docs.map((doc) => {
-                const data = doc.data();
-                return {
-                    id: doc.id,
-                    ...data,
-                    imageUrls: data.imageUrls || [data.imageUrl],
-                };
-            }) as Product[];
+    subscribeToProducts: (
+        callback: (products: Product[]) => void,
+        options: { category?: string; limitCount?: number } = {}
+    ) => {
+        let q = query(
+            collection(db, "products"),
+            // We don't filter by 'deleted' at Firestore level because existing docs might lack the field.
+            // Firestore excludes documents missing the filtered field.
+        );
+
+        if (options.category) {
+            q = query(q, where("category", "==", options.category));
+        }
+
+        if (options.limitCount) {
+            q = query(q, limit(options.limitCount));
+        }
+
+        const unsubscribe = onSnapshot(q, (snapshot: QuerySnapshot<DocumentData>) => {
+            const productsData = snapshot.docs
+                .map((doc) => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        ...data,
+                        imageUrls: data.imageUrls || [data.imageUrl],
+                    } as Product;
+                })
+                .filter(product => !product.deleted);
 
             callback(productsData);
         });
@@ -85,6 +105,7 @@ export const ProductService = {
                 ...data,
                 imageUrls,
                 createdAt: serverTimestamp(),
+                deleted: false,
             });
 
             return docRef.id;

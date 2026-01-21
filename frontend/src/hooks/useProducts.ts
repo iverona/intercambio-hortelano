@@ -17,10 +17,15 @@ export const useProducts = (
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        // Optimization: Pass single category filter to Firestore if exactly one is selected
+        // Note: Firestore 'in' query could be used for multiple, but let's keep it simple for now
+        // and just pass the category if there's only one, or none.
+        const categoryFilter = filters.categories.length === 1 ? filters.categories[0] : undefined;
+
         const unsubscribe = ProductService.subscribeToProducts((productsData) => {
-            // Filter out deleted products and excluded user's products
+            // Filter out excluded user's products (deleted products are filtered at service level)
             let processedData = productsData.filter((product) =>
-                !product.deleted && (!excludeUserId || product.userId !== excludeUserId)
+                !excludeUserId || product.userId !== excludeUserId
             );
 
             // Add distance calculation if userLocation is available
@@ -84,7 +89,7 @@ export const useProducts = (
 
             setProducts(filteredData);
             setLoading(false);
-        });
+        }, { category: categoryFilter, limitCount: 100 });
 
         return () => unsubscribe();
     }, [userLocation, filters]);
