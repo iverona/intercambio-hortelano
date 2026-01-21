@@ -576,5 +576,20 @@ export default {
     }
   },
   "footer.privacy": "Privacidad",
-  "privacy.title": "Política de Privacidad"
+  "footer.cookies": "Cookies",
+  "privacy.title": "Política de Privacidad",
+  "cookies.banner.message": "Utilizamos cookies para mejorar tu experiencia. Al continuar navegando, aceptas nuestra política de cookies.",
+  "cookies.banner.accept": "Aceptar",
+  "cookies.banner.policy": "Ver política de cookies",
+  "cookies.policy.title": "Política de Cookies",
+  "cookies.policy.intro": "En esta web utilizamos cookies propias y de terceros para mejorar nuestros servicios y mostrarle publicidad relacionada con sus preferencias mediante el análisis de sus hábitos de navegación.",
+  "cookies.policy.what_are_cookies": "¿Qué son las cookies?",
+  "cookies.policy.what_are_cookies_desc": "Una cookie es un fichero que se descarga en su ordenador al acceder a determinadas páginas web. Las cookies permiten a una página web, entre otras cosas, almacenar y recuperar información sobre los hábitos de navegación de un usuario o de su equipo.",
+  "cookies.policy.types": "Tipos de cookies que utilizamos",
+  "cookies.policy.essential_title": "Cookies estrictamente necesarias",
+  "cookies.policy.essential_desc": "Son aquellas necesarias para el funcionamiento de la web, como la gestión de sesiones o preferencias de idioma.",
+  "cookies.policy.analytics_title": "Cookies de terceros",
+  "cookies.policy.analytics_desc": "Utilizamos servicios como Firebase y Google Maps que pueden instalar cookies para su funcionamiento y estadísticas básicas.",
+  "cookies.policy.how_to_manage": "Cómo gestionar las cookies",
+  "cookies.policy.how_to_manage_desc": "Usted puede permitir, bloquear o eliminar las cookies instaladas en su equipo mediante la configuración de las opciones del navegador instalado en su ordenador."
 } as const;

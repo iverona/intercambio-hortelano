@@ -13,6 +13,7 @@ import { I18nProviderClient } from "@/locales/provider";
 import { getCurrentLocale } from "@/locales/server";
 import { ReactNode } from "react";
 import GoogleMapsProvider from "@/components/shared/GoogleMapsProvider";
+import CookieConsent from "@/components/shared/CookieConsent";
 
 export const metadata: Metadata = {
   title: "Portal de Intercambio Hortelano",
@@ -40,6 +41,7 @@ export default async function RootLayout({
               </div>
               <NotificationToaster />
               <Toaster />
+              <CookieConsent />
             </NotificationProvider>
           </FilterProvider>
         </AuthProvider>

@@ -18,6 +18,13 @@ export default function Footer() {
         >
           {t('footer.privacy')}
         </Link>
+        <span className="mx-2 text-gray-300 dark:text-gray-600">•</span>
+        <Link
+          href={`/${locale}/cookies`}
+          className="hover:text-[#879385] transition-colors underline underline-offset-2"
+        >
+          {t('footer.cookies')}
+        </Link>
       </div>
 
       <div className="flex flex-row items-center gap-4">

@@ -573,5 +573,20 @@ export default {
     },
   },
   "footer.privacy": "Privacy",
-  "privacy.title": "Privacy Policy"
+  "footer.cookies": "Cookies",
+  "privacy.title": "Privacy Policy",
+  "cookies.banner.message": "We use cookies to improve your experience. By continuing to browse, you accept our cookie policy.",
+  "cookies.banner.accept": "Accept",
+  "cookies.banner.policy": "View cookie policy",
+  "cookies.policy.title": "Cookie Policy",
+  "cookies.policy.intro": "On this website, we use our own and third-party cookies to improve our services and show you information related to your preferences by analyzing your browsing habits.",
+  "cookies.policy.what_are_cookies": "What are cookies?",
+  "cookies.policy.what_are_cookies_desc": "A cookie is a file that is downloaded to your computer when accessing certain websites. Cookies allow a website, among other things, to store and retrieve information about the browsing habits of a user or their equipment.",
+  "cookies.policy.types": "Types of cookies we use",
+  "cookies.policy.essential_title": "Strictly necessary cookies",
+  "cookies.policy.essential_desc": "These are necessary for the functioning of the website, such as session management or language preferences.",
+  "cookies.policy.analytics_title": "Third-party cookies",
+  "cookies.policy.analytics_desc": "We use services like Firebase and Google Maps that may install cookies for their operation and basic statistics.",
+  "cookies.policy.how_to_manage": "How to manage cookies",
+  "cookies.policy.how_to_manage_desc": "You can allow, block or delete cookies installed on your equipment by configuring the options of the browser installed on your computer."
 } as const;
