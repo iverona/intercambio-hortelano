@@ -6,8 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Leaf, DollarSign, Clock, Heart } from "lucide-react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { UserService } from "@/services/user.service";
 import { ProducerAvatar } from "@/components/shared/ProducerAvatar";
 
 import { cn } from "@/lib/utils";
@@ -46,13 +45,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
     if (product.userId) {
       const fetchProducer = async () => {
         try {
-          const userDoc = await getDoc(doc(db, "users", product.userId!));
-          if (userDoc.exists()) {
-            const data = userDoc.data();
+          const userData = await UserService.getUserProfile(product.userId!);
+          if (userData) {
             setProducer({
-              name: data.name || "Anonymous",
-              avatarUrl: data.avatarUrl,
-              address: data.address,
+              name: userData.name || "Anonymous",
+              avatarUrl: userData.avatarUrl,
+              address: userData.address,
             });
           }
         } catch (error) {

@@ -16,19 +16,43 @@ import {
     deleteObject
 } from "firebase/storage";
 
+// Cache for user profiles to avoid redundant Firestore reads
+// Uses Promises to handle concurrent requests for the same user ID
+const userCache = new Map<string, Promise<UserData | null>>();
+
 export const UserService = {
     getUserProfile: async (uid: string): Promise<UserData | null> => {
-        const userRef = doc(db, "users", uid);
-        const snapshot = await getDoc(userRef);
-        if (snapshot.exists()) {
-            return snapshot.data() as UserData;
+        // Check if we already have a request/result in cache
+        if (userCache.has(uid)) {
+            return userCache.get(uid)!;
         }
-        return null;
+
+        // Create the fetching promise
+        const fetchPromise = (async () => {
+            try {
+                const userRef = doc(db, "users", uid);
+                const snapshot = await getDoc(userRef);
+                if (snapshot.exists()) {
+                    return snapshot.data() as UserData;
+                }
+                return null;
+            } catch (error) {
+                // If it fails, remove from cache so it can be retried
+                userCache.delete(uid);
+                throw error;
+            }
+        })();
+
+        // Store promise in cache
+        userCache.set(uid, fetchPromise);
+        return fetchPromise;
     },
 
     updateUserProfile: async (uid: string, data: Partial<UserData>): Promise<void> => {
         const userRef = doc(db, "users", uid);
         await updateDoc(userRef, data);
+        // Invalidate cache after update
+        userCache.delete(uid);
     },
 
     uploadAvatar: async (uid: string, file: File, oldAvatarUrl?: string): Promise<string> => {
