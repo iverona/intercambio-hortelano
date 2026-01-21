@@ -21,7 +21,6 @@ import {
   Search,
   Flower2,
   ArrowRightLeft,
-  Menu,
   Leaf
 } from "lucide-react";
 import Filter from "./Filter";
@@ -139,10 +138,6 @@ const Header = () => {
           )}
         </nav>
 
-        {/* Mobile Menu Button */}
-        <button className="md:hidden text-gray-600 dark:text-gray-300">
-          <Menu className="w-8 h-8" />
-        </button>
       </div>
     </header>
   );
