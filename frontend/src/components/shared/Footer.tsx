@@ -22,13 +22,18 @@ export default function Footer() {
 
       <div className="flex flex-row items-center gap-4">
         {/* Agroforja Logo */}
-        <div className="bg-white/80 dark:bg-white/90 p-2 rounded-lg shadow-sm backdrop-blur-sm hover:scale-105 transition-transform duration-300">
+        <a
+          href="https://agroforja.es/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-white/80 dark:bg-white/90 p-2 rounded-lg shadow-sm backdrop-blur-sm hover:scale-105 transition-transform duration-300"
+        >
           <img
             src="/LogoAgroforja.png"
             alt="Agroforja"
             className="h-12 w-auto object-contain"
           />
-        </div>
+        </a>
 
         {/* Amigos de la Tierra Logo */}
         <div className="bg-white/80 dark:bg-white/90 p-2 rounded-lg shadow-sm backdrop-blur-sm hover:scale-105 transition-transform duration-300">
