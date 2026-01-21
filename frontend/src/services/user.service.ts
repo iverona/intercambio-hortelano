@@ -48,6 +48,71 @@ export const UserService = {
         return fetchPromise;
     },
 
+    getUsersProfiles: async (uids: string[]): Promise<UserData[]> => {
+        if (uids.length === 0) return [];
+
+        const uniqueUids = Array.from(new Set(uids));
+        const results: UserData[] = [];
+        const uidsToFetch: string[] = [];
+
+        // Check cache first
+        const cachePromises = uniqueUids.map(uid => {
+            if (userCache.has(uid)) {
+                return userCache.get(uid)!.then(data => {
+                    if (data) results.push(data);
+                    return true;
+                });
+            }
+            uidsToFetch.push(uid);
+            return Promise.resolve(false);
+        });
+
+        await Promise.all(cachePromises);
+
+        if (uidsToFetch.length === 0) return results;
+
+        // Fetch missing from Firestore in chunks of 30 (Firestore "in" limit)
+        const CHUNK_SIZE = 30;
+        for (let i = 0; i < uidsToFetch.length; i += CHUNK_SIZE) {
+            const chunk = uidsToFetch.slice(i, i + CHUNK_SIZE);
+            const fetchPromise = (async () => {
+                try {
+                    const q = query(
+                        collection(db, "users"),
+                        where("uid", "in", chunk)
+                    );
+                    const snapshot = await getDocs(q);
+                    const fetchedData = snapshot.docs.map(doc => doc.data() as UserData);
+
+                    // Add to results and update cache for each fetched user
+                    fetchedData.forEach(userData => {
+                        if (userData.uid) {
+                            // Already resolved promise for the cache
+                            userCache.set(userData.uid, Promise.resolve(userData));
+                        }
+                    });
+
+                    return fetchedData;
+                } catch (error) {
+                    // For batch failures, we don't strictly need to clear cache because we haven't set it yet
+                    // but we should log it
+                    console.error("Error batch fetching user profiles:", error);
+                    throw error;
+                }
+            })();
+
+            // Temporarily store the fetchPromise for each UID in the chunk to handle concurrent requests
+            chunk.forEach(uid => {
+                userCache.set(uid, fetchPromise.then(data => data.find(u => u.uid === uid) || null));
+            });
+
+            const fetchedChunkData = await fetchPromise;
+            results.push(...fetchedChunkData);
+        }
+
+        return results;
+    },
+
     updateUserProfile: async (uid: string, data: Partial<UserData>): Promise<void> => {
         const userRef = doc(db, "users", uid);
         await updateDoc(userRef, data);
@@ -97,15 +162,10 @@ export const UserService = {
 
         if (producerIds.size === 0) return [];
 
-        const usersQuery = query(
-            collection(db, "users"),
-            where("uid", "in", Array.from(producerIds))
-        );
-        const usersSnapshot = await getDocs(usersQuery);
+        const usersData = await UserService.getUsersProfiles(Array.from(producerIds));
 
-        return usersSnapshot.docs
-            .map((doc) => {
-                const data = doc.data() as UserData;
+        return usersData
+            .map((data) => {
                 return {
                     ...data,
                     productsCount: producerProductCounts.get(data.uid || "") || 0,
