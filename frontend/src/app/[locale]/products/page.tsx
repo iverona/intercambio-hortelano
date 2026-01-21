@@ -48,10 +48,12 @@ const AnimatedProductCard = ({ product, index }: { product: Product; index: numb
   );
 };
 
+import { SearchAndFilter } from "@/components/shared/SearchAndFilter";
+
 export default function ProductsPage() {
   const t = useI18n();
   const { user } = useAuth();
-  const { filters, setFilters } = useFilters();
+  const { filters } = useFilters();
   const [userLocation, setUserLocation] = useState<{
     latitude: number;
     longitude: number;
@@ -76,7 +78,7 @@ export default function ProductsPage() {
     <OrganicBackground className="py-12">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="flex justify-center mb-16">
+        <div className="flex justify-center mb-12">
           <OrganicCard
             className="w-full max-w-3xl"
             rotate={-1}
@@ -100,29 +102,16 @@ export default function ProductsPage() {
             }
           >
             <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-hand font-bold text-gray-900 dark:text-gray-100 mb-4">
+              <h1 className="text-4xl md:text-5xl font-hand font-bold text-gray-900 dark:text-gray-100 mb-2">
                 {t('home.products.title')}
               </h1>
-
-              {/* Filter badges */}
-              {(filters.categories.length > 0 || filters.distance < 100) && (
-                <div className="flex gap-2 flex-wrap justify-center mt-4">
-                  {filters.categories.map(cat => (
-                    <Badge key={cat} variant="secondary" className="capitalize bg-green-100/50 text-green-800 border-green-200">
-                      {cat}
-                    </Badge>
-                  ))}
-                  {filters.distance < 100 && (
-                    <Badge variant="secondary" className="flex items-center gap-1 bg-green-100/50 text-green-800 border-green-200">
-                      <MapPin className="w-3 h-3" />
-                      {t('home.products.filters.within', { distance: filters.distance })}
-                    </Badge>
-                  )}
-                </div>
-              )}
+              <p className="text-gray-500 font-serif italic">{t('home.products.subtitle')}</p>
             </div>
           </OrganicCard>
         </div>
+
+        {/* Search and Filters UI */}
+        <SearchAndFilter />
 
         {/* Products Grid or Loading State */}
         {loading ? (

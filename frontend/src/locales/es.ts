@@ -11,8 +11,10 @@ export default {
   "home.hero.stats.exchanges": "Intercambios",
 
   "home.products.title": "Fresco de la Huerta",
+  "home.products.subtitle": "Encuentra tesoros naturales cerca de ti",
   "home.products.showing": "Mostrando {count} productos",
   "home.products.showing_with_search": "Mostrando {count} productos para \"{searchTerm}\"",
+  "home.products.search_placeholder": "Busca tomates, miel, artesanías...",
   "home.products.filters.within": "Dentro de {distance}km",
   "home.products.new_badge": "Nuevo",
 

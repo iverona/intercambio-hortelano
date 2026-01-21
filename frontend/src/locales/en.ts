@@ -11,8 +11,10 @@ export default {
   "home.hero.stats.exchanges": "Exchanges",
 
   "home.products.title": "Fresh from the Garden",
+  "home.products.subtitle": "Find natural treasures near you",
   "home.products.showing": "Showing {count} products",
   "home.products.showing_with_search": "Showing {count} products for \"{searchTerm}\"",
+  "home.products.search_placeholder": "Search for tomatoes, honey, handicrafts...",
   "home.products.filters.within": "Within {distance}km",
   "home.products.new_badge": "New",
 
