@@ -45,7 +45,6 @@ export default function SignupPage() {
 
       await AuthService.createUserDoc(user.uid, {
         uid: user.uid,
-        email: user.email || email,
         name: name,
         onboardingComplete: false,
         authMethod: "password",

@@ -272,7 +272,7 @@ export default function ProfilePage() {
 
     try {
       const reauthResult = await reauthenticateUser(
-        userData.email,
+        user.email!,
         isGoogleSignInUser() ? undefined : reauthPassword
       );
 
@@ -509,7 +509,7 @@ export default function ProfilePage() {
                         <div>
                           <span className="text-sm text-muted-foreground block">{t('profile.email_label')}</span>
                           {showEmail ? (
-                            <span className="text-sm font-medium text-foreground ">{userData.email}</span>
+                            <span className="text-sm font-medium text-foreground ">{user?.email}</span>
                           ) : (
                             <span className="text-sm font-medium text-foreground ">••••••••••</span>
                           )}

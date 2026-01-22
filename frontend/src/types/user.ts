@@ -1,7 +1,6 @@
 export interface UserData {
     uid?: string; // Sometimes used for producer identification
     name: string;
-    email: string;
     authMethod?: string;
     onboardingComplete?: boolean;
     avatarUrl: string;

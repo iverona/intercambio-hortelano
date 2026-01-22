@@ -54,20 +54,10 @@ export const AuthService = {
                 throw new Error("No email associated with Google account");
             }
 
-            // Check if this email is already registered with password
-            const usersRef = collection(db, "users");
-            const q = query(usersRef, where("email", "==", email));
-            const querySnapshot = await getDocs(q);
-
-            if (!querySnapshot.empty) {
-                const existingUserDoc = querySnapshot.docs[0];
-                const existingUserData = existingUserDoc.data();
-
-                if (existingUserData.authMethod === "password") {
-                    await signOut(auth);
-                    throw new Error("This email is registered with email/password. Please sign in using your password.");
-                }
-            }
+            /* 
+            // Email check removed as we don't store email in Firestore anymore.
+            // Firebase Auth "One account per email" setting should handle this collision.
+            */
 
             // Check/Create user doc
             const userDocRef = doc(db, "users", user.uid);
@@ -76,7 +66,7 @@ export const AuthService = {
             if (!userDoc.exists()) {
                 await setDoc(userDocRef, {
                     uid: user.uid,
-                    email: user.email,
+                    // email: user.email, // Removed
                     name: user.displayName,
                     onboardingComplete: false,
                     authMethod: "google",
