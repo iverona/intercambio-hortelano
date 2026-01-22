@@ -71,7 +71,7 @@ const Header = () => {
             {t('header.home')}
           </Link>
           <Link href={`/${locale}/products`} className="text-gray-600 dark:text-gray-300 hover:text-[#879385] font-semibold text-lg font-sans">
-            Anuncios
+            {t('nav.products')}
           </Link>
           <Link href={`/${locale}/producers`} className="text-gray-600 dark:text-gray-300 hover:text-[#879385] font-semibold text-lg font-sans">
             Comunidad

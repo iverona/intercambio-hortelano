@@ -538,7 +538,7 @@ export default {
   "onboarding.success": "Profile completed successfully!",
 
   "nav.home": "Home",
-  "nav.search": "Search",
+  "nav.products": "Ads",
   "nav.publish": "Publish",
   "nav.messages": "Messages",
   "nav.profile": "Profile",
