@@ -89,7 +89,8 @@ export default function ProductDetailPage() {
     searchTerm: "",
     categories: product?.category ? [product.category] : [],
     distance: 10000,
-    sortBy: "date_newest"
+    sortBy: "date_newest",
+    showOwnProducts: false
   });
 
   // Filter out current product and limit to 4
