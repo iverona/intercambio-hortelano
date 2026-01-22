@@ -158,12 +158,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
       {/* Content */}
       <CardContent className="p-4">
         <Link href={`/product/${product.id}`}>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-1 group-hover:text-primary transition-colors">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 group-hover:text-primary transition-colors leading-tight">
             {product.name}
           </h3>
         </Link>
 
-        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2 min-h-[2.5rem]">
+        <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 line-clamp-3 leading-relaxed">
           {product.description}
         </p>
 
@@ -181,14 +181,14 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </Link>
               <div className="min-w-0 flex-1">
                 <Link href={`/producers/${product.userId}`} className="block group/name">
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover/name:text-green-600 dark:group-hover/name:text-green-400 truncate transition-colors">
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover/name:text-green-600 dark:group-hover/name:text-green-400 line-clamp-1 transition-colors" title={producer.name}>
                     {producer.name}
                   </p>
                 </Link>
                 {producer.address && (
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate flex items-center gap-1">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 flex items-center gap-1" title={producer.address}>
                     <MapPin className="w-3 h-3 shrink-0" />
-                    {producer.address}
+                    <span className="truncate">{producer.address}</span>
                   </p>
                 )}
               </div>
