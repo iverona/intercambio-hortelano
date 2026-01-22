@@ -33,9 +33,8 @@ service cloud.firestore {
     }
 
     match /notifications/{notificationId} {
-      // Allow read if user is authenticated
-      // The query in the app already filters by recipientId
-      allow read: if request.auth != null;
+      // Only allow users to read their own notifications
+      allow read: if request.auth != null && resource.data.recipientId == request.auth.uid;
       // Allow create if authenticated and the notification has a valid recipientId
       allow create: if request.auth != null && 
         request.resource.data.recipientId != null;
@@ -53,8 +52,9 @@ service cloud.firestore {
 
     // Rules for exchanges collection
     match /exchanges/{exchangeId} {
-      // Allow read if user is authenticated (queries will filter by requesterId/ownerId)
-      allow read: if request.auth != null;
+      // Only allow read if user is the requester or owner (parties involved)
+      allow read: if request.auth != null &&
+        (resource.data.requesterId == request.auth.uid || resource.data.ownerId == request.auth.uid);
       // Allow create if authenticated
       allow create: if request.auth != null;
       // Allow update if user is the requester or owner
