@@ -45,15 +45,15 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+            value: "camera=(), microphone=(), geolocation=(self), interest-cohort=()",
           },
           {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com",
-              "style-src 'self' 'unsafe-inline' https://accounts.google.com",
-              "img-src 'self' data: blob: https://firebasestorage.googleapis.com https://placehold.co https://*.googleusercontent.com https://*.gstatic.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com https://maps.googleapis.com",
+              "style-src 'self' 'unsafe-inline' https://accounts.google.com https://fonts.googleapis.com https://maps.googleapis.com",
+              "img-src 'self' data: blob: https://firebasestorage.googleapis.com https://placehold.co https://*.googleusercontent.com https://*.gstatic.com https://*.googleapis.com",
               "font-src 'self' data: https://fonts.gstatic.com",
               "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com",
               "frame-src 'self' https://accounts.google.com https://*.firebaseapp.com",
