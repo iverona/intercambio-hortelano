@@ -542,6 +542,7 @@ export default {
   "nav.publish": "Publish",
   "nav.messages": "Messages",
   "nav.profile": "Profile",
+  "nav.login": "Login",
 
   producers: {
     title: 'Explore Producers',

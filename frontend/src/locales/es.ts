@@ -542,6 +542,7 @@ export default {
   "nav.publish": "Publicar",
   "nav.messages": "Mensajes",
   "nav.profile": "Perfil",
+  "nav.login": "Acceder",
 
   "common.back": "Atrás",
 

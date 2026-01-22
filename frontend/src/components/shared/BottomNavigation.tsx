@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, ShoppingBag, PlusCircle, MessageSquare, User } from "lucide-react";
+import { Home, ShoppingBag, PlusCircle, MessageSquare, User, LogIn } from "lucide-react";
 import { useCurrentLocale, useI18n } from "@/locales/provider";
 import { useAuth } from "@/context/AuthContext";
 import { useNotifications } from "@/context/NotificationContext";
@@ -34,6 +34,7 @@ const BottomNavigation = () => {
       label: t('nav.publish'),
       isActive: (path: string) => path.includes("/publish"),
       isCenter: true,
+      authRequired: true,
     },
     {
       href: `/${locale}/exchanges`,
@@ -41,14 +42,15 @@ const BottomNavigation = () => {
       label: t('nav.messages'),
       isActive: (path: string) => path.includes("/exchanges"),
       badge: unreadCount > 0 ? unreadCount : undefined,
+      authRequired: true,
     },
     {
       href: user ? `/${locale}/profile` : `/${locale}/login`,
-      icon: User,
-      label: t('nav.profile'),
+      icon: user ? User : LogIn,
+      label: user ? t('nav.profile') : t('nav.login'),
       isActive: (path: string) => path.includes("/profile") || (!user && path.includes("/login")),
     },
-  ];
+  ].filter(item => !item.authRequired || user);
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 shadow-lg">
