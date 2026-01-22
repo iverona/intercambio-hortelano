@@ -11,12 +11,8 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if true;
       allow create: if request.auth != null && request.auth.uid == userId;
-      // Allow update if user is updating their own profile OR if any authenticated user is updating reputation fields
-      allow update: if request.auth != null && 
-        (request.auth.uid == userId || 
-         // Allow other users to update reputation-related fields only
-         (request.auth.uid != userId && 
-          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['reputation', 'points', 'level', 'badges'])));
+      // Only allow users to update their own profile
+      allow update: if request.auth != null && request.auth.uid == userId;
     }
 
     // Secure the chats collection
