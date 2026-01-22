@@ -28,6 +28,7 @@ const Filter = () => {
   const [localCategories, setLocalCategories] = useState<string[]>(filters.categories);
   const [localDistance, setLocalDistance] = useState(filters.distance);
   const [localSortBy, setLocalSortBy] = useState(filters.sortBy);
+  const [localShowOwnProducts, setLocalShowOwnProducts] = useState(filters.showOwnProducts);
 
   // Sync local state when the sheet opens
   useEffect(() => {
@@ -35,6 +36,7 @@ const Filter = () => {
       setLocalCategories(filters.categories);
       setLocalDistance(filters.distance);
       setLocalSortBy(filters.sortBy);
+      setLocalShowOwnProducts(filters.showOwnProducts);
     }
   }, [isOpen, filters]);
 
@@ -55,6 +57,7 @@ const Filter = () => {
       categories: localCategories,
       distance: localDistance,
       sortBy: localSortBy,
+      showOwnProducts: localShowOwnProducts,
     });
     setIsOpen(false);
   };
@@ -65,11 +68,13 @@ const Filter = () => {
       categories: [],
       distance: 100,
       sortBy: "distance",
+      showOwnProducts: false,
     };
     setFilters(defaultFilters);
     setLocalCategories([]);
     setLocalDistance(100);
     setLocalSortBy("distance");
+    setLocalShowOwnProducts(false);
   };
 
   const hasActiveFilters = filters.categories.length > 0 || filters.distance < 100 || filters.sortBy !== 'distance';
@@ -286,6 +291,62 @@ const Filter = () => {
                 <span>50 km</span>
                 <span>100 km</span>
               </div>
+            </div>
+          </div>
+
+          {/* Own Products Toggle Section */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t('filter.own_products')}</h3>
+            <div className="mx-auto max-w-sm">
+              <label className="relative group cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="absolute opacity-0 w-0 h-0"
+                  checked={localShowOwnProducts}
+                  onChange={(e) => setLocalShowOwnProducts(e.target.checked)}
+                />
+                <div className={`
+                  relative overflow-hidden rounded-2xl border-2 transition-all duration-300 p-5
+                  ${localShowOwnProducts
+                    ? 'border-green-500 bg-white dark:bg-green-950/30 shadow-lg shadow-green-500/20'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-600 bg-white/60 dark:bg-gray-800/50 shadow-sm hover:shadow-md'
+                  }
+                `}>
+                  {localShowOwnProducts && (
+                    <div className="absolute top-3 right-3">
+                      <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center animate-scale-in shadow-inner">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                    </div>
+                  )}
+                  <div className="flex items-center space-x-4">
+                    <div className={`
+                      w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300
+                      ${localShowOwnProducts
+                        ? 'bg-green-100 dark:bg-green-900/50'
+                        : 'bg-gray-100 dark:bg-gray-700/50'
+                      }
+                    `}>
+                      <svg
+                        className={`w-6 h-6 transition-colors duration-300 ${localShowOwnProducts ? 'text-green-600 dark:text-green-400' : 'text-gray-500'}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <p className={`font-semibold text-sm ${localShowOwnProducts ? 'text-green-700 dark:text-green-400' : 'text-gray-800 dark:text-gray-200'}`}>
+                        {t('filter.show_own_products')}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        {t('filter.show_own_products_description')}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </label>
             </div>
           </div>
 

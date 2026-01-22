@@ -10,6 +10,7 @@ export const useProducts = (
         categories: string[];
         distance: number;
         sortBy: string;
+        showOwnProducts: boolean;
     },
     excludeUserId?: string
 ) => {
@@ -23,9 +24,11 @@ export const useProducts = (
         const categoryFilter = filters.categories.length === 1 ? filters.categories[0] : undefined;
 
         const unsubscribe = ProductService.subscribeToProducts((productsData) => {
-            // Filter out excluded user's products (deleted products are filtered at service level)
+            // Filter out excluded user's products based on showOwnProducts setting
+            // If showOwnProducts is false (default), exclude user's own products
+            // If showOwnProducts is true, include all products
             let processedData = productsData.filter((product) =>
-                !excludeUserId || product.userId !== excludeUserId
+                !excludeUserId || filters.showOwnProducts || product.userId !== excludeUserId
             );
 
             // Add distance calculation if userLocation is available

@@ -314,6 +314,9 @@ export default {
   "filter.honey": "Honey",
   "filter.handicrafts": "Handicrafts",
   "filter.other": "Other",
+  "filter.own_products": "My Products",
+  "filter.show_own_products": "Show my ads",
+  "filter.show_own_products_description": "Include your own products in the results",
 
   "login.title": "Login",
   "login.email_label": "Email",

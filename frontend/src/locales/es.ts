@@ -314,6 +314,9 @@ export default {
   "filter.honey": "Miel",
   "filter.handicrafts": "Artesanías",
   "filter.other": "Otro",
+  "filter.own_products": "Mis Productos",
+  "filter.show_own_products": "Mostrar mis anuncios",
+  "filter.show_own_products_description": "Incluir tus propios productos en los resultados",
 
   "login.title": "Iniciar Sesión",
   "login.email_label": "Correo Electrónico",
