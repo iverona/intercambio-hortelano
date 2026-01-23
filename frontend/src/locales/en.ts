@@ -594,5 +594,8 @@ export default {
   "cookies.policy.analytics_title": "Third-party cookies",
   "cookies.policy.analytics_desc": "We use services like Firebase and Google Maps that may install cookies for their operation and basic statistics.",
   "cookies.policy.how_to_manage": "How to manage cookies",
-  "cookies.policy.how_to_manage_desc": "You can allow, block or delete cookies installed on your equipment by configuring the options of the browser installed on your computer."
+  "cookies.policy.how_to_manage_desc": "You can allow, block or delete cookies installed on your equipment by configuring the options of the browser installed on your computer.",
+  "privacy.location.title": "Location Protection",
+  "privacy.location.description": "To safeguard your privacy, we never store your exact location. A random offset (between 500m and 1.5km) is applied to your coordinates before saving. This allows you to participate in the local community without revealing your precise address.",
+  "privacy.location_notice": "Your privacy matters. We will only store an approximate location (randomly offset by ~1km) to show you on the general map. Your exact address is never shared.",
 } as const;

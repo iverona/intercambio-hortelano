@@ -597,5 +597,8 @@ export default {
   "cookies.policy.analytics_title": "Cookies de terceros",
   "cookies.policy.analytics_desc": "Utilizamos servicios como Firebase y Google Maps que pueden instalar cookies para su funcionamiento y estadísticas básicas.",
   "cookies.policy.how_to_manage": "Cómo gestionar las cookies",
-  "cookies.policy.how_to_manage_desc": "Usted puede permitir, bloquear o eliminar las cookies instaladas en su equipo mediante la configuración de las opciones del navegador instalado en su ordenador."
+  "cookies.policy.how_to_manage_desc": "Usted puede permitir, bloquear o eliminar las cookies instaladas en su equipo mediante la configuración de las opciones del navegador instalado en su ordenador.",
+  "privacy.location.title": "Protección de Ubicación",
+  "privacy.location.description": "Para salvaguardar tu privacidad, nunca almacenamos tu ubicación exacta. Un desplazamiento aleatorio (entre 500m y 1.5km) se aplica a tus coordenadas antes de guardarlas. Esto te permite participar en la comunidad local sin revelar tu dirección precisa.",
+  "privacy.location_notice": "Tu privacidad es importante. Solo almacenaremos una ubicación aproximada (desplazada aleatoriamente ~1km) para mostrarte en el mapa general. Tu dirección exacta nunca se comparte.",
 } as const;

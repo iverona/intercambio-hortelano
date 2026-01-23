@@ -6,10 +6,12 @@ export interface UserData {
     avatarUrl: string;
     bio?: string;
     location?: {
+        // Approximate location (fuzzed by ~500m-1.5km) for privacy
         latitude: number;
         longitude: number;
     };
     geohash?: string;
+    // Approximate address (e.g. City, Country) only
     address?: string;
     locationUpdatedAt?: {
         seconds: number;

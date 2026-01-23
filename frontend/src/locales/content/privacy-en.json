@@ -5,6 +5,7 @@
         "We collect information that you provide directly to us, such as your name, email address, and details about your garden when you register. We also use your location to show you nearby products, but always in an approximate way to protect your home.",
         "We use your information to facilitate exchanges between community members, send you notifications about your offers, and continuously improve our platform.",
         "We do not share your personal data with third parties for commercial purposes. Your information is only visible to other community members based on the privacy preferences set in your profile.",
+        "Location Protection: To safeguard your privacy, we never store your exact location. We apply a random offset (between 500m and 1.5km) to your coordinates before saving them to our database. This allows you to participate and be visible on the community map without revealing your precise address.",
         "By using EcoAnuncios, you agree to the practices described in this policy. We reserve the right to update this document periodically to reflect changes in our services or for legal reasons."
     ]
 }

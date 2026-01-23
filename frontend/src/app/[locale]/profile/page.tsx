@@ -16,6 +16,7 @@ import { useI18n, useChangeLocale, useCurrentLocale } from "@/locales/provider";
 import { toast } from "sonner";
 import LocationSearchInput from "@/components/shared/LocationSearchInput";
 import { useGeolocation } from "@/hooks/useGeolocation";
+import { fuzzLocation, getApproximateAddress } from "@/lib/locationUtils";
 import {
   reauthenticateUser,
   softDeleteUserAccount,
@@ -36,6 +37,7 @@ import {
   Loader2,
   Languages,
   LogOut,
+  ShieldCheck,
 } from "lucide-react";
 import { TomatoRating } from "@/components/shared/TomatoRating";
 import { useUser } from "@/hooks/useUser";
@@ -211,18 +213,27 @@ export default function ProfilePage() {
   const handleLocationUpdate = async (locationData: { latitude: number; longitude: number; geohash?: string; address?: string }) => {
     setUpdatingLocation(true);
     try {
-      await updateProfileData({
+      // Fuzz the location before saving to protect privacy
+      const fuzzedCoords = fuzzLocation(locationData.latitude, locationData.longitude);
+
+      const updatePayload: any = {
         location: {
-          latitude: locationData.latitude,
-          longitude: locationData.longitude,
+          latitude: fuzzedCoords.latitude,
+          longitude: fuzzedCoords.longitude,
         },
         geohash: locationData.geohash,
-        address: locationData.address || userData?.address,
         locationUpdatedAt: {
           seconds: Date.now() / 1000,
           nanoseconds: 0,
         }
-      });
+      };
+
+      // Generalize address if provided
+      if (locationData.address) {
+        updatePayload.address = getApproximateAddress(locationData.address);
+      }
+
+      await updateProfileData(updatePayload);
 
       setShowLocationUpdate(false);
       toast.success(t('profile.location_updated'));
@@ -577,6 +588,11 @@ export default function ProfilePage() {
               </div>
 
               {/* Update Location Options */}
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 flex gap-3 text-sm text-blue-800 dark:text-blue-300 mb-4">
+                <ShieldCheck className="w-5 h-5 flex-shrink-0" />
+                <p>{t('privacy.location_notice')}</p>
+              </div>
+
               {!showLocationUpdate ? (
                 <div className="flex gap-3">
                   <Button
