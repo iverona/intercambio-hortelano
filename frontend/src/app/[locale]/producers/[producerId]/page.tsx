@@ -3,6 +3,7 @@
 import { useEffect, useState, use } from "react";
 import { useI18n } from "@/locales/provider";
 import ProductCard from "@/components/shared/ProductCard";
+import OrganicProductCard from "@/components/shared/OrganicProductCard";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { ProducerAvatar } from "@/components/shared/ProducerAvatar";
 import { useUser } from "@/hooks/useUser";
@@ -135,11 +136,12 @@ export default function ProducerShopPage({
       </h2>
       {products.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {products.map((product) => (
-            <div key={product.id}>
-              <ProductCard product={product} />
-            </div>
-            /* Link removed to prevent nested <a> tags, handled inside ProductCard */
+          {products.map((product, index) => (
+            <OrganicProductCard
+              key={product.id}
+              product={product}
+              index={index}
+            />
           ))}
         </div>
       ) : (

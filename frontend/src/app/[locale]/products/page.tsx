@@ -3,6 +3,7 @@
 import { useI18n } from "@/locales/provider";
 import Link from "next/link";
 import ProductCard from "@/components/shared/ProductCard";
+import OrganicProductCard from "@/components/shared/OrganicProductCard";
 import { useAuth } from "@/context/AuthContext";
 import { useFilters } from "@/context/FilterContext";
 import { db } from "@/lib/firebase";
@@ -34,19 +35,7 @@ const ProductSkeleton = () => (
 );
 
 // Enhanced product card wrapper with animations
-const AnimatedProductCard = ({ product, index }: { product: Product; index: number }) => {
-  return (
-    <div
-      className="group relative transform transition-all duration-300 hover:scale-105 hover:-translate-y-2"
-      style={{ animationDelay: `${index * 50}ms` }}
-    >
-      {/* Hover glow effect */}
-      <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-emerald-400 rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300"></div>
-
-      <ProductCard product={product} />
-    </div>
-  );
-};
+// Removed in favor of shared OrganicProductCard
 
 import { SearchAndFilter } from "@/components/shared/SearchAndFilter";
 
@@ -139,18 +128,11 @@ export default function ProductsPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12 px-4">
             {products.map((product, index) => (
-              <OrganicCard
+              <OrganicProductCard
                 key={product.id}
-                className="h-full"
-                contentClassName="p-0 border-0 bg-[#FFFBE6] dark:bg-[#e0dcc7]" // Light paper background
-                rotate={index % 2 === 0 ? 1 : -1}
-                shadowColor="bg-[#A88C8F]" // Using the organic color from homepage
-              >
-                <ProductCard
-                  product={product}
-                  className="border-0 shadow-none rounded-none bg-transparent h-full"
-                />
-              </OrganicCard>
+                product={product}
+                index={index}
+              />
             ))}
           </div>
         )}
