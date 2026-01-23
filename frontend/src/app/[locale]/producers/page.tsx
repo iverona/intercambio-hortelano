@@ -1,45 +1,47 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@/locales/provider";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { ProducerAvatar } from "@/components/shared/ProducerAvatar";
 import { useProducers } from "@/hooks/useProducers";
-import { Producer } from "@/types/user";
+import OrganicProducerCard from "@/components/shared/OrganicProducerCard";
+import { OrganicCard } from "@/components/shared/OrganicCard";
 import {
     ArrowRight,
     Users,
     Sparkles,
-    Store,
-    Heart,
-    MapPin,
     Package,
     TrendingUp
 } from "lucide-react";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 
-// Skeleton loader component
-const ProducerSkeleton = () => (
-    <div className="animate-pulse">
-        <Card className="overflow-hidden border-0 shadow-lg bg-card ">
-            <div className="bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 h-32"></div>
-            <div className="p-6 space-y-3">
-                <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded-full"></div>
-                    <div className="space-y-2 flex-1">
-                        <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-3/4"></div>
-                        <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-1/2"></div>
-                    </div>
+// Skeleton loader component with organic styling
+const ProducerSkeleton = ({ index }: { index: number }) => (
+    <OrganicCard
+        className="h-full"
+        contentClassName="p-0 border-0 bg-[#FFFBE6] dark:bg-[#e0dcc7]"
+        rotate={index % 2 === 0 ? 1 : -1}
+        shadowColor="bg-[#A88C8F]"
+    >
+        <div className="animate-pulse p-4 space-y-3">
+            <div className="flex items-center gap-3">
+                <div className="w-14 h-14 bg-gray-200 dark:bg-gray-600 rounded-full"></div>
+                <div className="space-y-2 flex-1">
+                    <div className="h-4 bg-gray-200 dark:bg-gray-600 rounded w-3/4"></div>
+                    <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-1/2"></div>
                 </div>
-                <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-full"></div>
-                <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 rounded w-4/5"></div>
             </div>
-        </Card>
-    </div>
+            <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-full"></div>
+            <div className="h-3 bg-gray-200 dark:bg-gray-600 rounded w-4/5"></div>
+            <div className="flex gap-2 pt-2">
+                <div className="h-5 bg-gray-200 dark:bg-gray-600 rounded w-20"></div>
+                <div className="h-5 bg-gray-200 dark:bg-gray-600 rounded w-16"></div>
+            </div>
+            <div className="h-9 bg-gray-200 dark:bg-gray-600 rounded w-full mt-2"></div>
+        </div>
+    </OrganicCard>
 );
 
 // Hero section component (content only)
@@ -105,97 +107,7 @@ const HeroSectionContent = ({ producerCount }: { producerCount: number }) => {
     );
 };
 
-// Enhanced producer card with animations
-const ProducerCard = ({ producer, index }: { producer: Producer; index: number }) => {
-    const t = useI18n();
-    const producerName = producer.name || t('producers.unnamed');
-    const isNew = Math.random() > 0.7; // Mock new producer logic
-    const hasLocation = producer.address || producer.distance !== undefined;
-
-    return (
-        <div
-            className="group relative transform transition-all duration-300 hover:scale-105 hover:-translate-y-2"
-            style={{ animationDelay: `${index * 50}ms` }}
-        >
-            {/* New badge */}
-            {isNew && (
-                <div className="absolute -top-2 -right-2 z-10">
-                    <Badge className="bg-secondary text-white border-0 shadow-lg animate-pulse">
-                        {t('producers.new_badge')}
-                    </Badge>
-                </div>
-            )}
-
-            {/* Hover glow effect */}
-            <div className="absolute inset-0 bg-muted rounded-xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300"></div>
-
-            <Card className="relative overflow-hidden border border-card shadow-lg hover:shadow-2xl transition-all duration-300 bg-card ">
-                {/* Header - Light Green */}
-                <div className="h-24 bg-card/50 relative">
-                    {/* Favorite button - White Circle */}
-                    <button className="absolute top-3 right-3 p-2 rounded-full bg-white dark:bg-gray-800 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-gray-50 dark:hover:bg-gray-700">
-                        <Heart className="w-4 h-4 text-gray-400 dark:text-gray-300 hover:text-secondary transition-colors" />
-                    </button>
-                </div>
-
-                <CardContent className="relative pt-0">
-                    <div className="flex gap-4 mb-4">
-                        {/* Avatar - Floating */}
-                        <div className="-mt-10 relative z-10 shrink-0">
-                            <ProducerAvatar
-                                avatarUrl={producer.avatarUrl}
-                                name={producerName}
-                                size="md"
-                                className="border-4 border-white dark:border-gray-800 shadow-md h-20 w-20"
-                            />
-                        </div>
-
-                        {/* Name & Location - Right Side */}
-                        <div className="pt-2 min-w-0 flex-1">
-                            <h3 className="text-lg font-bold text-foreground leading-tight pr-2 font-display">
-                                {producerName}
-                            </h3>
-                            {hasLocation && (
-                                <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1 truncate">
-                                    <MapPin className="w-3 h-3 shrink-0" />
-                                    <span className="truncate">
-                                        {producer.address}
-                                        {producer.distance !== undefined && ` • ${Math.round(producer.distance)} km`}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Bio */}
-                    <p className="text-sm text-muted-foreground mb-6 line-clamp-2 min-h-[2.5rem] font-serif">
-                        {producer.bio || t('producers.no_bio')}
-                    </p>
-
-                    {/* Stats Badges */}
-                    <div className="flex flex-wrap gap-2 mb-6">
-                        <Badge variant="secondary" className="bg-muted/20 text-foreground dark:text-card-foreground border-0 font-normal hover:bg-muted/30 px-3">
-                            <Package className="w-3.5 h-3.5 mr-1.5" />
-                            {producer.productsCount || 0} {t('producers.products_label')}
-                        </Badge>
-                        <Badge variant="secondary" className="bg-primary/20 text-foreground dark:text-card-foreground border-0 font-normal hover:bg-primary/30 px-3">
-                            <Store className="w-3.5 h-3.5 mr-1.5" />
-                            {t('producers.verified')}
-                        </Badge>
-                    </div>
-
-                    {/* Button - Dark */}
-                    <Button asChild className="w-full bg-primary hover:bg-[#7a8578] text-white shadow-sm group/button">
-                        <Link href={`/producers/${producer.uid}`}>
-                            <span className="font-medium">{t('producers.view_shop')}</span>
-                            <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover/button:translate-x-1" />
-                        </Link>
-                    </Button>
-                </CardContent>
-            </Card>
-        </div>
-    );
-};
+// ProducerCard component moved to @/components/shared/OrganicProducerCard
 
 export default function ProducersPage() {
     const t = useI18n();
@@ -242,13 +154,13 @@ export default function ProducersPage() {
                     {loading ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                             {[...Array(8)].map((_, i) => (
-                                <ProducerSkeleton key={i} />
+                                <ProducerSkeleton key={i} index={i} />
                             ))}
                         </div>
                     ) : producers.length > 0 ? (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                             {producers.map((producer, index) => (
-                                <ProducerCard key={producer.uid} producer={producer} index={index} />
+                                <OrganicProducerCard key={producer.uid} producer={producer} index={index} />
                             ))}
                         </div>
                     ) : (
