@@ -284,6 +284,12 @@ export default function ProductDetailPage() {
                           {t('product.form.for_sale_label')}
                         </Badge>
                       )}
+                      {product.isFree && (
+                        <Badge className="bg-purple-500 text-white border-0 rounded-full px-3 py-1 text-xs font-serif uppercase tracking-wider">
+                          <Leaf className="w-3 h-3 mr-1" />
+                          {t('product.form.for_free_label')}
+                        </Badge>
+                      )}
                     </div>
 
                     <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-2 leading-none">
