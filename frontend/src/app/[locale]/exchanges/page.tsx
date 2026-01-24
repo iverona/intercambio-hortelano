@@ -67,11 +67,11 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
 
-    if (diffInHours < 1) return 'Just now';
-    if (diffInHours < 24) return `${diffInHours}h ago`;
+    if (diffInHours < 1) return t('product.time.just_now');
+    if (diffInHours < 24) return t('product.time.hours_ago', { count: diffInHours });
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays === 1) return 'Yesterday';
-    if (diffInDays < 7) return `${diffInDays} days ago`;
+    if (diffInDays === 1) return t('product.time.yesterday');
+    if (diffInDays < 7) return t('product.time.days_ago', { count: diffInDays });
     return date.toLocaleDateString();
   };
 
@@ -107,8 +107,12 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
               {exchange.status === 'pending' && !isRequester && (
                 <AlertCircle className="w-3 h-3 mr-1" />
               )}
-              <span className="hidden sm:inline">{exchange.status.charAt(0).toUpperCase() + exchange.status.slice(1)}</span>
-              <span className="sm:hidden">{exchange.status.charAt(0).toUpperCase()}</span>
+              <span className="hidden sm:inline">
+                {(t as any)(`exchanges.status.${exchange.status}`)}
+              </span>
+              <span className="sm:hidden">
+                {(t as any)(`exchanges.status.${exchange.status}`).charAt(0)}
+              </span>
             </Badge>
           </div>
 
@@ -246,7 +250,7 @@ export default function ExchangesPage() {
               <Link href="/">
                 <Package className="mr-2 h-4 w-4 md:h-5 md:w-5" />
                 <span className="hidden sm:inline">{t('exchanges.browse_products')}</span>
-                <span className="sm:hidden">Browse</span>
+                <span className="sm:hidden">{t('exchanges.browse_products').split(' ')[0]}</span>
               </Link>
             </Button>
           </div>
@@ -288,7 +292,7 @@ export default function ExchangesPage() {
               <TabsTrigger value="active" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm data-[state=active]:bg-secondary data-[state=active]:text-white dark:data-[state=active]:bg-[#7a6466]">
                 <MessageSquare className="w-3 h-3 md:w-4 md:h-4" />
                 <span className="hidden sm:inline">{t('exchanges.tabs.active')}</span>
-                <span className="sm:hidden">Active</span>
+                <span className="sm:hidden">{t('exchanges.tabs.active')}</span>
                 {activeExchanges.length > 0 && (
                   <Badge variant="secondary" className="ml-1 bg-white/20 text-white">
                     {activeExchanges.length}
@@ -298,7 +302,7 @@ export default function ExchangesPage() {
               <TabsTrigger value="pending" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm data-[state=active]:bg-card data-[state=active]:text-foreground dark:data-[state=active]:bg-[#4a463a] dark:data-[state=active]:text-[#EFEAC6]">
                 <Clock className="w-3 h-3 md:w-4 md:h-4" />
                 <span className="hidden sm:inline">{t('exchanges.tabs.pending')}</span>
-                <span className="sm:hidden">Pending</span>
+                <span className="sm:hidden">{t('exchanges.tabs.pending')}</span>
                 {pendingExchanges.length > 0 && (
                   <Badge variant="secondary" className="ml-1 bg-black/10 dark:bg-white/10">
                     {pendingExchanges.length}
@@ -308,7 +312,7 @@ export default function ExchangesPage() {
               <TabsTrigger value="completed" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm data-[state=active]:bg-primary data-[state=active]:text-white dark:data-[state=active]:bg-muted">
                 <Archive className="w-3 h-3 md:w-4 md:h-4" />
                 <span className="hidden sm:inline">{t('exchanges.tabs.history')}</span>
-                <span className="sm:hidden">History</span>
+                <span className="sm:hidden">{t('exchanges.tabs.history')}</span>
                 {completedExchanges.length > 0 && (
                   <Badge variant="secondary" className="ml-1 bg-white/20 text-white">
                     {completedExchanges.length}

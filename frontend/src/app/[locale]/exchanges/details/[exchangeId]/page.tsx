@@ -25,7 +25,7 @@ import {
   Info,
 } from "lucide-react";
 import { createNotification, NotificationMetadata } from "@/lib/notifications";
-import { useI18n } from "@/locales/provider";
+import { useCurrentLocale, useI18n } from "@/locales/provider";
 import { toast } from "sonner";
 import { ReviewSection } from "@/components/shared/ReviewSection";
 import { submitReview } from "@/lib/reviewHelpers";
@@ -38,6 +38,7 @@ export default function ExchangeDetailsPage() {
   const { user } = useAuth();
   const router = useRouter();
   const params = useParams();
+  const locale = useCurrentLocale();
   const exchangeId = params.exchangeId as string;
   const { exchange, loading, messages, sendMessage, updateStatus } = useExchangeDetails(exchangeId);
   const [newMessage, setNewMessage] = useState("");
@@ -204,7 +205,7 @@ export default function ExchangeDetailsPage() {
 
   const formatDate = (timestamp?: Timestamp) => {
     if (!timestamp) return '';
-    return timestamp.toDate().toLocaleDateString('en-US', {
+    return timestamp.toDate().toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -268,11 +269,11 @@ export default function ExchangeDetailsPage() {
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center gap-2 text-sm text-[#879385] dark:text-[#998676]">
             <Link href="/" className="hover:text-[#594a42] dark:hover:text-[#d6c7b0] transition-colors">
-              Home
+              {t('exchanges.details.breadcrumb.home')}
             </Link>
             <ChevronRight className="w-4 h-4" />
             <Link href="/exchanges" className="hover:text-[#594a42] dark:hover:text-[#d6c7b0] transition-colors">
-              Exchanges
+              {t('exchanges.details.breadcrumb.exchanges')}
             </Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-[#594a42] dark:text-[#d6c7b0] font-medium truncate max-w-[200px]">
@@ -306,7 +307,7 @@ export default function ExchangeDetailsPage() {
             </p>
           </div>
           <Badge className={`${getStatusBadgeStyle(exchange.status)} px-4 py-1.5 text-sm shadow-sm rounded-full`}>
-            {exchange.status.charAt(0).toUpperCase() + exchange.status.slice(1)}
+            {(t as any)(`exchanges.status.${exchange.status}`)}
           </Badge>
         </div>
 
@@ -384,11 +385,11 @@ export default function ExchangeDetailsPage() {
                   </div>
                   <div>
                     <p className="font-medium text-[#594a42] dark:text-[#d6c7b0] capitalize">
-                      {exchange.offer?.type} Offer
+                      {t('exchanges.details.offer_label', { type: exchange.offer?.type === 'exchange' ? t('product.form.for_exchange_label') : t('offer_modal.select_type.chat_title') })}
                     </p>
                     <div className="text-sm text-[#879385] dark:text-[#998676] mt-1 space-y-1">
                       {exchange.offer?.type === "exchange" && exchange.offer.offeredProductName && (
-                        <p>Swapping for: <span className="font-medium text-[#594a42] dark:text-[#d6c7b0]">{exchange.offer.offeredProductName}</span></p>
+                        <p>{t('exchanges.details.swapping_for', { product: exchange.offer.offeredProductName })}</p>
                       )}
                       {exchange.offer?.message && (
                         <p className="italic">"{exchange.offer.message}"</p>
@@ -451,14 +452,14 @@ export default function ExchangeDetailsPage() {
                         {exchange.status === 'pending' ? t('exchanges.tabs.pending') :
                           exchange.status === 'accepted' ? t('exchanges.tabs.active') :
                             exchange.status === 'completed' ? t('exchanges.tabs.history') :
-                              'Declined'}
+                              t('exchanges.status.rejected')}
                       </h2>
                       <p className="text-sm text-[#879385] dark:text-[#998676]">
                         {exchange.status === 'pending' && isOwner ? t('exchanges.item.action_required') :
                           exchange.status === 'pending' && isRequester ? t('exchanges.item.waiting_for_response') :
-                            exchange.status === 'accepted' ? "Exchange in progress. Use chat to coordinate." :
-                              exchange.status === 'completed' ? "This exchange has been completed successfully." :
-                                "This offer was declined."}
+                            exchange.status === 'accepted' ? t('exchanges.details.status_desc_accepted') :
+                              exchange.status === 'completed' ? t('exchanges.details.status_desc_completed') :
+                                t('exchanges.details.status_desc_rejected')}
                       </p>
                     </div>
                   </div>
