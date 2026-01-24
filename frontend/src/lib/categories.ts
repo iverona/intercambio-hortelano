@@ -1,23 +1,27 @@
 export const categories = [
   {
     id: "vegetables",
-    translationKey: "product.form.category.vegetables",
+    translationKey: "categories.vegetables",
     icon: "🥬",
   },
-  { id: "fruits", 
-    translationKey: "product.form.category.fruits", 
-    icon: "🍎" },
+  {
+    id: "fruits",
+    translationKey: "categories.fruits",
+    icon: "🍎",
+  },
   {
     id: "handmade",
-    translationKey: "product.form.category.handmade",
+    translationKey: "categories.handmade",
     icon: "🎨",
   },
   {
     id: "services",
-    translationKey: "product.form.category.services",
-    icon: "🛠️",
+    translationKey: "categories.services",
+    icon: "🤝",
   },
-  { id: "other", 
-    translationKey: "filter.other", 
-    icon: "📦" },
+  {
+    id: "other",
+    translationKey: "categories.other",
+    icon: "📦",
+  },
 ];
