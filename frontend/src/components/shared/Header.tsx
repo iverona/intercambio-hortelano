@@ -74,7 +74,7 @@ const Header = () => {
             {t('nav.products')}
           </Link>
           <Link href={`/${locale}/producers`} className="text-gray-600 dark:text-gray-300 hover:text-[#879385] font-semibold text-lg font-sans">
-            Comunidad
+            {t('nav.community')}
           </Link>
 
           {/* User Section or Login Button */}
@@ -131,7 +131,7 @@ const Header = () => {
             ) : (
               <Button asChild className="bg-[#879385] text-white px-6 py-2 rounded-full font-display text-2xl hover:bg-[#7a8578] shadow-md transition-all h-auto pb-1">
                 <Link href={`/${locale}/login`}>
-                  Login
+                  {t('header.login')}
                 </Link>
               </Button>
             )

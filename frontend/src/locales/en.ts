@@ -370,10 +370,15 @@ export default {
   "notifications.exchange_completed.title": "Exchange Completed",
   "notifications.exchange_completed.with_product": "Exchange completed for \"{productName}\"",
   "notifications.exchange_completed.default": "Your exchange has been marked as complete",
-
   "notifications.review_received.title": "New Review Received",
   "notifications.review_received.with_sender": "{senderName} left you a review",
   "notifications.review_received.default": "You have received a new review for a recent exchange",
+  "notifications.title": "Notifications",
+  "notifications.unread_messages_one": "You have 1 unread message",
+  "notifications.unread_messages_plural": "You have {count} unread messages",
+  "notifications.all_caught_up": "All caught up!",
+  "notifications.no_notifications": "No notifications yet",
+  "notifications.view_all": "View all notifications",
 
   "notifications.default.title": "New Notification",
   "notifications.default.description": "You have a new notification",
@@ -560,6 +565,7 @@ export default {
   "nav.messages": "Messages",
   "nav.profile": "Profile",
   "nav.login": "Login",
+  "nav.community": "Community",
   "common.edit": "Edit",
   "common.delete": "Delete",
 

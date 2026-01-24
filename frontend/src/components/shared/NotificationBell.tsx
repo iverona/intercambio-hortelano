@@ -77,11 +77,13 @@ const NotificationBell = () => {
       <PopoverContent className="w-96 p-0" align="end">
         <div className="flex items-center justify-between p-4">
           <div>
-            <h4 className="font-semibold text-sm">Notifications</h4>
+            <h4 className="font-semibold text-sm">{t('notifications.title')}</h4>
             <p className="text-xs text-muted-foreground mt-1">
               {unreadCount > 0
-                ? `You have ${unreadCount} unread message${unreadCount === 1 ? "" : "s"}`
-                : "All caught up!"}
+                ? unreadCount === 1
+                  ? t('notifications.unread_messages_one')
+                  : t('notifications.unread_messages_plural', { count: unreadCount })
+                : t('notifications.all_caught_up')}
             </p>
           </div>
         </div>
@@ -89,7 +91,7 @@ const NotificationBell = () => {
         <div className="max-h-[400px] overflow-y-auto">
           {notifications.length === 0 ? (
             <div className="p-8 text-center text-sm text-muted-foreground">
-              No notifications yet
+              {t('notifications.no_notifications')}
             </div>
           ) : (
             <div className="divide-y">
@@ -155,7 +157,7 @@ const NotificationBell = () => {
                   router.push(`/${locale}/notifications`);
                 }}
               >
-                View all notifications
+                {t('notifications.view_all')}
               </Button>
             </div>
           </>

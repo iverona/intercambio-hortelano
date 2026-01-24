@@ -370,10 +370,15 @@ export default {
   "notifications.exchange_completed.title": "Intercambio Completado",
   "notifications.exchange_completed.with_product": "Intercambio completado para \"{productName}\"",
   "notifications.exchange_completed.default": "Tu intercambio ha sido marcado como completado",
-
   "notifications.review_received.title": "Nueva Reseña Recibida",
   "notifications.review_received.with_sender": "{senderName} te dejó una reseña",
   "notifications.review_received.default": "Has recibido una nueva reseña por un intercambio reciente",
+  "notifications.title": "Notificaciones",
+  "notifications.unread_messages_one": "Tienes 1 mensaje sin leer",
+  "notifications.unread_messages_plural": "Tienes {count} mensajes sin leer",
+  "notifications.all_caught_up": "¡Estás al día!",
+  "notifications.no_notifications": "Aún no tienes notificaciones",
+  "notifications.view_all": "Ver todas las notificaciones",
 
   "notifications.default.title": "Nueva Notificación",
   "notifications.default.description": "Tienes una nueva notificación",
@@ -560,6 +565,7 @@ export default {
   "nav.messages": "Mensajes",
   "nav.profile": "Perfil",
   "nav.login": "Acceder",
+  "nav.community": "Comunidad",
 
   "common.back": "Atrás",
   "common.edit": "Editar",
