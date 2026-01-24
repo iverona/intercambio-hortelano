@@ -70,30 +70,18 @@ export default function ProductForm({
   isSubmitting = false,
 }: ProductFormProps) {
   const t = useI18n();
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
-  const [isForExchange, setIsForExchange] = useState(false);
-  const [isForSale, setIsForSale] = useState(false);
-  const [isFree, setIsFree] = useState(false);
+  const [name, setName] = useState(initialData?.name || "");
+  const [description, setDescription] = useState(initialData?.description || "");
+  const [category, setCategory] = useState(initialData?.category || "");
+  const [isForExchange, setIsForExchange] = useState(initialData?.isForExchange || false);
+  const [isForSale, setIsForSale] = useState(initialData?.isForSale || false);
+  const [isFree, setIsFree] = useState(initialData?.isFree || false);
   const [error, setError] = useState<string | null>(null);
-  const [imageSources, setImageSources] = useState<({ type: 'url', value: string } | { type: 'file', value: File, preview: string })[]>([]);
+  const [imageSources, setImageSources] = useState<({ type: 'url', value: string } | { type: 'file', value: File, preview: string })[]>(
+    initialData?.imageUrls?.map(url => ({ type: 'url' as const, value: url })) || []
+  );
   const [isCompressing, setIsCompressing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (initialData) {
-      setName(initialData.name || "");
-      setDescription(initialData.description || "");
-      setCategory(initialData.category || "");
-      setIsForExchange(initialData.isForExchange || false);
-      setIsForSale(initialData.isForSale || false);
-      setIsFree(initialData.isFree || false);
-      if (initialData.imageUrls) {
-        setImageSources(initialData.imageUrls.map(url => ({ type: 'url', value: url })));
-      }
-    }
-  }, [initialData]);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
