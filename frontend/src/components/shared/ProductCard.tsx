@@ -115,7 +115,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent z-10"></div>
 
         {/* Badges positioned on image */}
-        <div className="absolute top-3 left-3 z-20 flex flex-wrap gap-2">
+        <div className="absolute top-3 left-3 right-3 z-20 flex flex-wrap gap-2">
           {product.category && (
             <Badge className={`${getCategoryColor(product.category)} border-0 shadow-sm backdrop-blur-sm`}>
               {(() => {
@@ -133,7 +133,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         </div>
 
         {/* Price/Exchange badges in bottom right of image */}
-        <div className="absolute bottom-3 right-3 z-20 flex gap-2">
+        <div className="absolute bottom-3 right-3 left-3 z-20 flex flex-wrap justify-end gap-2">
           {product.isForExchange && (
             <Badge className="bg-[#879385] text-white border-0 shadow-lg backdrop-blur-sm">
               <Leaf className="w-3 h-3 mr-1" />
