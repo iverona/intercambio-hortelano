@@ -35,6 +35,7 @@ import {
   Leaf,
   DollarSign,
   ChevronRight,
+  Gift,
 } from "lucide-react";
 import Link from "next/link";
 import { useProduct, useProductMutations } from "@/hooks/useProduct";
@@ -46,13 +47,13 @@ import { OrganicBackground } from "@/components/shared/OrganicBackground";
 // Category colors mapping - updated to match earthy theme better if needed, but keeping logic
 const getCategoryColor = (category?: string) => {
   const colors: { [key: string]: string } = {
-    vegetables: "bg-muted text-foreground dark:text-card-foreground",
-    fruits: "bg-secondary text-white dark:bg-secondary dark:text-card-foreground",
-    herbs: "bg-primary text-white dark:text-card-foreground",
-    flowers: "bg-card text-foreground dark:text-card-foreground",
-    seeds: "bg-muted text-foreground dark:bg-muted dark:text-card-foreground",
-    tools: "bg-primary/20 text-foreground dark:bg-muted/40 ",
-    other: "bg-muted/50 text-foreground dark:text-card-foreground",
+    vegetables: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+    fruits: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+    herbs: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
+    flowers: "bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300",
+    seeds: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+    tools: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300",
+    other: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
   };
   return colors[category?.toLowerCase() || "other"] || colors.other;
 };
@@ -265,48 +266,55 @@ export default function ProductDetailPage() {
                 {/* Right Column: Details */}
                 <div className="flex flex-col h-full">
                   {/* Title & Category */}
-                  <div className="mb-6">
-                    <div className="flex flex-wrap gap-2 mb-3">
-                      {product.category && (
-                        <Badge className={`${getCategoryColor(product.category)} border-0 rounded-full px-3 py-1 text-xs font-serif uppercase tracking-wider`}>
-                          {product.category}
-                        </Badge>
-                      )}
-                      {product.isForExchange && (
-                        <Badge className="bg-primary text-white border-0 rounded-full px-3 py-1 text-xs font-serif uppercase tracking-wider">
-                          <Leaf className="w-3 h-3 mr-1" />
-                          {t('product.for_exchange')}
-                        </Badge>
-                      )}
-                      {product.isForSale && (
-                        <Badge className="bg-secondary text-white border-0 rounded-full px-3 py-1 text-xs font-serif uppercase tracking-wider">
-                          <DollarSign className="w-3 h-3 mr-1" />
-                          {t('product.form.for_sale_label')}
-                        </Badge>
-                      )}
-                      {product.isFree && (
-                        <Badge className="bg-purple-500 text-white border-0 rounded-full px-3 py-1 text-xs font-serif uppercase tracking-wider">
-                          <Leaf className="w-3 h-3 mr-1" />
-                          {t('product.form.for_free_label')}
-                        </Badge>
-                      )}
+                  {/* Category Eyebrow */}
+                  <div className="mb-2">
+                    {product.category && (
+                      <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest ${getCategoryColor(product.category)}`}>
+                        {/* @ts-ignore */}
+                        {t(`categories.${product.category.toLowerCase()}`)}
+                      </span>
+                    )}
+                  </div>
+
+                  <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4 leading-none">
+                    {product.name}
+                  </h1>
+
+                  {/* Transaction Types */}
+                  <div className="flex flex-wrap gap-3 mb-6">
+                    {product.isFree && (
+                      <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 rounded-lg border border-emerald-200 dark:border-emerald-800 shadow-sm">
+                        <Gift className="w-4 h-4" />
+                        <span className="font-bold font-serif text-sm uppercase tracking-wide">{t('product.form.for_free_label')}</span>
+                      </div>
+                    )}
+
+                    {product.isForExchange && (
+                      <div className="flex items-center gap-2 px-3 py-1.5 bg-primary/10 text-primary rounded-lg border border-primary/20 shadow-sm">
+                        <Leaf className="w-4 h-4" />
+                        <span className="font-bold font-serif text-sm uppercase tracking-wide">{t('product.for_exchange')}</span>
+                      </div>
+                    )}
+
+                    {product.isForSale && (
+                      <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary/10 text-secondary rounded-lg border border-secondary/20 shadow-sm">
+                        <DollarSign className="w-4 h-4" />
+                        <span className="font-bold font-serif text-sm uppercase tracking-wide">{t('product.form.for_sale_label')}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex flex-wrap gap-4 text-sm font-sans text-foreground/70 mt-4">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>{getTimeAgo(product.createdAt)}</span>
                     </div>
-
-                    <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-2 leading-none">
-                      {product.name}
-                    </h1>
-
-                    <div className="flex flex-wrap gap-4 text-sm font-sans text-foreground/70 mt-4">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        <span>{getTimeAgo(product.createdAt)}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Eye className="w-4 h-4" />
-                        <span>234 {t('product.views')}</span>
-                      </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-4 h-4" />
+                      <span>234 {t('product.views')}</span>
                     </div>
                   </div>
+
 
                   {/* Busco a cambio / Description */}
                   <div className="flex-grow space-y-6">
@@ -410,22 +418,24 @@ export default function ProductDetailPage() {
         </div>
       </div>
 
-      {product && (
-        <OfferModal
-          isOpen={showOfferModal}
-          onClose={() => setShowOfferModal(false)}
-          product={{
-            id: product.id,
-            name: product.name,
-            description: product.description,
-            imageUrls: product.imageUrls,
-            isForExchange: product.isForExchange,
-            isForSale: product.isForSale,
-          }}
-          //  @ts-ignore
-          onOfferSubmit={handleOfferSubmit}
-        />
-      )}
-    </OrganicBackground>
+      {
+        product && (
+          <OfferModal
+            isOpen={showOfferModal}
+            onClose={() => setShowOfferModal(false)}
+            product={{
+              id: product.id,
+              name: product.name,
+              description: product.description,
+              imageUrls: product.imageUrls,
+              isForExchange: product.isForExchange,
+              isForSale: product.isForSale,
+            }}
+            //  @ts-ignore
+            onOfferSubmit={handleOfferSubmit}
+          />
+        )
+      }
+    </OrganicBackground >
   );
 }
