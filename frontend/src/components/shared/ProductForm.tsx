@@ -416,7 +416,7 @@ export default function ProductForm({
                   {t('product.form.for_exchange_label')}
                 </p>
                 <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                  Trade with other gardeners
+                  {t('product.form.for_exchange_description')}
                 </p>
               </div>
               <div className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isForExchange
@@ -448,7 +448,7 @@ export default function ProductForm({
                   {t('product.form.for_sale_label')}
                 </p>
                 <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
-                  Sell for money
+                  {t('product.form.for_sale_description')}
                 </p>
               </div>
               <div className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isForSale
