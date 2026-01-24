@@ -319,6 +319,10 @@ export default {
   "filter.own_products": "My Products",
   "filter.show_own_products": "Show my ads",
   "filter.show_own_products_description": "Include your own products in the results",
+  "filter.transaction_type": "Transaction Type",
+  "filter.transaction_options.sale": "For Sale",
+  "filter.transaction_options.exchange": "For Exchange",
+  "filter.transaction_options.free": "Free",
 
   "login.title": "Login",
   "login.email_label": "Email",

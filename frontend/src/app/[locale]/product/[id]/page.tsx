@@ -90,7 +90,8 @@ export default function ProductDetailPage() {
     categories: product?.category ? [product.category] : [],
     distance: 10000,
     sortBy: "date_newest",
-    showOwnProducts: false
+    showOwnProducts: false,
+    transactionTypes: [],
   });
 
   // Filter out current product and limit to 4

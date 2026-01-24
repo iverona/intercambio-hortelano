@@ -26,6 +26,7 @@ const Filter = () => {
 
   // Local state for the sheet, synchronized with global state on open
   const [localCategories, setLocalCategories] = useState<string[]>(filters.categories);
+  const [localTransactionTypes, setLocalTransactionTypes] = useState<string[]>(filters.transactionTypes);
   const [localDistance, setLocalDistance] = useState(filters.distance);
   const [localSortBy, setLocalSortBy] = useState(filters.sortBy);
   const [localShowOwnProducts, setLocalShowOwnProducts] = useState(filters.showOwnProducts);
@@ -34,6 +35,7 @@ const Filter = () => {
   useEffect(() => {
     if (isOpen) {
       setLocalCategories(filters.categories);
+      setLocalTransactionTypes(filters.transactionTypes);
       setLocalDistance(filters.distance);
       setLocalSortBy(filters.sortBy);
       setLocalShowOwnProducts(filters.showOwnProducts);
@@ -41,7 +43,7 @@ const Filter = () => {
   }, [isOpen, filters]);
 
   // Calculate active filters count
-  const activeFiltersCount = filters.categories.length + (filters.distance < 100 ? 1 : 0) + (filters.sortBy !== 'distance' ? 1 : 0);
+  const activeFiltersCount = filters.categories.length + filters.transactionTypes.length + (filters.distance < 100 ? 1 : 0) + (filters.sortBy !== 'distance' ? 1 : 0);
 
   const handleCategoryChange = (categoryId: string) => {
     setLocalCategories((prev) =>
@@ -51,10 +53,19 @@ const Filter = () => {
     );
   };
 
+  const handleTransactionTypeChange = (type: string) => {
+    setLocalTransactionTypes((prev) =>
+      prev.includes(type)
+        ? prev.filter((t) => t !== type)
+        : [...prev, type]
+    );
+  };
+
   const handleApplyFilters = () => {
     setFilters({
       ...filters,
       categories: localCategories,
+      transactionTypes: localTransactionTypes,
       distance: localDistance,
       sortBy: localSortBy,
       showOwnProducts: localShowOwnProducts,
@@ -66,18 +77,20 @@ const Filter = () => {
     const defaultFilters = {
       ...filters,
       categories: [],
+      transactionTypes: [],
       distance: 100,
       sortBy: "distance",
       showOwnProducts: false,
     };
     setFilters(defaultFilters);
     setLocalCategories([]);
+    setLocalTransactionTypes([]);
     setLocalDistance(100);
     setLocalSortBy("distance");
     setLocalShowOwnProducts(false);
   };
 
-  const hasActiveFilters = filters.categories.length > 0 || filters.distance < 100 || filters.sortBy !== 'distance';
+  const hasActiveFilters = filters.categories.length > 0 || filters.transactionTypes.length > 0 || filters.distance < 100 || filters.sortBy !== 'distance';
 
   const getCategoryName = (categoryId: string) => {
     const category = categories.find(c => c.id === categoryId);
@@ -141,6 +154,21 @@ const Filter = () => {
                       </button>
                     </Badge>
                   ))}
+                  {filters.transactionTypes.map(type => (
+                    <Badge key={type} className="pl-3 pr-2 py-1.5 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-sm border border-green-100">
+                      <span>{(t as any)(`filter.transaction_options.${type}`)}</span>
+                      <button
+                        onClick={() => {
+                          const newTypes = filters.transactionTypes.filter(t => t !== type);
+                          setFilters({ ...filters, transactionTypes: newTypes });
+                          setLocalTransactionTypes(newTypes);
+                        }}
+                        className="ml-2 p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </Badge>
+                  ))}
                   {filters.distance < 100 && (
                     <Badge key="distance-badge" className="pl-3 pr-2 py-1.5 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-sm border border-green-100">
                       <span>{`< ${filters.distance} km`}</span>
@@ -173,6 +201,41 @@ const Filter = () => {
               </div>
             </div>
           )}
+
+          {/* Transaction Type Section */}
+          <div className="space-y-4">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t('filter.transaction_type')}</h3>
+            <div className="flex flex-wrap gap-3 mx-auto max-w-sm">
+              {['sale', 'exchange', 'free'].map((type) => (
+                <label key={type} className="relative group cursor-pointer flex-1 min-w-[30%]">
+                  <input
+                    type="checkbox"
+                    className="absolute opacity-0 w-0 h-0"
+                    checked={localTransactionTypes.includes(type)}
+                    onChange={() => handleTransactionTypeChange(type)}
+                  />
+                  <div className={`
+                    relative overflow-hidden rounded-2xl border-2 transition-all duration-300 py-3 px-2 text-center h-full flex items-center justify-center
+                    ${localTransactionTypes.includes(type)
+                      ? 'border-green-500 bg-white dark:bg-green-950/30 shadow-lg shadow-green-500/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-600 bg-white/60 dark:bg-gray-800/50 shadow-sm hover:shadow-md'
+                    }
+                  `}>
+                    <span className={`font-semibold text-sm ${localTransactionTypes.includes(type) ? 'text-green-700 dark:text-green-400' : 'text-gray-700 dark:text-gray-300'}`}>
+                      {(t as any)(`filter.transaction_options.${type}`)}
+                    </span>
+                    {localTransactionTypes.includes(type) && (
+                      <div className="absolute top-1 right-1">
+                        <div className="w-3 h-3 bg-green-500 rounded-full flex items-center justify-center animate-scale-in">
+                          <Check className="w-2 h-2 text-white" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </label>
+              ))}
+            </div>
+          </div>
 
           {/* Categories Section */}
           <div className="space-y-4">
@@ -356,7 +419,7 @@ const Filter = () => {
               variant="outline"
               className="flex-1 h-14 font-bold border-2 rounded-2xl bg-white hover:bg-gray-50 dark:hover:bg-gray-800 transition-all duration-300 hover:scale-105"
               onClick={handleResetFilters}
-              disabled={!hasActiveFilters && localCategories.length === 0 && localDistance === 100 && localSortBy === "distance"}
+              disabled={!hasActiveFilters && localCategories.length === 0 && localTransactionTypes.length === 0 && localDistance === 100 && localSortBy === "distance"}
             >
               <RotateCcw className="w-4 h-4 mr-2" />
               {t('filter.reset')}

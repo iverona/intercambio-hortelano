@@ -9,6 +9,7 @@ interface FilterContextType {
     searchTerm: string;
     sortBy: string;
     showOwnProducts: boolean;
+    transactionTypes: string[];
   };
   setFilters: (filters: {
     categories: string[];
@@ -16,6 +17,7 @@ interface FilterContextType {
     searchTerm: string;
     sortBy: string;
     showOwnProducts: boolean;
+    transactionTypes: string[];
   }) => void;
 }
 
@@ -31,6 +33,7 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
     searchTerm: "",
     sortBy: "distance",
     showOwnProducts: false,
+    transactionTypes: [] as string[],
   });
 
   // Load preference from localStorage on mount

@@ -11,6 +11,7 @@ export const useProducts = (
         distance: number;
         sortBy: string;
         showOwnProducts: boolean;
+        transactionTypes: string[];
     },
     excludeUserId?: string
 ) => {
@@ -68,6 +69,16 @@ export const useProducts = (
 
             // Apply filtering logic
             let filteredData = sortedData;
+
+            // Transaction Type filter
+            if (filters.transactionTypes.length > 0) {
+                filteredData = filteredData.filter((product) => {
+                    const matchesSale = filters.transactionTypes.includes('sale') && product.isForSale;
+                    const matchesExchange = filters.transactionTypes.includes('exchange') && product.isForExchange;
+                    const matchesFree = filters.transactionTypes.includes('free') && product.isFree;
+                    return matchesSale || matchesExchange || matchesFree;
+                });
+            }
 
             // Category filter
             if (filters.categories.length > 0) {

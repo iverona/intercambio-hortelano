@@ -319,6 +319,10 @@ export default {
   "filter.own_products": "Mis Productos",
   "filter.show_own_products": "Mostrar mis anuncios",
   "filter.show_own_products_description": "Incluir tus propios productos en los resultados",
+  "filter.transaction_type": "Tipo de Transacción",
+  "filter.transaction_options.sale": "Venta",
+  "filter.transaction_options.exchange": "Intercambio",
+  "filter.transaction_options.free": "Regalo",
 
   "login.title": "Iniciar Sesión",
   "login.email_label": "Correo Electrónico",
