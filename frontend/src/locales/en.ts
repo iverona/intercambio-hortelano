@@ -183,6 +183,12 @@ export default {
   "product.form.upload_restrictions": "SVG, PNG, JPG or GIF (MAX. 800x400px)",
   "product.form.save_button": "Save Changes",
   "product.form.publish_button": "Publish Product",
+  "product.time.just_now": "Just now",
+  "product.time.hours_ago": "{count}h ago",
+  "product.time.yesterday": "Yesterday",
+  "product.time.days_ago": "{count} days ago",
+  "product.time.weeks_ago": "{count} weeks ago",
+  "product.time.months_ago": "{count} months ago",
 
   "publish.back_to_home": "Back to Home",
   "publish.share_with_community": "Share with the community",
@@ -554,6 +560,8 @@ export default {
   "nav.messages": "Messages",
   "nav.profile": "Profile",
   "nav.login": "Login",
+  "common.edit": "Edit",
+  "common.delete": "Delete",
 
   producers: {
     title: 'Explore Producers',

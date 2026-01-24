@@ -10,6 +10,7 @@ import { UserService } from "@/services/user.service";
 import { ProducerAvatar } from "@/components/shared/ProducerAvatar";
 
 import { cn } from "@/lib/utils";
+import { categories } from "@/lib/categories";
 
 interface ProductCardProps {
   product: {
@@ -90,13 +91,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
 
-    if (diffInHours < 1) return { text: "Just now", isNew: true };
-    if (diffInHours < 24) return { text: `${diffInHours}h ago`, isNew: true };
+    if (diffInHours < 1) return { text: t('product.time.just_now'), isNew: true };
+    if (diffInHours < 24) return { text: t('product.time.hours_ago', { count: diffInHours }), isNew: true };
     const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays === 1) return { text: "Yesterday", isNew: true };
-    if (diffInDays < 7) return { text: `${diffInDays} days ago`, isNew: diffInDays <= 7 };
-    if (diffInDays < 30) return { text: `${Math.floor(diffInDays / 7)} weeks ago`, isNew: false };
-    return { text: `${Math.floor(diffInDays / 30)} months ago`, isNew: false };
+    if (diffInDays === 1) return { text: t('product.time.yesterday'), isNew: true };
+    if (diffInDays < 7) return { text: t('product.time.days_ago', { count: diffInDays }), isNew: diffInDays <= 7 };
+    if (diffInDays < 30) return { text: t('product.time.weeks_ago', { count: Math.floor(diffInDays / 7) }), isNew: false };
+    return { text: t('product.time.months_ago', { count: Math.floor(diffInDays / 30) }), isNew: false };
   };
 
   const timeInfo = getTimeAgo(product.createdAt);
@@ -117,7 +118,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <div className="absolute top-3 left-3 z-20 flex flex-wrap gap-2">
           {product.category && (
             <Badge className={`${getCategoryColor(product.category)} border-0 shadow-sm backdrop-blur-sm`}>
-              {product.category}
+              {(() => {
+                const categoryInfo = categories.find(c => c.id === product.category);
+                return categoryInfo ? (t as any)(categoryInfo.translationKey) : product.category;
+              })()}
             </Badge>
           )}
           {timeInfo.isNew && (
@@ -133,7 +137,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           {product.isForExchange && (
             <Badge className="bg-[#879385] text-white border-0 shadow-lg backdrop-blur-sm">
               <Leaf className="w-3 h-3 mr-1" />
-              Exchange
+              {t('product.form.for_exchange_label')}
             </Badge>
           )}
           {product.isForSale && (
@@ -235,7 +239,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 }}
                 className="hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-950 dark:hover:text-blue-400"
               >
-                Edit
+                {t('common.edit')}
               </Button>
             )}
             {onDelete && (
@@ -249,7 +253,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
                 }}
                 className="hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950 dark:hover:text-red-400"
               >
-                Delete
+                {t('common.delete')}
               </Button>
             )}
           </div>

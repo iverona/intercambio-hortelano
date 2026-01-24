@@ -160,11 +160,11 @@ export default {
   "product.form.category_placeholder": "Selecciona una categoría",
   "product.form.category.vegetables": "Verduras",
   "product.form.category.fruits": "Frutas",
-  "product.form.category.handmade": "Productos Hechos a Mano",
+  "product.form.category.handmade": "Artesanía",
   "product.form.category.services": "Servicios",
   "product.form.picture_label": "Foto del Producto",
   "product.form.transaction_type_label": "Tipo de Transacción",
-  "product.form.for_exchange_label": "Para Intercambio",
+  "product.form.for_exchange_label": "Intercambio",
   "product.form.for_exchange_description": "Intercambia con otros hortelanos",
   "product.form.for_sale_label": "Venta",
   "product.form.for_sale_description": "Vende por dinero",
@@ -183,6 +183,12 @@ export default {
   "product.form.upload_restrictions": "SVG, PNG, JPG o GIF (MÁX. 800x400px)",
   "product.form.save_button": "Guardar Cambios",
   "product.form.publish_button": "Publicar Producto",
+  "product.time.just_now": "Recién publicado",
+  "product.time.hours_ago": "Hace {count}h",
+  "product.time.yesterday": "Ayer",
+  "product.time.days_ago": "Hace {count} días",
+  "product.time.weeks_ago": "Hace {count} semanas",
+  "product.time.months_ago": "Hace {count} meses",
 
   "publish.back_to_home": "Volver al Inicio",
   "publish.share_with_community": "Comparte con la comunidad",
@@ -556,6 +562,8 @@ export default {
   "nav.login": "Acceder",
 
   "common.back": "Atrás",
+  "common.edit": "Editar",
+  "common.delete": "Eliminar",
 
   producers: {
     title: 'Explorar Productores',
