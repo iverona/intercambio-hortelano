@@ -40,6 +40,7 @@ export interface ProductData {
   category: string;
   isForExchange: boolean;
   isForSale: boolean;
+  isFree?: boolean;
   images: File[];
   imageUrls?: string[];
 }
@@ -50,6 +51,7 @@ export interface ProductSubmitData {
   category: string;
   isForExchange: boolean;
   isForSale: boolean;
+  isFree?: boolean;
   newImages: File[];
   retainedImageUrls: string[];
 }
@@ -73,6 +75,7 @@ export default function ProductForm({
   const [category, setCategory] = useState("");
   const [isForExchange, setIsForExchange] = useState(false);
   const [isForSale, setIsForSale] = useState(false);
+  const [isFree, setIsFree] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [imageSources, setImageSources] = useState<({ type: 'url', value: string } | { type: 'file', value: File, preview: string })[]>([]);
   const [isCompressing, setIsCompressing] = useState(false);
@@ -85,6 +88,7 @@ export default function ProductForm({
       setCategory(initialData.category || "");
       setIsForExchange(initialData.isForExchange || false);
       setIsForSale(initialData.isForSale || false);
+      setIsFree(initialData.isFree || false);
       if (initialData.imageUrls) {
         setImageSources(initialData.imageUrls.map(url => ({ type: 'url', value: url })));
       }
@@ -131,7 +135,7 @@ export default function ProductForm({
       return;
     }
 
-    if (!isForExchange && !isForSale) {
+    if (!isForExchange && !isForSale && !isFree) {
       setError(t('product.form.error.no_transaction_type'));
       return;
     }
@@ -149,6 +153,7 @@ export default function ProductForm({
       category,
       isForExchange,
       isForSale,
+      isFree,
       newImages,
       retainedImageUrls,
     });
@@ -402,7 +407,7 @@ export default function ProductForm({
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
           {/* Exchange Card */}
           <Card
             className={`p-3 md:p-5 cursor-pointer transition-all duration-300 border-2 ${isForExchange
@@ -463,6 +468,38 @@ export default function ProductForm({
                 : 'border-secondary/30'
                 }`}>
                 {isForSale && <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></div>}
+              </div>
+            </div>
+          </Card>
+
+          {/* Free Card */}
+          <Card
+            className={`p-3 md:p-5 cursor-pointer transition-all duration-300 border-2 ${isFree
+              ? 'bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 border-purple-500 dark:border-purple-600 shadow-lg'
+              : 'hover:border-purple-300 dark:hover:border-purple-700 hover:bg-purple-50/50 dark:hover:bg-purple-950/10'
+              } ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
+            onClick={() => !isSubmitting && setIsFree(!isFree)}
+          >
+            <div className="flex items-center gap-2 md:gap-3">
+              <div className={`p-1.5 md:p-2 rounded-lg transition-all flex-shrink-0 ${isFree
+                ? 'bg-purple-500'
+                : 'bg-purple-500/10'
+                }`}>
+                <Leaf className={`w-4 h-4 md:w-5 md:h-5 ${isFree ? 'text-white' : 'text-purple-500'}`} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className={`text-sm md:text-base font-semibold ${isFree ? 'text-purple-700 dark:text-purple-300' : 'text-gray-900 dark:text-gray-100'}`}>
+                  {t('product.form.for_free_label')}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
+                  {t('product.form.for_free_description')}
+                </p>
+              </div>
+              <div className={`w-4 h-4 md:w-5 md:h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${isFree
+                ? 'border-purple-500 bg-purple-500'
+                : 'border-purple-500/30'
+                }`}>
+                {isFree && <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-white rounded-full"></div>}
               </div>
             </div>
           </Card>

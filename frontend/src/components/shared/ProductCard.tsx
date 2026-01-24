@@ -19,6 +19,7 @@ interface ProductCardProps {
     imageUrls: string[];
     isForExchange?: boolean;
     isForSale?: boolean;
+    isFree?: boolean;
     distance?: number;
     category?: string;
     userId?: string;
@@ -139,6 +140,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <Badge className="bg-[#A88C8F] text-white border-0 shadow-lg backdrop-blur-sm">
               <DollarSign className="w-3 h-3 mr-1" />
               {t('product.form.for_sale_label')}
+            </Badge>
+          )}
+          {product.isFree && (
+            <Badge className="bg-purple-500 text-white border-0 shadow-lg backdrop-blur-sm">
+              <Leaf className="w-3 h-3 mr-1" />
+              {t('product.form.for_free_label')}
             </Badge>
           )}
         </div>

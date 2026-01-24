@@ -166,6 +166,8 @@ export default {
   "product.form.transaction_type_label": "Tipo de Transacción",
   "product.form.for_exchange_label": "Para Intercambio",
   "product.form.for_sale_label": "Venta",
+  "product.form.for_free_label": "Gratis",
+  "product.form.for_free_description": "Regalar a la comunidad",
   "product.form.price_label": "Precio",
   "product.form.price_placeholder": "ej., 5.00",
   "product.form.error.no_category": "Por favor, selecciona una categoría.",

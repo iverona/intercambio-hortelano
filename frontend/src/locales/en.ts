@@ -166,6 +166,8 @@ export default {
   "product.form.transaction_type_label": "Transaction Type",
   "product.form.for_exchange_label": "For Exchange",
   "product.form.for_sale_label": "For Sale",
+  "product.form.for_free_label": "Free",
+  "product.form.for_free_description": "Gift to the community",
   "product.form.price_label": "Price",
   "product.form.price_placeholder": "e.g., 5.00",
   "product.form.error.no_category": "Please select a category.",

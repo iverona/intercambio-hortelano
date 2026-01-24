@@ -7,6 +7,7 @@ export interface Product {
     userId: string;
     isForExchange?: boolean;
     isForSale?: boolean;
+    isFree?: boolean;
     location?: {
         latitude: number;
         longitude: number;

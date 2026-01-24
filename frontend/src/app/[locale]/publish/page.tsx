@@ -176,6 +176,7 @@ export default function PublishPage() {
         category: data.category,
         isForExchange: data.isForExchange,
         isForSale: data.isForSale,
+        isFree: data.isFree,
         imageUrls: [], // Service handles images upload
         userId: user.uid,
         location: currentUserProfile?.location || undefined,
