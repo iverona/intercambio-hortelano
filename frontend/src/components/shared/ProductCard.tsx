@@ -9,8 +9,8 @@ import { MapPin, Leaf, DollarSign, Clock, Heart } from "lucide-react";
 import { UserService } from "@/services/user.service";
 import { ProducerAvatar } from "@/components/shared/ProducerAvatar";
 
-import { cn } from "@/lib/utils";
-import { categories } from "@/lib/categories";
+import { cn, getTimeAgo } from "@/lib/utils";
+import { categories, getCategoryColor } from "@/lib/categories";
 
 interface ProductCardProps {
   product: {
@@ -63,44 +63,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
     }
   }, [product.userId]);
 
-  // Category colors mapping
-  const getCategoryColor = (category?: string) => {
-    const colors: { [key: string]: string } = {
-      // Vegetables / Herbs -> Sage Green
-      vegetables: "bg-[#879385] text-white",
-      herbs: "bg-[#879385] text-white",
-
-      // Fruits / Flowers -> Dusty Rose
-      fruits: "bg-[#A88C8F] text-white",
-      flowers: "bg-[#A88C8F] text-white",
-
-      // Seeds / Other -> Pale Yellow (needs dark text)
-      seeds: "bg-[#EFEAC6] text-[#3E3B34]",
-      other: "bg-[#EFEAC6] text-[#3E3B34]",
-
-      // Tools -> Muted Stone/Grey
-      tools: "bg-[#9CA3AF] text-white",
-    };
-    return colors[category?.toLowerCase() || "other"] || colors.other;
-  };
-
-  // Format time ago
-  const getTimeAgo = (createdAt: { seconds: number; nanoseconds: number } | undefined) => {
-    if (!createdAt) return { text: null, isNew: false };
-    const date = new Date(createdAt.seconds * 1000);
-    const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-
-    if (diffInHours < 1) return { text: t('product.time.just_now'), isNew: true };
-    if (diffInHours < 24) return { text: t('product.time.hours_ago', { count: diffInHours }), isNew: true };
-    const diffInDays = Math.floor(diffInHours / 24);
-    if (diffInDays === 1) return { text: t('product.time.yesterday'), isNew: true };
-    if (diffInDays < 7) return { text: t('product.time.days_ago', { count: diffInDays }), isNew: diffInDays <= 7 };
-    if (diffInDays < 30) return { text: t('product.time.weeks_ago', { count: Math.floor(diffInDays / 7) }), isNew: false };
-    return { text: t('product.time.months_ago', { count: Math.floor(diffInDays / 30) }), isNew: false };
-  };
-
-  const timeInfo = getTimeAgo(product.createdAt);
+  const timeInfo = getTimeAgo(product.createdAt, t);
 
   return (
     <Card className={cn("group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800", className)}>

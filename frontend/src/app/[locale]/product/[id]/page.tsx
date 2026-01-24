@@ -43,36 +43,10 @@ import { useUserProfile } from "@/hooks/useUser";
 import { useProducts } from "@/hooks/useProducts";
 import ProductCard from "@/components/shared/ProductCard";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
+import { categories, getCategoryColor } from "@/lib/categories";
+import { cn, getTimeAgo } from "@/lib/utils";
 
-// Category colors mapping - updated to match earthy theme better if needed, but keeping logic
-const getCategoryColor = (category?: string) => {
-  const colors: { [key: string]: string } = {
-    vegetables: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-    fruits: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
-    herbs: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300",
-    flowers: "bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300",
-    seeds: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
-    tools: "bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-300",
-    other: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
-  };
-  return colors[category?.toLowerCase() || "other"] || colors.other;
-};
-
-// Format time ago
-const getTimeAgo = (createdAt: { seconds: number; nanoseconds: number } | undefined) => {
-  if (!createdAt) return "Recently";
-  const date = new Date(createdAt.seconds * 1000);
-  const now = new Date();
-  const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-
-  if (diffInHours < 1) return "Just now";
-  if (diffInHours < 24) return `${diffInHours}h ago`;
-  const diffInDays = Math.floor(diffInHours / 24);
-  if (diffInDays === 1) return "Yesterday";
-  if (diffInDays < 7) return `${diffInDays} days ago`;
-  if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} weeks ago`;
-  return `${Math.floor(diffInDays / 30)} months ago`;
-};
+// Category colors mapping - using shared source of truth
 
 export default function ProductDetailPage() {
   const t = useI18n();
@@ -307,7 +281,7 @@ export default function ProductDetailPage() {
                   <div className="flex flex-wrap gap-4 text-sm font-sans text-foreground/70 mt-4">
                     <div className="flex items-center gap-1">
                       <Calendar className="w-4 h-4" />
-                      <span>{getTimeAgo(product.createdAt)}</span>
+                      <span>{getTimeAgo(product.createdAt, t).text}</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Eye className="w-4 h-4" />
