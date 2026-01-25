@@ -11,7 +11,8 @@ import {
     addDoc,
     orderBy,
     or,
-    Unsubscribe
+    Unsubscribe,
+    getDocs
 } from "firebase/firestore";
 import { Exchange, Message, ExchangeStatus } from "@/types/exchange";
 import { UserData } from "@/types/user";
@@ -268,5 +269,20 @@ export const ExchangeService = {
             console.error("Error creating offer:", error);
             throw error;
         }
+    },
+
+    /**
+     * Check if a user has a pending exchange for a specific product
+     */
+    hasPendingExchange: async (userId: string, productId: string): Promise<boolean> => {
+        const q = query(
+            collection(db, "exchanges"),
+            where("requesterId", "==", userId),
+            where("productId", "==", productId),
+            where("status", "==", "pending")
+        );
+
+        const snapshot = await getDocs(q);
+        return !snapshot.empty;
     }
 };

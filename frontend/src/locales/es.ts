@@ -154,6 +154,7 @@ export default {
   "product.form.description_placeholder": "ej., Tomates maduros y jugosos de mi huerta.",
   "product.form.category_label": "Categoría",
   "product.form.category_placeholder": "Selecciona una categoría",
+  "product.pending_exchange": "Solicitud Pendiente",
 
   "categories.vegetables": "Verduras",
   "categories.fruits": "Frutas",

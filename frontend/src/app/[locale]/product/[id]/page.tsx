@@ -19,8 +19,9 @@ import {
 } from "@/components/ui/popover";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter, useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import OfferModal from "@/components/shared/OfferModal";
+import { ExchangeService } from "@/services/exchange.service";
 import { useI18n } from "@/locales/provider";
 import {
   ArrowLeft,
@@ -76,6 +77,13 @@ export default function ProductDetailPage() {
 
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [hasPendingExchange, setHasPendingExchange] = useState(false);
+
+  useEffect(() => {
+    if (currentUser && product) {
+      ExchangeService.hasPendingExchange(currentUser.uid, product.id).then(setHasPendingExchange);
+    }
+  }, [currentUser, product]);
 
   const loading = productLoading;
   const isUnavailable = !loading && (!product || product.deleted);
@@ -348,11 +356,21 @@ export default function ProductDetailPage() {
                       currentUser ? (
                         <Button
                           size="lg"
-                          className="w-full bg-primary hover:bg-[#7a8578] text-white font-serif text-xl h-14 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1"
+                          className="w-full bg-primary hover:bg-[#7a8578] text-white font-serif text-xl h-14 rounded-full shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                           onClick={() => setShowOfferModal(true)}
+                          disabled={hasPendingExchange}
                         >
-                          <Sparkles className="mr-2 h-6 w-6" />
-                          {t('product.interested_button')}
+                          {hasPendingExchange ? (
+                            <>
+                              <Package className="mr-2 h-6 w-6" />
+                              {t('product.pending_exchange') || "Solicitud Pendiente"}
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="mr-2 h-6 w-6" />
+                              {t('product.interested_button')}
+                            </>
+                          )}
                         </Button>
                       ) : (
                         <Button asChild className="w-full bg-secondary hover:bg-[#8b6b6e] text-white font-serif text-lg h-12 rounded-full">

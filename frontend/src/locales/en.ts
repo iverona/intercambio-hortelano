@@ -154,6 +154,7 @@ export default {
   "product.form.description_placeholder": "e.g., Ripe and juicy tomatoes from my garden.",
   "product.form.category_label": "Category",
   "product.form.category_placeholder": "Select a category",
+  "product.pending_exchange": "Pending Request",
 
   "categories.vegetables": "Vegetables",
   "categories.fruits": "Fruits",
