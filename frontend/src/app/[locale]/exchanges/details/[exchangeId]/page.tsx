@@ -371,7 +371,7 @@ export default function ExchangeDetailsPage() {
             </Card>
 
             {/* Offer Details Card */}
-            <Card className="bg-[#FDFBF7] dark:bg-[#2e2c28] border-[#EFEAC6] dark:border-[#4a463a] shadow-sm">
+            <Card className="bg-[#FDFBF7] dark:bg-[#2e2c28] border-[#EFEAC6] dark:border-[#4a463a] shadow-md overflow-hidden relative border-t-4 border-t-[#6B8E23]">
               <CardHeader className="pb-3 border-b border-[#EFEAC6] dark:border-[#4a463a] bg-[#FFFBE6]/50 dark:bg-[#36342e]/50">
                 <CardTitle className="text-base font-semibold text-[#594a42] dark:text-[#d6c7b0] flex items-center gap-2">
                   <Info className="w-4 h-4" />
@@ -389,10 +389,10 @@ export default function ExchangeDetailsPage() {
                     </p>
                     <div className="text-sm text-[#879385] dark:text-[#998676] mt-1 space-y-1">
                       {exchange.offer?.type === "exchange" && exchange.offer.offeredProductName && (
-                        <p>{t('exchanges.details.swapping_for', { product: exchange.offer.offeredProductName })}</p>
-                      )}
-                      {exchange.offer?.message && (
-                        <p className="italic">"{exchange.offer.message}"</p>
+                        <p className="mb-2 text-[#594a42] dark:text-[#d6c7b0]">
+                          <span className="font-medium">{t('exchanges.details.swapping_for', { product: '' })}</span>
+                          {exchange.offer.offeredProductName}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -524,7 +524,7 @@ export default function ExchangeDetailsPage() {
             </Card>
 
             {/* Chat Section */}
-            {(exchange.status === "accepted" || exchange.status === "completed") && (
+            {exchange.chatId && (
               <Card className="bg-[#FDFBF7] dark:bg-[#2e2c28] border-[#EFEAC6] dark:border-[#4a463a] shadow-sm flex flex-col h-[500px] md:h-[600px]">
                 <CardHeader className="py-4 px-6 border-b border-[#EFEAC6] dark:border-[#4a463a] bg-[#FFFBE6]/50 dark:bg-[#36342e]/50">
                   <div className="flex items-center justify-between">
