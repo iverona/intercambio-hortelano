@@ -16,6 +16,7 @@ import {
 import { Exchange, Message, ExchangeStatus } from "@/types/exchange";
 import { UserData } from "@/types/user";
 import { ChatService } from "@/services/chat.service";
+import { createNotification } from "@/lib/notifications";
 
 export const ExchangeService = {
     /**
@@ -238,6 +239,28 @@ export const ExchangeService = {
                         createdAt: serverTimestamp(),
                     },
                 });
+            }
+
+            // Send notification to the product owner
+            try {
+                await createNotification({
+                    recipientId: data.ownerId,
+                    senderId: data.requesterId,
+                    type: "NEW_OFFER",
+                    entityId: exchangeDoc.id,
+                    metadata: {
+                        productName: data.productName,
+                        productId: data.productId,
+                        offeredProductName: data.offer.offeredProductName,
+                        offeredProductId: data.offer.offeredProductId,
+                        offerType: data.offer.type,
+                        message: data.offer.message ? data.offer.message.substring(0, 100) : undefined,
+                        exchangeId: exchangeDoc.id,
+                    },
+                });
+            } catch (notifyError) {
+                // Don't fail the whole offer if notification fails
+                console.error("Error creating notification for offer:", notifyError);
             }
 
             return exchangeDoc.id;
