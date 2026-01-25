@@ -75,6 +75,11 @@ export default function Home() {
           </div>
         </Link>
 
+      </div>
+
+      {/* Secondary Action Buttons (Mobile Friendly) */}
+      <div className="flex flex-col md:flex-row gap-6 mb-10 items-center justify-center w-full">
+        {/* Existing Products Button */}
         <Link href="/products" className="relative group">
           <div className="absolute inset-0 bg-[#998676] rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
           <div
@@ -83,6 +88,18 @@ export default function Home() {
           >
             <span className="font-serif text-xl block text-center">Todos los</span>
             <span className="font-serif text-2xl block font-bold text-center">anuncios</span>
+          </div>
+        </Link>
+
+        {/* New Producers Button */}
+        <Link href="/producers" className="relative group">
+          <div className="absolute inset-0 bg-[#879385] rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
+          <div
+            className="relative bg-[#879385] dark:bg-[#525b51] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20"
+            style={{ borderRadius: '15px 225px 15px 255px / 255px 15px 225px 15px' }}
+          >
+            <span className="font-serif text-xl block text-center">Conoce a los</span>
+            <span className="font-serif text-2xl block font-bold text-center">productores</span>
           </div>
         </Link>
       </div>

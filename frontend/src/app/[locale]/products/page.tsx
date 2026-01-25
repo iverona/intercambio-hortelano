@@ -22,6 +22,7 @@ import { Product } from "@/types/product";
 import { useProducts } from "@/hooks/useProducts";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 import { OrganicCard } from "@/components/shared/OrganicCard";
+import { BrowseTabs } from "@/components/shared/BrowseTabs";
 
 // Skeleton loader component
 const ProductSkeleton = () => (
@@ -66,6 +67,9 @@ export default function ProductsPage() {
   return (
     <OrganicBackground className="py-12">
       <div className="container mx-auto px-4">
+        {/* Mobile Navigation Tabs */}
+        <BrowseTabs />
+
         {/* Section Header */}
         <div className="flex justify-center mb-12">
           <OrganicCard

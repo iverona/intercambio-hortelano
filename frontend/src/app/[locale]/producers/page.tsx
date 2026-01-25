@@ -16,6 +16,7 @@ import {
     TrendingUp
 } from "lucide-react";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
+import { BrowseTabs } from "@/components/shared/BrowseTabs";
 
 // Skeleton loader component with organic styling
 const ProducerSkeleton = ({ index }: { index: number }) => (
@@ -116,6 +117,9 @@ export default function ProducersPage() {
     return (
         <OrganicBackground className="pb-20 md:pb-0">
             <div className="container mx-auto px-4">
+                {/* Mobile Navigation Tabs */}
+                <BrowseTabs />
+
                 {/* Hero Section */}
                 <HeroSectionContent producerCount={producers.length} />
 
