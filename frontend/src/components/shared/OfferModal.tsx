@@ -19,8 +19,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  ArrowRight, 
+import { Textarea } from "@/components/ui/textarea";
+import {
+  ArrowRight,
   Leaf,
   MessageSquare,
   Send,
@@ -70,6 +71,7 @@ export default function OfferModal({
   const [selectedProductId, setSelectedProductId] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [seller, setSeller] = useState<UserData | null>(null);
+  const [message, setMessage] = useState<string>("");
 
   useEffect(() => {
     if (isOpen && user) {
@@ -113,6 +115,7 @@ export default function OfferModal({
         type: "exchange",
         offeredProductId: selectedProduct.id,
         offeredProductName: selectedProduct.name,
+        message: message.trim() || undefined
       });
       onClose();
     }
@@ -121,6 +124,7 @@ export default function OfferModal({
   const handleChat = () => {
     onOfferSubmit({
       type: "chat",
+      message: message.trim() || undefined
     });
     onClose();
   };
@@ -168,6 +172,19 @@ export default function OfferModal({
           )}
 
           <div>
+            {/* Message Input */}
+            <div className="mb-6">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 block">
+                Mensaje (opcional)
+              </label>
+              <Textarea
+                placeholder={`Hola @${seller?.name || 'productor'}, me interesa tu ${product.name}...`}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className="w-full resize-none min-h-[100px]"
+              />
+            </div>
+
             <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
               Selecciona cómo deseas contactar:
             </p>
@@ -185,22 +202,22 @@ export default function OfferModal({
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 pl-7">
                     Propón un trueque sostenible usando uno de tus productos activos.
                   </p>
-                  
+
                   <div className="pl-7 space-y-3">
                     <div>
                       <label className="text-xs font-semibold text-gray-500 uppercase mb-1.5 block">
                         Tu producto para cambio
                       </label>
-                      <Select 
-                        value={selectedProductId} 
+                      <Select
+                        value={selectedProductId}
                         onValueChange={setSelectedProductId}
                         disabled={loading || userProducts.length === 0}
                       >
                         <SelectTrigger className="w-full bg-white dark:bg-slate-900 border-gray-200 dark:border-gray-800">
                           <SelectValue placeholder={
-                            loading ? "Cargando..." : 
-                            userProducts.length === 0 ? "No tienes productos" : 
-                            "Selecciona un producto..."
+                            loading ? "Cargando..." :
+                              userProducts.length === 0 ? "No tienes productos" :
+                                "Selecciona un producto..."
                           } />
                         </SelectTrigger>
                         <SelectContent>
@@ -213,7 +230,7 @@ export default function OfferModal({
                       </Select>
                     </div>
 
-                    <Button 
+                    <Button
                       className="w-full bg-green-600 hover:bg-green-700 text-white shadow-sm"
                       onClick={handleExchange}
                       disabled={!selectedProductId}
@@ -236,9 +253,9 @@ export default function OfferModal({
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 pl-7">
                   Inicia una conversación para aclarar dudas sobre el estado o disponibilidad.
                 </p>
-                
+
                 <div className="pl-7">
-                  <Button 
+                  <Button
                     className="w-full bg-purple-600 hover:bg-purple-700 text-white shadow-sm"
                     onClick={handleChat}
                   >
