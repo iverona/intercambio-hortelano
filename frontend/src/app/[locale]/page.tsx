@@ -121,6 +121,18 @@ export default function Home() {
             <span className="font-serif text-2xl block font-bold text-center">productores</span>
           </div>
         </Link>
+
+        {/* Contact Button */}
+        <Link href="/contact" className="relative group">
+          <div className="absolute inset-0 bg-[#A88C8F] rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
+          <div
+            className="relative bg-[#A88C8F] dark:bg-[#7a6466] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20"
+            style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}
+          >
+            <span className="font-serif text-xl block text-center">Tengo</span>
+            <span className="font-serif text-2xl block font-bold text-center">sugerencias</span>
+          </div>
+        </Link>
       </div>
 
       {/* Info Cards (Sticky Notes) */}
