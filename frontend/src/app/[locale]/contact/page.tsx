@@ -12,6 +12,9 @@ import { useState } from "react";
 import { Mail, MessageSquare, Send, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+import { functions } from "@/lib/firebase";
+import { httpsCallable } from "firebase/functions";
+
 export default function ContactPage() {
     const t = useI18n();
     const router = useRouter();
@@ -27,15 +30,20 @@ export default function ContactPage() {
         e.preventDefault();
         setLoading(true);
 
-        // Phase 3 will connect this to the Cloud Function.
-        // For now, we just simulate success.
-        setTimeout(() => {
-            setLoading(false);
+        try {
+            const submitContactForm = httpsCallable(functions, 'submitContactForm');
+            await submitContactForm(formData);
+
             toast.success(t("contact.form.success"));
             setFormData({ name: "", email: "", subject: "", message: "" });
             // Optionally redirect after a delay
-            // setTimeout(() => router.push("/"), 2000);
-        }, 1500);
+            setTimeout(() => router.push("/"), 2000);
+        } catch (error) {
+            console.error("Error submitting contact form:", error);
+            toast.error(t("contact.form.error"));
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleChange = (

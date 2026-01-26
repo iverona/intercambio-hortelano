@@ -210,6 +210,15 @@ export const ExchangeService = {
 
             // Create an exchange record with the chat already linked
             const exchangesRef = collection(db, "exchanges");
+
+            // Sanitize offer data to avoid Firestore "undefined" errors
+            const sanitizedOffer: any = {
+                type: data.offer.type,
+            };
+            if (data.offer.offeredProductId) sanitizedOffer.offeredProductId = data.offer.offeredProductId;
+            if (data.offer.offeredProductName) sanitizedOffer.offeredProductName = data.offer.offeredProductName;
+            if (data.offer.message) sanitizedOffer.message = data.offer.message;
+
             const exchangeData = {
                 productId: data.productId,
                 productName: data.productName,
@@ -217,7 +226,7 @@ export const ExchangeService = {
                 ownerId: data.ownerId,
                 status: "pending",
                 chatId: chatRef.id,
-                offer: data.offer,
+                offer: sanitizedOffer,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp(),
             };
@@ -252,10 +261,10 @@ export const ExchangeService = {
                     metadata: {
                         productName: data.productName,
                         productId: data.productId,
-                        offeredProductName: data.offer.offeredProductName,
-                        offeredProductId: data.offer.offeredProductId,
+                        offeredProductName: data.offer.offeredProductName || "",
+                        offeredProductId: data.offer.offeredProductId || "",
                         offerType: data.offer.type,
-                        message: data.offer.message ? data.offer.message.substring(0, 100) : undefined,
+                        message: data.offer.message ? data.offer.message.substring(0, 100) : "",
                         exchangeId: exchangeDoc.id,
                     },
                 });
