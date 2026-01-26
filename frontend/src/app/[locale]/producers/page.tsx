@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useI18n } from "@/locales/provider";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { useProducers } from "@/hooks/useProducers";
@@ -11,9 +10,7 @@ import { OrganicCard } from "@/components/shared/OrganicCard";
 import {
     ArrowRight,
     Users,
-    Sparkles,
-    Package,
-    TrendingUp
+    Sparkles
 } from "lucide-react";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 import { BrowseTabs } from "@/components/shared/BrowseTabs";
@@ -46,7 +43,7 @@ const ProducerSkeleton = ({ index }: { index: number }) => (
 );
 
 // Hero section component (content only)
-const HeroSectionContent = ({ producerCount }: { producerCount: number }) => {
+const HeroSectionContent = () => {
     const t = useI18n();
     return (
         <div className="text-center max-w-4xl mx-auto py-8">
@@ -65,45 +62,6 @@ const HeroSectionContent = ({ producerCount }: { producerCount: number }) => {
             <p className="text-xl lg:text-2xl text-muted-foreground mb-8 leading-relaxed font-serif">
                 {t('producers.subtitle')}
             </p>
-
-            {/* Stats */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-auto">
-                <Card className="p-4 bg-card/60 backdrop-blur-sm border border-[#A6C6B9] dark:border-[#4A5D54] shadow-lg">
-                    <div className="flex items-center justify-center gap-3">
-                        <div className="p-2 bg-muted rounded-lg">
-                            <Users className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="text-left">
-                            <p className="text-2xl font-bold text-foreground ">{producerCount}</p>
-                            <p className="text-sm text-muted-foreground ">{t('producers.stats.active')}</p>
-                        </div>
-                    </div>
-                </Card>
-
-                <Card className="p-4 bg-card/60 backdrop-blur-sm border border-primary dark:border-[#5a6359] shadow-lg">
-                    <div className="flex items-center justify-center gap-3">
-                        <div className="p-2 bg-primary rounded-lg">
-                            <Package className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="text-left">
-                            <p className="text-2xl font-bold text-foreground ">2.5k+</p>
-                            <p className="text-sm text-muted-foreground ">{t('producers.stats.products')}</p>
-                        </div>
-                    </div>
-                </Card>
-
-                <Card className="p-4 bg-card/60 backdrop-blur-sm border border-secondary dark:border-[#998676] shadow-lg">
-                    <div className="flex items-center justify-center gap-3">
-                        <div className="p-2 bg-secondary dark:bg-secondary rounded-lg">
-                            <TrendingUp className="w-5 h-5 text-white" />
-                        </div>
-                        <div className="text-left">
-                            <p className="text-2xl font-bold text-foreground ">98%</p>
-                            <p className="text-sm text-muted-foreground ">{t('producers.stats.satisfaction')}</p>
-                        </div>
-                    </div>
-                </Card>
-            </div>
         </div>
     );
 };
@@ -121,7 +79,7 @@ export default function ProducersPage() {
                 <BrowseTabs />
 
                 {/* Hero Section */}
-                <HeroSectionContent producerCount={producers.length} />
+                <HeroSectionContent />
 
                 {/* Section Header */}
                 <div className="mb-10 max-w-6xl mx-auto">
