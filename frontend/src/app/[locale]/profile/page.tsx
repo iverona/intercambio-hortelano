@@ -52,6 +52,7 @@ import {
 } from "@/components/ui/dialog";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 import { OrganicCard } from "@/components/shared/OrganicCard";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Loading skeleton component
 const ProfileSkeleton = () => (
@@ -654,6 +655,97 @@ export default function ProfilePage() {
                   </Button>
                 </div>
               )}
+            </div>
+          </ProfileSection>
+
+          {/* Notification Settings Section */}
+          <ProfileSection title={t('profile.notification_prefs')} icon={ShieldCheck}>
+            <div className="space-y-6">
+              <div className="flex items-center justify-between p-4 bg-card border border-gray-200 dark:border-gray-700 rounded-lg">
+                <div className="space-y-0.5">
+                  <Label htmlFor="email-notifs" className="text-base font-semibold">
+                    {t('profile.email_notifs')}
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    {t('profile.email_notifs_desc')}
+                  </p>
+                </div>
+                <Checkbox
+                  id="email-notifs"
+                  checked={emailNotifications}
+                  onCheckedChange={(checked) => {
+                    setEmailNotifications(checked === true);
+                    if (isEditing) handleSave(); // Auto-save if not in explicit edit mode? 
+                    // Wait, the current page has an 'Edit' button for Personal Info, 
+                    // but other sections like Location/Language save immediately.
+                    // I'll follow the pattern of immediate save for settings.
+                    updateProfileData({
+                      notifications: {
+                        email: checked === true,
+                        messages: messageNotifications,
+                        exchanges: exchangeNotifications,
+                        products: productNotifications,
+                      }
+                    });
+                  }}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center justify-between p-4 bg-card border border-gray-200 dark:border-gray-700 rounded-lg">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="message-notifs" className="text-sm font-medium">
+                      {t('profile.new_messages_notifs')}
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                      {t('profile.new_messages_notifs_desc')}
+                    </p>
+                  </div>
+                  <Checkbox
+                    id="message-notifs"
+                    checked={messageNotifications}
+                    disabled={!emailNotifications}
+                    onCheckedChange={(checked) => {
+                      setMessageNotifications(checked === true);
+                      updateProfileData({
+                        notifications: {
+                          email: emailNotifications,
+                          messages: checked === true,
+                          exchanges: exchangeNotifications,
+                          products: productNotifications,
+                        }
+                      });
+                    }}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-4 bg-card border border-gray-200 dark:border-gray-700 rounded-lg">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="exchange-notifs" className="text-sm font-medium">
+                      {t('profile.exchange_updates_notifs')}
+                    </Label>
+                    <p className="text-xs text-muted-foreground">
+                      {t('profile.exchange_updates_notifs_desc')}
+                    </p>
+                  </div>
+                  <Checkbox
+                    id="exchange-notifs"
+                    checked={exchangeNotifications}
+                    disabled={!emailNotifications}
+                    onCheckedChange={(checked) => {
+                      setExchangeNotifications(checked === true);
+                      updateProfileData({
+                        notifications: {
+                          email: emailNotifications,
+                          messages: messageNotifications,
+                          exchanges: checked === true,
+                          products: productNotifications,
+                        }
+                      });
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           </ProfileSection>
 
