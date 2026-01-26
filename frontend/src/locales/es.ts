@@ -1,5 +1,22 @@
 export default {
   "home.hero.badge": "Bienvenido a la comunidad",
+
+  "common.login": "Iniciar Sesión",
+  "common.logout": "Cerrar Sesión",
+  "common.signup": "Registrarse",
+  "common.email": "Correo Electrónico",
+  "common.password": "Contraseña",
+  "common.save_changes": "Guardar Cambios",
+  "common.cancel": "Cancelar",
+  "common.edit": "Editar",
+  "common.delete": "Eliminar",
+  "common.back": "Volver",
+  "common.submit": "Enviar",
+  "common.loading": "Cargando...",
+  "common.error": "Error",
+  "common.success": "Éxito",
+  "common.or": "O",
+
   "home.hero.title": "Comparte Tu Cosecha",
   "home.hero.subtitle": "Conecta con hortelanos locales, intercambia productos frescos y construye una comunidad sostenible",
   "home.hero.cta.primary": "Comparte Tus Productos",
@@ -33,12 +50,12 @@ export default {
   "profile.member_since": "Miembro desde {date}",
   "profile.location_verified": "Ubicación verificada",
   "profile.reviews": "({count} reseñas)",
-  "profile.email_label": "Correo:",
+
   "profile.show_email_button": "Mostrar",
   "profile.hide_email_button": "Ocultar",
-  "profile.save_button": "Guardar Cambios",
+
   "profile.save_error": "Error al guardar el perfil",
-  "profile.cancel_button": "Cancelar",
+
   "profile.edit_button": "Editar Perfil",
   "profile.change_photo": "Cambiar Foto",
   "profile.upload_photo": "Subir Foto",
@@ -75,7 +92,7 @@ export default {
   "profile.delete_account_button": "Eliminar Cuenta",
   "profile.delete_account_title": "Eliminar Cuenta",
   "profile.delete_account_confirmation": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
-  "profile.password_label": "Contraseña",
+
   "profile.password_placeholder": "Introduce tu contraseña",
   "profile.deleting_button": "Eliminando...",
   "profile.confirm_delete_button": "Confirmar Eliminación",
@@ -129,7 +146,7 @@ export default {
   "product.not_found": "Producto no encontrado",
   "product.unavailable": "Producto No Disponible",
   "product.back_to_home": "Volver al Inicio",
-  "product.back": "Volver",
+
   "product.breadcrumb.home": "Inicio",
   "product.breadcrumb.products": "Productos",
   "product.views": "vistas",
@@ -140,7 +157,7 @@ export default {
   "product.seller_stats.response": "Respuesta",
   "product.send_message": "Enviar Mensaje",
   "product.login_to_contact": "Inicia sesión para contactar al vendedor y hacer una oferta",
-  "product.login_button": "Iniciar Sesión",
+
   "product.edit_button": "Editar Producto",
   "product.view_garden": "Ver Mi Huerta",
   "product.similar_products": "Productos Similares",
@@ -186,7 +203,7 @@ export default {
   "product.form.upload_cta": "Haz clic para subir",
   "product.form.upload_drag_drop": "o arrastra y suelta",
   "product.form.upload_restrictions": "SVG, PNG, JPG o GIF (MÁX. 800x400px)",
-  "product.form.save_button": "Guardar Cambios",
+
   "product.form.publish_button": "Publicar Producto",
   "product.time.just_now": "Recién publicado",
   "product.time.hours_ago": "Hace {count}h",
@@ -317,7 +334,7 @@ export default {
   "header.my_garden": "Mi Huerta",
   "header.my_exchanges": "Mis Intercambios",
   "header.logout": "Cerrar Sesión",
-  "header.login": "Iniciar Sesión",
+
   "header.filter": "Filtrar",
 
   "filter.title": "Filtrar Productos",
@@ -344,8 +361,7 @@ export default {
   "filter.transaction_options.free": "Regalo",
 
   "login.title": "Iniciar Sesión",
-  "login.email_label": "Correo Electrónico",
-  "login.password_label": "Contraseña",
+
   "login.forgot_password": "¿Olvidaste tu Contraseña?",
   "login.reset_password_title": "Restablecer Contraseña",
   "login.reset_password_description": "Introduce tu correo electrónico para recibir un enlace de restablecimiento de contraseña",
@@ -353,8 +369,6 @@ export default {
   "login.reset_email_sent": "¡Correo de restablecimiento de contraseña enviado! Revisa tu bandeja de entrada.",
   "login.reset_email_error": "No se pudo enviar el correo de restablecimiento. Por favor, verifica la dirección de correo electrónico.",
   "login.back_to_login": "Volver a Iniciar Sesión",
-  "login.login_button": "Iniciar Sesión",
-  "login.or": "O",
   "login.google_button": "Iniciar sesión con Google",
   "login.google_account_error": "Este correo está registrado con email/contraseña. Por favor, inicia sesión usando tu contraseña.",
   "login.signup_prompt": "¿No tienes una cuenta? Regístrate",
@@ -426,7 +440,7 @@ export default {
   "offer_modal.confirmation.your_message": "Tu mensaje:",
   "offer_modal.confirmation.send_button": "Enviar Oferta",
 
-  "offer_modal.general.back_button": "Volver",
+
 
   "review_section.partner_review_title": "Reseña de {partnerName}",
   "review_section.your_review_title": "Tu Reseña",
@@ -442,25 +456,22 @@ export default {
   "review_section.characters_remaining": "{count}/280 caracteres",
   "review_section.submit_button": "Enviar Reseña",
   "review_section.submitting_button": "Enviando...",
-  "review_section.cancel_button": "Cancelar",
+
   "review_section.waiting_for_review": "Esperando a que {partnerName} deje su reseña",
 
   "signup.title": "Regístrate",
   "signup.success_message": "¡Registro exitoso! Se ha enviado un enlace de verificación a tu correo electrónico. Por favor, revisa tu bandeja de entrada para completar el proceso.",
   "signup.name_label": "Nombre",
   "signup.name_placeholder": "John Doe",
-  "signup.email_label": "Correo Electrónico",
-  "signup.password_label": "Contraseña",
+
   "signup.confirm_password_label": "Confirmar Contraseña",
   "signup.passwords_no_match": "Las contraseñas no coinciden",
-  "signup.signup_button": "Regístrate",
-  "signup.or": "O",
   "signup.google_button": "Registrarse con Google",
   "signup.login_prompt": "¿Ya tienes una cuenta? Inicia sesión",
   "signup.account_exists_title": "La Cuenta Ya Existe",
   "signup.account_exists_description": "Este correo electrónico ya está registrado con una cuenta de Google. Por favor, inicia sesión con Google para acceder a tu cuenta.",
   "signup.email_already_exists": "Este correo electrónico ya está registrado. Por favor, ve a la página de inicio de sesión para acceder.",
-  "signup.cancel": "Cancelar",
+
   "signup.signin_with_google": "Iniciar sesión con Google",
   "signup.go_to_login": "Ir a Iniciar Sesión",
 
@@ -544,7 +555,6 @@ export default {
   "onboarding.enter_manually_button": "Introducir Manualmente",
   "onboarding.manual_input_description": "Escribe tu dirección o ciudad para establecer tu ubicación",
   "onboarding.location_search_placeholder": "Busca tu ubicación...",
-  "onboarding.back_button": "Atrás",
   "onboarding.error.no_location": "No se pudo obtener tu ubicación.",
   "onboarding.error.no_geolocation": "La geolocalización no es compatible con este navegador.",
   "onboarding.error.update_failed": "Error al actualizar la ubicación. Por favor, inténtalo de nuevo.",
@@ -573,11 +583,10 @@ export default {
   "nav.publish": "Publicar",
   "nav.messages": "Mensajes",
   "nav.profile": "Perfil",
-  "nav.login": "Acceder",
+
   "nav.community": "Comunidad",
 
-  "common.edit": "Editar",
-  "common.delete": "Eliminar",
+
 
   "producers.title": "Explorar Productores",
   "producers.subtitle": "Descubre a las personas detrás de los productos.",
@@ -623,7 +632,4 @@ export default {
   "privacy.location_notice": "Tu privacidad es importante. Solo almacenaremos una ubicación aproximada (desplazada aleatoriamente ~1km) para mostrarte en el mapa general. Tu dirección exacta nunca se comparte.",
   "login_prompt.title": "¡Únete para publicar!",
   "login_prompt.description": "Para compartir tus productos con la comunidad, necesitas iniciar sesión o crear una cuenta.",
-  "login_prompt.login_button": "Iniciar Sesión",
-  "login_prompt.signup_button": "Crear Cuenta",
-  "login_prompt.cancel_button": "Cancelar",
 } as const;

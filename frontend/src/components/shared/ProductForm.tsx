@@ -514,7 +514,7 @@ export default function ProductForm({
           style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}
         >
           {isSubmitting && <Loader2 className="mr-3 h-6 w-6 animate-spin" />}
-          {isEdit ? t('product.form.save_button') : t('product.form.publish_button')}
+          {isEdit ? t('common.save_changes') : t('product.form.publish_button')}
         </Button>
       </div>
     </form>

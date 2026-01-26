@@ -123,7 +123,7 @@ const Header = () => {
                       className="flex items-center cursor-pointer text-red-600 focus:text-red-600 font-sans"
                     >
                       <LogOut className="mr-2 h-4 w-4" />
-                      <span>{t('header.logout')}</span>
+                      <span>{t('common.logout')}</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -131,7 +131,7 @@ const Header = () => {
             ) : (
               <Button asChild className="bg-[#879385] text-white px-6 py-2 rounded-full font-display text-2xl hover:bg-[#7a8578] shadow-md transition-all h-auto pb-1">
                 <Link href={`/${locale}/login`}>
-                  {t('header.login')}
+                  {t('common.login')}
                 </Link>
               </Button>
             )

@@ -375,7 +375,7 @@ export default function ProductDetailPage() {
                       ) : (
                         <Button asChild className="w-full bg-secondary hover:bg-[#8b6b6e] text-white font-serif text-lg h-12 rounded-full">
                           <Link href="/login">
-                            {t('product.login_button')}
+                            {t('common.login')}
                           </Link>
                         </Button>
                       )

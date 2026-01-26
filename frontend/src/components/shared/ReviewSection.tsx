@@ -185,7 +185,7 @@ export function ReviewSection({
                     onClick={() => setShowReviewForm(false)}
                     disabled={isSubmitting}
                   >
-                    {t('review_section.cancel_button')}
+                    {t('common.cancel')}
                   </Button>
                 </div>
               </div>

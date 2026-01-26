@@ -167,7 +167,7 @@ export default function ProfilePage() {
 
     try {
       await uploadAvatar(file);
-      toast.success(t('profile.save_button'));
+      toast.success(t('common.save_changes'));
     } catch (error) {
       toast.error(t('profile.upload_error'));
     } finally {
@@ -204,7 +204,7 @@ export default function ProfilePage() {
         }
       });
       setIsEditing(false);
-      toast.success(t('profile.save_button'));
+      toast.success(t('common.save_changes'));
     } catch (error) {
       toast.error(t('profile.save_error'));
     }
@@ -500,11 +500,11 @@ export default function ProfilePage() {
                       size="lg"
                     >
                       <Save className="mr-2 h-4 w-4" />
-                      {t('profile.save_button')}
+                      {t('common.save_changes')}
                     </Button>
                     <Button variant="outline" onClick={() => setIsEditing(false)} size="lg">
                       <X className="mr-2 h-4 w-4" />
-                      {t('profile.cancel_button')}
+                      {t('common.cancel')}
                     </Button>
                   </div>
                 </>
@@ -518,7 +518,7 @@ export default function ProfilePage() {
                           <Mail className="w-4 h-4 text-foreground dark:text-card-foreground" />
                         </div>
                         <div>
-                          <span className="text-sm text-muted-foreground block">{t('profile.email_label')}</span>
+                          <span className="text-sm text-muted-foreground block">{t('common.email')}</span>
                           {showEmail ? (
                             <span className="text-sm font-medium text-foreground ">{user?.email}</span>
                           ) : (
@@ -650,7 +650,7 @@ export default function ProfilePage() {
                     className="w-full"
                     disabled={updatingLocation}
                   >
-                    {t('onboarding.back_button')}
+                    {t('common.back')}
                   </Button>
                 </div>
               )}
@@ -705,7 +705,7 @@ export default function ProfilePage() {
 
           {!isGoogleUser && (
             <div className="py-4">
-              <Label htmlFor="password">{t('profile.password_label')}</Label>
+              <Label htmlFor="password">{t('common.password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -725,7 +725,7 @@ export default function ProfilePage() {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowReauthDialog(false)}>
-              {t('profile.cancel_button')}
+              {t('common.cancel')}
             </Button>
             <Button
               variant="destructive"

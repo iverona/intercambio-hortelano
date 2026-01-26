@@ -143,7 +143,7 @@ export default function SignupPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-foreground">{t('signup.email_label')}</Label>
+                  <Label htmlFor="email" className="text-foreground">{t('common.email')}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -154,7 +154,7 @@ export default function SignupPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-foreground">{t('signup.password_label')}</Label>
+                  <Label htmlFor="password" className="text-foreground">{t('common.password')}</Label>
                   <Input
                     id="password"
                     type="password"
@@ -175,11 +175,11 @@ export default function SignupPage() {
                 </div>
                 {(error || googleError) && <p className="text-destructive text-sm">{error || googleError}</p>}
                 <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                  {t('signup.signup_button')}
+                  {t('common.signup')}
                 </Button>
               </form>
               <div className="mt-4 text-center text-sm text-muted-foreground">
-                {t('signup.or')}
+                {t('common.or')}
               </div>
               <Button onClick={handleGoogleAuth} disabled={googleLoading} className="w-full mt-4 flex items-center gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/90">
                 <Chrome size={18} />

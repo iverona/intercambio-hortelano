@@ -93,7 +93,7 @@ export default function EditProductPage() {
             className="mb-4 md:mb-6 group -ml-2 md:ml-0 text-foreground hover:bg-muted/20"
           >
             <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-            <span className="hidden sm:inline">{t('product.back')}</span>
+            <span className="hidden sm:inline">{t('common.back')}</span>
           </Button>
 
           {/* Form Card */}

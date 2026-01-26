@@ -97,7 +97,7 @@ export default function LoginPage() {
                         <>
                             <form onSubmit={handleLogin} className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="email" className="text-foreground ">{t('login.email_label')}</Label>
+                                    <Label htmlFor="email" className="text-foreground ">{t('common.email')}</Label>
                                     <Input
                                         id="email"
                                         type="email"
@@ -108,7 +108,7 @@ export default function LoginPage() {
                                 </div>
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <Label htmlFor="password" className="text-foreground ">{t('login.password_label')}</Label>
+                                        <Label htmlFor="password" className="text-foreground ">{t('common.password')}</Label>
                                         <button
                                             type="button"
                                             onClick={toggleResetForm}
@@ -127,11 +127,11 @@ export default function LoginPage() {
                                 {(error || googleError) && <p className="text-red-500 text-sm">{error || googleError}</p>}
                                 {successMessage && <p className="text-[#556B2F] text-sm">{successMessage}</p>}
                                 <Button type="submit" className="w-full bg-primary hover:bg-[#7a8578] text-white">
-                                    {t('login.login_button')}
+                                    {t('common.login')}
                                 </Button>
                             </form>
                             <div className="mt-4 text-center text-sm text-muted-foreground ">
-                                {t('login.or')}
+                                {t('common.or')}
                             </div>
                             <Button onClick={handleGoogleAuth} disabled={googleLoading} className="w-full mt-4 flex items-center gap-2 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 dark:bg-card dark:text-card-foreground dark:border-gray-600 dark:hover:bg-[#4a463a]">
                                 <Chrome size={18} />
@@ -148,7 +148,7 @@ export default function LoginPage() {
                             <p className="text-sm text-muted-foreground mb-4 font-serif">{t('login.reset_password_description')}</p>
                             <form onSubmit={handlePasswordReset} className="space-y-4">
                                 <div className="space-y-2">
-                                    <Label htmlFor="reset-email" className="text-foreground ">{t('login.email_label')}</Label>
+                                    <Label htmlFor="reset-email" className="text-foreground ">{t('common.email')}</Label>
                                     <Input
                                         id="reset-email"
                                         type="email"

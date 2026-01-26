@@ -376,7 +376,7 @@ export default function OnboardingPage() {
                     className="w-full"
                     disabled={saving || isUploadingAvatar}
                   >
-                    {t('onboarding.back_button')}
+                    {t('common.back')}
                   </Button>
                 </div>
               )}

@@ -1,5 +1,22 @@
 export default {
   "home.hero.badge": "Welcome to the community",
+
+  "common.login": "Login",
+  "common.logout": "Logout",
+  "common.signup": "Sign Up",
+  "common.email": "Email",
+  "common.password": "Password",
+  "common.save_changes": "Save Changes",
+  "common.cancel": "Cancel",
+  "common.edit": "Edit",
+  "common.delete": "Delete",
+  "common.back": "Back",
+  "common.submit": "Submit",
+  "common.loading": "Loading...",
+  "common.error": "Error",
+  "common.success": "Success",
+  "common.or": "Or",
+
   "home.hero.title": "Share Your Harvest",
   "home.hero.subtitle": "Connect with local gardeners, exchange fresh produce, and build a sustainable community",
   "home.hero.cta.primary": "Share Your Produce",
@@ -33,12 +50,12 @@ export default {
   "profile.member_since": "Member since {date}",
   "profile.location_verified": "Location verified",
   "profile.reviews": "({count} reviews)",
-  "profile.email_label": "Email:",
+
   "profile.show_email_button": "Show",
   "profile.hide_email_button": "Hide",
-  "profile.save_button": "Save Changes",
+
   "profile.save_error": "Error saving profile",
-  "profile.cancel_button": "Cancel",
+
   "profile.edit_button": "Edit Profile",
   "profile.change_photo": "Change Photo",
   "profile.upload_photo": "Upload Photo",
@@ -75,7 +92,7 @@ export default {
   "profile.delete_account_button": "Delete Account",
   "profile.delete_account_title": "Delete Account",
   "profile.delete_account_confirmation": "Are you sure you want to delete your account? This action cannot be undone.",
-  "profile.password_label": "Password",
+
   "profile.password_placeholder": "Enter your password",
   "profile.deleting_button": "Deleting...",
   "profile.confirm_delete_button": "Confirm Deletion",
@@ -129,7 +146,7 @@ export default {
   "product.not_found": "Product not found",
   "product.unavailable": "Product Unavailable",
   "product.back_to_home": "Back to Home",
-  "product.back": "Back",
+
   "product.breadcrumb.home": "Home",
   "product.breadcrumb.products": "Products",
   "product.views": "views",
@@ -140,7 +157,7 @@ export default {
   "product.seller_stats.response": "Response",
   "product.send_message": "Send Message",
   "product.login_to_contact": "Sign in to contact the seller and make an offer",
-  "product.login_button": "Sign In",
+
   "product.edit_button": "Edit Product",
   "product.view_garden": "View My Garden",
   "product.similar_products": "Similar Products",
@@ -186,7 +203,7 @@ export default {
   "product.form.upload_cta": "Click to upload",
   "product.form.upload_drag_drop": "or drag and drop",
   "product.form.upload_restrictions": "SVG, PNG, JPG or GIF (MAX. 800x400px)",
-  "product.form.save_button": "Save Changes",
+
   "product.form.publish_button": "Publish Product",
   "product.time.just_now": "Just now",
   "product.time.hours_ago": "{count}h ago",
@@ -317,7 +334,7 @@ export default {
   "header.my_garden": "My Garden",
   "header.my_exchanges": "My Exchanges",
   "header.logout": "Logout",
-  "header.login": "Login",
+
   "header.filter": "Filter",
 
   "filter.title": "Filter Products",
@@ -344,8 +361,7 @@ export default {
   "filter.transaction_options.free": "Free",
 
   "login.title": "Login",
-  "login.email_label": "Email",
-  "login.password_label": "Password",
+
   "login.forgot_password": "Forgot Password?",
   "login.reset_password_title": "Reset Password",
   "login.reset_password_description": "Enter your email to receive a password reset link",
@@ -353,8 +369,6 @@ export default {
   "login.reset_email_sent": "Password reset email sent! Check your inbox.",
   "login.reset_email_error": "Could not send reset email. Please check the email address.",
   "login.back_to_login": "Back to Login",
-  "login.login_button": "Login",
-  "login.or": "Or",
   "login.google_button": "Sign in with Google",
   "login.google_account_error": "This email is registered with email/password. Please sign in using your password.",
   "login.signup_prompt": "Don't have an account? Sign up",
@@ -426,7 +440,7 @@ export default {
   "offer_modal.confirmation.your_message": "Your message:",
   "offer_modal.confirmation.send_button": "Send Offer",
 
-  "offer_modal.general.back_button": "Back",
+
 
   "review_section.partner_review_title": "{partnerName}'s Review",
   "review_section.your_review_title": "Your Review",
@@ -442,25 +456,22 @@ export default {
   "review_section.characters_remaining": "{count}/280 characters",
   "review_section.submit_button": "Submit Review",
   "review_section.submitting_button": "Submitting...",
-  "review_section.cancel_button": "Cancel",
+
   "review_section.waiting_for_review": "Waiting for {partnerName} to leave their review",
 
   "signup.title": "Sign Up",
   "signup.success_message": "Registration successful! A verification link has been sent to your email. Please check your inbox to complete the process.",
   "signup.name_label": "Name",
   "signup.name_placeholder": "John Doe",
-  "signup.email_label": "Email",
-  "signup.password_label": "Password",
+
   "signup.confirm_password_label": "Confirm Password",
   "signup.passwords_no_match": "Passwords do not match",
-  "signup.signup_button": "Sign Up",
-  "signup.or": "Or",
   "signup.google_button": "Sign up with Google",
   "signup.login_prompt": "Already have an account? Login",
   "signup.account_exists_title": "Account Already Exists",
   "signup.account_exists_description": "This email is already registered with a Google account. Please sign in with Google to access your account.",
   "signup.email_already_exists": "This email address is already registered. Please go to the login page to sign in.",
-  "signup.cancel": "Cancel",
+
   "signup.signin_with_google": "Sign in with Google",
   "signup.go_to_login": "Go to Login",
 
@@ -544,7 +555,6 @@ export default {
   "onboarding.enter_manually_button": "Enter Manually",
   "onboarding.manual_input_description": "Type your address or city to set your location",
   "onboarding.location_search_placeholder": "Search for your location...",
-  "onboarding.back_button": "Back",
   "onboarding.error.no_location": "Unable to retrieve your location.",
   "onboarding.error.no_geolocation": "Geolocation is not supported by this browser.",
   "onboarding.error.update_failed": "Failed to update location. Please try again.",
@@ -573,10 +583,9 @@ export default {
   "nav.publish": "Publish",
   "nav.messages": "Messages",
   "nav.profile": "Profile",
-  "nav.login": "Login",
+
   "nav.community": "Community",
-  "common.edit": "Edit",
-  "common.delete": "Delete",
+
 
   "producers.title": "Explore Producers",
   "producers.subtitle": "Discover the people behind the products.",
@@ -622,7 +631,4 @@ export default {
   "privacy.location_notice": "Your privacy matters. We will only store an approximate location (randomly offset by ~1km) to show you on the general map. Your exact address is never shared.",
   "login_prompt.title": "Join to publish!",
   "login_prompt.description": "To share your products with the community, you need to log in or create an account.",
-  "login_prompt.login_button": "Login",
-  "login_prompt.signup_button": "Create Account",
-  "login_prompt.cancel_button": "Cancel",
 } as const;

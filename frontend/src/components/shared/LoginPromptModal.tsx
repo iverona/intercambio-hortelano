@@ -46,14 +46,14 @@ export default function LoginPromptModal({ isOpen, onClose }: LoginPromptModalPr
                         <Button asChild className="w-full bg-green-600 hover:bg-green-700 text-white" size="lg">
                             <Link href="/login">
                                 <LogIn className="w-4 h-4 mr-2" />
-                                {t('login_prompt.login_button')}
+                                {t('common.login')}
                             </Link>
                         </Button>
 
                         <Button asChild variant="outline" className="w-full border-green-200 dark:border-green-800 hover:bg-green-50 dark:hover:bg-green-900/20 text-green-700 dark:text-green-300" size="lg">
                             <Link href="/signup">
                                 <UserPlus className="w-4 h-4 mr-2" />
-                                {t('login_prompt.signup_button')}
+                                {t('common.signup')}
                             </Link>
                         </Button>
 
@@ -62,7 +62,7 @@ export default function LoginPromptModal({ isOpen, onClose }: LoginPromptModalPr
                             onClick={onClose}
                             className="mt-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                         >
-                            {t('login_prompt.cancel_button')}
+                            {t('common.cancel')}
                         </Button>
                     </div>
                 </div>

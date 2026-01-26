@@ -47,7 +47,7 @@ const BottomNavigation = () => {
     {
       href: user ? `/${locale}/profile` : `/${locale}/login`,
       icon: user ? User : LogIn,
-      label: user ? t('nav.profile') : t('nav.login'),
+      label: user ? t('nav.profile') : t('common.login'),
       isActive: (path: string) => path.includes("/profile") || (!user && path.includes("/login")),
     },
   ].filter(item => !item.authRequired || user);
