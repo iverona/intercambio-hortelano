@@ -12,9 +12,7 @@ import {
   Sparkles,
   Upload,
   AlertCircle,
-  Leaf,
-  MapPin,
-  Camera
+  Leaf
 } from "lucide-react";
 import { useI18n } from "@/locales/provider";
 import { useProductMutations } from "@/hooks/useProduct";
@@ -57,50 +55,10 @@ const PublishHeroContent = () => {
           </div>
         </div>
 
-        <div className="hidden md:inline-flex items-center gap-2 px-4 py-2 bg-card/80 backdrop-blur-sm rounded-full shadow-sm border border-[#A6C6B9]/30">
-          <Sparkles className="w-4 h-4 text-secondary" />
-          <span className="text-sm font-medium text-foreground ">{t('publish.share_with_community')}</span>
-        </div>
+
       </div>
 
-      {/* Quick tips */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-        <Card className="p-3 md:p-4 bg-card/60 backdrop-blur-sm border border-card shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-2 md:gap-3">
-            <div className="p-1.5 md:p-2 bg-card rounded-lg flex-shrink-0">
-              <Camera className="w-4 h-4 md:w-5 md:h-5 text-[#556B2F] dark:text-card-foreground" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs md:text-sm font-bold text-foreground truncate">{t('publish.tip.add_photos')}</p>
-              <p className="text-xs text-muted-foreground line-clamp-1">{t('publish.tip.add_photos_desc')}</p>
-            </div>
-          </div>
-        </Card>
 
-        <Card className="p-3 md:p-4 bg-card/60 backdrop-blur-sm border border-[#A6C6B9] dark:border-[#4A5D54] shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-2 md:gap-3">
-            <div className="p-1.5 md:p-2 bg-muted rounded-lg flex-shrink-0">
-              <MapPin className="w-4 h-4 md:w-5 md:h-5 text-white" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs md:text-sm font-bold text-foreground truncate">{t('publish.tip.location')}</p>
-              <p className="text-xs text-muted-foreground line-clamp-1">{t('publish.tip.location_desc')}</p>
-            </div>
-          </div>
-        </Card>
-
-        <Card className="p-3 md:p-4 bg-card/60 backdrop-blur-sm border border-secondary dark:border-[#998676] shadow-sm hover:shadow-md transition-shadow">
-          <div className="flex items-center gap-2 md:gap-3">
-            <div className="p-1.5 md:p-2 bg-secondary dark:bg-secondary rounded-lg flex-shrink-0">
-              <Leaf className="w-4 h-4 md:w-5 md:h-5 text-white" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs md:text-sm font-bold text-foreground truncate">{t('publish.tip.exchange')}</p>
-              <p className="text-xs text-muted-foreground line-clamp-1">{t('publish.tip.exchange_desc')}</p>
-            </div>
-          </div>
-        </Card>
-      </div>
     </div>
   );
 }
