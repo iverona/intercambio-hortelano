@@ -6,12 +6,32 @@ import Image from "next/image";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 import { OrganicCard } from "@/components/shared/OrganicCard";
 import { OrganicNote } from "@/components/shared/OrganicNote";
+import React from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import LoginPromptModal from "@/components/shared/LoginPromptModal";
 
 export default function Home() {
   const t = useI18n();
+  const { user } = useAuth();
+  const [showLoginPrompt, setShowLoginPrompt] = React.useState(false);
+  const router = useRouter();
+
+  const handlePublishClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!user) {
+      setShowLoginPrompt(true);
+    } else {
+      router.push("/publish");
+    }
+  };
 
   return (
     <OrganicBackground>
+      <LoginPromptModal
+        isOpen={showLoginPrompt}
+        onClose={() => setShowLoginPrompt(false)}
+      />
 
       {/* Organic Card Header */}
       <OrganicCard
@@ -64,7 +84,7 @@ export default function Home() {
 
       {/* Action Buttons */}
       <div className="flex flex-col md:flex-row gap-6 mt-8 mb-10 items-center justify-center w-full">
-        <Link href="/publish" className="relative group">
+        <Link href="/publish" onClick={handlePublishClick} className="relative group cursor-pointer">
           <div className="absolute inset-0 bg-[#A88C8F] rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
           <div
             className="relative bg-[#A88C8F] dark:bg-[#7a6466] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20"
@@ -74,7 +94,6 @@ export default function Home() {
             <span className="font-serif text-2xl block font-bold text-center">anuncio</span>
           </div>
         </Link>
-
       </div>
 
       {/* Secondary Action Buttons (Mobile Friendly) */}

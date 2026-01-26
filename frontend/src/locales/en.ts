@@ -620,4 +620,9 @@ export default {
   "privacy.location.title": "Location Protection",
   "privacy.location.description": "To safeguard your privacy, we never store your exact location. A random offset (between 500m and 1.5km) is applied to your coordinates before saving. This allows you to participate in the local community without revealing your precise address.",
   "privacy.location_notice": "Your privacy matters. We will only store an approximate location (randomly offset by ~1km) to show you on the general map. Your exact address is never shared.",
+  "login_prompt.title": "Join to publish!",
+  "login_prompt.description": "To share your products with the community, you need to log in or create an account.",
+  "login_prompt.login_button": "Login",
+  "login_prompt.signup_button": "Create Account",
+  "login_prompt.cancel_button": "Cancel",
 } as const;

@@ -621,4 +621,9 @@ export default {
   "privacy.location.title": "Protección de Ubicación",
   "privacy.location.description": "Para salvaguardar tu privacidad, nunca almacenamos tu ubicación exacta. Un desplazamiento aleatorio (entre 500m y 1.5km) se aplica a tus coordenadas antes de guardarlas. Esto te permite participar en la comunidad local sin revelar tu dirección precisa.",
   "privacy.location_notice": "Tu privacidad es importante. Solo almacenaremos una ubicación aproximada (desplazada aleatoriamente ~1km) para mostrarte en el mapa general. Tu dirección exacta nunca se comparte.",
+  "login_prompt.title": "¡Únete para publicar!",
+  "login_prompt.description": "Para compartir tus productos con la comunidad, necesitas iniciar sesión o crear una cuenta.",
+  "login_prompt.login_button": "Iniciar Sesión",
+  "login_prompt.signup_button": "Crear Cuenta",
+  "login_prompt.cancel_button": "Cancelar",
 } as const;
