@@ -267,7 +267,6 @@ exports.onNewOffer = (0, firestore_3.onDocumentCreated)("exchanges/{exchangeId}"
     if (!exchangeData)
         return;
     try {
-        logger.info(`Processing new offer ${exchangeId}. OwnerId: ${exchangeData.ownerId}`);
         // 1. Get Product Owner (Recipient)
         const ownerDoc = await db.collection("users").doc(exchangeData.ownerId).get();
         if (!ownerDoc.exists) {
@@ -277,7 +276,6 @@ exports.onNewOffer = (0, firestore_3.onDocumentCreated)("exchanges/{exchangeId}"
         const ownerData = ownerDoc.data();
         let ownerEmail = ownerData.email;
         if (!ownerEmail) {
-            logger.info(`Email missing in Firestore for owner ${exchangeData.ownerId}. Fetching from Auth...`);
             try {
                 const userRecord = await (0, auth_1.getAuth)().getUser(exchangeData.ownerId);
                 ownerEmail = userRecord.email;
@@ -294,7 +292,6 @@ exports.onNewOffer = (0, firestore_3.onDocumentCreated)("exchanges/{exchangeId}"
         const emailEnabled = ((_b = ownerData.notifications) === null || _b === void 0 ? void 0 : _b.email) !== false;
         const exchangeNotifEnabled = ((_c = ownerData.notifications) === null || _c === void 0 ? void 0 : _c.exchanges) !== false;
         if (!emailEnabled || !exchangeNotifEnabled) {
-            logger.info(`Email notifications disabled for user ${exchangeData.ownerId}`);
             return;
         }
         // 3. Get Requester Name
@@ -346,8 +343,6 @@ exports.onNewMessage = (0, firestore_3.onDocumentCreated)("chats/{chatId}/messag
     if (!messageData)
         return;
     try {
-        const messageId = event.params.messageId;
-        logger.info(`Processing new message in chat ${chatId}. MessageId: ${messageId}`);
         // 1. Get Chat details to find participants
         const chatDoc = await db.collection("chats").doc(chatId).get();
         if (!chatDoc.exists) {
@@ -370,7 +365,6 @@ exports.onNewMessage = (0, firestore_3.onDocumentCreated)("chats/{chatId}/messag
         const recipientData = recipientDoc.data();
         let recipientEmail = recipientData.email;
         if (!recipientEmail) {
-            logger.info(`Email missing in Firestore for recipient ${recipientId}. Fetching from Auth...`);
             try {
                 const userRecord = await (0, auth_1.getAuth)().getUser(recipientId);
                 recipientEmail = userRecord.email;
@@ -424,30 +418,44 @@ exports.submitContactForm = (0, https_1.onCall)(async (request) => {
     const uid = request.auth ? request.auth.uid : "Anonymous";
     // Validate input
     if (!name || !email || !message) {
-        throw new Error("Missing required fields");
+        logger.error("Validation failed: Missing required fields", { name, email, message });
+        throw new https_1.HttpsError("invalid-argument", "Missing required fields");
     }
-    const adminEmail = process.env.EMAIL_USER;
-    if (adminEmail) {
-        const adminSubject = `[Contacto] ${subject || 'Sin asunto'} - ${name}`;
-        const adminHtml = `
+    try {
+        const adminEmail = process.env.EMAIL_USER;
+        if (adminEmail) {
+            const adminSubject = `[Contacto] ${subject || "Sin asunto"} - ${name}`;
+            const adminHtml = `
         <h3>Nuevo mensaje de contacto</h3>
         <p><strong>De:</strong> ${name} (${email})</p>
         <p><strong>UID:</strong> ${uid}</p>
         <p><strong>Asunto:</strong> ${subject}</p>
         <hr />
-        <p>${message.replace(/\n/g, '<br>')}</p>
+        <p>${message.replace(/\n/g, "<br>")}</p>
       `;
-        await sendEmail(adminEmail, adminSubject, adminHtml);
-    }
-    // Auto-reply
-    const userHtml = `
+            await sendEmail(adminEmail, adminSubject, adminHtml);
+        }
+        else {
+            logger.warn("ADMIN_EMAIL (EMAIL_USER) not set. Admin notification skipped.");
+        }
+        // Auto-reply to user
+        const userHtml = `
       <p>Hola ${name},</p>
       <p>Hemos recibido tu mensaje con el asunto: "<strong>${subject}</strong>".</p>
       <p>Nos pondremos en contacto contigo lo antes posible.</p>
       <br>
       <p>El equipo de Portal de Intercambio Hortelano</p>
-  `;
-    await sendEmail(email, "Hemos recibido tu mensaje", userHtml);
-    return { success: true };
+    `;
+        await sendEmail(email, "Hemos recibido tu mensaje", userHtml);
+        return { success: true };
+    }
+    catch (error) {
+        logger.error("Error in submitContactForm execution:", error);
+        // Return a more descriptive error to the client if it's already an HttpsError
+        if (error instanceof https_1.HttpsError)
+            throw error;
+        // Otherwise throw as internal
+        throw new https_1.HttpsError("internal", error.message || "An unexpected error occurred");
+    }
 });
 //# sourceMappingURL=index.js.map
