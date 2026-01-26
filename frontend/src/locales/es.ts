@@ -600,7 +600,7 @@ export default {
   "producers.products_label": "productos",
   "producers.verified": "Verificado",
   "producers.section_title": "Productores Destacados",
-  "producers.showing": "Mostrando productores",
+  "producers.showing": "Mostrando {count} productores",
   "producers.browse_products": "Explorar Productos",
 
   "producer_shop.not_found": "Productor no encontrado.",

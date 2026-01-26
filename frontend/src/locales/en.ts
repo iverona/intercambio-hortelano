@@ -599,7 +599,7 @@ export default {
   "producers.products_label": "products",
   "producers.verified": "Verified",
   "producers.section_title": "Featured Producers",
-  "producers.showing": "Showing producers",
+  "producers.showing": "Showing {count} producers",
   "producers.browse_products": "Browse Products",
 
   "producer_shop.not_found": "Producer not found.",
