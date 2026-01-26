@@ -23,6 +23,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 import { OrganicCard } from "@/components/shared/OrganicCard";
 import { BrowseTabs } from "@/components/shared/BrowseTabs";
+import { SectionHeader } from "@/components/shared/SectionHeader";
 
 // Skeleton loader component
 const ProductSkeleton = () => (
@@ -71,37 +72,19 @@ export default function ProductsPage() {
         <BrowseTabs />
 
         {/* Section Header */}
-        <div className="flex justify-center mb-12">
-          <OrganicCard
-            className="w-full max-w-3xl"
-            rotate={-1}
-            overlay={
-              <div
-                className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-11/12 md:w-full bg-[#FFFBE6] dark:bg-[#e0dcc7] py-3 px-6 shadow-md text-center rotate-[1deg] transition-transform duration-300"
-                style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}
-              >
-                <p className="font-serif text-[#3e3b34] text-lg md:text-xl italic">
-                  {loading ? (
-                    <span className="inline-block w-32 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></span>
-                  ) : (
-                    <>
-                      {filters.searchTerm
-                        ? t('home.products.showing_with_search', { count: products.length, searchTerm: filters.searchTerm })
-                        : t('home.products.showing', { count: products.length })}
-                    </>
-                  )}
-                </p>
-              </div>
-            }
-          >
-            <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-hand font-bold text-gray-900 dark:text-gray-100 mb-2">
-                {t('home.products.title')}
-              </h1>
-              <p className="text-gray-500 font-serif italic">{t('home.products.subtitle')}</p>
-            </div>
-          </OrganicCard>
-        </div>
+        <SectionHeader
+          title={t('home.products.title')}
+          subtitle={t('home.products.subtitle')}
+          banner={
+            loading ? (
+              <span className="inline-block w-32 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></span>
+            ) : (
+              filters.searchTerm
+                ? t('home.products.showing_with_search', { count: products.length, searchTerm: filters.searchTerm })
+                : t('home.products.showing', { count: products.length })
+            )
+          }
+        />
 
         {/* Search and Filters UI */}
         <SearchAndFilter />

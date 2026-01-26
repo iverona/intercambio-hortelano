@@ -11,6 +11,7 @@ import {
     ArrowRight,
     Users
 } from "lucide-react";
+import { SectionHeader } from "@/components/shared/SectionHeader";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 import { BrowseTabs } from "@/components/shared/BrowseTabs";
 
@@ -35,34 +36,17 @@ export default function ProducersPage() {
                 {/* Mobile Navigation Tabs */}
                 <BrowseTabs />
 
-                {/* Section Header */}
-                <div className="flex justify-center mb-12">
-                    <OrganicCard
-                        className="w-full max-w-3xl"
-                        rotate={-1}
-                        overlay={
-                            <div
-                                className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 w-11/12 md:w-full bg-[#FFFBE6] dark:bg-[#e0dcc7] py-3 px-6 shadow-md text-center rotate-[1deg] transition-transform duration-300"
-                                style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}
-                            >
-                                <p className="font-serif text-[#3e3b34] text-lg md:text-xl italic">
-                                    {loading ? (
-                                        <span className="inline-block w-32 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></span>
-                                    ) : (
-                                        t('producers.showing', { count: producers.length })
-                                    )}
-                                </p>
-                            </div>
-                        }
-                    >
-                        <div className="text-center">
-                            <h1 className="text-4xl md:text-5xl font-hand font-bold text-gray-900 dark:text-gray-100 mb-2">
-                                {t('producers.title')}
-                            </h1>
-                            <p className="text-gray-500 font-serif italic">{t('producers.subtitle')}</p>
-                        </div>
-                    </OrganicCard>
-                </div>
+                <SectionHeader
+                    title={t('producers.title')}
+                    subtitle={t('producers.subtitle')}
+                    banner={
+                        loading ? (
+                            <span className="inline-block w-32 h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></span>
+                        ) : (
+                            t('producers.showing', { count: producers.length })
+                        )
+                    }
+                />
 
                 {/* Producers Grid or Loading/Empty State */}
                 {loading ? (
