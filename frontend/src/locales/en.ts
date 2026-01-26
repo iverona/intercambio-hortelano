@@ -603,7 +603,6 @@ export default {
   "producers.browse_products": "Browse Products",
 
   "producer_shop.not_found": "Producer not found.",
-  "producer_shop.products_title": "Products from this producer ({count})",
   "producer_shop.empty_state.title": "No products yet",
   "producer_shop.empty_state.subtitle": "This producer has not listed any products for sale or exchange yet.",
   "footer.privacy": "Privacy",

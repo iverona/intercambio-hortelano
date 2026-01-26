@@ -604,7 +604,6 @@ export default {
   "producers.browse_products": "Explorar Productos",
 
   "producer_shop.not_found": "Productor no encontrado.",
-  "producer_shop.products_title": "Productos de este productor ({count})",
   "producer_shop.empty_state.title": "Aún no hay productos",
   "producer_shop.empty_state.subtitle": "Este productor todavía no ha publicado ningún producto para la venta o el intercambio.",
   "footer.privacy": "Privacidad",

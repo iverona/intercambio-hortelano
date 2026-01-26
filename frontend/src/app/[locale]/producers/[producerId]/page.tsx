@@ -123,8 +123,13 @@ export default function ProducerShopPage({
           containerClassName="justify-center"
           maxW="max-w-4xl"
           rotate={1}
-          banner={producer.bio || t("producers.no_bio")}
-          bannerPosition="large"
+          banner={
+            <div className="flex items-center justify-center gap-2">
+              <Package className="w-5 h-5 text-secondary" />
+              <span>{products.length} {t("producers.products_label")}</span>
+            </div>
+          }
+          bannerPosition="default"
           bannerRotate={-1}
           centered={false}
         >
@@ -151,18 +156,16 @@ export default function ProducerShopPage({
                   </span>
                 </div>
               )}
+              {/* Producer Bio moved here */}
+              <div className="mt-4 text-gray-600 dark:text-gray-300 font-serif italic leading-relaxed max-w-2xl">
+                {producer.bio || t("producers.no_bio")}
+              </div>
             </div>
           </div>
         </SectionHeader>
 
         {/* Products Section */}
-        <div className="mt-28">
-          <div className="flex items-center justify-between mb-10 border-b border-[#A6C6B9]/30 dark:border-[#4A5D54]/30 pb-4">
-            <h2 className="text-3xl font-hand font-bold text-gray-900 dark:text-gray-100">
-              {t("producer_shop.products_title", { count: products.length })}
-            </h2>
-          </div>
-
+        <div className="mt-12">
           {products.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12 px-2">
               {products.map((product, index) => (
