@@ -20,7 +20,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 export const ProductService = {
     subscribeToProducts: (
         callback: (products: Product[]) => void,
-        options: { category?: string; limitCount?: number } = {}
+        options: { categories?: string[]; limitCount?: number } = {}
     ) => {
         let q = query(
             collection(db, "products"),
@@ -28,8 +28,12 @@ export const ProductService = {
             // Firestore excludes documents missing the filtered field.
         );
 
-        if (options.category) {
-            q = query(q, where("category", "==", options.category));
+        if (options.categories && options.categories.length > 0) {
+            if (options.categories.length === 1) {
+                q = query(q, where("category", "==", options.categories[0]));
+            } else if (options.categories.length <= 10) {
+                q = query(q, where("category", "in", options.categories));
+            }
         }
 
         if (options.limitCount) {
