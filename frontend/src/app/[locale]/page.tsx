@@ -83,26 +83,23 @@ export default function Home() {
       </OrganicCard>
 
       {/* Action Buttons */}
-      <div className="flex flex-col md:flex-row gap-6 mt-8 mb-10 items-center justify-center w-full">
-        <Link href="/publish" onClick={handlePublishClick} className="relative group cursor-pointer">
+      <div className="flex flex-col md:flex-row flex-wrap gap-6 mt-8 mb-12 items-center justify-center w-full px-4">
+        <Link href="/publish" onClick={handlePublishClick} className="relative group cursor-pointer w-64">
           <div className="absolute inset-0 bg-[#A88C8F] rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
           <div
-            className="relative bg-[#A88C8F] dark:bg-[#7a6466] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20"
+            className="relative bg-[#A88C8F] dark:bg-[#7a6466] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20 w-full"
             style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}
           >
             <span className="font-serif text-xl block text-center">Publica tu</span>
             <span className="font-serif text-2xl block font-bold text-center">anuncio</span>
           </div>
         </Link>
-      </div>
 
-      {/* Secondary Action Buttons (Mobile Friendly) */}
-      <div className="flex flex-col md:flex-row gap-6 mb-10 items-center justify-center w-full">
         {/* Existing Products Button */}
-        <Link href="/products" className="relative group">
+        <Link href="/products" className="relative group w-64">
           <div className="absolute inset-0 bg-[#998676] rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
           <div
-            className="relative bg-[#998676] dark:bg-[#6e6054] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20"
+            className="relative bg-[#998676] dark:bg-[#6e6054] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20 w-full"
             style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}
           >
             <span className="font-serif text-xl block text-center">Todos los</span>
@@ -111,10 +108,10 @@ export default function Home() {
         </Link>
 
         {/* New Producers Button */}
-        <Link href="/producers" className="relative group">
+        <Link href="/producers" className="relative group w-64">
           <div className="absolute inset-0 bg-[#879385] rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
           <div
-            className="relative bg-[#879385] dark:bg-[#525b51] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20"
+            className="relative bg-[#879385] dark:bg-[#525b51] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20 w-full"
             style={{ borderRadius: '15px 225px 15px 255px / 255px 15px 225px 15px' }}
           >
             <span className="font-serif text-xl block text-center">Conoce a los</span>
@@ -123,10 +120,10 @@ export default function Home() {
         </Link>
 
         {/* Contact Button */}
-        <Link href="/contact" className="relative group">
+        <Link href="/contact" className="relative group w-64">
           <div className="absolute inset-0 bg-[#A88C8F] rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
           <div
-            className="relative bg-[#A88C8F] dark:bg-[#7a6466] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20"
+            className="relative bg-[#A88C8F] dark:bg-[#7a6466] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20 w-full"
             style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}
           >
             <span className="font-serif text-xl block text-center">Tengo</span>
