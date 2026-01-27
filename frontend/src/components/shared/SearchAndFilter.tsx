@@ -6,7 +6,6 @@ import { useI18n } from "@/locales/provider";
 import { useFilters } from "@/context/FilterContext";
 import { categories } from "@/lib/categories";
 import Filter from "./Filter";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export function SearchAndFilter() {
@@ -19,10 +18,20 @@ export function SearchAndFilter() {
         setSearchValue(filters.searchTerm);
     }, [filters.searchTerm]);
 
+    // Debounce search input
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            if (searchValue !== filters.searchTerm) {
+                setFilters({ ...filters, searchTerm: searchValue });
+            }
+        }, 500);
+
+        return () => clearTimeout(timeoutId);
+    }, [searchValue, filters, setFilters]);
+
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setSearchValue(value);
-        setFilters({ ...filters, searchTerm: value });
     };
 
     const clearSearch = () => {
