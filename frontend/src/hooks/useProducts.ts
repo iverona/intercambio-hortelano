@@ -19,10 +19,9 @@ export const useProducts = (
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Optimization: Pass single category filter to Firestore if exactly one is selected
-        // Note: Firestore 'in' query could be used for multiple, but let's keep it simple for now
-        // and just pass the category if there's only one, or none.
-        const categoryFilter = filters.categories.length === 1 ? filters.categories[0] : undefined;
+        // Optimization: Pass categories filter to Firestore.
+        // The service handles optimization using 'in' query for multiple categories (up to 10).
+        const categoriesFilter = filters.categories.length > 0 ? filters.categories : undefined;
 
         const unsubscribe = ProductService.subscribeToProducts((productsData) => {
             // Filter out excluded user's products based on showOwnProducts setting
@@ -103,7 +102,7 @@ export const useProducts = (
 
             setProducts(filteredData);
             setLoading(false);
-        }, { category: categoryFilter, limitCount: 100 });
+        }, { categories: categoriesFilter, limitCount: 100 });
 
         return () => unsubscribe();
     }, [userLocation, filters]);
