@@ -9,8 +9,6 @@ import { Producer } from "@/types/user";
 import {
     ArrowRight,
     MapPin,
-    Package,
-    Store,
 } from "lucide-react";
 
 interface OrganicProducerCardProps {
@@ -57,20 +55,6 @@ const ProducerCardContent: React.FC<{ producer: Producer }> = ({ producer }) => 
                 <p className="text-sm text-muted-foreground line-clamp-2 font-serif">
                     {producer.bio || t('producers.no_bio')}
                 </p>
-            </div>
-
-            {/* Stats Badges */}
-            <div className="px-4 py-2">
-                <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary" className="bg-[#879385]/20 text-foreground border-0 font-normal text-xs px-2 py-0.5">
-                        <Package className="w-3 h-3 mr-1" />
-                        {producer.productsCount || 0} {t('producers.products_label')}
-                    </Badge>
-                    <Badge variant="secondary" className="bg-[#A88C8F]/20 text-foreground border-0 font-normal text-xs px-2 py-0.5">
-                        <Store className="w-3 h-3 mr-1" />
-                        {t('producers.verified')}
-                    </Badge>
-                </div>
             </div>
 
             {/* Button */}

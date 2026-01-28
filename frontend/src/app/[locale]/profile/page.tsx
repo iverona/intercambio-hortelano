@@ -352,9 +352,6 @@ export default function ProfilePage() {
     return null;
   }
 
-  const memberSince = userData.joinedDate
-    ? new Date(userData.joinedDate.seconds * 1000).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
-    : 'Recently';
 
   const showAvatar = !!userData.avatarUrl;
 
@@ -434,16 +431,6 @@ export default function ProfilePage() {
               </p>
 
               <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                <Badge className="bg-primary text-white hover:bg-[#7a8578] border-0 shadow-sm">
-                  <Calendar className="w-3 h-3 mr-1" />
-                  {t('profile.member_since', { date: memberSince })}
-                </Badge>
-                {userData.location && (
-                  <Badge className="bg-muted text-foreground hover:bg-[#95b5a8] border-0 shadow-sm">
-                    <MapPin className="w-3 h-3 mr-1" />
-                    {t('profile.location_verified')}
-                  </Badge>
-                )}
                 {userData.reputation && userData.reputation.totalReviews > 0 && (
                   <div className="flex items-center gap-2 px-3 py-1 bg-secondary/20 dark:bg-secondary/20 rounded-full">
                     <TomatoRating
