@@ -175,7 +175,7 @@ export default function ProductForm({
           placeholder={t('product.form.name_placeholder')}
           value={name}
           onChange={(e) => setName(e.target.value)}
-          disabled={isEdit || isSubmitting}
+          disabled={isSubmitting}
           className="text-base"
         />
       </div>
