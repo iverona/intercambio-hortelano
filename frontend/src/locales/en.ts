@@ -607,6 +607,8 @@ export default {
   "producer_shop.empty_state.subtitle": "This producer has not listed any products for sale or exchange yet.",
   "footer.privacy": "Privacy",
   "footer.cookies": "Cookies",
+  "footer.legal": "Legal Notice",
+  "legal.title": "Legal Notice",
   "privacy.title": "Privacy Policy",
   "cookies.banner.message": "We use cookies to improve your experience. By continuing to browse, you accept our cookie policy.",
   "cookies.banner.accept": "Accept",

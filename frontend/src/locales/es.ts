@@ -608,6 +608,8 @@ export default {
   "producer_shop.empty_state.subtitle": "Este productor todavía no ha publicado ningún producto para la venta o el intercambio.",
   "footer.privacy": "Privacidad",
   "footer.cookies": "Cookies",
+  "footer.legal": "Aviso Legal",
+  "legal.title": "Aviso Legal",
   "privacy.title": "Política de Privacidad",
   "cookies.banner.message": "Utilizamos cookies para mejorar tu experiencia. Al continuar navegando, aceptas nuestra política de cookies.",
   "cookies.banner.accept": "Aceptar",
