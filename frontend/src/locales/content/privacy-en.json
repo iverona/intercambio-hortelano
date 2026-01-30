@@ -1,11 +1,84 @@
 {
-    "title": "Privacy Policy",
-    "content": [
-        "At EcoAnuncios, we take your privacy very seriously. This privacy policy describes how we collect, use, and protect your personal information when you use our exchange portal.",
-        "We collect information that you provide directly to us, such as your name, email address, and details about your garden when you register. We also use your location to show you nearby products, but always in an approximate way to protect your home.",
-        "We use your information to facilitate exchanges between community members, send you notifications about your offers, and continuously improve our platform.",
-        "We do not share your personal data with third parties for commercial purposes. Your information is only visible to other community members based on the privacy preferences set in your profile.",
-        "Location Protection: To safeguard your privacy, we never store your exact location. We apply a random offset (between 500m and 1.5km) to your coordinates before saving them to our database. This allows you to participate and be visible on the community map without revealing your precise address.",
-        "By using EcoAnuncios, you agree to the practices described in this policy. We reserve the right to update this document periodically to reflect changes in our services or for legal reasons."
-    ]
+    "title": "EcoAnuncios Privacy Policy",
+    "sections": [
+        {
+            "id": "responsable",
+            "title": "Data Controller",
+            "content": [
+                "The person responsible for the collection and processing of your personal data on this platform is the company Agroforja, with NIF [CIF] and registered office at [Full Address]. For any questions, inquiries or exercise of rights, you can contact us at: [Contact email of the web]."
+            ]
+        },
+        {
+            "id": "filosofia",
+            "title": "Our Philosophy",
+            "content": [
+                "At EcoAnuncios, we take your privacy very seriously. We believe in transparency and mutual respect, values that guide our community. This policy describes how we protect your information when you use our exchange portal."
+            ]
+        },
+        {
+            "id": "datos",
+            "title": "What data do we collect?",
+            "content": [
+                "We collect the information you provide directly for the operation of the service:"
+            ],
+            "items": [
+                {
+                    "label": "Registration Data",
+                    "text": "Username and email address. Your email is strictly confidential and will never be visible to other members or shared with third parties."
+                },
+                {
+                    "label": "Garden Details",
+                    "text": "Information you choose to share voluntarily in your listings to facilitate exchange."
+                }
+            ]
+        },
+        {
+            "id": "ubicacion",
+            "title": "Location Protection (Privacy by Design)",
+            "content": [
+                "To safeguard your safety and privacy, we never store or display your exact location. We apply a random offset (between 500m and 1.5km) to your coordinates before saving them in our database. This allows other members to see that there is a gardener in the area, but ensures that no one can know your precise address through the map."
+            ]
+        },
+        {
+            "id": "uso",
+            "title": "Use of Information",
+            "content": [
+                "We use your information exclusively to:"
+            ],
+            "list": [
+                "Facilitate contact and exchanges between community members.",
+                "Send you technical notifications about your offers or account.",
+                "Continuously improve platform features."
+            ]
+        },
+        {
+            "id": "terceros",
+            "title": "Third Parties and Advertising",
+            "content": [
+                "We do not share your personal data with third parties for commercial or advertising purposes. The information in your listings is only visible to other members according to your profile preferences."
+            ]
+        },
+        {
+            "id": "derechos",
+            "title": "Your Rights (Access, Rectification and Erasure)",
+            "content": [
+                "You have the right to know what data we have about you, to correct it or to delete it."
+            ],
+            "items": [
+                {
+                    "label": "Total Control",
+                    "text": "You can exercise your right of erasure at any time and immediately through the \"Delete account\" option available in your user profile. By doing so, your personal data and your listings will be permanently deleted."
+                }
+            ],
+            "extra": "You can also send us a manual request to the email of the person in charge indicated above."
+        },
+        {
+            "id": "actualizaciones",
+            "title": "Updates to this Policy",
+            "content": [
+                "By using EcoAnuncios, you agree to the practices described in this policy. We reserve the right to update this document periodically to reflect changes in our services or for legal reasons. In case of substantial changes, we will notify you through the web or by email."
+            ]
+        }
+    ],
+    "lastUpdated": "Last updated: January 30, 2026"
 }

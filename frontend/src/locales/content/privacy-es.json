@@ -1,11 +1,84 @@
 {
-    "title": "Política de Privacidad",
-    "content": [
-        "En EcoAnuncios, nos tomamos muy en serio tu privacidad. Esta política de privacidad describe cómo recopilamos, utilizamos y protegemos tu información personal cuando utilizas nuestro portal de intercambio.",
-        "Recopilamos información que nos proporcionas directamente, como tu nombre, dirección de correo electrónico y detalles de tu huerta cuando te registras. También utilizamos tu ubicación para mostrarte productos cercanos, pero siempre de forma aproximada para proteger tu hogar.",
-        "Utilizamos tu información para facilitar los intercambios entre miembros de la comunidad, enviarte notificaciones sobre tus ofertas y mejorar continuamente nuestra plataforma.",
-        "No compartimos tus datos personales con terceros para fines comerciales. Tu información solo es visible para otros miembros de la comunidad según tus preferencias de privacidad configuradas en tu perfil.",
-        "Protección de Ubicación: Para salvaguardar tu privacidad, nunca almacenamos tu ubicación exacta. Aplicamos un desplazamiento aleatorio (entre 500m y 1.5km) a tus coordenadas antes de guardarlas en nuestra base de datos. Esto te permite participar y ser visible en el mapa de la comunidad sin revelar tu dirección precisa.",
-        "Al utilizar EcoAnuncios, aceptas las prácticas descritas en esta política. Nos reservamos el derecho de actualizar este documento periódicamente para reflejar cambios en nuestros servicios o por motivos legales."
-    ]
+    "title": "Política de Privacidad de EcoAnuncios",
+    "sections": [
+        {
+            "id": "responsable",
+            "title": "Responsable del Tratamiento de Datos",
+            "content": [
+                "El responsable de la recogida y tratamiento de tus datos personales en esta plataforma es la sociedad Agroforja, con NIF [CIF] y domicilio social en [Dirección completa]. Para cualquier duda, consulta o ejercicio de derechos, puedes contactar con nosotros en: [Email de contacto de la web]."
+            ]
+        },
+        {
+            "id": "filosofia",
+            "title": "Nuestra Filosofía",
+            "content": [
+                "En EcoAnuncios, nos tomamos muy en serio tu privacidad. Creemos en la transparencia y en el respeto mutuo, valores que guían nuestra comunidad. Esta política describe cómo protegemos tu información cuando utilizas nuestro portal de intercambio."
+            ]
+        },
+        {
+            "id": "datos",
+            "title": "¿Qué datos recopilamos?",
+            "content": [
+                "Recopilamos la información que nos proporcionas directamente para el funcionamiento del servicio:"
+            ],
+            "items": [
+                {
+                    "label": "Datos de Registro",
+                    "text": "Nombre de usuario y dirección de correo electrónico. Tu email es estrictamente confidencial y nunca será visible para otros miembros ni se compartirá con terceros."
+                },
+                {
+                    "label": "Detalles de tu Huerta",
+                    "text": "Información que decidas compartir voluntariamente en tus anuncios para facilitar el intercambio."
+                }
+            ]
+        },
+        {
+            "id": "ubicacion",
+            "title": "Protección de Ubicación (Privacidad por Diseño)",
+            "content": [
+                "Para salvaguardar tu seguridad y privacidad, nunca almacenamos ni mostramos tu ubicación exacta. Aplicamos un desplazamiento aleatorio (entre 500m y 1.5km) a tus coordenadas antes de guardarlas en nuestra base de datos. Esto permite que otros miembros vean que hay un hortelano en la zona, pero garantiza que nadie pueda conocer tu dirección precisa a través del mapa."
+            ]
+        },
+        {
+            "id": "uso",
+            "title": "Uso de la Información",
+            "content": [
+                "Utilizamos tu información exclusivamente para:"
+            ],
+            "list": [
+                "Facilitar el contacto y los intercambios entre miembros de la comunidad.",
+                "Enviarte notificaciones técnicas sobre tus ofertas o cuenta.",
+                "Mejorar continuamente las funciones de la plataforma."
+            ]
+        },
+        {
+            "id": "terceros",
+            "title": "Terceros y Publicidad",
+            "content": [
+                "No compartimos tus datos personales con terceros para fines comerciales o publicitarios. La información de tus anuncios solo es visible para otros miembros según las preferencias de tu perfil."
+            ]
+        },
+        {
+            "id": "derechos",
+            "title": "Tus Derechos (Acceso, Rectificación y Supresión)",
+            "content": [
+                "Tienes derecho a saber qué datos tenemos sobre ti, a corregirlos o a eliminarlos."
+            ],
+            "items": [
+                {
+                    "label": "Control Total",
+                    "text": "Puedes ejercer tu derecho de supresión en cualquier momento y de forma inmediata a través de la opción \"Eliminar cuenta\" disponible en tu perfil de usuario. Al hacerlo, se borrarán tus datos personales y tus anuncios de forma definitiva."
+                }
+            ],
+            "extra": "También puedes enviarnos una solicitud manual al correo electrónico del Responsable arriba indicado."
+        },
+        {
+            "id": "actualizaciones",
+            "title": "Actualizaciones de esta Política",
+            "content": [
+                "Al utilizar EcoAnuncios, aceptas las prácticas descritas en esta política. Nos reservamos el derecho de actualizar este documento periódicamente para reflejar cambios en nuestros servicios o por motivos legales. En caso de cambios sustanciales, te lo notificaremos a través de la web o por correo electrónico."
+            ]
+        }
+    ],
+    "lastUpdated": "Última actualización: 30 de enero de 2026"
 }
