@@ -611,7 +611,7 @@ export default {
   "footer.legal": "Aviso Legal",
   "legal.title": "Aviso Legal",
   "privacy.title": "Política de Privacidad",
-  "cookies.banner.message": "Utilizamos cookies para mejorar tu experiencia. Al continuar navegando, aceptas nuestra política de cookies.",
+  "cookies.banner.message": "Usamos cookies necesarias y de análisis para que encuentres los huertos más cercanos y la web funcione bien. Al hacer clic en \"Aceptar\" nos ayudas a mantener viva la comunidad.",
   "cookies.banner.accept": "Aceptar",
   "cookies.banner.policy": "Ver política de cookies",
   "cookies.policy.title": "Política de Cookies",

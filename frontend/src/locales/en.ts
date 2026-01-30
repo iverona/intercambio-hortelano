@@ -610,7 +610,7 @@ export default {
   "footer.legal": "Legal Notice",
   "legal.title": "Legal Notice",
   "privacy.title": "Privacy Policy",
-  "cookies.banner.message": "We use cookies to improve your experience. By continuing to browse, you accept our cookie policy.",
+  "cookies.banner.message": "We use necessary and analytical cookies to help you find the nearest gardens and ensure the website works correctly. By clicking \"Accept\" you help us keep the community alive.",
   "cookies.banner.accept": "Accept",
   "cookies.banner.policy": "View cookie policy",
   "cookies.policy.title": "Cookie Policy",
