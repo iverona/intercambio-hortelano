@@ -28,11 +28,11 @@ export default function LegalPage() {
             {/* Organic Card Container */}
             <OrganicCard
                 className="w-full max-w-3xl mx-auto mb-10"
-                rotate={1}
+                rotate={-1}
                 showOverflow={true}
             >
                 {/* Decorative Icons */}
-                <div className="absolute -top-6 -right-6 md:-right-10 opacity-90 transform rotate-12 pointer-events-none">
+                <div className="absolute -top-6 -left-6 md:-left-10 opacity-90 transform -rotate-12 pointer-events-none">
                     <Image
                         src="/hojasolivo.png"
                         alt="Hojas de olivo"
@@ -43,12 +43,12 @@ export default function LegalPage() {
                 </div>
 
                 {/* Title */}
-                <h1 className="font-display font-bold text-5xl md:text-7xl text-[#594a42] dark:text-[#d6c7b0] tracking-wide mb-8 text-center uppercase">
+                <h1 className="font-display font-bold text-4xl md:text-6xl text-[#594a42] dark:text-[#d6c7b0] tracking-wide mb-12 text-center uppercase">
                     {legalData.title}
                 </h1>
 
                 {/* Content */}
-                <div className="font-serif text-[#3e3b34] dark:text-[#e0dcc7] text-lg leading-relaxed space-y-6">
+                <div className="font-serif text-[#3e3b34] dark:text-[#e0dcc7] text-lg leading-relaxed space-y-8">
                     {legalData.content.map((paragraph, index) => (
                         <p key={index}>
                             {paragraph}
@@ -57,8 +57,8 @@ export default function LegalPage() {
                 </div>
 
                 {/* Signature/End Decoration */}
-                <div className="mt-12 flex justify-center opacity-60">
-                    <div className="w-16 h-1 bg-[#879385] rounded-full"></div>
+                <div className="mt-16 flex justify-center opacity-40">
+                    <div className="w-24 h-1 bg-[#879385] rounded-full"></div>
                 </div>
 
             </OrganicCard>
