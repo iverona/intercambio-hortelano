@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { AuthService } from "@/services/auth.service";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
-import { Chrome } from "lucide-react";
+import { Chrome, UserPlus, LogIn, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
@@ -137,17 +137,25 @@ export default function SignupPage() {
             <Button
               variant="outline"
               onClick={() => router.push('/login')}
-              className="w-full sm:w-auto"
+              className="w-full sm:w-auto px-6 py-5 h-auto"
+              style={{
+                borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px'
+              }}
             >
-              {t('signup.go_to_login')}
+              <LogIn className="w-5 h-5 mr-2" />
+              <span className="font-serif font-bold">{t('signup.go_to_login')}</span>
             </Button>
             <Button
               onClick={handleGoogleSignIn}
               disabled={googleLoading}
-              className="flex items-center gap-2 w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90"
+              className="flex items-center gap-2 w-full sm:w-auto text-white px-6 py-5 shadow-md transform transition-transform hover:-translate-y-0.5 border-2 border-white/20 h-auto"
+              style={{
+                backgroundColor: '#A88C8F',
+                borderRadius: '15px 225px 15px 255px / 255px 15px 225px 15px'
+              }}
             >
-              <Chrome size={18} />
-              {t('signup.signin_with_google')}
+              <Chrome size={20} />
+              <span className="font-serif font-bold">{t('signup.signin_with_google')}</span>
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -232,16 +240,32 @@ export default function SignupPage() {
                   </Label>
                 </div>
                 {(error || googleError) && <p className="text-destructive text-sm">{error || googleError}</p>}
-                <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                  {t('common.signup')}
+                <Button
+                  type="submit"
+                  className="w-full text-white px-8 py-6 shadow-md transform transition-transform hover:-translate-y-0.5 border-2 border-white/20 h-auto"
+                  style={{
+                    backgroundColor: '#879385',
+                    borderRadius: '15px 225px 15px 255px / 255px 15px 225px 15px'
+                  }}
+                >
+                  <UserPlus className="w-5 h-5 mr-2" />
+                  <span className="font-serif text-lg font-bold">{t('common.signup')}</span>
                 </Button>
               </form>
               <div className="mt-4 text-center text-sm text-muted-foreground">
                 {t('common.or')}
               </div>
-              <Button onClick={handleGoogleAuthWithConsent} disabled={googleLoading} className="w-full mt-4 flex items-center gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/90">
-                <Chrome size={18} />
-                {t('signup.google_button')}
+              <Button
+                onClick={handleGoogleAuthWithConsent}
+                disabled={googleLoading}
+                variant="outline"
+                className="w-full mt-4 flex items-center justify-center gap-2 px-8 py-6 shadow-sm border-2 border-gray-100 dark:border-gray-700 h-auto"
+                style={{
+                  borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px'
+                }}
+              >
+                <Chrome size={18} className="mr-1" />
+                <span className="font-serif text-lg">{t('signup.google_button')}</span>
               </Button>
               <div className="mt-4 text-center">
                 <Link href="/login" className="text-sm text-primary hover:underline font-semibold">

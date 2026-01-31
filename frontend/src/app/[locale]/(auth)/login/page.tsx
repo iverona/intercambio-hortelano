@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { AuthService } from "@/services/auth.service";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 import { useAuth } from "@/context/AuthContext";
-import { Chrome, UserPlus } from "lucide-react";
+import { Chrome, UserPlus, LogIn, KeyRound, ArrowLeft } from "lucide-react";
 import { handleUserRedirect } from "@/lib/authUtils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -126,16 +126,32 @@ export default function LoginPage() {
                                 </div>
                                 {(error || googleError) && <p className="text-red-500 text-sm">{error || googleError}</p>}
                                 {successMessage && <p className="text-[#556B2F] text-sm">{successMessage}</p>}
-                                <Button type="submit" className="w-full bg-primary hover:bg-[#7a8578] text-white">
-                                    {t('common.login')}
+                                <Button
+                                    type="submit"
+                                    className="w-full text-white px-8 py-6 shadow-md transform transition-transform hover:-translate-y-0.5 border-2 border-white/20 h-auto"
+                                    style={{
+                                        backgroundColor: '#A88C8F',
+                                        borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px'
+                                    }}
+                                >
+                                    <LogIn className="w-5 h-5 mr-2" />
+                                    <span className="font-serif text-lg font-bold">{t('common.login')}</span>
                                 </Button>
                             </form>
                             <div className="mt-4 text-center text-sm text-muted-foreground ">
                                 {t('common.or')}
                             </div>
-                            <Button onClick={handleGoogleAuth} disabled={googleLoading} className="w-full mt-4 flex items-center gap-2 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 dark:bg-card dark:text-card-foreground dark:border-gray-600 dark:hover:bg-[#4a463a]">
-                                <Chrome size={18} />
-                                {t('login.google_button')}
+                            <Button
+                                onClick={handleGoogleAuth}
+                                disabled={googleLoading}
+                                variant="outline"
+                                className="w-full mt-4 flex items-center justify-center gap-2 px-8 py-6 shadow-sm border-2 border-gray-100 dark:border-gray-700 h-auto"
+                                style={{
+                                    borderRadius: '15px 225px 15px 255px / 255px 15px 225px 15px'
+                                }}
+                            >
+                                <Chrome size={18} className="mr-1" />
+                                <span className="font-serif text-lg">{t('login.google_button')}</span>
                             </Button>
                             <div className="mt-8 flex flex-col items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
                                 <p className="text-sm text-muted-foreground font-medium">
@@ -172,16 +188,25 @@ export default function LoginPage() {
                                 </div>
                                 {error && <p className="text-red-500 text-sm">{error}</p>}
                                 {successMessage && <p className="text-[#556B2F] text-sm">{successMessage}</p>}
-                                <Button type="submit" className="w-full bg-primary hover:bg-[#7a8578] text-white">
-                                    {t('login.send_reset_link')}
+                                <Button
+                                    type="submit"
+                                    className="w-full text-white px-8 py-6 shadow-md transform transition-transform hover:-translate-y-0.5 border-2 border-white/20 h-auto"
+                                    style={{
+                                        backgroundColor: '#A88C8F',
+                                        borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px'
+                                    }}
+                                >
+                                    <KeyRound className="w-5 h-5 mr-2" />
+                                    <span className="font-serif text-lg font-bold">{t('login.send_reset_link')}</span>
                                 </Button>
                             </form>
                             <div className="mt-4 text-center">
                                 <button
                                     type="button"
                                     onClick={toggleResetForm}
-                                    className="text-sm text-primary hover:underline"
+                                    className="text-sm text-primary hover:underline flex items-center justify-center w-full gap-1 pt-2"
                                 >
+                                    <ArrowLeft size={16} />
                                     {t('login.back_to_login')}
                                 </button>
                             </div>
