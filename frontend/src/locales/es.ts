@@ -371,7 +371,7 @@ export default {
   "login.back_to_login": "Volver a Iniciar Sesión",
   "login.google_button": "Iniciar sesión con Google",
   "login.google_account_error": "Este correo está registrado con email/contraseña. Por favor, inicia sesión usando tu contraseña.",
-  "login.signup_prompt": "¿No tienes una cuenta? Regístrate",
+  "login.signup_prompt": "¿No tienes una cuenta?",
 
   "notifications.new_offer.title": "Nueva Oferta Recibida",
   "notifications.new_offer.default": "Alguien hizo una oferta por tu producto",

@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { AuthService } from "@/services/auth.service";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 import { useAuth } from "@/context/AuthContext";
-import { Chrome } from "lucide-react";
+import { Chrome, UserPlus } from "lucide-react";
 import { handleUserRedirect } from "@/lib/authUtils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -137,10 +137,23 @@ export default function LoginPage() {
                                 <Chrome size={18} />
                                 {t('login.google_button')}
                             </Button>
-                            <div className="mt-4 text-center">
-                                <Link href="/signup" className="text-sm text-primary hover:underline font-semibold">
+                            <div className="mt-8 flex flex-col items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-700">
+                                <p className="text-sm text-muted-foreground font-medium">
                                     {t('login.signup_prompt')}
-                                </Link>
+                                </p>
+                                <Button
+                                    asChild
+                                    variant="outline"
+                                    className="w-full bg-[#879385] hover:bg-[#727d70] text-white px-8 py-6 shadow-md transform transition-transform hover:-translate-y-0.5 border-2 border-white/20 h-auto"
+                                    style={{
+                                        borderRadius: '15px 225px 15px 255px / 255px 15px 225px 15px'
+                                    }}
+                                >
+                                    <Link href="/signup" className="flex items-center justify-center">
+                                        <UserPlus className="w-5 h-5 mr-2" />
+                                        <span className="font-serif text-lg font-bold">{t('common.signup')}</span>
+                                    </Link>
+                                </Button>
                             </div>
                         </>
                     ) : (
