@@ -10,12 +10,12 @@ export const useGoogleAuth = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleGoogleAuth = async () => {
+  const handleGoogleAuth = async (consent?: any) => {
     setError(null);
     setLoading(true);
 
     try {
-      const user = await AuthService.loginWithGoogle();
+      const user = await AuthService.loginWithGoogle(consent);
 
       if (user) {
         // Handle redirect

@@ -39,6 +39,14 @@ export interface UserData {
     level?: number;
     badges?: string[];
     preferredLocale?: string;
+    consent?: {
+        privacyAccepted: boolean;
+        legalAccepted: boolean;
+        acceptedAt: {
+            seconds: number;
+            nanoseconds: number;
+        };
+    };
 }
 
 export interface Producer extends UserData {

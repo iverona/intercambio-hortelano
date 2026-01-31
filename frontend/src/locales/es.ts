@@ -471,6 +471,11 @@ export default {
   "signup.account_exists_title": "La Cuenta Ya Existe",
   "signup.account_exists_description": "Este correo electrónico ya está registrado con una cuenta de Google. Por favor, inicia sesión con Google para acceder a tu cuenta.",
   "signup.email_already_exists": "Este correo electrónico ya está registrado. Por favor, ve a la página de inicio de sesión para acceder.",
+  "signup.terms_consent_prefix": "Acepto la",
+  "signup.terms_consent_and": "y el",
+  "signup.privacy_policy": "Política de Privacidad",
+  "signup.legal_notice": "Aviso Legal",
+  "signup.error_terms_required": "Debes aceptar la Política de Privacidad y el Aviso Legal para registrarte",
 
   "signup.signin_with_google": "Iniciar sesión con Google",
   "signup.go_to_login": "Ir a Iniciar Sesión",

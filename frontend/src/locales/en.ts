@@ -471,6 +471,11 @@ export default {
   "signup.account_exists_title": "Account Already Exists",
   "signup.account_exists_description": "This email is already registered with a Google account. Please sign in with Google to access your account.",
   "signup.email_already_exists": "This email address is already registered. Please go to the login page to sign in.",
+  "signup.terms_consent_prefix": "I accept the",
+  "signup.terms_consent_and": "and the",
+  "signup.privacy_policy": "Privacy Policy",
+  "signup.legal_notice": "Legal Notice",
+  "signup.error_terms_required": "You must accept the Privacy Policy and Legal Notice to sign up",
 
   "signup.signin_with_google": "Sign in with Google",
   "signup.go_to_login": "Go to Login",

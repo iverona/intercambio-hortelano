@@ -44,7 +44,7 @@ export const AuthService = {
         await updateProfile(user, data);
     },
 
-    loginWithGoogle: async (): Promise<User | null> => {
+    loginWithGoogle: async (consent?: UserData['consent']): Promise<User | null> => {
         try {
             const result = await signInWithPopup(auth, googleProvider);
             const user = result.user;
@@ -70,7 +70,11 @@ export const AuthService = {
                     name: user.displayName,
                     onboardingComplete: false,
                     authMethod: "google",
+                    ...(consent ? { consent } : {}),
                 });
+            } else if (consent) {
+                // If user exists but we have new consent info, update it
+                await setDoc(userDocRef, { consent }, { merge: true });
             }
 
             return user;

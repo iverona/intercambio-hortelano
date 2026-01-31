@@ -16,6 +16,7 @@ import { AuthService } from "@/services/auth.service";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 import { Chrome } from "lucide-react";
 import Link from "next/link";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useI18n } from "@/locales/provider";
@@ -30,6 +31,7 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showGoogleDialog, setShowGoogleDialog] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const router = useRouter();
   const { handleGoogleAuth, error: googleError, loading: googleLoading } = useGoogleAuth();
 
@@ -37,6 +39,10 @@ export default function SignupPage() {
     e.preventDefault();
     if (password !== confirmPassword) {
       setError(t('signup.passwords_no_match') || null);
+      return;
+    }
+    if (!acceptedTerms) {
+      setError(t('signup.error_terms_required') || null);
       return;
     }
     try {
@@ -48,6 +54,14 @@ export default function SignupPage() {
         name: name,
         onboardingComplete: false,
         authMethod: "password",
+        consent: {
+          privacyAccepted: true,
+          legalAccepted: true,
+          acceptedAt: {
+            seconds: Math.floor(Date.now() / 1000),
+            nanoseconds: 0,
+          },
+        },
       });
 
       await AuthService.sendEmailVerification(user);
@@ -83,8 +97,30 @@ export default function SignupPage() {
   };
 
   const handleGoogleSignIn = async () => {
+    if (!acceptedTerms) {
+      setError(t('signup.error_terms_required') || null);
+      return;
+    }
     setShowGoogleDialog(false);
-    await handleGoogleAuth();
+    await handleGoogleAuthWithConsent();
+  };
+
+  const handleGoogleAuthWithConsent = async () => {
+    if (!acceptedTerms) {
+      setError(t('signup.error_terms_required') || null);
+      return;
+    }
+
+    const consent = {
+      privacyAccepted: true,
+      legalAccepted: true,
+      acceptedAt: {
+        seconds: Math.floor(Date.now() / 1000),
+        nanoseconds: 0,
+      },
+    };
+
+    await handleGoogleAuth(consent);
   };
 
   return (
@@ -173,6 +209,24 @@ export default function SignupPage() {
                     className="bg-background/50 border-input"
                   />
                 </div>
+                <div className="flex items-start space-x-2 pt-2">
+                  <Checkbox
+                    id="terms"
+                    checked={acceptedTerms}
+                    onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
+                    className="mt-1"
+                  />
+                  <Label htmlFor="terms" className="text-sm text-foreground leading-tight cursor-pointer">
+                    {t('signup.terms_consent_prefix')}{' '}
+                    <Link href="/privacy" className="text-primary hover:underline font-semibold" target="_blank">
+                      {t('signup.privacy_policy')}
+                    </Link>
+                    {' '}{t('signup.terms_consent_and')}{' '}
+                    <Link href="/legal" className="text-primary hover:underline font-semibold" target="_blank">
+                      {t('signup.legal_notice')}
+                    </Link>
+                  </Label>
+                </div>
                 {(error || googleError) && <p className="text-destructive text-sm">{error || googleError}</p>}
                 <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
                   {t('common.signup')}
@@ -181,7 +235,7 @@ export default function SignupPage() {
               <div className="mt-4 text-center text-sm text-muted-foreground">
                 {t('common.or')}
               </div>
-              <Button onClick={handleGoogleAuth} disabled={googleLoading} className="w-full mt-4 flex items-center gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/90">
+              <Button onClick={handleGoogleAuthWithConsent} disabled={googleLoading} className="w-full mt-4 flex items-center gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/90">
                 <Chrome size={18} />
                 {t('signup.google_button')}
               </Button>
