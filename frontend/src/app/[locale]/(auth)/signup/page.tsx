@@ -216,7 +216,7 @@ export default function SignupPage() {
                     onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
                     className="mt-1"
                   />
-                  <Label htmlFor="terms" className="text-sm text-foreground leading-tight cursor-pointer">
+                  <Label htmlFor="terms" className="text-sm text-foreground leading-relaxed cursor-pointer block">
                     {t('signup.terms_consent_prefix')}{' '}
                     <Link href="/privacy" className="text-primary hover:underline font-semibold" target="_blank">
                       {t('signup.privacy_policy')}
@@ -225,6 +225,10 @@ export default function SignupPage() {
                     <Link href="/legal" className="text-primary hover:underline font-semibold" target="_blank">
                       {t('signup.legal_notice')}
                     </Link>
+                    .
+                    <span className="block mt-1 text-muted-foreground">
+                      {t('signup.notifications_consent')}
+                    </span>
                   </Label>
                 </div>
                 {(error || googleError) && <p className="text-destructive text-sm">{error || googleError}</p>}

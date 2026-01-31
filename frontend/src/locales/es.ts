@@ -475,6 +475,7 @@ export default {
   "signup.terms_consent_and": "y el",
   "signup.privacy_policy": "Política de Privacidad",
   "signup.legal_notice": "Aviso Legal",
+  "signup.notifications_consent": "Entiendo que recibiré notificaciones por email sobre mi actividad en la plataforma, las cuales podré configurar desde mi perfil.",
   "signup.error_terms_required": "Debes aceptar la Política de Privacidad y el Aviso Legal para registrarte",
 
   "signup.signin_with_google": "Iniciar sesión con Google",
