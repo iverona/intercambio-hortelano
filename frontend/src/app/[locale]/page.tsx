@@ -1,6 +1,6 @@
 "use client";
 
-import { useI18n } from "@/locales/provider";
+import { useI18n, useCurrentLocale } from "@/locales/provider";
 import Link from "next/link";
 import Image from "next/image";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
@@ -13,6 +13,7 @@ import LoginPromptModal from "@/components/shared/LoginPromptModal";
 
 export default function Home() {
   const t = useI18n();
+  const locale = useCurrentLocale();
   const { user } = useAuth();
   const [showLoginPrompt, setShowLoginPrompt] = React.useState(false);
   const router = useRouter();
@@ -22,7 +23,7 @@ export default function Home() {
     if (!user) {
       setShowLoginPrompt(true);
     } else {
-      router.push("/publish");
+      router.push(`/${locale}/publish`);
     }
   };
 
@@ -84,7 +85,7 @@ export default function Home() {
 
       {/* Action Buttons */}
       <div className="flex flex-col md:flex-row flex-wrap gap-6 mt-8 mb-12 items-center justify-center w-full px-4">
-        <Link href="/publish" onClick={handlePublishClick} className="relative group cursor-pointer w-64">
+        <Link href={`/${locale}/publish`} onClick={handlePublishClick} className="relative group cursor-pointer w-64">
           <div className="absolute inset-0 bg-[#A88C8F] rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
           <div
             className="relative bg-[#A88C8F] dark:bg-[#7a6466] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20 w-full"
@@ -96,7 +97,7 @@ export default function Home() {
         </Link>
 
         {/* Existing Products Button */}
-        <Link href="/products" className="relative group w-64">
+        <Link href={`/${locale}/products`} className="relative group w-64">
           <div className="absolute inset-0 bg-[#998676] rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
           <div
             className="relative bg-[#998676] dark:bg-[#6e6054] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20 w-full"
@@ -108,7 +109,7 @@ export default function Home() {
         </Link>
 
         {/* New Producers Button */}
-        <Link href="/producers" className="relative group w-64">
+        <Link href={`/${locale}/producers`} className="relative group w-64">
           <div className="absolute inset-0 bg-[#879385] rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
           <div
             className="relative bg-[#879385] dark:bg-[#525b51] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20 w-full"
@@ -120,7 +121,7 @@ export default function Home() {
         </Link>
 
         {/* Contact Button */}
-        <Link href="/contact" className="relative group w-64">
+        <Link href={`/${locale}/contact`} className="relative group w-64">
           <div className="absolute inset-0 bg-[#A88C8F] rounded-full blur opacity-40 group-hover:opacity-60 transition-opacity"></div>
           <div
             className="relative bg-[#A88C8F] dark:bg-[#7a6466] text-white px-8 py-4 shadow-lg transform transition-transform group-hover:-translate-y-1 border-2 border-white/20 w-full"
@@ -142,7 +143,7 @@ export default function Home() {
           colorClass="bg-[#EFEAC6] dark:bg-[#4a463a]"
           textColorClass="text-[#3E3B34] dark:text-[#EFEAC6]"
           rotate={-2}
-          href="/manifiesto"
+          href={`/${locale}/manifiesto`}
         />
 
         {/* Participar */}
@@ -151,7 +152,7 @@ export default function Home() {
           iconSrc="/participar.png"
           colorClass="bg-[#A88C8F] dark:bg-[#6b585a]"
           rotate={1}
-          href="/como-participar"
+          href={`/${locale}/como-participar`}
         />
 
         {/* Comunidad */}
@@ -160,7 +161,7 @@ export default function Home() {
           iconSrc="/gente.png"
           colorClass="bg-[#879385] dark:bg-[#525b51]"
           rotate={2}
-          href="/nuestra-comunidad"
+          href={`/${locale}/nuestra-comunidad`}
         />
       </div>
 

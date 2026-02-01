@@ -4,15 +4,27 @@ import Image from "next/image";
 import Link from "next/link";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 import { OrganicCard } from "@/components/shared/OrganicCard";
+import { useCurrentLocale, useI18n } from "@/locales/provider";
+import manifestEs from "@/locales/content/manifesto-es.json";
+import manifestEn from "@/locales/content/manifesto-en.json";
+
+interface ManifestData {
+    title: string;
+    paragraphs: string[];
+}
 
 export default function Manifest() {
+    const t = useI18n();
+    const locale = useCurrentLocale();
+    const manifestData = (locale === 'es' ? manifestEs : manifestEn) as ManifestData;
+
     return (
         <OrganicBackground className="py-12">
 
             {/* Back Link */}
             <div className="w-full max-w-2xl mb-6">
-                <Link href="/" className="inline-flex items-center text-[#594a42] dark:text-[#d6c7b0] hover:underline font-serif">
-                    ← Volver al inicio
+                <Link href={`/${locale}`} className="inline-flex items-center text-[#594a42] dark:text-[#d6c7b0] hover:underline font-serif">
+                    ← {t('product.back_to_home')}
                 </Link>
             </div>
 
@@ -26,7 +38,7 @@ export default function Manifest() {
                 <div className="absolute -top-6 -right-6 md:-right-10 opacity-90 transform rotate-12 pointer-events-none">
                     <Image
                         src="/hojas.png"
-                        alt="Hojas decorativas"
+                        alt="Hojas"
                         width={100}
                         height={100}
                         className="w-24 h-auto object-contain"
@@ -35,29 +47,14 @@ export default function Manifest() {
 
                 {/* Title */}
                 <h1 className="font-display font-bold text-5xl md:text-7xl text-[#594a42] dark:text-[#d6c7b0] tracking-wide mb-8 text-center">
-                    Nuestro Manifiesto
+                    {manifestData.title}
                 </h1>
 
                 {/* Content */}
                 <div className="font-serif text-[#3e3b34] dark:text-[#e0dcc7] text-lg leading-relaxed space-y-6">
-                    <p>
-                        Creemos en un futuro donde la sostenibilidad guía cada decisión.
-                    </p>
-                    <p>
-                        Actuamos con profundo respeto por el planeta, las personas y todas las formas de vida.
-                    </p>
-                    <p>
-                        La ética es el corazón de nuestro compromiso, impulsando prácticas responsables y transparentes.
-                    </p>
-                    <p>
-                        Fomentamos la colaboración como herramienta para generar impacto colectivo y duradero.
-                    </p>
-                    <p>
-                        Cada anuncio promueve un consumo consciente y una vida más saludable.
-                    </p>
-                    <p>
-                        Juntos, construimos un mundo en equilibrio con la naturaleza y con nosotros mismos.
-                    </p>
+                    {manifestData.paragraphs.map((paragraph, idx) => (
+                        <p key={idx}>{paragraph}</p>
+                    ))}
                 </div>
 
                 {/* Signature/End Decoration */}

@@ -1,0 +1,33 @@
+{
+    "title": "Nuestra Comunidad",
+    "sections": [
+        {
+            "title": "Todo natural, como la tierra lo da",
+            "content": "Comparte solo productos cultivados sin químicos ni pesticidas."
+        },
+        {
+            "title": "Transacciones claras y sencillas",
+            "content": "Explica bien qué ofreces y qué necesitas a cambio."
+        },
+        {
+            "title": "De tu huerta a la de otra persona",
+            "content": "Solo se comparte productos/servicios que vengan de tu propio cultivo. Nada de compras en tiendas para revender."
+        },
+        {
+            "title": "Trátanos con respeto y sinceridad",
+            "content": "Cumple con lo que prometes, responde con amabilidad y comunica si surge algún cambio."
+        },
+        {
+            "title": "Cuidemos el planeta en cada paso",
+            "content": "Usa envases reutilizables o compostables y evita el plástico innecesario. También puedes publicar artículos de segunda mano relacionados con la huerta que contribuyan a reducir nuestra huella de carbono."
+        },
+        {
+            "title": "Esto es una comunidad",
+            "content": "La idea es compartir, intercambiar, regalar, y vender a precio justo. Consulta el valor del mercado si has de proponer un precio."
+        },
+        {
+            "title": "Compartir saberes también es intercambiar",
+            "content": "Anímate a dejar consejos, recetas o trucos de cultivo. Juntos aprendemos y hacemos crecer este espacio."
+        }
+    ]
+}
