@@ -13,6 +13,8 @@ service cloud.firestore {
       allow create: if request.auth != null && request.auth.uid == userId;
       // Only allow users to update their own profile
       allow update: if request.auth != null && request.auth.uid == userId;
+      // Allow users to delete their own profile
+      allow delete: if request.auth != null && request.auth.uid == userId;
     }
 
     // Secure the chats collection
@@ -64,6 +66,17 @@ service cloud.firestore {
       // Allow delete if user is the owner
       allow delete: if request.auth != null && 
         resource.data.ownerId == request.auth.uid;
+    }
+    // LOPD "Bloqueo" Compliance: Strictly deny all access to archived users
+    // LOPD "Bloqueo" Compliance: Archived data is write-only for the owner during deletion.
+    match /archived_users/{userId} {
+      allow create, update: if request.auth != null && request.auth.uid == userId;
+      allow read, delete: if false;
+      
+      match /products/{productId} {
+         allow create, update: if request.auth != null && request.auth.uid == userId;
+         allow read, delete: if false;
+      }
     }
   }
 }

@@ -12,10 +12,14 @@ import {
     addDoc,
     serverTimestamp,
     updateDoc,
-    limit
+    limit,
+    writeBatch,
+    deleteDoc,
+    setDoc,
+    getDoc
 } from "firebase/firestore";
 import { storage } from "@/lib/firebase";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 
 export const ProductService = {
     subscribeToProducts: (
@@ -162,11 +166,109 @@ export const ProductService = {
 
     deleteProduct: async (id: string): Promise<void> => {
         try {
-            // Soft delete
-            await updateDoc(doc(db, "products", id), {
-                deleted: true,
-                updatedAt: serverTimestamp(),
+            // 1. Fetch product to get data for archive and userId
+            const productRef = doc(db, "products", id);
+            const productSnap = await getDoc(productRef);
+
+            if (!productSnap.exists()) {
+                throw new Error("Product not found");
+            }
+
+            const productData = productSnap.data() as Product;
+            const userId = productData.userId;
+
+            if (!userId) {
+                // If legacy product somehow has no userId, just hard delete it to clean up
+                await deleteDoc(productRef);
+                return;
+            }
+
+            // Gather operations
+            let batch = writeBatch(db);
+            let operationCount = 0;
+            const BATCH_LIMIT = 450;
+            const commitBatch = async () => {
+                if (operationCount > 0) {
+                    await batch.commit();
+                    batch = writeBatch(db);
+                    operationCount = 0;
+                }
+            };
+
+            // 2. Archive Product
+            // We store it in archived_users/{userId}/products/{productId}
+            const archiveRef = doc(db, "archived_users", userId, "products", id);
+            batch.set(archiveRef, {
+                ...productData,
+                archivedAt: serverTimestamp(),
+                deletionReason: "user_delete_single"
             });
+            operationCount++;
+            await commitBatch();
+
+            // 3. Delete Images (Best effort)
+            if (productData.imageUrls && Array.isArray(productData.imageUrls)) {
+                for (const url of productData.imageUrls) {
+                    if (url.includes("firebasestorage")) {
+                        try {
+                            const imgRef = ref(storage, url);
+                            await deleteObject(imgRef);
+                        } catch (err) {
+                            console.warn(`Failed to delete image ${url}:`, err);
+                        }
+                    }
+                }
+            }
+
+            // 4. Reject Pending/Accepted Exchanges involving this product
+            const exchangesQuery = query(
+                collection(db, "exchanges"),
+                where("productId", "==", id),
+                where("status", "in", ["pending", "accepted"])
+            );
+
+            const exchangesSnap = await getDocs(exchangesQuery);
+
+            for (const exchangeDoc of exchangesSnap.docs) {
+                if (operationCount >= BATCH_LIMIT) await commitBatch();
+
+                const exchangeData = exchangeDoc.data();
+
+                // Reject exchange
+                batch.update(exchangeDoc.ref, {
+                    status: "rejected",
+                    rejectionReason: "item_deleted",
+                    updatedAt: serverTimestamp()
+                });
+                operationCount++;
+
+                // Notify the other user (requester)
+                const partnerId = exchangeData.requesterId === userId
+                    ? exchangeData.ownerId  // Should technically resolve to requester usually, but safeguard
+                    : exchangeData.requesterId;
+
+                if (operationCount >= BATCH_LIMIT) await commitBatch();
+                const notifRef = doc(collection(db, "notifications"));
+                batch.set(notifRef, {
+                    userId: partnerId,
+                    type: "offer_declined",
+                    exchangeId: exchangeDoc.id,
+                    productId: id,
+                    productName: productData.name || "Deleted Product",
+                    message: "The product for this exchange was deleted",
+                    read: false,
+                    createdAt: serverTimestamp()
+                });
+                operationCount++;
+            }
+
+            // 5. Hard Delete Product
+            if (operationCount >= BATCH_LIMIT) await commitBatch();
+            batch.delete(productRef);
+
+            // Commit final changes
+            await batch.commit();
+
         } catch (error) {
             console.error("Error deleting product:", error);
             throw error;

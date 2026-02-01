@@ -780,6 +780,10 @@ export default function ProfilePage() {
             <DialogDescription>
               {t('profile.delete_account_confirmation')}
             </DialogDescription>
+            <div className="mt-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-md flex gap-3 text-sm text-amber-800 dark:text-amber-200">
+              <ShieldCheck className="w-5 h-5 flex-shrink-0" />
+              <p>{t('profile.delete_account_legal_notice')}</p>
+            </div>
           </DialogHeader>
 
           {!isGoogleUser && (

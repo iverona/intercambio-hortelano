@@ -110,6 +110,27 @@ export const UserService = {
             results.push(...fetchedChunkData);
         }
 
+        // Check for missing UIDs (Deleted Users)
+        const foundUids = new Set(results.map(r => r.uid));
+        const missingUids = uids.filter(uid => !foundUids.has(uid));
+
+        missingUids.forEach(uid => {
+            // Create a stub for deleted users so the UI doesn't hang
+            const deletedUserStub: UserData = {
+                uid: uid,
+                name: "Deleted User",
+                email: "deleted@user.com",
+                role: "user",
+                createdAt: new Date(), // Dummy date
+                avatarUrl: "", // Or use a placeholder if available
+                deleted: true // Mark as deleted
+            } as any;
+
+            results.push(deletedUserStub);
+            // Cache it so we don't keep trying to look it up
+            userCache.set(uid, Promise.resolve(deletedUserStub));
+        });
+
         return results;
     },
 

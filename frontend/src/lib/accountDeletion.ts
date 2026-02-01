@@ -79,6 +79,12 @@ export async function reauthenticateUser(
 /**
  * Soft-deletes a user account and all associated data
  */
+/**
+ * Deletes a user account and all associated data in compliance with GDPR/LOPD.
+ * 1. Archives data for 5 years (blocked by security rules).
+ * 2. Deletes images from Storage immediately.
+ * 3. Hard deletes live data from Firestore.
+ */
 export async function softDeleteUserAccount(
   userId: string
 ): Promise<DeleteAccountResult> {
@@ -88,11 +94,10 @@ export async function softDeleteUserAccount(
   }
 
   try {
-    // Gather all operations first
-    const operations: (() => void)[] = [];
+    // Gather all operations
     let batch = writeBatch(db);
     let operationCount = 0;
-    const BATCH_LIMIT = 450; // Safety margin below 500
+    const BATCH_LIMIT = 450;
 
     const commitBatch = async () => {
       if (operationCount > 0) {
@@ -102,65 +107,110 @@ export async function softDeleteUserAccount(
       }
     };
 
-    // 1. Update user document - soft delete and anonymize
-    // 1. Delete avatar from storage if exists
+    // --- STEP 1: FETCH DATA TO ARCHIVE ---
+    console.log("[DELETE] Starting deletion process for:", userId);
+
+    // Fetch User Data
     const userRef = doc(db, "users", userId);
     const userSnap = await getDoc(userRef);
-    if (userSnap.exists()) {
-      const userData = userSnap.data();
-      if (userData?.avatarUrl && userData.avatarUrl.includes("firebasestorage")) {
-        try {
-          const avatarRef = ref(storage, userData.avatarUrl);
-          await deleteObject(avatarRef);
-        } catch (error) {
-          console.warn("Failed to delete avatar from storage:", error);
-          // Continue with account deletion even if avatar deletion fails
-        }
-      }
+    if (!userSnap.exists()) {
+      console.error("[DELETE] User profile not found");
+      return { success: false, error: "User profile not found" };
     }
+    const userData = userSnap.data();
+    console.log("[DELETE] User data fetched");
 
-    // 2. Update user document - soft delete and anonymize
-    batch.update(userRef, {
-      deleted: true,
-      deletedAt: serverTimestamp(),
-      name: "Deleted User",
-      bio: "",
-      avatarUrl: "",
-      email: deleteField(),
-      address: deleteField(),
-      location: deleteField(),
-      geohash: deleteField(),
-      locationUpdatedAt: deleteField(),
-      notifications: deleteField(),
-      privacy: deleteField(),
-      authMethod: deleteField(),
-      reputation: deleteField(),
-      points: deleteField(),
-      level: deleteField(),
-      badges: deleteField(),
-      onboardingComplete: deleteField(),
-      lastUpdated: deleteField(),
-      joinedDate: deleteField(),
-    });
-    operationCount++;
-
-    // 2. Mark all user's products as deleted
+    // Fetch User Products
     const productsQuery = query(
       collection(db, "products"),
       where("userId", "==", userId)
     );
     const productsSnapshot = await getDocs(productsQuery);
+    const products = productsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    console.log("[DELETE] Products fetched:", products.length);
 
-    for (const doc of productsSnapshot.docs) {
+    // --- STEP 2: ARCHIVE DATA (LOPD Compliance) ---
+    console.log("[DELETE] Preparing Archive batch...");
+
+    // Archive User
+    const archiveUserRef = doc(db, "archived_users", userId);
+    batch.set(archiveUserRef, {
+      ...userData,
+      archivedAt: serverTimestamp(),
+      originalUid: userId,
+      deletionReason: "user_request"
+    });
+    operationCount++;
+
+    // Archive Products
+    for (const product of products) {
       if (operationCount >= BATCH_LIMIT) await commitBatch();
-      batch.update(doc.ref, {
-        deleted: true,
-        deletedAt: serverTimestamp(),
+      const archiveProductRef = doc(db, "archived_users", userId, "products", product.id);
+      batch.set(archiveProductRef, {
+        ...product,
+        archivedAt: serverTimestamp()
       });
       operationCount++;
     }
 
-    // 3. Reject all active and pending exchanges
+    // Commit Archival first to ensure data safety
+    console.log("[DELETE] Committing Archive batch...");
+    await commitBatch();
+    console.log("[DELETE] Archive batch committed successfully");
+
+
+    // --- STEP 3: DELETE IMAGES FROM STORAGE ---
+    // We do this "best effort" - if one fails, we log but continue to ensure account is deleted.
+    console.log("[DELETE] Starting image cleanup...");
+
+    // Delete Avatar
+    if (userData.avatarUrl && userData.avatarUrl.includes("firebasestorage")) {
+      try {
+        const avatarRef = ref(storage, userData.avatarUrl);
+        await deleteObject(avatarRef);
+        console.log("[DELETE] Avatar deleted");
+      } catch (error) {
+        console.warn("Failed to delete avatar from storage:", error);
+      }
+    }
+
+    // Delete Product Images
+    for (const product of products) {
+      const p = product as any;
+      if (p.imageUrls && Array.isArray(p.imageUrls)) {
+        for (const url of p.imageUrls) {
+          if (typeof url === 'string' && url.includes("firebasestorage")) {
+            try {
+              const imgRef = ref(storage, url);
+              await deleteObject(imgRef);
+              console.log("[DELETE] Product image deleted:", url);
+            } catch (err) {
+              console.warn(`Failed to delete product image ${url}:`, err);
+            }
+          }
+        }
+      }
+    }
+
+
+    // --- STEP 4: HARD DELETE LIVE DATA ---
+    console.log("[DELETE] Preparing Delete batch...");
+
+    // Delete User Document
+    batch.delete(userRef);
+    operationCount++;
+
+    // Delete Product Documents
+    for (const docSnap of productsSnapshot.docs) {
+      if (operationCount >= BATCH_LIMIT) await commitBatch();
+      batch.delete(docSnap.ref);
+      operationCount++;
+    }
+
+    // --- STEP 5: HANDLE EXCHANGES (REJECT PENDING/ACCEPTED) ---
+    // We modify existing exchanges to indicate the user is deleted. We do NOT delete exchanges
+    // because the other party needs the record (as per plan "Contextual Inference").
+
     // Get exchanges where user is the requester
     const requesterExchangesQuery = query(
       collection(db, "exchanges"),
@@ -180,18 +230,17 @@ export async function softDeleteUserAccount(
       getDocs(ownerExchangesQuery),
     ]);
 
-    // Combine all exchanges
     const allExchanges = [
       ...requesterSnapshot.docs,
       ...ownerSnapshot.docs,
     ];
+    console.log("[DELETE] Exchanges to reject:", allExchanges.length);
 
-    // Reject exchanges and create notifications
     for (const exchangeDoc of allExchanges) {
+      if (operationCount >= BATCH_LIMIT) await commitBatch();
+
       const exchangeData = exchangeDoc.data();
 
-      // Update exchange status
-      if (operationCount >= BATCH_LIMIT) await commitBatch();
       batch.update(exchangeDoc.ref, {
         status: "rejected",
         rejectionReason: "user_deleted",
@@ -199,32 +248,35 @@ export async function softDeleteUserAccount(
       });
       operationCount++;
 
-      // Determine the other user (the one who isn't deleted)
+      // Notify the other user
       const otherUserId = exchangeData.requesterId === userId
         ? exchangeData.ownerId
         : exchangeData.requesterId;
 
-      // Create notification for the other user
       if (operationCount >= BATCH_LIMIT) await commitBatch();
       const notifRef = doc(collection(db, "notifications"));
       batch.set(notifRef, {
-        userId: otherUserId,
+        recipientId: otherUserId,
         type: "offer_declined",
         exchangeId: exchangeDoc.id,
         productId: exchangeData.productId,
-        productName: exchangeData.productName || "Unknown Product",
-        message: "The other user has deleted their account",
+        productName: exchangeData.productName || "Unknown",
+        message: "The other user has deleted their account", // Translation handled in UI
         read: false,
         createdAt: serverTimestamp(),
       });
       operationCount++;
     }
 
-    // Commit any remaining operations
+    // Commit Deletions and Updates
+    console.log("[DELETE] Committing Final batch...");
     await commitBatch();
+    console.log("[DELETE] Final batch committed successfully");
 
-    // 4. Delete Firebase Auth account (this will sign out the user)
+    // --- STEP 6: DELETE AUTH ACCOUNT ---
+    console.log("[DELETE] Deleting Auth user...");
     await deleteUser(user);
+    console.log("[DELETE] Auth user deleted");
 
     return { success: true };
   } catch (error: any) {

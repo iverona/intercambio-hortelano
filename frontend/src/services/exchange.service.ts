@@ -56,7 +56,7 @@ export const ExchangeService = {
                 } else {
                     exchange.partner = {
                         id: partnerId,
-                        name: "Unknown User",
+                        name: "Deleted User",
                         avatarUrl: "",
                     };
                 }
@@ -114,6 +114,12 @@ export const ExchangeService = {
                         name: rData.name || "Unknown User",
                         avatarUrl: rData.avatarUrl || ""
                     };
+                } else {
+                    exchangeInfo.requester = {
+                        id: exchangeData.requesterId,
+                        name: "Deleted User",
+                        avatarUrl: ""
+                    };
                 }
 
                 // Fetch Owner
@@ -124,6 +130,12 @@ export const ExchangeService = {
                         id: exchangeData.ownerId,
                         name: oData.name || "Unknown User",
                         avatarUrl: oData.avatarUrl || ""
+                    };
+                } else {
+                    exchangeInfo.owner = {
+                        id: exchangeData.ownerId,
+                        name: "Deleted User",
+                        avatarUrl: ""
                     };
                 }
 
@@ -139,6 +151,16 @@ export const ExchangeService = {
                             imageUrls: pData.imageUrls || [pData.imageUrl] || [],
                             category: pData.category,
                             condition: pData.condition,
+                        };
+                    } else {
+                        // Product deleted - use fallback from exchange data
+                        exchangeInfo.product = {
+                            id: exchangeData.productId,
+                            name: exchangeData.productName || "Deleted Product",
+                            description: "This product has been deleted.",
+                            imageUrls: ["/deleted_placeholder.png"],
+                            category: "Deleted",
+                            condition: "Unknown",
                         };
                     }
                 }
