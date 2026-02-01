@@ -67,7 +67,7 @@
             "items": [
                 {
                     "label": "Total Control",
-                    "text": "You can exercise your right of erasure at any time and immediately through the \"Delete account\" option available in your user profile. By doing so, your personal data and your listings will be permanently deleted."
+                    "text": "You can exercise your right to erasure at any time through the \"Delete account\" option available in your user profile. By doing so, your listings will be removed immediately. However, to comply with our legal obligations, we will keep your personal data duly blocked for a period of 5 years, after which it will be permanently deleted."
                 }
             ],
             "extra": "You can also send us a manual request to the email of the person in charge indicated above."
@@ -76,9 +76,9 @@
             "id": "actualizaciones",
             "title": "Updates to this Policy",
             "content": [
-                "By using EcoAnuncios, you agree to the practices described in this policy. We reserve the right to update this document periodically to reflect changes in our services or for legal reasons. In case of substantial changes, we will notify you through the web or by email."
+                "By using EcoAnuncios you agree to the practices described in this policy. We reserve the right to update this document periodically to reflect changes in our services or for legal reasons. In case of substantial changes, we will notify you through the web or by email."
             ]
         }
     ],
-    "lastUpdated": "Last updated: January 30, 2026"
+    "lastUpdated": "Last updated: February 1, 2026"
 }

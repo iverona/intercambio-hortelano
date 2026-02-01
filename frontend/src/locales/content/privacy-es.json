@@ -67,7 +67,7 @@
             "items": [
                 {
                     "label": "Control Total",
-                    "text": "Puedes ejercer tu derecho de supresión en cualquier momento y de forma inmediata a través de la opción \"Eliminar cuenta\" disponible en tu perfil de usuario. Al hacerlo, se borrarán tus datos personales y tus anuncios de forma definitiva."
+                    "text": "Puedes ejercer tu derecho de supresión en cualquier momento a través de la opción \"Eliminar cuenta\" disponible en tu perfil de usuario. Al hacerlo, tus anuncios se retirarán de inmediato. No obstante, para cumplir con nuestras obligaciones legales, mantendremos tus datos personales debidamente bloqueados durante un plazo de 5 años, transcurrido el cual se procederá a su eliminación definitiva."
                 }
             ],
             "extra": "También puedes enviarnos una solicitud manual al correo electrónico del Responsable arriba indicado."
@@ -76,9 +76,9 @@
             "id": "actualizaciones",
             "title": "Actualizaciones de esta Política",
             "content": [
-                "Al utilizar EcoAnuncios, aceptas las prácticas descritas en esta política. Nos reservamos el derecho de actualizar este documento periódicamente para reflejar cambios en nuestros servicios o por motivos legales. En caso de cambios sustanciales, te lo notificaremos a través de la web o por correo electrónico."
+                "Al utilizar EcoAnuncios aceptas las prácticas descritas en esta política. Nos reservamos el derecho de actualizar este documento periódicamente para reflejar cambios en nuestros servicios o por motivos legales. En caso de cambios sustanciales, te lo notificaremos a través de la web o por correo electrónico."
             ]
         }
     ],
-    "lastUpdated": "Última actualización: 30 de enero de 2026"
+    "lastUpdated": "Última actualización: 1 de febrero de 2026"
 }
