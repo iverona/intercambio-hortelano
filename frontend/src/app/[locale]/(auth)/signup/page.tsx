@@ -67,8 +67,10 @@ export default function SignupPage() {
       await AuthService.sendEmailVerification(user);
       setIsSubmitted(true);
     } catch (error: any) {
+      const errorCode = error?.code;
+
       // Check if email is already in use
-      if (error.code === "auth/email-already-in-use") {
+      if (errorCode === "auth/email-already-in-use") {
         // Check what sign-in methods are available for this email
         try {
           const signInMethods = await AuthService.fetchSignInMethods(email);
@@ -88,11 +90,20 @@ export default function SignupPage() {
         }
 
         // If it's not Google, it must be password - show generic error
-        setError(t('signup.email_already_exists') || null);
+        setError(t('signup.email_already_exists'));
         return;
       }
 
-      setError(error instanceof Error ? error.message : "An error occurred");
+      switch (errorCode) {
+        case 'auth/invalid-email':
+          setError(t('signup.error.invalid_email'));
+          break;
+        case 'auth/weak-password':
+          setError(t('signup.error.weak_password'));
+          break;
+        default:
+          setError(error instanceof Error ? error.message : t('signup.error.generic'));
+      }
     }
   };
 

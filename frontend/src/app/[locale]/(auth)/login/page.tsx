@@ -35,9 +35,7 @@ export default function LoginPage() {
             const userCredential = await AuthService.loginWithEmail(email, password);
 
             if (!userCredential.user.emailVerified) {
-                setError(
-                    "Your email is not verified. Please check your inbox for the verification link."
-                );
+                setError(t('login.error.email_not_verified'));
                 return;
             }
 
@@ -46,8 +44,34 @@ export default function LoginPage() {
             await refreshUser();
             // Then handle the redirect
             await handleUserRedirect(user, router);
-        } catch (error) {
-            setError(error instanceof Error ? error.message : "An error occurred");
+        } catch (error: any) {
+            const errorCode = error?.code;
+
+            switch (errorCode) {
+                case 'auth/invalid-email':
+                    setError(t('login.error.invalid_email'));
+                    break;
+                case 'auth/user-disabled':
+                    setError(t('login.error.user_disabled'));
+                    break;
+                case 'auth/user-not-found':
+                    setError(t('login.error.user_not_found'));
+                    break;
+                case 'auth/wrong-password':
+                    setError(t('login.error.wrong_password'));
+                    break;
+                case 'auth/invalid-credential':
+                    setError(t('login.error.invalid_credential'));
+                    break;
+                case 'auth/too-many-requests':
+                    setError(t('login.error.too_many_requests'));
+                    break;
+                case 'auth/missing-password':
+                    setError(t('login.error.missing_password'));
+                    break;
+                default:
+                    setError(error instanceof Error ? error.message : t('login.error.generic'));
+            }
         }
     };
 
