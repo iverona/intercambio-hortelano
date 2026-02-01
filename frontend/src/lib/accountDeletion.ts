@@ -134,8 +134,11 @@ export async function softDeleteUserAccount(
 
     // Archive User
     const archiveUserRef = doc(db, "archived_users", userId);
+    // Remove avatarUrl from the archived data since the file is deleted
+    const { avatarUrl, ...userDataToArchive } = userData;
     batch.set(archiveUserRef, {
-      ...userData,
+      ...userDataToArchive,
+      avatarUrl: null, // Explicitly null to indicate deletion
       archivedAt: serverTimestamp(),
       originalUid: userId,
       deletionReason: "user_request"
@@ -146,8 +149,11 @@ export async function softDeleteUserAccount(
     for (const product of products) {
       if (operationCount >= BATCH_LIMIT) await commitBatch();
       const archiveProductRef = doc(db, "archived_users", userId, "products", product.id);
+      // Remove imageUrls from archived product
+      const { imageUrls, ...productDataToArchive } = product as any;
       batch.set(archiveProductRef, {
-        ...product,
+        ...productDataToArchive,
+        imageUrls: [], // Empty array since files are deleted
         archivedAt: serverTimestamp()
       });
       operationCount++;

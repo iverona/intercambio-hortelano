@@ -198,8 +198,13 @@ export const ProductService = {
             // 2. Archive Product
             // We store it in archived_users/{userId}/products/{productId}
             const archiveRef = doc(db, "archived_users", userId, "products", id);
+
+            // Remove imageUrls since we are deleting the files
+            const { imageUrls, ...productDataToArchive } = productData;
+
             batch.set(archiveRef, {
-                ...productData,
+                ...productDataToArchive,
+                imageUrls: [], // Empty array
                 archivedAt: serverTimestamp(),
                 deletionReason: "user_delete_single"
             });
