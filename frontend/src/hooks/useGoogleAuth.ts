@@ -10,9 +10,15 @@ export const useGoogleAuth = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleGoogleAuth = async (consent?: any) => {
+  const handleGoogleAuth = async (consentOrEvent?: any) => {
     setError(null);
     setLoading(true);
+
+    // If passed from an onClick, it might be an event object.
+    // We only want to pass actual consent data.
+    const consent = (consentOrEvent && typeof consentOrEvent === 'object' && 'privacyAccepted' in consentOrEvent)
+      ? consentOrEvent
+      : undefined;
 
     try {
       const user = await AuthService.loginWithGoogle(consent);

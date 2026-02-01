@@ -142,7 +142,7 @@ export default function LoginPage() {
                                 {t('common.or')}
                             </div>
                             <Button
-                                onClick={handleGoogleAuth}
+                                onClick={() => handleGoogleAuth()}
                                 disabled={googleLoading}
                                 variant="outline"
                                 className="w-full mt-4 flex items-center justify-center gap-2 px-8 py-6 shadow-sm border-2 border-gray-100 dark:border-gray-700 h-auto"
