@@ -512,7 +512,7 @@ export default function ExchangeDetailsPage() {
                               recipientId,
                               senderId: user!.uid,
                               type: "EXCHANGE_COMPLETED",
-                              entityId: exchange.chatId || exchange.id,
+                              entityId: exchange.id,
                               metadata: completeMetadata,
                             });
                             toast.success(t('exchanges.details.toast.exchange_completed'));
