@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useNotifications } from "@/context/NotificationContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +43,15 @@ export default function ExchangeDetailsPage() {
   const exchangeId = params.exchangeId as string;
   const { exchange, loading, messages, sendMessage, updateStatus } = useExchangeDetails(exchangeId);
   const [newMessage, setNewMessage] = useState("");
+  const { markEntityNotificationsAsRead, notifications } = useNotifications();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Mark notifications for this exchange as read as they arrive
+  useEffect(() => {
+    if (exchangeId) {
+      markEntityNotificationsAsRead(exchangeId);
+    }
+  }, [exchangeId, notifications, markEntityNotificationsAsRead]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {

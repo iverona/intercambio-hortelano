@@ -33,6 +33,7 @@ interface NotificationContextType {
   unreadCount: number;
   markAsRead: (notificationId: string) => Promise<void>;
   markAllAsRead: () => Promise<void>;
+  markEntityNotificationsAsRead: (entityId: string) => Promise<void>;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -131,8 +132,35 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Mark all notifications for a specific entity as read
+  const markEntityNotificationsAsRead = async (entityId: string) => {
+    const unreadNotifications = notifications.filter(n => !n.isRead && n.entityId === entityId);
+    if (unreadNotifications.length === 0) return;
+
+    try {
+      const batch = writeBatch(db);
+
+      unreadNotifications.forEach((notification) => {
+        const notificationRef = doc(db, "notifications", notification.id);
+        batch.update(notificationRef, { isRead: true });
+      });
+
+      await batch.commit();
+    } catch (error) {
+      console.error("Error marking entity notifications as read:", error);
+    }
+  };
+
   return (
-    <NotificationContext.Provider value={{ notifications, unreadCount, markAsRead, markAllAsRead }}>
+    <NotificationContext.Provider
+      value={{
+        notifications,
+        unreadCount,
+        markAsRead,
+        markAllAsRead,
+        markEntityNotificationsAsRead,
+      }}
+    >
       {children}
     </NotificationContext.Provider>
   );
