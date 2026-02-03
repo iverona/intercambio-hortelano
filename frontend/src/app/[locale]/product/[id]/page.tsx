@@ -26,7 +26,6 @@ import { useI18n } from "@/locales/provider";
 import {
   ArrowLeft,
   Calendar,
-  Eye,
   Heart,
   Package,
   Share2,
@@ -291,10 +290,7 @@ export default function ProductDetailPage() {
                       <Calendar className="w-4 h-4" />
                       <span>{getTimeAgo(product.createdAt, t).text}</span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Eye className="w-4 h-4" />
-                      <span>234 {t('product.views')}</span>
-                    </div>
+
                   </div>
 
 
