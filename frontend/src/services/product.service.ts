@@ -15,7 +15,6 @@ import {
     limit,
     writeBatch,
     deleteDoc,
-    setDoc,
     getDoc
 } from "firebase/firestore";
 import { storage } from "@/lib/firebase";
@@ -200,7 +199,7 @@ export const ProductService = {
             const archiveRef = doc(db, "archived_users", userId, "products", id);
 
             // Remove imageUrls since we are deleting the files
-            const { imageUrls, ...productDataToArchive } = productData;
+            const { imageUrls: _imageUrls, ...productDataToArchive } = productData;
 
             batch.set(archiveRef, {
                 ...productDataToArchive,
@@ -213,16 +212,18 @@ export const ProductService = {
 
             // 3. Delete Images (Best effort)
             if (productData.imageUrls && Array.isArray(productData.imageUrls)) {
-                for (const url of productData.imageUrls) {
-                    if (url.includes("firebasestorage")) {
-                        try {
-                            const imgRef = ref(storage, url);
-                            await deleteObject(imgRef);
-                        } catch (err) {
-                            console.warn(`Failed to delete image ${url}:`, err);
+                await Promise.all(
+                    productData.imageUrls.map(async (url) => {
+                        if (url.includes("firebasestorage")) {
+                            try {
+                                const imgRef = ref(storage, url);
+                                await deleteObject(imgRef);
+                            } catch (err) {
+                                console.warn(`Failed to delete image ${url}:`, err);
+                            }
                         }
-                    }
-                }
+                    })
+                );
             }
 
             // 4. Reject Pending/Accepted Exchanges involving this product
