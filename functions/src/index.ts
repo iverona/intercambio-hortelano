@@ -477,6 +477,7 @@ export const submitContactForm = onCall(async (request: CallableRequest) => {
 
   try {
     const adminEmail = process.env.EMAIL_USER;
+    const emailPromises = [];
 
     if (adminEmail) {
       const adminSubject = `[Contacto] ${subject || "Sin asunto"} - ${name}`;
@@ -489,7 +490,7 @@ export const submitContactForm = onCall(async (request: CallableRequest) => {
         <p>${message.replace(/\n/g, "<br>")}</p>
       `;
 
-      await sendEmail(adminEmail, adminSubject, adminHtml);
+      emailPromises.push(sendEmail(adminEmail, adminSubject, adminHtml));
     } else {
       logger.warn("ADMIN_EMAIL (EMAIL_USER) not set. Admin notification skipped.");
     }
@@ -503,7 +504,9 @@ export const submitContactForm = onCall(async (request: CallableRequest) => {
       <p>El equipo de Portal de Intercambio Hortelano</p>
     `;
 
-    await sendEmail(email, "Hemos recibido tu mensaje", userHtml);
+    emailPromises.push(sendEmail(email, "Hemos recibido tu mensaje", userHtml));
+
+    await Promise.all(emailPromises);
 
     return { success: true };
   } catch (error: any) {
