@@ -73,6 +73,8 @@ export const UserService = {
 
         // Fetch missing from Firestore in chunks of 30 (Firestore "in" limit)
         const CHUNK_SIZE = 30;
+        const fetchPromises: Promise<UserData[]>[] = [];
+
         for (let i = 0; i < uidsToFetch.length; i += CHUNK_SIZE) {
             const chunk = uidsToFetch.slice(i, i + CHUNK_SIZE);
             const fetchPromise = (async () => {
@@ -106,9 +108,13 @@ export const UserService = {
                 userCache.set(uid, fetchPromise.then(data => data.find(u => u.uid === uid) || null));
             });
 
-            const fetchedChunkData = await fetchPromise;
-            results.push(...fetchedChunkData);
+            fetchPromises.push(fetchPromise);
         }
+
+        const chunksResults = await Promise.all(fetchPromises);
+        chunksResults.forEach((fetchedChunkData) => {
+            results.push(...fetchedChunkData);
+        });
 
         // Check for missing UIDs (Deleted Users)
         const foundUids = new Set(results.map(r => r.uid));
