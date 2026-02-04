@@ -423,6 +423,7 @@ exports.submitContactForm = (0, https_1.onCall)(async (request) => {
     }
     try {
         const adminEmail = process.env.EMAIL_USER;
+        const emailPromises = [];
         if (adminEmail) {
             const adminSubject = `[Contacto] ${subject || "Sin asunto"} - ${name}`;
             const adminHtml = `
@@ -433,7 +434,7 @@ exports.submitContactForm = (0, https_1.onCall)(async (request) => {
         <hr />
         <p>${message.replace(/\n/g, "<br>")}</p>
       `;
-            await sendEmail(adminEmail, adminSubject, adminHtml);
+            emailPromises.push(sendEmail(adminEmail, adminSubject, adminHtml));
         }
         else {
             logger.warn("ADMIN_EMAIL (EMAIL_USER) not set. Admin notification skipped.");
@@ -446,7 +447,8 @@ exports.submitContactForm = (0, https_1.onCall)(async (request) => {
       <br>
       <p>El equipo de Portal de Intercambio Hortelano</p>
     `;
-        await sendEmail(email, "Hemos recibido tu mensaje", userHtml);
+        emailPromises.push(sendEmail(email, "Hemos recibido tu mensaje", userHtml));
+        await Promise.all(emailPromises);
         return { success: true };
     }
     catch (error) {
