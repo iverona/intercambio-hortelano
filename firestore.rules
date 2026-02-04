@@ -74,8 +74,8 @@ service cloud.firestore {
         request.resource.data.entityId == resource.data.entityId &&
         request.resource.data.createdAt == resource.data.createdAt;
         
-      // Prevent deletes to maintain notification history
-      allow delete: if false;
+      // Allow recipients to delete their own notifications
+      allow delete: if isOwner(resource.data.recipientId);
     }
 
     // Rules for exchanges collection

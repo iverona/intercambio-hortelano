@@ -34,6 +34,7 @@ interface NotificationContextType {
   markAsRead: (notificationId: string) => Promise<void>;
   markAllAsRead: () => Promise<void>;
   markEntityNotificationsAsRead: (entityId: string) => Promise<void>;
+  clearAllNotifications: () => Promise<void>;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -151,6 +152,24 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Delete all notifications for the user
+  const clearAllNotifications = async () => {
+    if (notifications.length === 0) return;
+
+    try {
+      const batch = writeBatch(db);
+
+      notifications.forEach((notification) => {
+        const notificationRef = doc(db, "notifications", notification.id);
+        batch.delete(notificationRef);
+      });
+
+      await batch.commit();
+    } catch (error) {
+      console.error("Error clearing all notifications:", error);
+    }
+  };
+
   return (
     <NotificationContext.Provider
       value={{
@@ -159,6 +178,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
         markAsRead,
         markAllAsRead,
         markEntityNotificationsAsRead,
+        clearAllNotifications,
       }}
     >
       {children}

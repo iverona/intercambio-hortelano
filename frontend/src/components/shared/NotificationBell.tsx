@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { useI18n } from "@/locales/provider";
 
 const NotificationBell = () => {
-  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead, clearAllNotifications } = useNotifications();
   const router = useRouter();
   const params = useParams();
   const locale = params?.locale as string || 'en';
@@ -75,7 +75,7 @@ const NotificationBell = () => {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-96 p-0" align="end">
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-start justify-between p-4">
           <div>
             <h4 className="font-semibold text-sm">{t('notifications.title')}</h4>
             <p className="text-xs text-muted-foreground mt-1">
@@ -86,6 +86,19 @@ const NotificationBell = () => {
                 : t('notifications.all_caught_up')}
             </p>
           </div>
+          {notifications.length > 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs h-auto p-0 hover:bg-transparent text-primary hover:text-primary/80"
+              onClick={(e) => {
+                e.stopPropagation();
+                clearAllNotifications();
+              }}
+            >
+              {t('notifications.clear_all')}
+            </Button>
+          )}
         </div>
         <Separator />
         <div className="max-h-[400px] overflow-y-auto">

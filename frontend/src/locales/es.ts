@@ -417,6 +417,7 @@ export default {
   "notifications.all_caught_up": "¡Estás al día!",
   "notifications.no_notifications": "Aún no tienes notificaciones",
   "notifications.view_all": "Ver todas las notificaciones",
+  "notifications.clear_all": "Limpiar todas",
 
   "notifications.default.title": "Nueva Notificación",
   "notifications.default.description": "Tienes una nueva notificación",
