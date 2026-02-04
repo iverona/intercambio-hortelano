@@ -231,6 +231,10 @@ export default function OnboardingPage() {
               const snapshot = await getDoc(docRef);
               if (snapshot.exists()) {
                 const userData = snapshot.data();
+                // Pre-fill name if it exists in Firestore (useful for email signups)
+                if (userData.name && !name) {
+                  setName(userData.name);
+                }
                 // Check if consent is missing or incomplete
                 if (!userData.consent?.privacyAccepted || !userData.consent?.legalAccepted) {
                   setShowTermsStep(true);
