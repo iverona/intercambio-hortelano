@@ -289,32 +289,32 @@ export default function ExchangesPage() {
           {/* Tabs for different exchange states */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-4 md:mb-6 bg-card border border-card ">
-              <TabsTrigger value="active" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm data-[state=active]:bg-secondary data-[state=active]:text-white dark:data-[state=active]:bg-[#7a6466]">
+              <TabsTrigger value="active" className="group flex items-center gap-1 md:gap-2 text-xs md:text-sm data-[state=active]:bg-secondary data-[state=active]:text-white dark:data-[state=active]:bg-[#7a6466]">
                 <MessageSquare className="w-3 h-3 md:w-4 md:h-4" />
                 <span className="hidden sm:inline">{t('exchanges.tabs.active')}</span>
                 <span className="sm:hidden">{t('exchanges.tabs.active')}</span>
                 {activeExchanges.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 bg-white/20 text-white">
+                  <Badge variant="secondary" className="ml-1 bg-black/5 dark:bg-white/10 text-current group-data-[state=active]:bg-white/20 border-none px-1.5">
                     {activeExchanges.length}
                   </Badge>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="pending" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm data-[state=active]:bg-card data-[state=active]:text-foreground dark:data-[state=active]:bg-[#4a463a] dark:data-[state=active]:text-[#EFEAC6]">
+              <TabsTrigger value="pending" className="group flex items-center gap-1 md:gap-2 text-xs md:text-sm data-[state=active]:bg-card data-[state=active]:text-foreground dark:data-[state=active]:bg-[#4a463a] dark:data-[state=active]:text-[#EFEAC6]">
                 <Clock className="w-3 h-3 md:w-4 md:h-4" />
                 <span className="hidden sm:inline">{t('exchanges.tabs.pending')}</span>
                 <span className="sm:hidden">{t('exchanges.tabs.pending')}</span>
                 {pendingExchanges.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 bg-black/10 dark:bg-white/10">
+                  <Badge variant="secondary" className="ml-1 bg-black/10 dark:bg-white/10 text-current border-none px-1.5">
                     {pendingExchanges.length}
                   </Badge>
                 )}
               </TabsTrigger>
-              <TabsTrigger value="completed" className="flex items-center gap-1 md:gap-2 text-xs md:text-sm data-[state=active]:bg-primary data-[state=active]:text-white dark:data-[state=active]:bg-muted">
+              <TabsTrigger value="completed" className="group flex items-center gap-1 md:gap-2 text-xs md:text-sm data-[state=active]:bg-primary data-[state=active]:text-white dark:data-[state=active]:bg-muted">
                 <Archive className="w-3 h-3 md:w-4 md:h-4" />
                 <span className="hidden sm:inline">{t('exchanges.tabs.history')}</span>
                 <span className="sm:hidden">{t('exchanges.tabs.history')}</span>
                 {completedExchanges.length > 0 && (
-                  <Badge variant="secondary" className="ml-1 bg-white/20 text-white">
+                  <Badge variant="secondary" className="ml-1 bg-black/5 dark:bg-white/10 text-current group-data-[state=active]:bg-white/20 border-none px-1.5">
                     {completedExchanges.length}
                   </Badge>
                 )}
