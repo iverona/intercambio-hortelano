@@ -6,9 +6,7 @@ import ProductCard from "@/components/shared/ProductCard";
 import OrganicProductCard from "@/components/shared/OrganicProductCard";
 import { useAuth } from "@/context/AuthContext";
 import { useFilters } from "@/context/FilterContext";
-import { db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useUser } from "@/hooks/useUser";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -44,23 +42,9 @@ import { SearchAndFilter } from "@/components/shared/SearchAndFilter";
 export default function ProductsPage() {
   const t = useI18n();
   const { user } = useAuth();
+  const { userData } = useUser();
   const { filters } = useFilters();
-  const [userLocation, setUserLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
-
-  // Fetch user location
-  useEffect(() => {
-    if (user) {
-      const userRef = doc(db, "users", user.uid);
-      getDoc(userRef).then((doc) => {
-        if (doc.exists() && doc.data().location) {
-          setUserLocation(doc.data().location);
-        }
-      });
-    }
-  }, [user]);
+  const userLocation = userData?.location ?? null;
 
   // Use custom hook for product data logic
   const { products, loading } = useProducts(userLocation, filters, user?.uid);
