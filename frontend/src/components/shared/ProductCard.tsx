@@ -5,7 +5,7 @@ import { useI18n } from "@/locales/provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Leaf, DollarSign, Clock, Heart } from "lucide-react";
+import { MapPin, Leaf, DollarSign, Clock } from "lucide-react";
 import { UserService } from "@/services/user.service";
 import { ProducerAvatar } from "@/components/shared/ProducerAvatar";
 
@@ -69,10 +69,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
   return (
     <Card className={cn("group relative overflow-hidden border shadow-md hover:shadow-xl transition-all duration-300 bg-white dark:bg-gray-800", className)}>
-      {/* Favorite button */}
-      <button className="absolute top-3 right-3 z-20 p-2 rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-white dark:hover:bg-gray-700">
-        <Heart className="w-4 h-4 text-gray-600 dark:text-gray-300 hover:text-red-500 transition-colors" />
-      </button>
+
 
       {/* Image container with overlay */}
       <Link href={`/product/${product.id}`} className="block relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">

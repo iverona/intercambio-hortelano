@@ -26,9 +26,7 @@ import { useI18n } from "@/locales/provider";
 import {
   ArrowLeft,
   Calendar,
-  Heart,
   Package,
-  Share2,
   Sparkles,
   Star,
   User as UserIcon,
@@ -75,7 +73,6 @@ export default function ProductDetailPage() {
     .slice(0, 4);
 
   const [showOfferModal, setShowOfferModal] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [hasPendingExchange, setHasPendingExchange] = useState(false);
 
   useEffect(() => {
@@ -104,20 +101,6 @@ export default function ProductDetailPage() {
         ...offer
       }
     });
-  };
-
-  const handleShare = async () => {
-    if (navigator.share && product) {
-      try {
-        await navigator.share({
-          title: product.name,
-          text: product.description,
-          url: window.location.href,
-        });
-      } catch (error) {
-        console.log("Error sharing:", error);
-      }
-    }
   };
 
   if (loading) {
@@ -221,26 +204,6 @@ export default function ProductDetailPage() {
                         <Package className="w-24 h-24 text-primary opacity-50" />
                       </div>
                     )}
-
-                    {/* Action Buttons Overlay */}
-                    <div className="absolute top-4 right-4 flex gap-2 z-10">
-                      <Button
-                        size="icon"
-                        className="rounded-full bg-white/90 dark:bg-black/40 backdrop-blur-sm shadow-sm hover:scale-110 transition-transform text-secondary hover:text-[#8b6b6e]"
-                        onClick={() => setIsFavorite(!isFavorite)}
-                      >
-                        <Heart
-                          className={`h-5 w-5 ${isFavorite ? "fill-[#A88C8F]" : ""}`}
-                        />
-                      </Button>
-                      <Button
-                        size="icon"
-                        className="rounded-full bg-white/90 dark:bg-black/40 backdrop-blur-sm shadow-sm hover:scale-110 transition-transform text-primary hover:text-[#6f7a6d]"
-                        onClick={handleShare}
-                      >
-                        <Share2 className="h-5 w-5" />
-                      </Button>
-                    </div>
                   </div>
                 </div>
 
