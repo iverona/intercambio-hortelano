@@ -47,6 +47,7 @@ export default function Footer() {
             src="/LogoAgroforja.png"
             alt="Agroforja"
             fill
+            sizes="128px"
             className="object-contain p-2"
           />
         </a>
@@ -57,6 +58,7 @@ export default function Footer() {
             src="/LogoAmigosTierra.png"
             alt="Amigos de la Tierra"
             fill
+            sizes="128px"
             className="object-contain p-2"
           />
         </div>

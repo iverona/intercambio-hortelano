@@ -237,9 +237,7 @@
 }
 
 /* Smooth scroll behavior */
-html {
-  scroll-behavior: smooth;
-}
+
 
 /* Enhanced focus styles */
 .focus-visible:focus {

@@ -44,6 +44,10 @@ const nextConfig: NextConfig = {
             value: "origin-when-cross-origin",
           },
           {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin-allow-popups",
+          },
+          {
             key: "Permissions-Policy",
             value: "camera=(), microphone=(), geolocation=(self), interest-cohort=()",
           },
