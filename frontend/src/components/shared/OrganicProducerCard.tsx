@@ -59,7 +59,7 @@ const ProducerCardContent: React.FC<{ producer: Producer; priority?: boolean }> 
             </div>
 
             {/* Button */}
-            <div className="p-4 pt-2">
+            <div className="p-4 pt-2 relative z-20">
                 <Button asChild className="w-full bg-[#879385] hover:bg-[#7a8578] text-white shadow-sm group/button text-sm">
                     <Link href={`/producers/${producer.uid}`}>
                         <span className="font-medium">{t('producers.view_shop')}</span>
@@ -81,6 +81,7 @@ const OrganicProducerCard: React.FC<OrganicProducerCardProps> = ({
             contentClassName="p-0 border-0 bg-[#FFFBE6] dark:bg-[#e0dcc7]"
             rotate={index % 2 === 0 ? 1 : -1}
             shadowColor="bg-[#A88C8F]"
+            href={`/producers/${producer.uid}`}
         >
             <ProducerCardContent producer={producer} priority={index < 8} />
         </OrganicCard>

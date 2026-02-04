@@ -72,7 +72,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
 
       {/* Image container with overlay */}
-      <Link href={`/product/${product.id}`} className="block relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
+      <div className="relative h-48 overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800">
         {/* Gradient overlay - lighter and only at bottom */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent z-10"></div>
 
@@ -127,12 +127,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
           blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
           priority={priority}
         />
-      </Link>
+      </div>
 
       {/* Content */}
       <CardContent className="p-4">
         <Link href={`/product/${product.id}`}>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 group-hover:text-primary transition-colors leading-tight">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 group-hover:text-primary transition-colors leading-tight after:absolute after:inset-0 after:z-10">
             {product.name}
           </h3>
         </Link>
@@ -143,7 +143,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Producer Info */}
         {producer && (
-          <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
+          <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 relative z-20">
             <div className="flex items-center gap-3">
               <Link href={`/producers/${product.userId}`} className="shrink-0 group/avatar">
                 <ProducerAvatar
@@ -190,7 +190,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         {/* Edit/Delete buttons for user's own products */}
         {(onEdit || onDelete) && (
-          <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-2">
+          <div className="mt-4 pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-2 relative z-20">
             {onEdit && (
               <Button
                 variant="ghost"

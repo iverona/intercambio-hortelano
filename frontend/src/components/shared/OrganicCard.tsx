@@ -1,5 +1,5 @@
 import React from "react";
-
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 interface OrganicCardProps {
@@ -10,6 +10,7 @@ interface OrganicCardProps {
   rotate?: number;
   overlay?: React.ReactNode;
   showOverflow?: boolean;
+  href?: string;
 }
 
 export function OrganicCard({
@@ -19,7 +20,8 @@ export function OrganicCard({
   shadowColor = "bg-primary ",
   rotate = 1,
   overlay,
-  showOverflow = false
+  showOverflow = false,
+  href
 }: OrganicCardProps) {
   const organicRadius = '255px 15px 225px 15px / 15px 225px 15px 255px';
 
@@ -48,6 +50,15 @@ export function OrganicCard({
       >
         {children}
       </div>
+
+      {href && (
+        <Link
+          href={href}
+          className="absolute inset-0 z-10"
+          aria-hidden="true"
+          tabIndex={-1}
+        />
+      )}
 
       {overlay}
     </div>

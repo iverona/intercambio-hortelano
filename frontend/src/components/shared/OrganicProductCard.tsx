@@ -23,6 +23,7 @@ const OrganicProductCard: React.FC<OrganicProductCardProps> = ({
             contentClassName="p-0 border-0 bg-[#FFFBE6] dark:bg-[#e0dcc7]" // Light paper background
             rotate={index % 2 === 0 ? 1 : -1}
             shadowColor="bg-[#A88C8F]" // Using the organic color from homepage
+            href={`/product/${product.id}`}
         >
             <ProductCard
                 product={product}
