@@ -8,19 +8,23 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/context/AuthContext";
 import { db, storage } from "@/lib/firebase";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { useI18n } from "@/locales/provider";
 import LocationSearchInput from "@/components/shared/LocationSearchInput";
-import { MapPin, User, Camera, Loader2, ArrowLeft, ShieldCheck } from "lucide-react";
+import { MapPin, User, Camera, Loader2, ArrowLeft, ShieldCheck, LogOut } from "lucide-react";
 import { useGeolocation } from "@/hooks/useGeolocation";
 import { fuzzLocation, getApproximateAddress } from "@/lib/locationUtils";
 import imageCompression from "browser-image-compression";
 import { toast } from "sonner";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
+import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
+import { AuthService } from "@/services/auth.service";
+import { softDeleteUserAccount } from "@/lib/accountDeletion";
 
 export default function OnboardingPage() {
   const t = useI18n();
@@ -39,12 +43,8 @@ export default function OnboardingPage() {
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Initialize name from user data
-  useEffect(() => {
-    if (user?.displayName) {
-      setName(user.displayName);
-    }
-  }, [user]);
+  // Old useEffect removed as it is merged with the consent check one
+
 
   // Step 2: Location data (will be set when user selects location)
   const [locationData, setLocationData] = useState<{
@@ -192,6 +192,119 @@ export default function OnboardingPage() {
     }
   };
 
+  // Step 0: Terms Acceptance (if not accepted)
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [showTermsStep, setShowTermsStep] = useState(false);
+
+  // Initialize name from user data and check consent
+  useEffect(() => {
+    if (user) {
+      if (user.displayName) {
+        setName(user.displayName);
+      }
+      // Check for consent
+      // We need to check if the user has already accepted the terms.
+      // The user object from useAuth might be the Firebase Auth user, which doesn't have the custom 'consent' field directly on it unless we merged it or fetched it.
+      // However, on page load we don't have the full Firestore document in 'user' usually unless the context provides it.
+      // The 'useAuth' context seems to provide 'user' which is User | null.
+      // We might need to fetch the user doc here or rely on the fact that AuthContext likely merges custom claims or we need to fetch it.
+      // Let's look at how 'refreshUser' or 'user' is provided.
+      // Assuming 'user' from context might NOT have 'consent' field if it is just Firebase User.
+      // But the context often provides a way to get it.
+      // Let's assume for safety we can check the firestore doc or use a service helper if available, BUT
+      // looking at 'useAuth', it seems it exposes 'user' which is likely the Firebase Auth user.
+      // Let's check the AuthService.getUserData usage or similar.
+      // Actually, let's fetch the user data to be sure.
+
+      const checkConsent = async () => {
+        try {
+          // We can check if we need to fetch from Firestore
+          // For now, let's assuming we force checking.
+          // But wait, the previous code didn't fetch user doc in useEffect explicitly for name, it used 'user.displayName'.
+          // Let's modify this to fetch the latest user data including consent.
+          if (user.uid) {
+            const docRef = doc(db, "users", user.uid);
+            // We can use onSnapshot or getDoc. getDoc is fine for one-time check.
+            // But better to use getDoc here.
+            // Import getDoc is already there.
+            import("firebase/firestore").then(async ({ getDoc }) => {
+              const snapshot = await getDoc(docRef);
+              if (snapshot.exists()) {
+                const userData = snapshot.data();
+                // Check if consent is missing or incomplete
+                if (!userData.consent?.privacyAccepted || !userData.consent?.legalAccepted) {
+                  setShowTermsStep(true);
+                }
+              }
+            });
+          }
+        } catch (e) {
+          console.error("Error checking consent", e);
+        }
+      };
+      checkConsent();
+
+    }
+  }, [user]);
+
+  // Step 2... (rest of existing code)
+
+  const handleTermsContinue = async () => {
+    if (!acceptedTerms) {
+      toast.error(t('signup.error_terms_required'));
+      return;
+    }
+
+    if (!user) return;
+    setSaving(true);
+
+    try {
+      const consent = {
+        privacyAccepted: true,
+        legalAccepted: true,
+        acceptedAt: {
+          seconds: Math.floor(Date.now() / 1000),
+          nanoseconds: 0,
+        },
+      };
+
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, { consent });
+
+      // Use set to merge if update fails? No, user should exist.
+
+      setShowTermsStep(false);
+      setSaving(false);
+    } catch (error) {
+      console.error("Error saving consent:", error);
+      toast.error(t('onboarding.error.update_failed'));
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      const result = await softDeleteUserAccount(user.uid);
+
+      if (result.success) {
+        toast.success(t('onboarding.account_deleted'));
+        router.push("/login");
+      } else {
+        console.error("Error deleting account:", result.error);
+        await AuthService.logout();
+        router.push("/login");
+      }
+    } catch (error: any) {
+      console.error("Error during cancellation:", error);
+      await AuthService.logout();
+      router.push("/login");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const handleEnterManually = () => {
     setShowManualInput(true);
     clearError();
@@ -204,16 +317,72 @@ export default function OnboardingPage() {
           <div className="flex items-center justify-between mb-2">
             <CardTitle className="text-2xl font-display text-foreground ">{t('onboarding.welcome')}</CardTitle>
             <span className="text-sm text-gray-500">
-              {t('onboarding.step_indicator', { current: currentStep, total: 2 })}
+              {showTermsStep ? t('onboarding.step_terms') : t('onboarding.step_indicator', { current: currentStep, total: 2 })}
             </span>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400 font-serif">
-            {currentStep === 1 ? t('onboarding.profile_step_description') : t('onboarding.location_step_description')}
+            {showTermsStep ? t('onboarding.terms_description') : (currentStep === 1 ? t('onboarding.profile_step_description') : t('onboarding.location_step_description'))}
           </p>
         </CardHeader>
 
         <CardContent>
-          {currentStep === 1 ? (
+          {showTermsStep ? (
+            // Step 0: Terms Acceptance
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="p-2 bg-primary rounded-lg shadow-md">
+                  <ShieldCheck className="w-5 h-5 text-white" />
+                </div>
+                <h2 className="text-xl font-bold text-foreground font-display">
+                  {t('onboarding.terms_title')}
+                </h2>
+              </div>
+
+              <div className="flex items-start space-x-2 pt-2 border p-4 rounded-lg bg-background/50">
+                <Checkbox
+                  id="terms-onboarding"
+                  checked={acceptedTerms}
+                  onCheckedChange={(checked) => setAcceptedTerms(checked === true)}
+                  className="mt-1"
+                />
+                <Label htmlFor="terms-onboarding" className="text-sm text-foreground leading-relaxed cursor-pointer block">
+                  {t('signup.terms_consent_prefix')}{' '}
+                  <Link href="/privacy" className="text-primary hover:underline font-semibold" target="_blank">
+                    {t('signup.privacy_policy')}
+                  </Link>
+                  {' '}{t('signup.terms_consent_and')}{' '}
+                  <Link href="/legal" className="text-primary hover:underline font-semibold" target="_blank">
+                    {t('signup.legal_notice')}
+                  </Link>
+                  .
+                  <span className="block mt-1 text-muted-foreground">
+                    {t('signup.notifications_consent')}
+                  </span>
+                </Label>
+              </div>
+
+              <Button
+                onClick={handleTermsContinue}
+                className="w-full bg-primary hover:bg-[#7a8578] text-white shadow-lg"
+                size="lg"
+                disabled={!acceptedTerms || saving}
+              >
+                {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                {t('common.continue')}
+              </Button>
+
+              <Button
+                onClick={handleCancel}
+                variant="ghost"
+                className="w-full text-muted-foreground hover:text-destructive mt-2"
+                size="lg"
+                disabled={saving}
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                {t('onboarding.cancel_button')}
+              </Button>
+            </div>
+          ) : currentStep === 1 ? (
             // Step 1: Profile Information
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-6">

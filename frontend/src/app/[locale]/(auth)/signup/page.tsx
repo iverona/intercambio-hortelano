@@ -108,30 +108,15 @@ export default function SignupPage() {
   };
 
   const handleGoogleSignIn = async () => {
-    if (!acceptedTerms) {
-      setError(t('signup.error_terms_required') || null);
-      return;
-    }
+    // Google users will accept terms during onboarding
     setShowGoogleDialog(false);
     await handleGoogleAuthWithConsent();
   };
 
   const handleGoogleAuthWithConsent = async () => {
-    if (!acceptedTerms) {
-      setError(t('signup.error_terms_required') || null);
-      return;
-    }
-
-    const consent = {
-      privacyAccepted: true,
-      legalAccepted: true,
-      acceptedAt: {
-        seconds: Math.floor(Date.now() / 1000),
-        nanoseconds: 0,
-      },
-    };
-
-    await handleGoogleAuth(consent);
+    // We don't accept terms here for Google Auth anymore.
+    // The user will be redirected to onboarding where they must accept terms.
+    await handleGoogleAuth();
   };
 
   return (
@@ -267,7 +252,7 @@ export default function SignupPage() {
                 {t('common.or')}
               </div>
               <Button
-                onClick={handleGoogleAuthWithConsent}
+                onClick={() => handleGoogleAuthWithConsent()}
                 disabled={googleLoading}
                 variant="outline"
                 className="w-full mt-4 flex items-center justify-center gap-2 px-8 py-6 shadow-sm border-2 border-gray-100 dark:border-gray-700 h-auto"
