@@ -29,6 +29,7 @@ const OrganicProductCard: React.FC<OrganicProductCardProps> = ({
                 onEdit={onEdit}
                 onDelete={onDelete}
                 className="border-0 shadow-none rounded-none bg-transparent h-full"
+                priority={index < 4}
             />
         </OrganicCard>
     );

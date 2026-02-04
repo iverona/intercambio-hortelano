@@ -32,6 +32,7 @@ interface ProductCardProps {
   onEdit?: (id: string) => void;
   onDelete?: (id: string) => void;
   className?: string; // Allow style overrides
+  priority?: boolean;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -39,6 +40,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   onEdit,
   onDelete,
   className,
+  priority = false,
 }) => {
   const t = useI18n();
   const [producer, setProducer] = useState<{ name: string; avatarUrl?: string; address?: string } | null>(null);
@@ -126,6 +128,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           placeholder="blur"
           blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/+F9PQAI8wNPvd7POQAAAABJRU5ErkJggg=="
+          priority={priority}
         />
       </Link>
 

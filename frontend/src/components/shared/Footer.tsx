@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCurrentLocale, useI18n } from "@/locales/provider";
+import Image from "next/image";
 
 export default function Footer() {
   const t = useI18n();
@@ -40,21 +41,23 @@ export default function Footer() {
           href="https://agroforja.es/"
           target="_blank"
           rel="noopener noreferrer"
-          className="bg-white/80 dark:bg-white/90 p-2 rounded-lg shadow-sm backdrop-blur-sm hover:scale-105 transition-transform duration-300"
+          className="bg-white/80 dark:bg-white/90 p-2 rounded-lg shadow-sm backdrop-blur-sm hover:scale-105 transition-transform duration-300 relative h-12 w-32"
         >
-          <img
+          <Image
             src="/LogoAgroforja.png"
             alt="Agroforja"
-            className="h-12 w-auto object-contain"
+            fill
+            className="object-contain p-2"
           />
         </a>
 
         {/* Amigos de la Tierra Logo */}
-        <div className="bg-white/80 dark:bg-white/90 p-2 rounded-lg shadow-sm backdrop-blur-sm hover:scale-105 transition-transform duration-300">
-          <img
+        <div className="bg-white/80 dark:bg-white/90 p-2 rounded-lg shadow-sm backdrop-blur-sm hover:scale-105 transition-transform duration-300 relative h-24 w-32">
+          <Image
             src="/LogoAmigosTierra.png"
             alt="Amigos de la Tierra"
-            className="h-24 w-auto object-contain"
+            fill
+            className="object-contain p-2"
           />
         </div>
       </div>

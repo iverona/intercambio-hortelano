@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -328,10 +329,13 @@ export default function ExchangeDetailsPage() {
             <Card className="bg-[#FDFBF7] dark:bg-[#2e2c28] border-[#EFEAC6] dark:border-[#4a463a] shadow-sm overflow-hidden">
               <div className="aspect-video w-full bg-[#EFEAC6] dark:bg-[#4a463a] relative">
                 {exchange.product?.imageUrls?.[0] ? (
-                  <img
+                  <Image
                     src={exchange.product.imageUrls[0]}
                     alt={exchange.product.name || exchange.productName}
-                    className="w-full h-full object-cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover"
+                    priority
                   />
                 ) : (
                   <div className="flex items-center justify-center h-full text-[#879385] dark:text-[#998676]">

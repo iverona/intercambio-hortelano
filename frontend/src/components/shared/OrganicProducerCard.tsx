@@ -17,7 +17,7 @@ interface OrganicProducerCardProps {
 }
 
 // Content component for the producer card
-const ProducerCardContent: React.FC<{ producer: Producer }> = ({ producer }) => {
+const ProducerCardContent: React.FC<{ producer: Producer; priority?: boolean }> = ({ producer, priority = false }) => {
     const t = useI18n();
     const producerName = producer.name || t('producers.unnamed');
     const hasLocation = producer.address || producer.distance !== undefined;
@@ -32,6 +32,7 @@ const ProducerCardContent: React.FC<{ producer: Producer }> = ({ producer }) => 
                         name={producerName}
                         size="md"
                         className="border-2 border-[#A88C8F]/30 shadow-sm h-14 w-14"
+                        priority={priority}
                     />
                     <div className="min-w-0 flex-1">
                         <h3 className="text-lg font-bold text-foreground font-display leading-tight line-clamp-1">
@@ -81,7 +82,7 @@ const OrganicProducerCard: React.FC<OrganicProducerCardProps> = ({
             rotate={index % 2 === 0 ? 1 : -1}
             shadowColor="bg-[#A88C8F]"
         >
-            <ProducerCardContent producer={producer} />
+            <ProducerCardContent producer={producer} priority={index < 8} />
         </OrganicCard>
     );
 };
