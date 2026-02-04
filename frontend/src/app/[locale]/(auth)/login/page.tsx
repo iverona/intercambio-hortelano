@@ -131,8 +131,14 @@ export default function LoginPage() {
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <Label htmlFor="password" className="text-foreground ">{t('common.password')}</Label>
+                                    <Label htmlFor="password" className="text-foreground ">{t('common.password')}</Label>
+                                    <Input
+                                        id="password"
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                    />
+                                    <div className="flex justify-end">
                                         <button
                                             type="button"
                                             onClick={toggleResetForm}
@@ -141,12 +147,6 @@ export default function LoginPage() {
                                             {t('login.forgot_password')}
                                         </button>
                                     </div>
-                                    <Input
-                                        id="password"
-                                        type="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                    />
                                 </div>
                                 {(error || googleError) && <p className="text-red-500 text-sm">{error || googleError}</p>}
                                 {successMessage && <p className="text-[#556B2F] text-sm">{successMessage}</p>}
