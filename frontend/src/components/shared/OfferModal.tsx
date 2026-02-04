@@ -136,7 +136,10 @@ export default function OfferModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden bg-[#FFFBE6] dark:bg-[#2C2A25] gap-0 border-none shadow-2xl rounded-3xl">
+      <DialogContent
+        showCloseButton={false}
+        className="sm:max-w-md p-0 overflow-hidden bg-[#FFFBE6] dark:bg-[#2C2A25] gap-0 border-none shadow-2xl rounded-3xl"
+      >
         <DialogHeader className="sr-only">
           <DialogTitle>{(t as any)('product.contact.title')}</DialogTitle>
           <DialogDescription>{(t as any)('product.contact.description')}</DialogDescription>
@@ -197,22 +200,14 @@ export default function OfferModal({
             <div className="space-y-4">
               {/* Option 1: Exchange */}
               {product.isForExchange && (
-                <div
-                  className="relative p-6 bg-white dark:bg-[#3E3B34] border-2 border-[#879385] shadow-[4px_4px_0px_0px_rgba(135,147,133,0.1)] hover:shadow-lg transition-all duration-300"
-                  style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}
+                <ContactOption
+                  title={(t as any)('product.contact.option_exchange')}
+                  description={(t as any)('product.contact.exchange_desc')}
+                  icon={<Leaf className="w-5 h-5 text-[#879385]" />}
+                  colorClass="border-[#879385] shadow-[4px_4px_0px_0px_rgba(135,147,133,0.1)]"
+                  bgColorClass="bg-[#879385]/10"
+                  radius="var(--radius-hand)"
                 >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="p-2 bg-[#879385]/10 rounded-full">
-                      <Leaf className="w-5 h-5 text-[#879385]" />
-                    </div>
-                    <span className="font-bold text-[#2C2A25] dark:text-white text-lg">
-                      {(t as any)('product.contact.option_exchange')}
-                    </span>
-                  </div>
-                  <p className="text-sm text-[#3E3B34]/70 dark:text-[#A6C6B9] mb-5 leading-relaxed">
-                    {(t as any)('product.contact.exchange_desc')}
-                  </p>
-
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-[#879385] uppercase tracking-wider ml-1">
@@ -249,26 +244,18 @@ export default function OfferModal({
                       {(t as any)('product.contact.button_exchange')}
                     </Button>
                   </div>
-                </div>
+                </ContactOption>
               )}
 
               {/* Option 2: Chat */}
-              <div
-                className="relative p-6 bg-white dark:bg-[#3E3B34] border-2 border-[#A88C8F] shadow-[4px_4px_0px_0px_rgba(168,140,143,0.1)] hover:shadow-lg transition-all duration-300"
-                style={{ borderRadius: '15px 225px 15px 255px / 255px 15px 225px 15px' }}
+              <ContactOption
+                title={(t as any)('product.contact.option_chat')}
+                description={(t as any)('product.contact.chat_desc')}
+                icon={<MessageSquare className="w-5 h-5 text-[#A88C8F]" />}
+                colorClass="border-[#A88C8F] shadow-[4px_4px_0px_0px_rgba(168,140,143,0.1)]"
+                bgColorClass="bg-[#A88C8F]/10"
+                radius="var(--radius-hand-reverse)"
               >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="p-2 bg-[#A88C8F]/10 rounded-full">
-                    <MessageSquare className="w-5 h-5 text-[#A88C8F]" />
-                  </div>
-                  <span className="font-bold text-[#2C2A25] dark:text-white text-lg">
-                    {(t as any)('product.contact.option_chat')}
-                  </span>
-                </div>
-                <p className="text-sm text-[#3E3B34]/70 dark:text-[#A6C6B9] mb-5 leading-relaxed">
-                  {(t as any)('product.contact.chat_desc')}
-                </p>
-
                 <Button
                   className="w-full bg-[#A88C8F] hover:bg-[#8e7679] text-white shadow-md hover:shadow-lg transition-all h-12 rounded-xl font-bold"
                   onClick={handleChat}
@@ -276,7 +263,7 @@ export default function OfferModal({
                   <Send className="w-5 h-5 mr-2" />
                   {(t as any)('product.contact.button_chat')}
                 </Button>
-              </div>
+              </ContactOption>
             </div>
           </div>
 
@@ -286,13 +273,52 @@ export default function OfferModal({
               <Info className="w-5 h-5 text-[#879385]" />
             </div>
             <div className="text-xs leading-relaxed text-[#3E3B34] dark:text-[#A6C6B9]">
-              <span className="font-bold block mb-1">Nota importante:</span>
-              EcoAnuncios promueve el intercambio justo y sostenible. La negociación se maneja libremente entre productores.
+              <span className="font-bold block mb-1">{(t as any)('product.contact.footer_note_title')}</span>
+              {(t as any)('product.contact.footer_note_text')}
             </div>
           </div>
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+// Helper component for contact options to avoid code duplication
+function ContactOption({
+  title,
+  description,
+  icon,
+  children,
+  colorClass,
+  bgColorClass,
+  radius
+}: {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  colorClass: string;
+  bgColorClass: string;
+  radius: string;
+}) {
+  return (
+    <div
+      className={`relative p-6 bg-white dark:bg-[#3E3B34] border-2 transition-all duration-300 hover:shadow-lg ${colorClass}`}
+      style={{ borderRadius: radius }}
+    >
+      <div className="flex items-center gap-3 mb-3">
+        <div className={`p-2 rounded-full ${bgColorClass}`}>
+          {icon}
+        </div>
+        <span className="font-bold text-[#2C2A25] dark:text-white text-lg">
+          {title}
+        </span>
+      </div>
+      <p className="text-sm text-[#3E3B34]/70 dark:text-[#A6C6B9] mb-5 leading-relaxed">
+        {description}
+      </p>
+      {children}
+    </div>
   );
 }
 

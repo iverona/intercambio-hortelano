@@ -171,6 +171,8 @@ export default {
   "product.contact.option_chat": "MENSAJE DIRECTO",
   "product.contact.chat_desc": "Inicia una conversación para aclarar dudas sobre el producto.",
   "product.contact.button_chat": "Iniciar Chat",
+  "product.contact.footer_note_title": "Nota importante:",
+  "product.contact.footer_note_text": "EcoAnuncios promueve el intercambio justo. Si hay negociación de precios EcoAnuncios no interviene ni se responsabiliza del mismo.",
 
   "product.edit_button": "Editar Producto",
   "product.view_garden": "Ver Mi Huerta",

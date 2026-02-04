@@ -171,6 +171,8 @@ export default {
   "product.contact.option_chat": "DIRECT MESSAGE",
   "product.contact.chat_desc": "Start a conversation to clarify details about the product.",
   "product.contact.button_chat": "Start Chat",
+  "product.contact.footer_note_title": "Important note:",
+  "product.contact.footer_note_text": "EcoAnuncios promotes fair exchange. If there is price negotiation EcoAnuncios does not intervene or take responsibility for it.",
 
   "product.edit_button": "Edit Product",
   "product.view_garden": "View My Garden",
