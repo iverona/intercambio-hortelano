@@ -12,5 +12,6 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|static|.*\\..*|_next).*)'],
+  // Exclude api, static, files with extension, _next, and firebase auth paths (__)
+  matcher: ['/((?!api|static|.*\\..*|_next|__).*)'],
 };

@@ -67,12 +67,14 @@ const nextConfig: NextConfig = {
     ];
   },
   async rewrites() {
-    return [
-      {
-        source: '/__/auth/:path*',
-        destination: 'https://portal-intercambio-hortelano.firebaseapp.com/__/auth/:path*',
-      },
-    ];
+    return {
+      beforeFiles: [
+        {
+          source: '/__/auth/:path*',
+          destination: 'https://portal-intercambio-hortelano.firebaseapp.com/__/auth/:path*',
+        },
+      ],
+    };
   },
 };
 
