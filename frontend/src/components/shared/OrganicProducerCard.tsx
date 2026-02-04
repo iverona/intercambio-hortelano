@@ -82,6 +82,7 @@ const OrganicProducerCard: React.FC<OrganicProducerCardProps> = ({
             rotate={index % 2 === 0 ? 1 : -1}
             shadowColor="bg-[#A88C8F]"
             href={`/producers/${producer.uid}`}
+            ariaLabel={`${producer.name || 'Productor'} - Ver tienda`}
         >
             <ProducerCardContent producer={producer} priority={index < 8} />
         </OrganicCard>

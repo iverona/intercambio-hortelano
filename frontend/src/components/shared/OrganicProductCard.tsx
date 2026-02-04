@@ -24,6 +24,7 @@ const OrganicProductCard: React.FC<OrganicProductCardProps> = ({
             rotate={index % 2 === 0 ? 1 : -1}
             shadowColor="bg-[#A88C8F]" // Using the organic color from homepage
             href={`/product/${product.id}`}
+            ariaLabel={`${product.name} - Ver detalle`}
         >
             <ProductCard
                 product={product}

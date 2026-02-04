@@ -132,7 +132,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       {/* Content */}
       <CardContent className="p-4">
         <Link href={`/product/${product.id}`}>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 group-hover:text-primary transition-colors leading-tight after:absolute after:inset-0 after:z-10">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 group-hover:text-primary transition-colors leading-tight">
             {product.name}
           </h3>
         </Link>

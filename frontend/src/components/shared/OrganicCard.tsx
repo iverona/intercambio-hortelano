@@ -11,6 +11,7 @@ interface OrganicCardProps {
   overlay?: React.ReactNode;
   showOverflow?: boolean;
   href?: string;
+  ariaLabel?: string;
 }
 
 export function OrganicCard({
@@ -21,7 +22,8 @@ export function OrganicCard({
   rotate = 1,
   overlay,
   showOverflow = false,
-  href
+  href,
+  ariaLabel
 }: OrganicCardProps) {
   const organicRadius = '255px 15px 225px 15px / 15px 225px 15px 255px';
 
@@ -55,8 +57,7 @@ export function OrganicCard({
         <Link
           href={href}
           className="absolute inset-0 z-10"
-          aria-hidden="true"
-          tabIndex={-1}
+          aria-label={ariaLabel}
         />
       )}
 
