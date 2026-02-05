@@ -325,7 +325,7 @@ exports.onNewOffer = (0, firestore_3.onDocumentCreated)("exchanges/{exchangeId}"
       </ul>
 
       <p>Entra en la plataforma para responder:</p>
-      <a href="https://ecoanuncios.com/exchanges/details/${exchangeId}">Ver Intercambio</a>
+      <a href="${process.env.BASE_URL || 'https://ecoanuncios.com'}/exchanges/details/${exchangeId}">Ver Intercambio</a>
     `;
         await sendEmail(ownerEmail, subject, html);
     }
@@ -397,14 +397,15 @@ exports.onNewMessage = (0, firestore_3.onDocumentCreated)("chats/{chatId}/messag
             ? (_d = senderDoc.data()) === null || _d === void 0 ? void 0 : _d.name
             : "Un usuario";
         // 6. Get Exchange ID for the link
-        let exchangeLink = "https://ecoanuncios.com/exchanges";
+        const baseUrl = process.env.BASE_URL || 'https://ecoanuncios.com';
+        let exchangeLink = `${baseUrl}/exchanges`;
         const exchangesSnapshot = await db.collection("exchanges")
             .where("chatId", "==", chatId)
             .limit(1)
             .get();
         if (!exchangesSnapshot.empty) {
             const exchangeId = exchangesSnapshot.docs[0].id;
-            exchangeLink = `https://ecoanuncios.com/exchanges/details/${exchangeId}`;
+            exchangeLink = `${baseUrl}/exchanges/details/${exchangeId}`;
         }
         // 7. Send Email
         const subject = `Nuevo mensaje de ${senderName}`;
