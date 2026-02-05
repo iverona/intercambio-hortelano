@@ -4,6 +4,7 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { getFunctions } from "firebase/functions";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -22,5 +23,24 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const functions = getFunctions(app, "us-central1");
 const googleProvider = new GoogleAuthProvider();
+
+// Initialize App Check
+if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
+  // Enable debug token in development
+  if (process.env.NODE_ENV === "development") {
+    // @ts-ignore
+    window.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+  }
+
+  try {
+    initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY),
+      isTokenAutoRefreshEnabled: true,
+    });
+    console.log("Firebase App Check initialized.");
+  } catch (error) {
+    console.error("Firebase App Check initialization failed:", error);
+  }
+}
 
 export { app, auth, db, storage, functions, googleProvider };
