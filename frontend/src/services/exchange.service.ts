@@ -52,6 +52,8 @@ export const ExchangeService = {
                         id: partnerId,
                         name: partnerData.name || "Unknown User",
                         avatarUrl: partnerData.avatarUrl || "",
+                        address: partnerData.address,
+                        location: partnerData.location,
                     };
                 } else {
                     exchange.partner = {
@@ -112,7 +114,9 @@ export const ExchangeService = {
                     exchangeInfo.requester = {
                         id: exchangeData.requesterId,
                         name: rData.name || "Unknown User",
-                        avatarUrl: rData.avatarUrl || ""
+                        avatarUrl: rData.avatarUrl || "",
+                        address: rData.address,
+                        location: rData.location
                     };
                 } else {
                     exchangeInfo.requester = {
@@ -129,7 +133,9 @@ export const ExchangeService = {
                     exchangeInfo.owner = {
                         id: exchangeData.ownerId,
                         name: oData.name || "Unknown User",
-                        avatarUrl: oData.avatarUrl || ""
+                        avatarUrl: oData.avatarUrl || "",
+                        address: oData.address,
+                        location: oData.location
                     };
                 } else {
                     exchangeInfo.owner = {

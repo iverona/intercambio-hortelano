@@ -30,7 +30,13 @@ export interface ExchangeUser {
     id: string;
     name: string;
     avatarUrl: string;
+    address?: string;
+    location?: {
+        latitude: number;
+        longitude: number;
+    };
 }
+
 
 export interface ExchangeProduct {
     id: string;

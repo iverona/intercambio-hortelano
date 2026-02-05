@@ -34,6 +34,8 @@ import { submitReview } from "@/lib/reviewHelpers";
 import Link from "next/link";
 import { useExchangeDetails } from "@/hooks/useExchanges";
 import { Timestamp } from "firebase/firestore";
+import { useUser } from "@/hooks/useUser";
+import { getDistance } from "@/lib/geolocation";
 
 export default function ExchangeDetailsPage() {
   const t = useI18n();
@@ -43,6 +45,7 @@ export default function ExchangeDetailsPage() {
   const locale = useCurrentLocale();
   const exchangeId = params.exchangeId as string;
   const { exchange, loading, messages, sendMessage, updateStatus } = useExchangeDetails(exchangeId);
+  const { userData: currentUserData } = useUser();
   const [newMessage, setNewMessage] = useState("");
   const { markEntityNotificationsAsRead, notifications } = useNotifications();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -262,6 +265,15 @@ export default function ExchangeDetailsPage() {
   const existingReviewByUser = user ? reviews?.[user.uid] : undefined;
   const existingReviewByPartner = partner ? reviews?.[partner.id] : undefined;
 
+  const distance = currentUserData?.location && partner?.location
+    ? getDistance(
+      currentUserData.location.latitude,
+      currentUserData.location.longitude,
+      partner.location.latitude,
+      partner.location.longitude
+    )
+    : null;
+
   return (
     <main className="bg-[#FFFBE6] dark:bg-[#2C2A25] pb-16">
       {/* Organic Header */}
@@ -365,21 +377,40 @@ export default function ExchangeDetailsPage() {
                   </p>
                 )}
 
-                {!isOwner && (
-                  <div className="flex items-center gap-4 bg-[#FDFBF7] dark:bg-[#2C2A25] p-3 rounded-xl border border-[#EFEAC6] dark:border-[#4a463a]">
-                    <Avatar className="h-10 w-10 border-2 border-white shadow-sm">
+                {!isOwner && partner && (
+                  <Link
+                    href={`/${locale}/producers/${partner.id}`}
+                    className="flex items-center gap-4 bg-[#FDFBF7] dark:bg-[#2C2A25] p-3 rounded-xl border border-[#EFEAC6] dark:border-[#4a463a] hover:border-[#879385] transition-all group"
+                  >
+                    <Avatar className="h-10 w-10 border-2 border-white shadow-sm group-hover:scale-105 transition-transform">
                       <AvatarImage src={partner?.avatarUrl} />
                       <AvatarFallback>{partner?.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
-                    <div>
+                    <div className="flex-1 min-w-0">
                       <p className="text-[10px] text-[#879385] uppercase tracking-wider font-bold">
                         {t('exchanges.details.partner_info.owns')}
                       </p>
-                      <p className="text-sm font-bold text-[#2C2A25] dark:text-[#FFFBE6]">
+                      <p className="text-sm font-bold text-[#2C2A25] dark:text-[#FFFBE6] truncate group-hover:text-[#879385] transition-colors">
                         {partner?.name}
                       </p>
+                      {(partner?.address || distance !== null) && (
+                        <div className="flex items-center gap-2 mt-0.5">
+                          {partner?.address && (
+                            <span className="text-[10px] text-[#594a42]/70 dark:text-[#d6c7b0]/70 flex items-center gap-0.5 truncate">
+                              <MapPin className="w-3 h-3" />
+                              {partner.address}
+                            </span>
+                          )}
+                          {distance !== null && (
+                            <span className="text-[10px] font-bold text-[#879385]">
+                              • {distance.toFixed(1)} km
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
-                  </div>
+                    <ChevronRight className="w-4 h-4 text-[#879385] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
                 )}
               </div>
             </div>
@@ -416,21 +447,40 @@ export default function ExchangeDetailsPage() {
                   </div>
                 </div>
 
-                {!isRequester && (
-                  <div className="flex items-center gap-3 mt-4 pt-4 border-t border-[#879385]/10">
-                    <Avatar className="h-8 w-8 border-2 border-[#879385]/30">
+                {!isRequester && partner && (
+                  <Link
+                    href={`/${locale}/producers/${partner.id}`}
+                    className="flex items-center gap-3 mt-4 pt-4 border-t border-[#879385]/10 hover:opacity-80 transition-all group"
+                  >
+                    <Avatar className="h-8 w-8 border-2 border-[#879385]/30 group-hover:scale-105 transition-transform">
                       <AvatarImage src={partner?.avatarUrl} />
                       <AvatarFallback>{partner?.name?.charAt(0)}</AvatarFallback>
                     </Avatar>
-                    <div>
+                    <div className="flex-1 min-w-0">
                       <p className="text-[10px] text-[#4E5D4B] uppercase tracking-wider font-bold">
                         {t('exchanges.details.partner_info.requested_by')}
                       </p>
-                      <p className="text-sm font-bold text-[#2C2A25] dark:text-[#FFFBE6]">
+                      <p className="text-sm font-bold text-[#2C2A25] dark:text-[#FFFBE6] truncate">
                         {partner?.name}
                       </p>
+                      {(partner?.address || distance !== null) && (
+                        <div className="flex items-center gap-2 mt-0.5">
+                          {partner?.address && (
+                            <span className="text-[10px] text-[#4E5D4B]/70 dark:text-[#d6c7b0]/70 flex items-center gap-0.5 truncate">
+                              <MapPin className="w-3 h-3" />
+                              {partner.address}
+                            </span>
+                          )}
+                          {distance !== null && (
+                            <span className="text-[10px] font-bold text-[#4E5D4B]/70">
+                              • {distance.toFixed(1)} km
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
-                  </div>
+                    <ChevronRight className="w-4 h-4 text-[#4E5D4B] opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </Link>
                 )}
               </div>
             </div>
