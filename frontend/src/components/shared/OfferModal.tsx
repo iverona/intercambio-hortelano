@@ -218,16 +218,20 @@ export default function OfferModal({
                         onValueChange={setSelectedProductId}
                         disabled={loading || userProducts.length === 0}
                       >
-                        <SelectTrigger className="w-full bg-[#FFFBE6]/50 dark:bg-black/20 border-[#879385]/20 rounded-xl">
+                        <SelectTrigger className="w-full bg-[#FFFBE6]/50 dark:bg-black/20 border-[#879385]/20 rounded-xl text-[#2C2A25] dark:text-[#FFFBE6]">
                           <SelectValue placeholder={
                             loading ? "Cargando..." :
                               userProducts.length === 0 ? "No tienes productos" :
                                 "Selecciona un producto..."
                           } />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#FFFBE6] dark:bg-[#2C2A25] border-[#879385]/20">
+                        <SelectContent className="bg-[#FFFBE6] dark:bg-[#2C2A25] border-[#879385]/20 text-[#2C2A25] dark:text-[#FFFBE6]">
                           {userProducts.map((p) => (
-                            <SelectItem key={p.id} value={p.id} className="focus:bg-[#879385]/10">
+                            <SelectItem
+                              key={p.id}
+                              value={p.id}
+                              className="focus:bg-[#879385]/10 focus:text-[#2C2A25] dark:focus:text-[#FFFBE6] text-[#2C2A25] dark:text-[#FFFBE6]"
+                            >
                               {p.name}
                             </SelectItem>
                           ))}
