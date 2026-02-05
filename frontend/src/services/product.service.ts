@@ -129,34 +129,45 @@ export const ProductService = {
         _imagesToDelete: string[] = []
     ): Promise<void> => {
         try {
+            let userId = data.userId;
+            let currentImageUrls = data.imageUrls;
+
+            // If new images are provided but userId or currentImageUrl list is missing from the update data,
+            // we need to fetch the existing product to know where to upload and what to append to.
+            if (newImages.length > 0 && (!userId || !currentImageUrls)) {
+                const productSnap = await getDoc(doc(db, "products", id));
+                if (productSnap.exists()) {
+                    const existingData = productSnap.data();
+                    if (!userId) userId = existingData.userId;
+                    if (!currentImageUrls) currentImageUrls = existingData.imageUrls || (existingData.imageUrl ? [existingData.imageUrl] : []);
+                }
+            }
+
             // 1. Upload new images
             const newImageUrls = await Promise.all(
                 newImages.map(async (image) => {
-                    if (!data.userId) throw new Error("User ID required for image upload");
-                    const storageRef = ref(storage, `products/${data.userId}/${Date.now()}_${image.name}`);
+                    if (!userId) throw new Error("User ID required for image upload");
+                    const storageRef = ref(storage, `products/${userId}/${Date.now()}_${image.name}`);
                     await uploadBytes(storageRef, image);
                     return await getDownloadURL(storageRef);
                 })
             );
 
-            // 2. Get current product to merge images if needed, but the caller should usually pass the final list of kept images if they are reordering.
-            // Simplified approach: append new images to existing ones (filtered by deletes)
-            // Ideally, the 'data' should contain the final state of imageUrls if we were just updating metadata, but for files we need special handling.
-            // Let's assume 'data.imageUrls' contains the URLs of the images we want to KEEP (excluding deleted ones).
-            // So we just add newImageUrls to data.imageUrls.
+            // 2. Prepare update data
+            const updateData: any = {
+                ...data,
+                updatedAt: serverTimestamp(),
+            };
 
-            const currentImageUrls = data.imageUrls || [];
-            const updatedImageUrls = [...currentImageUrls, ...newImageUrls];
+            // Only update imageUrls if we have new images to add OR if the caller explicitly provided a new list (e.g. for reordering or deleting)
+            if (newImages.length > 0 || data.imageUrls !== undefined) {
+                updateData.imageUrls = [...(currentImageUrls || []), ...newImageUrls];
+            }
 
             // 3. Update Firestore
-            await updateDoc(doc(db, "products", id), {
-                ...data,
-                imageUrls: updatedImageUrls,
-                updatedAt: serverTimestamp(),
-            });
+            await updateDoc(doc(db, "products", id), updateData);
 
             // 4. (Optional) Delete removed images from Storage could go here
-            // implementing basic storage cleanup is good practice but not strictly required for MVP if risky.
         } catch (error) {
             console.error("Error updating product:", error);
             throw error;

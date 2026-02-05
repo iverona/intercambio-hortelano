@@ -45,8 +45,8 @@ export default function EditProductPage() {
           isForExchange: data.isForExchange,
           isForSale: data.isForSale,
           isFree: data.isFree,
-          // userId and createdAt are not updated
-          // location is not currently editable?
+          userId: product.userId, // Required for image upload path
+          imageUrls: retainedUrls, // Must pass retained URLs so they aren't lost
         },
         data.newImages,
         urlsToDelete
