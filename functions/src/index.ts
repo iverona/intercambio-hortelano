@@ -363,7 +363,7 @@ export const onNewOffer = onDocumentCreated("exchanges/{exchangeId}", async (eve
       </ul>
 
       <p>Entra en la plataforma para responder:</p>
-      <a href="https://portal-intercambio-hortelano.web.app/exchanges/details/${exchangeId}">Ver Intercambio</a>
+      <a href="https://ecoanuncios.com/exchanges/details/${exchangeId}">Ver Intercambio</a>
     `;
 
     await sendEmail(ownerEmail, subject, html);
@@ -447,7 +447,19 @@ export const onNewMessage = onDocumentCreated(
         ? senderDoc.data()?.name
         : "Un usuario";
 
-      // 6. Send Email
+      // 6. Get Exchange ID for the link
+      let exchangeLink = "https://ecoanuncios.com/exchanges";
+      const exchangesSnapshot = await db.collection("exchanges")
+        .where("chatId", "==", chatId)
+        .limit(1)
+        .get();
+
+      if (!exchangesSnapshot.empty) {
+        const exchangeId = exchangesSnapshot.docs[0].id;
+        exchangeLink = `https://ecoanuncios.com/exchanges/details/${exchangeId}`;
+      }
+
+      // 7. Send Email
       const subject = `Nuevo mensaje de ${senderName}`;
       const html = `
       <h2>Nuevo mensaje recibido</h2>
@@ -458,7 +470,7 @@ export const onNewMessage = onDocumentCreated(
         ${messageData.text}
       </blockquote>
 
-      <a href="https://portal-intercambio-hortelano.web.app/exchanges">Ir a mis mensajes</a>
+      <a href="${exchangeLink}">Ir al intercambio</a>
     `;
 
       await sendEmail(recipientEmail, subject, html);
