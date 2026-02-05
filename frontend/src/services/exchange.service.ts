@@ -262,6 +262,7 @@ export const ExchangeService = {
                     text: data.offer.message,
                     senderId: data.requesterId,
                     createdAt: serverTimestamp(),
+                    isOfferMessage: true,
                 });
 
                 // Update the lastMessage field on the chat

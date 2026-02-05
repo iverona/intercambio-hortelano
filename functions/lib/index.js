@@ -342,6 +342,11 @@ exports.onNewMessage = (0, firestore_3.onDocumentCreated)("chats/{chatId}/messag
     const chatId = event.params.chatId;
     if (!messageData)
         return;
+    // Skip notification if this is an initial offer message (already handled by onNewOffer)
+    if (messageData.isOfferMessage) {
+        logger.info(`Skipping notification for offer message ${event.params.messageId}`);
+        return;
+    }
     try {
         // 1. Get Chat details to find participants
         const chatDoc = await db.collection("chats").doc(chatId).get();
