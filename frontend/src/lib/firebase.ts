@@ -18,13 +18,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
-const functions = getFunctions(app, "us-central1");
-const googleProvider = new GoogleAuthProvider();
 
-// Initialize App Check
+// Initialize App Check (must be before services to ensure tokens are ready)
 if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY) {
   // Enable debug token in development
   if (process.env.NODE_ENV === "development") {
@@ -42,5 +37,11 @@ if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY)
     console.error("Firebase App Check initialization failed:", error);
   }
 }
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+const functions = getFunctions(app, "us-central1");
+const googleProvider = new GoogleAuthProvider();
 
 export { app, auth, db, storage, functions, googleProvider };
