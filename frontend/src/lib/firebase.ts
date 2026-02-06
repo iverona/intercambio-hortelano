@@ -24,7 +24,7 @@ if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY)
   // Enable debug token in development
   if (process.env.NODE_ENV === "development") {
     // @ts-ignore
-    window.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    window.FIREBASE_APPCHECK_DEBUG_TOKEN = process.env.NEXT_PUBLIC_FIREBASE_DEBUG_TOKEN || true;
   }
 
   try {

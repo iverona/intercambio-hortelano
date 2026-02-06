@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/popover";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter, useParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import OfferModal from "@/components/shared/OfferModal";
 import { ExchangeService } from "@/services/exchange.service";
 import { useI18n } from "@/locales/provider";
@@ -58,14 +58,16 @@ export default function ProductDetailPage() {
   const { createOffer } = useProductMutations();
 
   // Fetch similar products
-  const { products: allSimilarProducts } = useProducts(null, {
+  const similarProductsFilters = useMemo(() => ({
     searchTerm: "",
     categories: product?.category ? [product.category] : [],
     distance: 10000,
     sortBy: "date_newest",
     showOwnProducts: false,
     transactionTypes: [],
-  });
+  }), [product?.category]);
+
+  const { products: allSimilarProducts } = useProducts(null, similarProductsFilters);
 
   // Filter out current product and limit to 4
   const similarProducts = allSimilarProducts
