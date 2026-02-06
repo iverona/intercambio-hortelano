@@ -36,6 +36,9 @@ env:
   
   - variable: NEXT_PUBLIC_FIREBASE_APP_ID
     value: "1:821327219227:web:4b131074d1365a707246be"
+  
+  - variable: NEXT_PUBLIC_RECAPTCHA_SITE_KEY
+    value: "6LfnAWIsAAAAADzOTZ_tDrgsYe5WujvfkdfeK_s_"
 
 scripts:
   buildCommand: next build --no-lint
