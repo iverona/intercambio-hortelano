@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/popover";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter, useParams } from "next/navigation";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import OfferModal from "@/components/shared/OfferModal";
 import { ExchangeService } from "@/services/exchange.service";
 import { useI18n } from "@/locales/provider";
@@ -38,7 +38,8 @@ import {
 import Link from "next/link";
 import { useProduct, useProductMutations } from "@/hooks/useProduct";
 import { useUserProfile } from "@/hooks/useUser";
-import { useProducts } from "@/hooks/useProducts";
+import { ProductService } from "@/services/product.service";
+import { Product } from "@/types/product";
 import ProductCard from "@/components/shared/ProductCard";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 import { categories, getCategoryColor } from "@/lib/categories";
@@ -57,22 +58,15 @@ export default function ProductDetailPage() {
   const { user: seller, loading: sellerLoading } = useUserProfile(product?.userId);
   const { createOffer } = useProductMutations();
 
-  // Fetch similar products
-  const similarProductsFilters = useMemo(() => ({
-    searchTerm: "",
-    categories: product?.category ? [product.category] : [],
-    distance: 10000,
-    sortBy: "date_newest",
-    showOwnProducts: false,
-    transactionTypes: [],
-  }), [product?.category]);
+  // Fetch similar products using one-time query (more memory efficient)
+  const [similarProducts, setSimilarProducts] = useState<Product[]>([]);
 
-  const { products: allSimilarProducts } = useProducts(null, similarProductsFilters);
-
-  // Filter out current product and limit to 4
-  const similarProducts = allSimilarProducts
-    .filter(p => p.id !== id)
-    .slice(0, 4);
+  useEffect(() => {
+    if (product?.category && id) {
+      ProductService.getSimilarProducts(product.category, id, 4)
+        .then(setSimilarProducts);
+    }
+  }, [product?.category, id]);
 
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [hasPendingExchange, setHasPendingExchange] = useState(false);

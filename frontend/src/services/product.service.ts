@@ -82,6 +82,39 @@ export const ProductService = {
         }
     },
 
+    /**
+     * Get similar products by category - one-time query (no real-time subscription)
+     * More memory efficient than subscribeToProducts for static content
+     */
+    getSimilarProducts: async (
+        category: string,
+        excludeProductId: string,
+        limitCount: number = 4
+    ): Promise<Product[]> => {
+        try {
+            const q = query(
+                collection(db, "products"),
+                where("category", "==", category),
+                limit(limitCount + 1) // +1 to account for possibly excluding current product
+            );
+            const snapshot = await getDocs(q);
+            return snapshot.docs
+                .map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        ...data,
+                        imageUrls: data.imageUrls || [data.imageUrl],
+                    } as Product;
+                })
+                .filter(product => !product.deleted && product.id !== excludeProductId)
+                .slice(0, limitCount);
+        } catch (error) {
+            console.error("Error fetching similar products:", error);
+            return [];
+        }
+    },
+
     getProduct: (id: string, callback: (product: Product | null) => void) => {
         const unsubscribe = onSnapshot(doc(db, "products", id), (docSnap) => {
             if (docSnap.exists()) {
