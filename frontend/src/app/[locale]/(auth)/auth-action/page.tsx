@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { auth } from "@/lib/firebase";
-import { applyActionCode, verifyPasswordResetCode, confirmPasswordReset, ActionCodeInfo } from "firebase/auth";
+import { applyActionCode, verifyPasswordResetCode, confirmPasswordReset, ActionCodeInfo, signOut } from "firebase/auth";
 import { CheckCircle, XCircle, Loader2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -131,6 +131,8 @@ export default function AuthActionPage() {
 
     try {
       await confirmPasswordReset(auth, actionCode, newPassword);
+      // Explicitly sign out to clear any existing session after password change
+      await signOut(auth);
       setActionState("success");
       startRedirectCountdown("/login");
     } catch (error: any) {
