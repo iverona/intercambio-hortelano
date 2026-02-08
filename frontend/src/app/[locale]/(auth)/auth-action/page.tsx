@@ -173,32 +173,62 @@ export default function AuthActionPage() {
                   <Label htmlFor="new-password" className="text-foreground ">
                     {t("auth_action.reset_password.new_password_label")}
                   </Label>
-                  <Input
-                    id="new-password"
-                    type="password"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    placeholder={t("auth_action.reset_password.new_password_placeholder")}
-                    required
-                    minLength={6}
-                    disabled={isSubmitting}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="new-password"
+                      type={showNewPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder={t("auth_action.reset_password.new_password_placeholder")}
+                      required
+                      minLength={6}
+                      disabled={isSubmitting}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+                    >
+                      {showNewPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="confirm-password" className="text-foreground ">
                     {t("auth_action.reset_password.confirm_password_label")}
                   </Label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder={t("auth_action.reset_password.confirm_password_placeholder")}
-                    required
-                    minLength={6}
-                    disabled={isSubmitting}
-                  />
+                  <div className="relative">
+                    <Input
+                      id="confirm-password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder={t("auth_action.reset_password.confirm_password_placeholder")}
+                      required
+                      minLength={6}
+                      disabled={isSubmitting}
+                      className="pr-10"
+                    />
+                    <button
+                      type="button"
+                      tabIndex={-1}
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 {errorMessage && (

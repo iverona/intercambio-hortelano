@@ -38,6 +38,7 @@ import {
   Languages,
   LogOut,
   ShieldCheck,
+  KeyRound,
 } from "lucide-react";
 import { TomatoRating } from "@/components/shared/TomatoRating";
 import { useUser } from "@/hooks/useUser";
@@ -257,6 +258,8 @@ export default function ProfilePage() {
   };
 
   const handlePasswordChange = () => {
+    if (isGoogleUser) return;
+
     const auth = getAuth();
     if (auth.currentUser && auth.currentUser.email) {
       sendPasswordResetEmail(auth, auth.currentUser.email)
@@ -264,6 +267,7 @@ export default function ProfilePage() {
           toast.success(t('profile.password_reset_sent'));
         })
         .catch((error) => {
+          console.error("Password reset error:", error);
           toast.error(t('profile.password_reset_error'));
         });
     } else {
@@ -525,14 +529,28 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
-                  <Button
-                    onClick={() => setIsEditing(true)}
-                    className="bg-secondary hover:bg-[#8f7477] text-white shadow-lg"
-                    size="lg"
-                  >
-                    <Edit className="mr-2 h-4 w-4" />
-                    {t('profile.edit_button')}
-                  </Button>
+                  <div className="flex flex-wrap gap-3 pt-2">
+                    <Button
+                      onClick={() => setIsEditing(true)}
+                      className="bg-secondary hover:bg-[#8f7477] text-white shadow-lg"
+                      size="lg"
+                    >
+                      <Edit className="mr-2 h-4 w-4" />
+                      {t('profile.edit_button')}
+                    </Button>
+
+                    {!isGoogleUser && (
+                      <Button
+                        onClick={handlePasswordChange}
+                        variant="outline"
+                        className="shadow-lg border-primary/20 hover:bg-primary/5"
+                        size="lg"
+                      >
+                        <KeyRound className="mr-2 h-4 w-4" />
+                        {t('profile.change_password')}
+                      </Button>
+                    )}
+                  </div>
                 </>
               )}
             </div>
@@ -801,6 +819,7 @@ export default function ProfilePage() {
                 />
                 <button
                   type="button"
+                  tabIndex={-1}
                   onClick={() => setShowReauthPassword(!showReauthPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
                 >
