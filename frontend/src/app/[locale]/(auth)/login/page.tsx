@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { AuthService } from "@/services/auth.service";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
 import { useAuth } from "@/context/AuthContext";
-import { Chrome, UserPlus, LogIn, KeyRound, ArrowLeft } from "lucide-react";
+import { Chrome, UserPlus, LogIn, KeyRound, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { handleUserRedirect } from "@/lib/authUtils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -23,6 +23,7 @@ export default function LoginPage() {
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [showResetForm, setShowResetForm] = useState(false);
     const [resetEmail, setResetEmail] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
     const { refreshUser } = useAuth();
     const { handleGoogleAuth, error: googleError, loading: googleLoading } = useGoogleAuth();
@@ -133,13 +134,27 @@ export default function LoginPage() {
                                 </div>
                                 <div className="space-y-2">
                                     <Label htmlFor="password" className="text-foreground ">{t('common.password')}</Label>
-                                    <Input
-                                        id="password"
-                                        type="password"
-                                        autoComplete="current-password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                    />
+                                    <div className="relative">
+                                        <Input
+                                            id="password"
+                                            type={showPassword ? "text" : "password"}
+                                            autoComplete="current-password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="pr-10"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+                                        >
+                                            {showPassword ? (
+                                                <EyeOff className="h-4 w-4" />
+                                            ) : (
+                                                <Eye className="h-4 w-4" />
+                                            )}
+                                        </button>
+                                    </div>
                                     <div className="flex justify-end">
                                         <button
                                             type="button"

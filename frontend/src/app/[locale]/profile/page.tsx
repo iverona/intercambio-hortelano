@@ -125,6 +125,7 @@ export default function ProfilePage() {
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const [reauthError, setReauthError] = useState("");
   const [isGoogleUser, setIsGoogleUser] = useState(false);
+  const [showReauthPassword, setShowReauthPassword] = useState(false);
 
   // Initialize state from userData
   useEffect(() => {
@@ -789,14 +790,27 @@ export default function ProfilePage() {
           {!isGoogleUser && (
             <div className="py-4">
               <Label htmlFor="password">{t('common.password')}</Label>
-              <Input
-                id="password"
-                type="password"
-                value={reauthPassword}
-                onChange={(e) => setReauthPassword(e.target.value)}
-                placeholder={t('profile.password_placeholder')}
-                className="mt-2"
-              />
+              <div className="relative mt-2">
+                <Input
+                  id="password"
+                  type={showReauthPassword ? "text" : "password"}
+                  value={reauthPassword}
+                  onChange={(e) => setReauthPassword(e.target.value)}
+                  placeholder={t('profile.password_placeholder')}
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowReauthPassword(!showReauthPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+                >
+                  {showReauthPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
+                </button>
+              </div>
             </div>
           )}
 

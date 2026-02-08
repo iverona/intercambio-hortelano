@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { AuthService } from "@/services/auth.service";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
-import { Chrome, UserPlus, LogIn, ArrowLeft } from "lucide-react";
+import { Chrome, UserPlus, LogIn, ArrowLeft, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
@@ -32,6 +32,8 @@ export default function SignupPage() {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [showGoogleDialog, setShowGoogleDialog] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
   const { handleGoogleAuth, error: googleError, loading: googleLoading } = useGoogleAuth();
 
@@ -194,24 +196,50 @@ export default function SignupPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-foreground">{t('common.password')}</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="bg-background/50 border-input"
-                  />
+                  <Label htmlFor="password">{t('common.password')}</Label>
+                  <div className="relative">
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="bg-background/50 border-input pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="confirm-password" className="text-foreground">{t('signup.confirm_password_label')}</Label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="bg-background/50 border-input"
-                  />
+                  <Label htmlFor="confirm-password">{t('signup.confirm_password_label')}</Label>
+                  <div className="relative">
+                    <Input
+                      id="confirm-password"
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      className="bg-background/50 border-input pr-10"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                 </div>
                 <div className="flex items-start space-x-2 pt-2">
                   <Checkbox
