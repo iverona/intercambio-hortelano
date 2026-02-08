@@ -635,7 +635,7 @@ export default {
   "producers.empty": "Aún no se han encontrado productores.",
   "producers.empty_description": "Sé el primero en compartir los productos de tu huerta con la comunidad.",
   "producers.no_bio": "Este productor aún no ha añadido una biografía.",
-  "producers.view_shop": "Ver Tienda",
+  "producers.view_shop": "Ver Productor",
   "producers.unnamed": "Productor sin nombre",
   "producers.hero.badge": "Conoce a nuestra comunidad",
   "producers.new_badge": "Nuevo",

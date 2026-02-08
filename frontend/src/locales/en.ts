@@ -634,7 +634,7 @@ export default {
   "producers.empty": "No producers found yet.",
   "producers.empty_description": "Be the first to share your garden produce with the community.",
   "producers.no_bio": "This producer has not added a bio yet.",
-  "producers.view_shop": "View Shop",
+  "producers.view_shop": "View Producer",
   "producers.unnamed": "Unnamed Producer",
   "producers.hero.badge": "Meet our community",
   "producers.new_badge": "New",
