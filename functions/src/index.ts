@@ -11,7 +11,8 @@ import { getAuth } from "firebase-admin/auth";
 import * as logger from "firebase-functions/logger";
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import { onCall, CallableRequest, HttpsError } from "firebase-functions/v2/https";
-import * as nodemailer from "nodemailer";
+// Lazy load nodemailer instead of top-level import to reduce cold start time
+// import * as nodemailer from "nodemailer";
 
 // Initialize Firebase Admin
 initializeApp();
@@ -106,22 +107,33 @@ export const updateUserReputation = onDocumentUpdated(
 
       try {
         // Get all exchanges where this user has been reviewed
-        const exchangesSnapshot = await db.collection("exchanges")
-          .where("status", "==", "completed")
-          .get();
+        // Optimization: Query only exchanges where the user is owner or requester, not ALL completed exchanges
+        const [asOwnerSnapshot, asRequesterSnapshot] = await Promise.all([
+          db.collection("exchanges")
+            .where("status", "==", "completed")
+            .where("ownerId", "==", reviewedUserId)
+            .get(),
+          db.collection("exchanges")
+            .where("status", "==", "completed")
+            .where("requesterId", "==", reviewedUserId)
+            .get()
+        ]);
 
         let totalRating = 0;
         let reviewCount = 0;
         const processedReviews = new Set<string>();
 
+        // Merge docs
+        const allDocs = [...asOwnerSnapshot.docs, ...asRequesterSnapshot.docs];
+
         // Calculate average rating from all reviews
-        exchangesSnapshot.forEach((doc) => {
+        for (const doc of allDocs) {
           const exchangeData = doc.data() as ExchangeData;
           const reviews = exchangeData.reviews || {};
 
           for (const [userId, reviewData] of Object.entries(reviews)) {
             if (reviewData.reviewedUserId === reviewedUserId) {
-              // Create unique key to avoid counting duplicates
+              // Create unique key to avoid counting duplicates (handles if user is both owner/requester or processed twice)
               const reviewKey = `${doc.id}-${userId}`;
               if (!processedReviews.has(reviewKey)) {
                 processedReviews.add(reviewKey);
@@ -130,7 +142,7 @@ export const updateUserReputation = onDocumentUpdated(
               }
             }
           }
-        });
+        }
 
         if (reviewCount === 0) {
           logger.info(`No reviews found for user ${reviewedUserId}`);
@@ -247,17 +259,6 @@ export const initializeUserReputation = onDocumentUpdated(
 );
 
 /**
- * Configure Nodemailer Transporter
- */
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-/**
  * Helper function to send emails
  */
 async function sendEmail(to: string, subject: string, html: string) {
@@ -270,6 +271,17 @@ async function sendEmail(to: string, subject: string, html: string) {
   }
 
   try {
+    // Dynamically import nodemailer to reduce cold start time
+    const nodemailer = await import("nodemailer");
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
     const mailOptions = {
       from: `"Portal Hortelano" <${process.env.EMAIL_USER}>`,
       to,
