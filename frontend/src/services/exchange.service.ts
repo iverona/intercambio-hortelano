@@ -107,8 +107,14 @@ export const ExchangeService = {
                     ...exchangeData,
                 } as Exchange;
 
-                // Fetch Requester
-                const requesterDoc = await getDoc(doc(db, "users", exchangeData.requesterId));
+                // Fetch Requester, Owner, and Product in parallel
+                const [requesterDoc, ownerDoc, productDoc] = await Promise.all([
+                    getDoc(doc(db, "users", exchangeData.requesterId)),
+                    getDoc(doc(db, "users", exchangeData.ownerId)),
+                    exchangeData.productId ? getDoc(doc(db, "products", exchangeData.productId)) : Promise.resolve(null)
+                ]);
+
+                // Process Requester
                 if (requesterDoc.exists()) {
                     const rData = requesterDoc.data() as UserData;
                     exchangeInfo.requester = {
@@ -126,8 +132,7 @@ export const ExchangeService = {
                     };
                 }
 
-                // Fetch Owner
-                const ownerDoc = await getDoc(doc(db, "users", exchangeData.ownerId));
+                // Process Owner
                 if (ownerDoc.exists()) {
                     const oData = ownerDoc.data() as UserData;
                     exchangeInfo.owner = {
@@ -145,10 +150,9 @@ export const ExchangeService = {
                     };
                 }
 
-                // Fetch Product
+                // Process Product
                 if (exchangeData.productId) {
-                    const productDoc = await getDoc(doc(db, "products", exchangeData.productId));
-                    if (productDoc.exists()) {
+                    if (productDoc && productDoc.exists()) {
                         const pData = productDoc.data();
                         exchangeInfo.product = {
                             id: exchangeData.productId,
