@@ -143,7 +143,7 @@ export const UserService = {
 
     uploadAvatar: async (uid: string, file: File): Promise<string> => {
         // 1. Upload new avatar
-        const storageRef = ref(storage, `avatars/${uid}/${Date.now()}_${file.name}`);
+        const storageRef = ref(storage, `avatars/${uid}/${crypto.randomUUID()}.${file.name.split('.').pop()}`);
         await uploadBytes(storageRef, file);
         const newAvatarUrl = await getDownloadURL(storageRef);
 

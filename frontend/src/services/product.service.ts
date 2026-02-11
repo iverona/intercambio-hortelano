@@ -135,7 +135,7 @@ export const ProductService = {
         try {
             const imageUrls = await Promise.all(
                 images.map(async (image) => {
-                    const storageRef = ref(storage, `products/${data.userId}/${Date.now()}_${image.name}`);
+                    const storageRef = ref(storage, `products/${data.userId}/${crypto.randomUUID()}.${image.name.split('.').pop()}`);
                     await uploadBytes(storageRef, image);
                     return await getDownloadURL(storageRef);
                 })
@@ -180,7 +180,7 @@ export const ProductService = {
             const newImageUrls = await Promise.all(
                 newImages.map(async (image) => {
                     if (!userId) throw new Error("User ID required for image upload");
-                    const storageRef = ref(storage, `products/${userId}/${Date.now()}_${image.name}`);
+                    const storageRef = ref(storage, `products/${userId}/${crypto.randomUUID()}.${image.name.split('.').pop()}`);
                     await uploadBytes(storageRef, image);
                     return await getDownloadURL(storageRef);
                 })

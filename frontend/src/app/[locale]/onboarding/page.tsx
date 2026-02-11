@@ -140,7 +140,7 @@ export default function OnboardingPage() {
           useWebWorker: true,
         });
 
-        const storageRef = ref(storage, `avatars/${user.uid}/onboarding_${Date.now()}_${compressedFile.name}`);
+        const storageRef = ref(storage, `avatars/${user.uid}/${crypto.randomUUID()}.${compressedFile.name.split('.').pop()}`);
         await uploadBytes(storageRef, compressedFile);
         avatarUrl = await getDownloadURL(storageRef);
         setIsUploadingAvatar(false);
