@@ -39,8 +39,14 @@ service cloud.firestore {
 
     // Secure the chats collection
     match /chats/{chatId} {
-      // Allow read and update only if the user is a participant in the existing chat
-      allow read, update: if isSignedIn() && request.auth.uid in resource.data.participants;
+      // Allow read only if the user is a participant in the existing chat
+      allow read: if isSignedIn() && request.auth.uid in resource.data.participants;
+      
+      // Allow update only if participant, and prevent modification of immutable fields
+      allow update: if isSignedIn() 
+                    && request.auth.uid in resource.data.participants
+                    && request.resource.data.participants == resource.data.participants
+                    && request.resource.data.listingId == resource.data.listingId;
       
       // Allow create only as part of an exchange (requires listingId context)
       allow create: if isSignedIn() 
@@ -50,8 +56,13 @@ service cloud.firestore {
 
       // Secure the messages subcollection
       match /messages/{messageId} {
-        // Allow read and create only if the user is a participant in the parent chat document
-        allow read, create: if isSignedIn() && get(/databases/$(database)/documents/chats/$(chatId)).data.participants.hasAny([request.auth.uid]);
+        // Allow read only if the user is a participant in the parent chat document
+        allow read: if isSignedIn() && get(/databases/$(database)/documents/chats/$(chatId)).data.participants.hasAny([request.auth.uid]);
+        // Allow create only if participant AND senderId matches auth uid (prevent spoofing)
+        allow create: if isSignedIn() 
+                      && get(/databases/$(database)/documents/chats/$(chatId)).data.participants.hasAny([request.auth.uid])
+                      && request.resource.data.senderId == request.auth.uid
+                      && request.resource.data.text is string;
         // Disallow updates and deletes to messages to maintain chat history integrity
         allow update, delete: if false;
       }
