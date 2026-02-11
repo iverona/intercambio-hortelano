@@ -141,21 +141,11 @@ export const UserService = {
         userCache.delete(uid);
     },
 
-    uploadAvatar: async (uid: string, file: File, oldAvatarUrl?: string): Promise<string> => {
+    uploadAvatar: async (uid: string, file: File): Promise<string> => {
         // 1. Upload new avatar
         const storageRef = ref(storage, `avatars/${uid}/${Date.now()}_${file.name}`);
         await uploadBytes(storageRef, file);
         const newAvatarUrl = await getDownloadURL(storageRef);
-
-        // 2. Delete old avatar if exists
-        if (oldAvatarUrl && oldAvatarUrl.includes("firebasestorage")) {
-            try {
-                const oldAvatarRef = ref(storage, oldAvatarUrl);
-                await deleteObject(oldAvatarRef);
-            } catch (error) {
-                console.warn("Could not delete old avatar", error);
-            }
-        }
 
         return newAvatarUrl;
     },

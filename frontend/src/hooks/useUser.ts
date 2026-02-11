@@ -56,10 +56,11 @@ export const useUser = () => {
                 useWebWorker: true,
             });
 
+            const oldAvatarUrl = userData?.avatarUrl;
+
             const newAvatarUrl = await UserService.uploadAvatar(
                 user.uid,
-                compressedFile,
-                userData?.avatarUrl
+                compressedFile
             );
 
             // Update Firestore
@@ -71,6 +72,17 @@ export const useUser = () => {
 
             // Update Local State
             setUserData(prev => prev ? { ...prev, avatarUrl: newAvatarUrl } : null);
+
+            // Delete old avatar if exists and successful
+            if (oldAvatarUrl) {
+                try {
+                    await UserService.deleteAvatar(user.uid, oldAvatarUrl);
+                } catch (delError) {
+                    console.warn("Could not delete old avatar, but new one is set:", delError);
+                }
+            }
+
+
         } catch (err) {
             console.error("Error uploading avatar:", err);
             throw err;
