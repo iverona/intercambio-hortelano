@@ -29,7 +29,7 @@ env:
     value: "portal-intercambio-hortelano"
   
   - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-    value: "portal-intercambio-hortelano.firebasestorage.app"
+    value: "ecoanuncios"
   
   - variable: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
     value: "821327219227"

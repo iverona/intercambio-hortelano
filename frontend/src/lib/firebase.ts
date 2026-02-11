@@ -41,7 +41,7 @@ if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY)
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
-const functions = getFunctions(app, "us-central1");
+const functions = getFunctions(app, "europe-southwest1");
 const googleProvider = new GoogleAuthProvider();
 
 export { app, auth, db, storage, functions, googleProvider };

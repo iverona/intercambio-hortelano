@@ -3,9 +3,12 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "storage": {
-    "rules": "storage.rules"
-  },
+  "storage": [
+    {
+      "target": "ecoanuncios",
+      "rules": "storage.rules"
+    }
+  ],
   "functions": [
     {
       "source": "functions",
@@ -43,7 +46,7 @@
       "startCommand": "npm run dev"
     }
   },
-  "apphosting": [    
+  "apphosting": [
     {
       "backendId": "backend",
       "rootDir": "frontend/",

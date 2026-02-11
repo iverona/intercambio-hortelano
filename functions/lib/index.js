@@ -51,7 +51,7 @@ const nodemailer = __importStar(require("nodemailer"));
 (0, app_1.initializeApp)();
 const db = (0, firestore_2.getFirestore)();
 // Set global options for cost control
-(0, firebase_functions_1.setGlobalOptions)({ maxInstances: 10 });
+(0, firebase_functions_1.setGlobalOptions)({ maxInstances: 10, region: "europe-southwest1" });
 /**
  * Calculate user level based on total points
  */

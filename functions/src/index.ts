@@ -18,7 +18,7 @@ initializeApp();
 const db = getFirestore();
 
 // Set global options for cost control
-setGlobalOptions({ maxInstances: 10 });
+setGlobalOptions({ maxInstances: 10, region: "europe-southwest1" });
 
 /**
  * Calculate user level based on total points
