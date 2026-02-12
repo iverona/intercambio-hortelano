@@ -261,7 +261,7 @@ const transporter = nodemailer.createTransport({
 /**
  * Helper function to send emails
  */
-async function sendEmail(to: string, subject: string, html: string) {
+async function sendEmail(to: string, subject: string, html: string, replyTo?: string) {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     logger.warn("Email credentials not set. Skipping email send.", {
       to,
@@ -276,6 +276,7 @@ async function sendEmail(to: string, subject: string, html: string) {
       to,
       subject,
       html,
+      replyTo,
     };
 
     const info = await transporter.sendMail(mailOptions);
@@ -570,7 +571,8 @@ export const submitContactForm = onCall(
         <p>${safeMessage.replace(/\n/g, "<br>")}</p>
       `;
 
-        emailPromises.push(sendEmail(adminEmail, adminSubject, adminHtml));
+        // Pass user email as replyTo
+        emailPromises.push(sendEmail(adminEmail, adminSubject, adminHtml, email));
       } else {
         logger.warn("ADMIN_EMAIL (EMAIL_USER) not set. Admin notification skipped.");
       }
