@@ -287,6 +287,19 @@ async function sendEmail(to: string, subject: string, html: string) {
 }
 
 /**
+ * Sanitize a string for safe HTML injection (prevents XSS in email clients)
+ */
+function escapeHtml(str: string): string {
+  if (typeof str !== "string") return "";
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+/**
  * Cloud Function: Send email notification on new offer (Exchange created)
  */
 export const onNewOffer = onDocumentCreated("exchanges/{exchangeId}", async (event) => {
@@ -336,13 +349,18 @@ export const onNewOffer = onDocumentCreated("exchanges/{exchangeId}", async (eve
       ? requesterDoc.data()?.name
       : "Un usuario";
 
-    // 4. Send Email
-    const subject = `Nueva oferta para tu producto: ${exchangeData.productName}`;
+    // 4. Send Email (all user-provided data is escaped to prevent XSS)
+    const safeOwnerName = escapeHtml(ownerData.name || "");
+    const safeRequesterName = escapeHtml(requesterName);
+    const safeProductName = escapeHtml(exchangeData.productName || "");
+    const safeOfferedProductName = escapeHtml(exchangeData.offer?.offeredProductName || "");
+    const safeOfferMessage = escapeHtml(exchangeData.offer?.message || "");
+
+    const subject = `Nueva oferta para tu producto: ${safeProductName}`;
     const html = `
       <h2>¡Tienes una nueva oferta!</h2>
-      <p>Hola ${ownerData.name},</p>
-      <p><strong>${requesterName}</strong> ha hecho una oferta por tu producto <strong>${exchangeData.productName
-      }</strong>.</p>
+      <p>Hola ${safeOwnerName},</p>
+      <p><strong>${safeRequesterName}</strong> ha hecho una oferta por tu producto <strong>${safeProductName}</strong>.</p>
       
       <p><strong>Detalles de la oferta:</strong></p>
       <ul>
@@ -352,12 +370,12 @@ export const onNewOffer = onDocumentCreated("exchanges/{exchangeId}", async (eve
           ? "Solo Chat"
           : "Compra"
       }</li>
-        ${exchangeData.offer?.offeredProductName
-        ? `<li>Producto ofrecido: ${exchangeData.offer.offeredProductName}</li>`
+        ${safeOfferedProductName
+        ? `<li>Producto ofrecido: ${safeOfferedProductName}</li>`
         : ""
       }
-        ${exchangeData.offer?.message
-        ? `<li>Mensaje: "${exchangeData.offer.message}"</li>`
+        ${safeOfferMessage
+        ? `<li>Mensaje: &quot;${safeOfferMessage}&quot;</li>`
         : ""
       }
       </ul>
@@ -460,15 +478,20 @@ export const onNewMessage = onDocumentCreated(
         exchangeLink = `${baseUrl}/exchanges/details/${exchangeId}`;
       }
 
-      // 7. Send Email
-      const subject = `Nuevo mensaje de ${senderName}`;
+      // 7. Send Email (all user-provided data is escaped to prevent XSS)
+      const safeRecipientName = escapeHtml(recipientData.name || "");
+      const safeSenderName = escapeHtml(senderName);
+      const safeListingTitle = escapeHtml(chatData.listingTitle || "");
+      const safeMessageText = escapeHtml(messageData.text || "");
+
+      const subject = `Nuevo mensaje de ${safeSenderName}`;
       const html = `
       <h2>Nuevo mensaje recibido</h2>
-      <p>Hola ${recipientData.name},</p>
-      <p><strong>${senderName}</strong> te ha enviado un mensaje sobre <strong>${chatData.listingTitle}</strong>:</p>
+      <p>Hola ${safeRecipientName},</p>
+      <p><strong>${safeSenderName}</strong> te ha enviado un mensaje sobre <strong>${safeListingTitle}</strong>:</p>
       
       <blockquote style="background: #f9f9f9; padding: 10px; border-left: 5px solid #ccc;">
-        ${messageData.text}
+        ${safeMessageText}
       </blockquote>
 
       <a href="${exchangeLink}">Ir al intercambio</a>
@@ -483,56 +506,93 @@ export const onNewMessage = onDocumentCreated(
 
 /**
  * Callable Function: Submit Contact Form
+ * Security: App Check enforced + input validation + HTML sanitization
  */
-export const submitContactForm = onCall(async (request: CallableRequest) => {
-  const { name, email, subject, message } = request.data;
-  const uid = request.auth ? request.auth.uid : "Anonymous";
+export const submitContactForm = onCall(
+  { enforceAppCheck: true },
+  async (request: CallableRequest) => {
+    const { name, email, subject, message } = request.data;
+    const uid = request.auth ? request.auth.uid : "Anonymous";
 
-  // Validate input
-  if (!name || !email || !message) {
-    logger.error("Validation failed: Missing required fields", { name, email, message });
-    throw new HttpsError("invalid-argument", "Missing required fields");
-  }
-
-  try {
-    const adminEmail = process.env.EMAIL_USER;
-    const emailPromises = [];
-
-    if (adminEmail) {
-      const adminSubject = `[Contacto] ${subject || "Sin asunto"} - ${name}`;
-      const adminHtml = `
-        <h3>Nuevo mensaje de contacto</h3>
-        <p><strong>De:</strong> ${name} (${email})</p>
-        <p><strong>UID:</strong> ${uid}</p>
-        <p><strong>Asunto:</strong> ${subject}</p>
-        <hr />
-        <p>${message.replace(/\n/g, "<br>")}</p>
-      `;
-
-      emailPromises.push(sendEmail(adminEmail, adminSubject, adminHtml));
-    } else {
-      logger.warn("ADMIN_EMAIL (EMAIL_USER) not set. Admin notification skipped.");
+    // --- Input Validation (5.4) ---
+    // Type checks
+    if (typeof name !== "string" || typeof email !== "string" || typeof message !== "string") {
+      throw new HttpsError("invalid-argument", "Invalid field types");
+    }
+    if (subject !== undefined && typeof subject !== "string") {
+      throw new HttpsError("invalid-argument", "Invalid subject type");
     }
 
-    // Auto-reply to user
-    const userHtml = `
-      <p>Hola ${name},</p>
-      <p>Hemos recibido tu mensaje con el asunto: "<strong>${subject}</strong>".</p>
+    // Required fields
+    if (!name.trim() || !email.trim() || !message.trim()) {
+      throw new HttpsError("invalid-argument", "Missing required fields");
+    }
+
+    // Length limits
+    if (name.length > 100) {
+      throw new HttpsError("invalid-argument", "Name too long (max 100 characters)");
+    }
+    if (email.length > 254) {
+      throw new HttpsError("invalid-argument", "Email too long");
+    }
+    if (subject && subject.length > 200) {
+      throw new HttpsError("invalid-argument", "Subject too long (max 200 characters)");
+    }
+    if (message.length > 5000) {
+      throw new HttpsError("invalid-argument", "Message too long (max 5000 characters)");
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      throw new HttpsError("invalid-argument", "Invalid email format");
+    }
+
+    // --- Sanitize inputs for HTML (5.3) ---
+    const safeName = escapeHtml(name);
+    const safeEmail = escapeHtml(email);
+    const safeSubject = escapeHtml(subject || "Sin asunto");
+    const safeMessage = escapeHtml(message);
+
+    try {
+      const adminEmail = process.env.EMAIL_USER;
+      const emailPromises = [];
+
+      if (adminEmail) {
+        const adminSubject = `[Contacto] ${safeSubject} - ${safeName}`;
+        const adminHtml = `
+        <h3>Nuevo mensaje de contacto</h3>
+        <p><strong>De:</strong> ${safeName} (${safeEmail})</p>
+        <p><strong>UID:</strong> ${uid}</p>
+        <p><strong>Asunto:</strong> ${safeSubject}</p>
+        <hr />
+        <p>${safeMessage.replace(/\n/g, "<br>")}</p>
+      `;
+
+        emailPromises.push(sendEmail(adminEmail, adminSubject, adminHtml));
+      } else {
+        logger.warn("ADMIN_EMAIL (EMAIL_USER) not set. Admin notification skipped.");
+      }
+
+      // Auto-reply to user
+      const userHtml = `
+      <p>Hola ${safeName},</p>
+      <p>Hemos recibido tu mensaje con el asunto: &quot;<strong>${safeSubject}</strong>&quot;.</p>
       <p>Nos pondremos en contacto contigo lo antes posible.</p>
       <br>
       <p>El equipo de Portal de Intercambio Hortelano</p>
     `;
 
-    emailPromises.push(sendEmail(email, "Hemos recibido tu mensaje", userHtml));
+      emailPromises.push(sendEmail(email, "Hemos recibido tu mensaje", userHtml));
 
-    await Promise.all(emailPromises);
+      await Promise.all(emailPromises);
 
-    return { success: true };
-  } catch (error: any) {
-    logger.error("Error in submitContactForm execution:", error);
-    // Return a more descriptive error to the client if it's already an HttpsError
-    if (error instanceof HttpsError) throw error;
-    // Otherwise throw as internal
-    throw new HttpsError("internal", error.message || "An unexpected error occurred");
-  }
-});
+      return { success: true };
+    } catch (error: any) {
+      logger.error("Error in submitContactForm execution:", error);
+      // Return a more descriptive error to the client if it's already an HttpsError
+      if (error instanceof HttpsError) throw error;
+      // Otherwise throw as internal
+      throw new HttpsError("internal", error.message || "An unexpected error occurred");
+    }
+  });
