@@ -270,8 +270,10 @@ export default function ProductDetailPage() {
 
                     {/* Seller Snippet */}
                     {seller && (
-                      <div className="flex items-center gap-4 p-4 rounded-xl hover:bg-card/30 transition-colors cursor-pointer group"
-                        onClick={() => {/* Navigate to profile maybe? */ }}>
+                      <Link
+                        href={`/producers/${product.userId}`}
+                        className="flex items-center gap-4 p-4 rounded-xl hover:bg-card/30 transition-colors cursor-pointer group"
+                      >
                         <Avatar className="h-16 w-16 ring-2 ring-primary ring-offset-2 ring-offset-[#FDFBF7] dark:ring-offset-[#2e2c28]">
                           <AvatarImage src={seller.avatarUrl} alt={seller.name} />
                           <AvatarFallback className="bg-muted text-foreground font-display font-bold text-xl">
@@ -288,7 +290,7 @@ export default function ProductDetailPage() {
                             <span className="text-xs opacity-70">({t('product.seller_stats.response')}: 95%)</span>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     )}
                   </div>
 
