@@ -11,6 +11,10 @@ import { toast } from "sonner";
 import { useState } from "react";
 import { Mail, MessageSquare, Send, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+import { useAuth } from "@/context/AuthContext";
+import { useUser } from "@/hooks/useUser";
 
 import { functions } from "@/lib/firebase";
 import { httpsCallable } from "firebase/functions";
@@ -19,12 +23,44 @@ export default function ContactPage() {
     const t = useI18n();
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const { user } = useAuth();
+    const { userData } = useUser();
     const [formData, setFormData] = useState({
         name: "",
         email: "",
         subject: "",
         message: "",
     });
+
+    useEffect(() => {
+        if (user) {
+            setFormData(prev => {
+                const autoName = userData?.name || user.displayName || "";
+                const autoEmail = user.email || "";
+
+                let newName = prev.name;
+                // If name is empty, fill it. 
+                // If name matches displayName but we have a (potentially newer) profile name, update it.
+                if (!newName || (userData?.name && newName === user.displayName)) {
+                    newName = autoName;
+                }
+
+                let newEmail = prev.email;
+                if (!newEmail) {
+                    newEmail = autoEmail;
+                }
+
+                if (newName !== prev.name || newEmail !== prev.email) {
+                    return {
+                        ...prev,
+                        name: newName,
+                        email: newEmail
+                    };
+                }
+                return prev;
+            });
+        }
+    }, [user, userData]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -127,7 +163,7 @@ export default function ContactPage() {
                             />
                         </div>
 
-                        <div className="flex justify-end pt-4">
+                        <div className="flex justify-center pt-4">
                             <Button
                                 type="submit"
                                 disabled={loading}
