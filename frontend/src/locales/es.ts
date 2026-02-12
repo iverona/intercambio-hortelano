@@ -191,7 +191,7 @@ export default {
   "product.form.category_placeholder": "Selecciona una categoría",
   "product.pending_exchange": "Solicitud Pendiente",
 
-  "categories.vegetables": "Verduras",
+  "categories.vegetables": "Hortalizas",
   "categories.fruits": "Frutas",
   "categories.herbs": "Hierbas",
   "categories.flowers": "Flores",
