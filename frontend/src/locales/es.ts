@@ -206,16 +206,12 @@ export default {
   "product.form.transaction_type_label": "Tipo de Transacción",
   "product.form.for_exchange_label": "Intercambio",
   "product.form.for_exchange_description": "Intercambia con otros hortelanos",
-  "product.form.for_sale_label": "Venta",
-  "product.form.for_sale_description": "Vende por dinero",
+
   "product.form.for_free_label": "Gratis",
   "product.form.for_free_description": "Regalar a la comunidad",
-  "product.form.price_label": "Precio",
-  "product.form.price_placeholder": "ej., 5.00",
+
   "product.form.error.no_category": "Por favor, selecciona una categoría.",
   "product.form.error.no_transaction_type": "Por favor, selecciona al menos un tipo de transacción.",
-  "product.form.error.no_price": "Por favor, introduce un precio para el producto.",
-  "product.form.error.negative_price": "El precio no puede ser un número negativo.",
   "product.form.error.max_images": "Puedes subir un máximo de 4 imágenes.",
   "product.form.error.image_compression": "Hubo un error al comprimir una imagen.",
   "product.form.upload_cta": "Haz clic para subir",
@@ -368,13 +364,12 @@ export default {
   "filter.sort_options.distance": "Distancia: Más cercanos primero",
   "filter.sort_options.date_newest": "Fecha: Más nuevos primero",
   "filter.sort_options.date_oldest": "Fecha: Más antiguos primero",
-  "filter.sort_options.price_low_high": "Precio: De menor a mayor",
-  "filter.sort_options.price_high_low": "Precio: De mayor a menor",
+
   "filter.own_products": "Mis Productos",
   "filter.show_own_products": "Mostrar mis anuncios",
   "filter.show_own_products_description": "Incluir tus propios productos en los resultados",
   "filter.transaction_type": "Tipo de Transacción",
-  "filter.transaction_options.sale": "Venta",
+
   "filter.transaction_options.exchange": "Intercambio",
   "filter.transaction_options.free": "Regalo",
 
@@ -405,7 +400,7 @@ export default {
   "notifications.new_offer.title": "Nueva Oferta Recibida",
   "notifications.new_offer.default": "Alguien hizo una oferta por tu producto",
   "notifications.new_offer.exchange": "Ofreció \"{offeredProduct}\" por tu \"{productName}\"",
-  "notifications.new_offer.purchase": "Ofreció €{amount} por tu \"{productName}\"",
+
   "notifications.new_offer.chat": "Quiere chatear sobre tu \"{productName}\"",
   "notifications.new_offer.simple": "Nueva oferta por tu \"{productName}\"",
 

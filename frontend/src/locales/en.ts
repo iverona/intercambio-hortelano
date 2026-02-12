@@ -206,16 +206,12 @@ export default {
   "product.form.transaction_type_label": "Transaction Type",
   "product.form.for_exchange_label": "For Exchange",
   "product.form.for_exchange_description": "Trade with other gardeners",
-  "product.form.for_sale_label": "For Sale",
-  "product.form.for_sale_description": "Sell for money",
+
   "product.form.for_free_label": "Free",
   "product.form.for_free_description": "Gift to the community",
-  "product.form.price_label": "Price",
-  "product.form.price_placeholder": "e.g., 5.00",
+
   "product.form.error.no_category": "Please select a category.",
   "product.form.error.no_transaction_type": "Please select at least one transaction type.",
-  "product.form.error.no_price": "Please enter a price for the product.",
-  "product.form.error.negative_price": "Price cannot be a negative number.",
   "product.form.error.max_images": "You can upload a maximum of 4 images.",
   "product.form.error.image_compression": "There was an error compressing an image.",
   "product.form.upload_cta": "Click to upload",
@@ -368,13 +364,12 @@ export default {
   "filter.sort_options.distance": "Distance: Nearest first",
   "filter.sort_options.date_newest": "Date: Newest first",
   "filter.sort_options.date_oldest": "Date: Oldest first",
-  "filter.sort_options.price_low_high": "Price: Low to High",
-  "filter.sort_options.price_high_low": "Price: High to Low",
+
   "filter.own_products": "My Products",
   "filter.show_own_products": "Show my ads",
   "filter.show_own_products_description": "Include your own products in the results",
   "filter.transaction_type": "Transaction Type",
-  "filter.transaction_options.sale": "For Sale",
+
   "filter.transaction_options.exchange": "For Exchange",
   "filter.transaction_options.free": "Free",
 
@@ -405,7 +400,7 @@ export default {
   "notifications.new_offer.title": "New Offer Received",
   "notifications.new_offer.default": "Someone made an offer on your product",
   "notifications.new_offer.exchange": "Offered \"{offeredProduct}\" for your \"{productName}\"",
-  "notifications.new_offer.purchase": "Offered €{amount} for your \"{productName}\"",
+
   "notifications.new_offer.chat": "Wants to chat about your \"{productName}\"",
   "notifications.new_offer.simple": "New offer for your \"{productName}\"",
 

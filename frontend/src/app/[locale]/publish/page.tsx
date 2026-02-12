@@ -132,7 +132,6 @@ export default function PublishPage() {
         description: data.description,
         category: data.category,
         isForExchange: data.isForExchange,
-        isForSale: data.isForSale,
         isFree: data.isFree,
         imageUrls: [], // Service handles images upload
         userId: user.uid,

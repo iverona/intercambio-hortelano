@@ -31,7 +31,6 @@ import {
   Star,
   User as UserIcon,
   Leaf,
-  DollarSign,
   ChevronRight,
   Gift,
 } from "lucide-react";
@@ -236,12 +235,7 @@ export default function ProductDetailPage() {
                       </div>
                     )}
 
-                    {product.isForSale && (
-                      <div className="flex items-center gap-2 px-3 py-1.5 bg-secondary/10 text-secondary rounded-lg border border-secondary/20 shadow-sm">
-                        <DollarSign className="w-4 h-4" />
-                        <span className="font-bold font-serif text-sm uppercase tracking-wide">{t('product.form.for_sale_label')}</span>
-                      </div>
-                    )}
+
                   </div>
 
                   <div className="flex flex-wrap gap-4 text-sm font-sans text-foreground/70 mt-4">
@@ -378,7 +372,6 @@ export default function ProductDetailPage() {
               description: product.description,
               imageUrls: product.imageUrls,
               isForExchange: product.isForExchange,
-              isForSale: product.isForSale,
             }}
             //  @ts-ignore
             onOfferSubmit={handleOfferSubmit}

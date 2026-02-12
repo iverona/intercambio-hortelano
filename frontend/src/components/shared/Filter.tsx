@@ -206,7 +206,7 @@ const Filter = () => {
           <div className="space-y-4">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t('filter.transaction_type')}</h3>
             <div className="flex flex-wrap gap-3 mx-auto max-w-sm">
-              {['sale', 'exchange', 'free'].map((type) => (
+              {['exchange', 'free'].map((type) => (
                 <label key={type} className="relative group cursor-pointer flex-1 min-w-[30%]">
                   <input
                     type="checkbox"
@@ -294,7 +294,7 @@ const Filter = () => {
                       flex items-center justify-between px-5 py-4 rounded-2xl cursor-pointer transition-all duration-300 border-2
                       ${localSortBy === option.value
                         ? 'bg-white border-green-500 shadow-md'
-                        : 'bg-white/60 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-600 shadow-sm hover:shadow-lg'
+                        : 'bg-white/60 dark:bg-gray-800/50 border-gray-200 dark:border-gray-700 hover:border-green-400 dark:hover:border-green-600 bg-white/60 dark:bg-gray-800/50 shadow-sm hover:shadow-lg'
                       }
                     `}
                   >

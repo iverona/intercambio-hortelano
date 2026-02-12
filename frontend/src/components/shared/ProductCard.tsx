@@ -5,7 +5,7 @@ import { useI18n } from "@/locales/provider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, Leaf, DollarSign, Clock } from "lucide-react";
+import { MapPin, Leaf, Clock } from "lucide-react";
 import { UserService } from "@/services/user.service";
 import { ProducerAvatar } from "@/components/shared/ProducerAvatar";
 
@@ -19,7 +19,6 @@ interface ProductCardProps {
     description: string;
     imageUrls: string[];
     isForExchange?: boolean;
-    isForSale?: boolean;
     isFree?: boolean;
     distance?: number;
     category?: string;
@@ -102,12 +101,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               {t('product.form.for_exchange_label')}
             </Badge>
           )}
-          {product.isForSale && (
-            <Badge className="bg-[#A88C8F] text-white border-0 shadow-lg backdrop-blur-sm">
-              <DollarSign className="w-3 h-3 mr-1" />
-              {t('product.form.for_sale_label')}
-            </Badge>
-          )}
+
           {product.isFree && (
             <Badge className="bg-purple-500 text-white border-0 shadow-lg backdrop-blur-sm">
               <Leaf className="w-3 h-3 mr-1" />

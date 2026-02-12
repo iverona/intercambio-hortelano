@@ -42,7 +42,6 @@ interface Product {
   description: string;
   imageUrls?: string[];
   isForExchange?: boolean;
-  isForSale?: boolean;
   userId?: string;
 }
 
