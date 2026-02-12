@@ -263,13 +263,16 @@ export async function softDeleteUserAccount(
       const notifRef = doc(collection(db, "notifications"));
       batch.set(notifRef, {
         recipientId: otherUserId,
-        type: "offer_declined",
-        exchangeId: exchangeDoc.id,
-        productId: exchangeData.productId,
-        productName: exchangeData.productName || "Unknown",
-        message: "The other user has deleted their account", // Translation handled in UI
-        read: false,
+        senderId: userId,
+        type: "OFFER_REJECTED",
+        entityId: exchangeDoc.id,
+        isRead: false,
         createdAt: serverTimestamp(),
+        metadata: {
+          productName: exchangeData.productName || "Unknown",
+          productId: exchangeData.productId || "",
+          message: "The other user has deleted their account",
+        },
       });
       operationCount++;
     }

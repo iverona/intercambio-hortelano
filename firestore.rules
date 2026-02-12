@@ -68,14 +68,35 @@ service cloud.firestore {
       }
     }
 
+    // --- Notification Helper ---
+    function isExchangeParticipant(exchangeId, userId) {
+      return get(/databases/$(database)/documents/exchanges/$(exchangeId)).data.requesterId == userId
+          || get(/databases/$(database)/documents/exchanges/$(exchangeId)).data.ownerId == userId;
+    }
+
     match /notifications/{notificationId} {
       // Only allow users to read their own notifications
       allow read: if isOwner(resource.data.recipientId);
       
-      // Allow create if authenticated and sender matches auth (prevent spoofing)
-      allow create: if isSignedIn() && 
-        request.resource.data.recipientId != null &&
-        request.resource.data.senderId == request.auth.uid; 
+      // Allow create only if:
+      // 1. Sender is authenticated and matches auth UID
+      // 2. Recipient is not the sender (no self-spam)
+      // 3. Valid notification type (whitelist)
+      // 4. Required schema fields present
+      // 5. Both sender and recipient are participants in the referenced exchange
+      allow create: if isSignedIn()
+        && request.resource.data.senderId == request.auth.uid
+        && request.resource.data.recipientId is string
+        && request.resource.data.recipientId != request.auth.uid
+        && request.resource.data.entityId is string
+        && request.resource.data.isRead == false
+        && request.resource.data.createdAt is timestamp
+        && request.resource.data.type in [
+             'NEW_OFFER', 'OFFER_ACCEPTED', 'OFFER_REJECTED',
+             'MESSAGE_RECEIVED', 'EXCHANGE_COMPLETED', 'REVIEW_RECEIVED'
+           ]
+        && isExchangeParticipant(request.resource.data.entityId, request.auth.uid)
+        && isExchangeParticipant(request.resource.data.entityId, request.resource.data.recipientId);
 
       // Allow update only if the user is the recipient (e.g. marking as read)
       allow update: if isOwner(resource.data.recipientId) && 
