@@ -272,7 +272,7 @@ async function sendEmail(to: string, subject: string, html: string) {
 
   try {
     const mailOptions = {
-      from: `"Portal Hortelano" <${process.env.EMAIL_USER}>`,
+      from: `"Ecoanuncios" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       html,
@@ -581,7 +581,7 @@ export const submitContactForm = onCall(
       <p>Hemos recibido tu mensaje con el asunto: &quot;<strong>${safeSubject}</strong>&quot;.</p>
       <p>Nos pondremos en contacto contigo lo antes posible.</p>
       <br>
-      <p>El equipo de Portal de Intercambio Hortelano</p>
+      <p>El equipo de Ecoanuncios</p>
     `;
 
       emailPromises.push(sendEmail(email, "Hemos recibido tu mensaje", userHtml));

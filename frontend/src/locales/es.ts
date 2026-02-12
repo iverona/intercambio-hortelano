@@ -340,7 +340,7 @@ export default {
   "exchanges.details.toast.exchange_completed": "¡Intercambio marcado como completado!",
   "exchanges.details.toast.failed_to_complete": "Error al completar el intercambio",
 
-  "header.title": "Portal de Intercambio Hortelano",
+  "header.title": "Ecoanuncios",
   "header.search_placeholder": "Busca tomates, miel...",
   "header.home": "Inicio",
   "header.publish": "Publicar Producto",

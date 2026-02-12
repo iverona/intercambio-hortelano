@@ -340,7 +340,7 @@ export default {
   "exchanges.details.toast.exchange_completed": "Exchange marked as completed!",
   "exchanges.details.toast.failed_to_complete": "Failed to complete exchange",
 
-  "header.title": "Gardener's Exchange Portal",
+  "header.title": "Ecoanuncios",
   "header.search_placeholder": "Search for tomatoes, honey...",
   "header.home": "Home",
   "header.publish": "Publish Product",

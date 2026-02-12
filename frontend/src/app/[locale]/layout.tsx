@@ -17,7 +17,7 @@ import CookieConsent from "@/components/shared/CookieConsent";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ecoanuncios.com"),
-  title: "Portal de Intercambio Hortelano",
+  title: "EcoAnuncios",
   description: "Intercambia productos de tu huerta",
 };
 
