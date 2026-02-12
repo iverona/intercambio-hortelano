@@ -307,6 +307,10 @@ export default function ProfilePage() {
       }
 
       setShowReauthDialog(false);
+
+      // Force client-side sign out to clear local state immediately - the backend user is gone
+      await signOut(auth);
+
       toast.success(t('profile.delete_success'));
 
       setTimeout(() => {
