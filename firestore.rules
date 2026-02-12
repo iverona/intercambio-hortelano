@@ -98,10 +98,12 @@ service cloud.firestore {
       // Allow create if authenticated and requester is self
       allow create: if isSignedIn() && request.resource.data.requesterId == request.auth.uid;
       
-      // Allow update if user is the requester or owner
+      // Allow update if user is the requester or owner, AND identity/origin fields are immutable
       allow update: if isSignedIn() && 
         (resource.data.requesterId == request.auth.uid || 
-         resource.data.ownerId == request.auth.uid);
+         resource.data.ownerId == request.auth.uid)
+        && (!request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(['requesterId', 'ownerId', 'productId', 'productName', 'chatId', 'offer', 'createdAt']));
          
       // Allow delete if user is the owner
       allow delete: if isOwner(resource.data.ownerId);
