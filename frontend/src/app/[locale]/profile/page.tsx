@@ -14,8 +14,7 @@ import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { useI18n, useChangeLocale, useCurrentLocale } from "@/locales/provider";
 import { toast } from "sonner";
-import LocationSearchInput from "@/components/shared/LocationSearchInput";
-import { useGeolocation } from "@/hooks/useGeolocation";
+import LocationPicker from "@/components/shared/LocationPicker";
 import { fuzzLocation, getApproximateAddress } from "@/lib/locationUtils";
 import {
   reauthenticateUser,
@@ -116,7 +115,7 @@ export default function ProfilePage() {
 
   const [showLocationUpdate, setShowLocationUpdate] = useState(false);
   const [updatingLocation, setUpdatingLocation] = useState(false);
-  const { getCurrentLocation, loading: geoLoading, error: geoError, clearError } = useGeolocation();
+
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -601,63 +600,40 @@ export default function ProfilePage() {
               </div>
 
               {!showLocationUpdate ? (
-                <div className="flex gap-3">
-                  <Button
-                    onClick={async () => {
-                      clearError();
-                      const locationData = await getCurrentLocation();
-                      if (locationData) {
-                        handleLocationUpdate({
-                          latitude: locationData.latitude,
-                          longitude: locationData.longitude,
-                          geohash: locationData.geohash
-                        });
-                      }
-                    }}
-                    disabled={geoLoading || updatingLocation}
-                    className="bg-primary hover:bg-[#7a8578] text-white"
-                  >
-                    <MapPin className="mr-2 h-4 w-4" />
-                    {geoLoading || updatingLocation ? t('profile.updating_location') : t('profile.use_current_location')}
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      setShowLocationUpdate(true);
-                      clearError();
-                    }}
-                    variant="outline"
-                    disabled={updatingLocation}
-                  >
-                    {t('profile.enter_location_manually')}
-                  </Button>
-                </div>
+                <Button
+                  onClick={() => setShowLocationUpdate(true)}
+                  className="bg-primary hover:bg-[#7a8578] text-white"
+                  disabled={updatingLocation}
+                >
+                  <MapPin className="mr-2 h-4 w-4" />
+                  {t('profile.update_location_button')}
+                </Button>
               ) : (
                 <div className="space-y-4">
-                  <p className="text-sm text-muted-foreground ">
-                    {t('profile.manual_location_description')}
-                  </p>
-                  <LocationSearchInput
-                    onLocationSelect={(location) => {
-                      handleLocationUpdate({
-                        latitude: location.latitude,
-                        longitude: location.longitude,
-                        geohash: location.geohash,
-                        address: location.address
-                      });
+                  <LocationPicker
+                    onLocationConfirm={async (location) => {
+                      await handleLocationUpdate(location);
                     }}
-                    placeholder={t('profile.location_search_placeholder')}
-                    className="w-full"
+                    saving={updatingLocation}
+                    showDescription={false}
+                    labels={{
+                      shareLocationButton: t('profile.use_current_location'),
+                      enterManuallyButton: t('profile.enter_location_manually'),
+                      manualInputDescription: t('profile.manual_location_description'),
+                      searchPlaceholder: t('profile.location_search_placeholder'),
+                      selectedLocationLabel: t('onboarding.selected_location_label'),
+                      confirmButton: t('onboarding.confirm_location_button'),
+                      changeButton: t('onboarding.change_location_button'),
+                      loadingButton: t('profile.updating_location'),
+                    }}
                   />
                   <Button
-                    onClick={() => {
-                      setShowLocationUpdate(false);
-                      clearError();
-                    }}
+                    onClick={() => setShowLocationUpdate(false)}
                     variant="outline"
                     className="w-full"
                     disabled={updatingLocation}
                   >
-                    {t('common.back')}
+                    {t('common.cancel')}
                   </Button>
                 </div>
               )}

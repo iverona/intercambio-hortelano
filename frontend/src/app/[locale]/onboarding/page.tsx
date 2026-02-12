@@ -14,9 +14,8 @@ import { updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
 import { useI18n } from "@/locales/provider";
-import LocationSearchInput from "@/components/shared/LocationSearchInput";
-import { MapPin, User, Camera, Loader2, ArrowLeft, ShieldCheck, LogOut, Check, RotateCcw } from "lucide-react";
-import { useGeolocation } from "@/hooks/useGeolocation";
+import LocationPicker from "@/components/shared/LocationPicker";
+import { MapPin, User, Camera, Loader2, ArrowLeft, ShieldCheck, LogOut } from "lucide-react";
 import { fuzzLocation, getApproximateAddress } from "@/lib/locationUtils";
 import imageCompression from "browser-image-compression";
 import { toast } from "sonner";
@@ -32,8 +31,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [saving, setSaving] = useState(false);
-  const [showManualInput, setShowManualInput] = useState(false);
-  const { getCurrentLocation, loading: geoLoading, error: geoError, clearError } = useGeolocation();
+
 
   // Step 1: Profile information
   const [name, setName] = useState("");
@@ -95,36 +93,6 @@ export default function OnboardingPage() {
     setCurrentStep(2);
   };
 
-  const handleLocation = async () => {
-    clearError();
-    const location = await getCurrentLocation();
-
-    if (location && user) {
-      setLocationData(location);
-      await completeOnboarding(location);
-    }
-  };
-
-  const handleManualLocationSelect = (location: {
-    latitude: number;
-    longitude: number;
-    geohash: string;
-    address: string;
-  }) => {
-    if (user) {
-      setLocationData(location);
-    }
-  };
-
-  const handleConfirmLocation = async () => {
-    if (locationData) {
-      await completeOnboarding(locationData);
-    }
-  };
-
-  const handleChangeLocation = () => {
-    setLocationData(null);
-  };
 
   const completeOnboarding = async (location: {
     latitude: number;
@@ -135,7 +103,6 @@ export default function OnboardingPage() {
     if (!user) return;
 
     setSaving(true);
-    clearError();
 
     try {
       let avatarUrl = "";
@@ -316,11 +283,6 @@ export default function OnboardingPage() {
     } finally {
       setSaving(false);
     }
-  };
-
-  const handleEnterManually = () => {
-    setShowManualInput(true);
-    clearError();
   };
 
   return (
@@ -506,111 +468,13 @@ export default function OnboardingPage() {
                 </h2>
               </div>
 
-              <p className="text-center text-gray-600 dark:text-gray-400 font-serif">
-                {t('onboarding.description')}
-              </p>
-
-              {!showManualInput ? (
-                <>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <Button
-                      onClick={handleLocation}
-                      disabled={geoLoading || saving || isUploadingAvatar}
-                      className="bg-primary hover:bg-[#7a8578] text-white"
-                    >
-                      {(geoLoading || saving || isUploadingAvatar) ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          {t('onboarding.loading_button')}
-                        </>
-                      ) : (
-                        <>
-                          <MapPin className="mr-2 h-4 w-4" />
-                          {t('onboarding.share_location_button')}
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      onClick={handleEnterManually}
-                      variant="outline"
-                      disabled={geoLoading || saving || isUploadingAvatar}
-                    >
-                      {t('onboarding.enter_manually_button')}
-                    </Button>
-                  </div>
-                </>
-              ) : locationData && locationData.address ? (
-                // Confirmation step: show selected location and confirm/change buttons
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-4 border rounded-lg bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800">
-                    <div className="p-2 bg-green-100 dark:bg-green-800 rounded-full">
-                      <MapPin className="w-5 h-5 text-green-600 dark:text-green-400" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                        {t('onboarding.selected_location_label')}
-                      </p>
-                      <p className="text-base font-semibold text-foreground">
-                        {locationData.address}
-                      </p>
-                    </div>
-                  </div>
-
-                  <Button
-                    onClick={handleConfirmLocation}
-                    className="w-full bg-primary hover:bg-[#7a8578] text-white shadow-lg"
-                    size="lg"
-                    disabled={saving || isUploadingAvatar}
-                  >
-                    {(saving || isUploadingAvatar) ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        {t('onboarding.loading_button')}
-                      </>
-                    ) : (
-                      <>
-                        <Check className="mr-2 h-4 w-4" />
-                        {t('onboarding.confirm_location_button')}
-                      </>
-                    )}
-                  </Button>
-
-                  <Button
-                    onClick={handleChangeLocation}
-                    variant="outline"
-                    className="w-full"
-                    disabled={saving || isUploadingAvatar}
-                  >
-                    <RotateCcw className="mr-2 h-4 w-4" />
-                    {t('onboarding.change_location_button')}
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t('onboarding.manual_input_description')}
-                  </p>
-                  <LocationSearchInput
-                    onLocationSelect={handleManualLocationSelect}
-                    placeholder={t('onboarding.location_search_placeholder')}
-                    className="w-full"
-                  />
-                  <Button
-                    onClick={() => {
-                      setShowManualInput(false);
-                      setLocationData(null);
-                      clearError();
-                    }}
-                    variant="outline"
-                    className="w-full"
-                    disabled={saving || isUploadingAvatar}
-                  >
-                    {t('common.back')}
-                  </Button>
-                </div>
-              )}
-
-              {geoError && <p className="text-red-500 text-sm mt-4 text-center">{geoError}</p>}
+              <LocationPicker
+                onLocationConfirm={async (location) => {
+                  setLocationData(location);
+                  await completeOnboarding(location);
+                }}
+                saving={saving || isUploadingAvatar}
+              />
 
               {/* Back to Step 1 */}
               <Button

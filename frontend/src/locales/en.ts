@@ -127,6 +127,7 @@ export default {
   "profile.reauth_error": "Authentication failed. Please try again.",
   "profile.deleting_account": "Deleting account...",
   "profile.location_settings": "Location Settings",
+  "profile.update_location_button": "Update Location",
   "profile.current_location": "Current Location",
   "profile.location_coordinates": "Lat: {lat}, Lng: {lng}",
   "profile.no_location_set": "No location set",
