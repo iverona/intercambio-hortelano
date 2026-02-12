@@ -43,7 +43,6 @@ export default function EditProductPage() {
           description: data.description,
           category: data.category,
           isForExchange: data.isForExchange,
-          isForSale: data.isForSale,
           isFree: data.isFree,
           userId: product.userId, // Required for image upload path
           imageUrls: retainedUrls, // Must pass retained URLs so they aren't lost
@@ -76,7 +75,6 @@ export default function EditProductPage() {
     description: product.description,
     category: product.category,
     isForExchange: product.isForExchange || false,
-    isForSale: product.isForSale || false,
     isFree: product.isFree || false,
     imageUrls: product.imageUrls,
     images: [] // Initial data doesn't have File objects yet

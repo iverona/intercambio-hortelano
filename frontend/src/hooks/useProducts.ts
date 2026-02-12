@@ -72,10 +72,9 @@ export const useProducts = (
             // Transaction Type filter
             if (filters.transactionTypes.length > 0) {
                 filteredData = filteredData.filter((product) => {
-                    const matchesSale = filters.transactionTypes.includes('sale') && product.isForSale;
                     const matchesExchange = filters.transactionTypes.includes('exchange') && product.isForExchange;
                     const matchesFree = filters.transactionTypes.includes('free') && product.isFree;
-                    return matchesSale || matchesExchange || matchesFree;
+                    return matchesExchange || matchesFree;
                 });
             }
 
