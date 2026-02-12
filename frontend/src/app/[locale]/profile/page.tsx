@@ -783,6 +783,10 @@ export default function ProfilePage() {
               <ShieldCheck className="w-5 h-5 flex-shrink-0" />
               <p>{t('profile.delete_account_legal_notice')}</p>
             </div>
+            <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md flex gap-3 text-sm text-blue-800 dark:text-blue-200">
+              <KeyRound className="w-5 h-5 flex-shrink-0" />
+              <p>{t('profile.reauth_warning')}</p>
+            </div>
           </DialogHeader>
 
           {!isGoogleUser && (

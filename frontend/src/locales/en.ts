@@ -95,6 +95,7 @@ export default {
   "profile.delete_account_title": "Delete Account",
   "profile.delete_account_confirmation": "Are you sure you want to delete your account? This action cannot be undone.",
   "profile.delete_account_legal_notice": "Your profile will no longer be visible immediately. In compliance with the law, we will securely block and retain your basic data for the legal period of 5 years before permanent deletion.",
+  "profile.reauth_warning": "For security, you will be asked to authenticate again to confirm your identity.",
 
   "profile.password_placeholder": "Enter your password",
   "profile.deleting_button": "Deleting...",

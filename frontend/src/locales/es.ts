@@ -95,6 +95,7 @@ export default {
   "profile.delete_account_title": "Eliminar Cuenta",
   "profile.delete_account_confirmation": "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer.",
   "profile.delete_account_legal_notice": "Tu perfil dejará de ser visible ahora mismo. Conforme a la ley, mantendremos tus datos básicos bloqueados de forma segura durante el plazo legal de 5 años antes de su borrado definitivo.",
+  "profile.reauth_warning": "Por seguridad, se te pedirá que te autentiques nuevamente para confirmar tu identidad.",
 
   "profile.password_placeholder": "Introduce tu contraseña",
   "profile.deleting_button": "Eliminando...",
