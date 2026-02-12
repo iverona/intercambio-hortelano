@@ -129,15 +129,12 @@ service cloud.firestore {
       // Allow delete if user is the owner
       allow delete: if isOwner(resource.data.ownerId);
     }
-    // LOPD "Bloqueo" Compliance: Strictly deny all access to archived users
-    // LOPD "Bloqueo" Compliance: Archived data is write-only for the owner during deletion.
+    // LOPD "Bloqueo" Compliance: All access denied. Writes handled by Admin SDK (Cloud Function).
     match /archived_users/{userId} {
-      allow create, update: if isOwner(userId);
-      allow read, delete: if false;
+      allow read, write: if false;
       
       match /products/{productId} {
-         allow create, update: if isOwner(userId);
-         allow read, delete: if false;
+        allow read, write: if false;
       }
     }
   }

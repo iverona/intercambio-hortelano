@@ -19,7 +19,7 @@ import { useGeolocation } from "@/hooks/useGeolocation";
 import { fuzzLocation, getApproximateAddress } from "@/lib/locationUtils";
 import {
   reauthenticateUser,
-  softDeleteUserAccount,
+  deleteUserAccount,
   isGoogleSignInUser
 } from "@/lib/accountDeletion";
 import {
@@ -299,7 +299,7 @@ export default function ProfilePage() {
         return;
       }
 
-      const deleteResult = await softDeleteUserAccount(user.uid);
+      const deleteResult = await deleteUserAccount();
 
       if (!deleteResult.success) {
         setReauthError(deleteResult.error || t('profile.delete_error'));

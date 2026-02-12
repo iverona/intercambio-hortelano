@@ -24,7 +24,7 @@ import { OrganicBackground } from "@/components/shared/OrganicBackground";
 import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { AuthService } from "@/services/auth.service";
-import { softDeleteUserAccount } from "@/lib/accountDeletion";
+import { deleteUserAccount } from "@/lib/accountDeletion";
 
 export default function OnboardingPage() {
   const t = useI18n();
@@ -290,7 +290,7 @@ export default function OnboardingPage() {
     if (!user) return;
     setSaving(true);
     try {
-      const result = await softDeleteUserAccount(user.uid);
+      const result = await deleteUserAccount();
 
       if (result.success) {
         toast.success(t('onboarding.account_deleted'));
