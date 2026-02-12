@@ -619,6 +619,9 @@ export default {
   "onboarding.success": "Profile completed successfully!",
   "onboarding.account_deleted": "Your account and data have been successfully deleted.",
   "onboarding.cancel_button": "Cancel and delete account",
+  "onboarding.selected_location_label": "Selected location",
+  "onboarding.confirm_location_button": "Confirm location",
+  "onboarding.change_location_button": "Change location",
 
   "nav.home": "Home",
   "nav.products": "Ads",

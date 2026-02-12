@@ -619,6 +619,9 @@ export default {
   "onboarding.success": "¡Perfil completado con éxito!",
   "onboarding.account_deleted": "Tu cuenta y datos han sido eliminados correctamente.",
   "onboarding.cancel_button": "Cancelar y borrar cuenta",
+  "onboarding.selected_location_label": "Ubicación seleccionada",
+  "onboarding.confirm_location_button": "Confirmar ubicación",
+  "onboarding.change_location_button": "Cambiar ubicación",
 
   "nav.home": "Inicio",
   "nav.products": "Anuncios",
