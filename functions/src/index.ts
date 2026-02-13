@@ -4,6 +4,7 @@
  */
 
 import { setGlobalOptions } from "firebase-functions";
+import { defineSecret } from "firebase-functions/params";
 import { onDocumentUpdated } from "firebase-functions/v2/firestore";
 import { initializeApp } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
@@ -20,6 +21,9 @@ const db = getFirestore();
 
 // Set global options for cost control
 setGlobalOptions({ maxInstances: 10, region: "europe-southwest1" });
+
+const emailUser = defineSecret("EMAIL_USER");
+const emailPass = defineSecret("EMAIL_PASS");
 
 /**
  * Calculate user level based on total points
@@ -250,19 +254,13 @@ export const initializeUserReputation = onDocumentUpdated(
 /**
  * Configure Nodemailer Transporter
  */
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+// Transporter will be initialized lazily to access secrets
 
 /**
  * Helper function to send emails
  */
 async function sendEmail(to: string, subject: string, html: string, replyTo?: string) {
-  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+  if (!emailUser.value() || !emailPass.value()) {
     logger.warn("Email credentials not set. Skipping email send.", {
       to,
       subject,
@@ -270,9 +268,17 @@ async function sendEmail(to: string, subject: string, html: string, replyTo?: st
     return;
   }
 
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: emailUser.value(),
+      pass: emailPass.value(),
+    },
+  });
+
   try {
     const mailOptions = {
-      from: `"Ecoanuncios" <${process.env.EMAIL_USER}>`,
+      from: `"Ecoanuncios" <${emailUser.value()}>`,
       to,
       subject,
       html,
@@ -304,7 +310,10 @@ function escapeHtml(str: string): string {
 /**
  * Cloud Function: Send email notification on new offer (Exchange created)
  */
-export const onNewOffer = onDocumentCreated("exchanges/{exchangeId}", async (event) => {
+export const onNewOffer = onDocumentCreated({
+  document: "exchanges/{exchangeId}",
+  secrets: [emailUser, emailPass],
+}, async (event) => {
   const exchangeData = event.data?.data();
   const exchangeId = event.params.exchangeId;
 
@@ -395,8 +404,10 @@ export const onNewOffer = onDocumentCreated("exchanges/{exchangeId}", async (eve
 /**
  * Cloud Function: Send email notification on new chat message
  */
-export const onNewMessage = onDocumentCreated(
-  "chats/{chatId}/messages/{messageId}",
+export const onNewMessage = onDocumentCreated({
+  document: "chats/{chatId}/messages/{messageId}",
+  secrets: [emailUser, emailPass],
+},
   async (event) => {
     const messageData = event.data?.data();
     const chatId = event.params.chatId;
@@ -511,7 +522,7 @@ export const onNewMessage = onDocumentCreated(
  * Security: App Check enforced + input validation + HTML sanitization
  */
 export const submitContactForm = onCall(
-  { enforceAppCheck: true },
+  { enforceAppCheck: true, secrets: [emailUser, emailPass] },
   async (request: CallableRequest) => {
     const { name, email, subject, message } = request.data;
     const uid = request.auth ? request.auth.uid : "Anonymous";
@@ -557,7 +568,7 @@ export const submitContactForm = onCall(
     const safeMessage = escapeHtml(message);
 
     try {
-      const adminEmail = process.env.EMAIL_USER;
+      const adminEmail = emailUser.value();
       const emailPromises = [];
 
       if (adminEmail) {
