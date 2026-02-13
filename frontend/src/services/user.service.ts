@@ -21,7 +21,11 @@ import {
 const userCache = new Map<string, Promise<UserData | null>>();
 
 export const UserService = {
-    getUserProfile: async (uid: string): Promise<UserData | null> => {
+    getUserProfile: async (uid: string, forceRefresh: boolean = false): Promise<UserData | null> => {
+        if (forceRefresh) {
+            userCache.delete(uid);
+        }
+
         // Check if we already have a request/result in cache
         if (userCache.has(uid)) {
             return userCache.get(uid)!;
