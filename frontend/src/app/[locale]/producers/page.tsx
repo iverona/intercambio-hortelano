@@ -9,8 +9,14 @@ import OrganicProducerCard from "@/components/shared/OrganicProducerCard";
 import { OrganicCard } from "@/components/shared/OrganicCard";
 import {
     ArrowRight,
-    Users
+    Users,
+    Map as MapIcon,
+    List
 } from "lucide-react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import MapComponent from "@/components/shared/MapComponent";
+import { useUser } from "@/hooks/useUser";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 import { BrowseTabs } from "@/components/shared/BrowseTabs";
@@ -29,6 +35,21 @@ const ProducerSkeleton = ({ index }: { index: number }) => (
 export default function ProducersPage() {
     const t = useI18n();
     const { producers, loading } = useProducers();
+    const { userData } = useUser();
+    const router = useRouter();
+    const [isMapView, setIsMapView] = useState(false);
+
+    const mapMarkers = producers
+        .filter((p) => p.location)
+        .map((p) => ({
+            id: p.uid!,
+            latitude: p.location!.latitude,
+            longitude: p.location!.longitude,
+            label: p.productsCount ? `${p.productsCount}` : "",
+            title: p.name,
+            imageUrl: p.avatarUrl,
+            type: 'producer' as const,
+        }));
 
     return (
         <OrganicBackground className="py-12">
@@ -48,7 +69,31 @@ export default function ProducersPage() {
                     }
                 />
 
-                {/* Producers Grid or Loading/Empty State */}
+                {/* View Toggle */}
+                <div className="flex justify-end mb-6">
+                    <div className="bg-white dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm inline-flex">
+                        <Button
+                            variant={!isMapView ? "secondary" : "ghost"}
+                            size="sm"
+                            onClick={() => setIsMapView(false)}
+                            className={!isMapView ? "bg-green-100 text-green-800 hover:bg-green-200" : ""}
+                        >
+                            <List className="w-4 h-4 mr-2" />
+                            {t('common.list') || "List"}
+                        </Button>
+                        <Button
+                            variant={isMapView ? "secondary" : "ghost"}
+                            size="sm"
+                            onClick={() => setIsMapView(true)}
+                            className={isMapView ? "bg-green-100 text-green-800 hover:bg-green-200" : ""}
+                        >
+                            <MapIcon className="w-4 h-4 mr-2" />
+                            {t('common.map') || "Map"}
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Producers Grid, Map or Loading/Empty State */}
                 {loading ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4">
                         {[...Array(8)].map((_, i) => (
@@ -56,11 +101,22 @@ export default function ProducersPage() {
                         ))}
                     </div>
                 ) : producers.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12 px-4">
-                        {producers.map((producer, index) => (
-                            <OrganicProducerCard key={producer.uid} producer={producer} index={index} />
-                        ))}
-                    </div>
+                    isMapView ? (
+                        <div className="h-[600px] w-full rounded-xl overflow-hidden shadow-lg border-2 border-green-100/50">
+                            <MapComponent
+                                markers={mapMarkers}
+                                userLocation={userData?.location}
+                                onMarkerClick={(marker) => router.push(`/producers/${marker.id}`)}
+                                className="w-full h-full"
+                            />
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12 px-4">
+                            {producers.map((producer, index) => (
+                                <OrganicProducerCard key={producer.uid} producer={producer} index={index} />
+                            ))}
+                        </div>
+                    )
                 ) : (
                     <EmptyState
                         icon={Users}

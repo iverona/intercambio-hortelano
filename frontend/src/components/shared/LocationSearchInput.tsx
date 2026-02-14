@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { geohashForLocation } from "geofire-common";
 import { MapPin, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useLoadScript } from "@react-google-maps/api";
+import { useGoogleMaps } from "@/components/shared/GoogleMapsProvider";
 
 interface LocationSearchInputProps {
   onLocationSelect: (location: {
@@ -17,8 +17,6 @@ interface LocationSearchInputProps {
   className?: string;
 }
 
-const libraries: ("places")[] = ["places"];
-
 export default function LocationSearchInput({
   onLocationSelect,
   placeholder = "Search for your location...",
@@ -28,10 +26,7 @@ export default function LocationSearchInput({
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-    libraries,
-  });
+  const { isLoaded, loadError } = useGoogleMaps();
 
   useEffect(() => {
     if (!isLoaded || !inputRef.current || autocompleteRef.current) return;
@@ -45,28 +40,28 @@ export default function LocationSearchInput({
     // Add listener for place selection
     autocompleteRef.current.addListener("place_changed", () => {
       const place = autocompleteRef.current?.getPlace();
-      
+
       if (!place || !place.geometry || !place.geometry.location) {
         console.error("No place details available");
         return;
       }
 
       setIsLoading(true);
-      
+
       const lat = place.geometry.location.lat();
       const lng = place.geometry.location.lng();
       const address = place.formatted_address || "";
-      
+
       // Generate geohash with precision 7 (approximately 150m x 150m)
       const geohash = geohashForLocation([lat, lng], 7);
-      
+
       onLocationSelect({
         latitude: lat,
         longitude: lng,
         geohash,
         address,
       });
-      
+
       setIsLoading(false);
     });
 

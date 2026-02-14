@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import MapComponent from "@/components/shared/MapComponent";
 import { useI18n } from "@/locales/provider";
 import Link from "next/link";
 import ProductCard from "@/components/shared/ProductCard";
@@ -14,6 +17,8 @@ import {
   Package,
   ArrowRight,
   Leaf,
+  Map as MapIcon,
+  List,
 } from "lucide-react";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Product } from "@/types/product";
@@ -22,6 +27,7 @@ import { OrganicBackground } from "@/components/shared/OrganicBackground";
 import { OrganicCard } from "@/components/shared/OrganicCard";
 import { BrowseTabs } from "@/components/shared/BrowseTabs";
 import { SectionHeader } from "@/components/shared/SectionHeader";
+import { SearchAndFilter } from "@/components/shared/SearchAndFilter";
 
 // Skeleton loader component
 const ProductSkeleton = () => (
@@ -34,20 +40,36 @@ const ProductSkeleton = () => (
   </div>
 );
 
-// Enhanced product card wrapper with animations
-// Removed in favor of shared OrganicProductCard
-
-import { SearchAndFilter } from "@/components/shared/SearchAndFilter";
-
 export default function ProductsPage() {
   const t = useI18n();
   const { user } = useAuth();
   const { userData } = useUser();
   const { filters } = useFilters();
+  const router = useRouter();
   const userLocation = userData?.location ?? null;
+  const [isMapView, setIsMapView] = useState(false);
 
   // Use custom hook for product data logic
   const { products, loading } = useProducts(userLocation, filters, user?.uid);
+
+  const mapMarkers = products
+    .filter((p) => p.location)
+    .map((p) => {
+      let label = "";
+      if (p.isFree) label = t('product.form.for_free_label');
+      else if (p.isForExchange) label = t('product.form.for_exchange_label');
+
+      return {
+        id: p.id,
+        latitude: p.location!.latitude,
+        longitude: p.location!.longitude,
+        label,
+        title: p.name,
+        imageUrl: p.imageUrls?.[0],
+        category: p.category,
+        type: 'product' as const,
+      };
+    });
 
   return (
     <OrganicBackground className="py-12">
@@ -73,7 +95,31 @@ export default function ProductsPage() {
         {/* Search and Filters UI */}
         <SearchAndFilter />
 
-        {/* Products Grid or Loading State */}
+        {/* View Toggle */}
+        <div className="flex justify-end mb-6">
+          <div className="bg-white dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm inline-flex">
+            <Button
+              variant={!isMapView ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => setIsMapView(false)}
+              className={!isMapView ? "bg-green-100 text-green-800 hover:bg-green-200" : ""}
+            >
+              <List className="w-4 h-4 mr-2" />
+              {t('common.list') || "List"}
+            </Button>
+            <Button
+              variant={isMapView ? "secondary" : "ghost"}
+              size="sm"
+              onClick={() => setIsMapView(true)}
+              className={isMapView ? "bg-green-100 text-green-800 hover:bg-green-200" : ""}
+            >
+              <MapIcon className="w-4 h-4 mr-2" />
+              {t('common.map') || "Map"}
+            </Button>
+          </div>
+        </div>
+
+        {/* Products Grid, Map or Loading State */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4">
             {[...Array(8)].map((_, i) => (
@@ -96,6 +142,15 @@ export default function ProductsPage() {
               ) : undefined
             }
           />
+        ) : isMapView ? (
+          <div className="h-[600px] w-full rounded-xl overflow-hidden shadow-lg border-2 border-green-100/50">
+            <MapComponent
+              markers={mapMarkers}
+              userLocation={userLocation}
+              onMarkerClick={(marker) => router.push(`/products/${marker.id}`)}
+              className="w-full h-full"
+            />
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12 px-4">
             {products.map((product, index) => (

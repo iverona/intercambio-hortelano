@@ -18,6 +18,8 @@ export default {
   "common.auth_error": "Authentication error",
   "common.success": "Success",
   "common.or": "Or",
+  "common.list": "List",
+  "common.map": "Map",
 
   "home.hero.title": "Share Your Harvest",
   "home.hero.subtitle": "Connect with local gardeners, exchange fresh produce, and build a sustainable community",

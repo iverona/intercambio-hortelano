@@ -18,6 +18,8 @@ export default {
   "common.auth_error": "Error de autenticación",
   "common.success": "Éxito",
   "common.or": "O",
+  "common.list": "Lista",
+  "common.map": "Mapa",
 
   "home.hero.title": "Comparte Tu Cosecha",
   "home.hero.subtitle": "Conecta con hortelanos locales, intercambia productos frescos y construye una comunidad sostenible",
