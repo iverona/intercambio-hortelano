@@ -36,7 +36,7 @@ export default function Home() {
 
       {/* Organic Card Header */}
       <OrganicCard
-        className="w-full max-w-2xl mx-auto mb-10"
+        className="w-full max-w-2xl mx-auto mb-10 mt-10 md:mt-16"
         rotate={1}
         showOverflow={true}
         overlay={
@@ -51,7 +51,7 @@ export default function Home() {
         }
       >
         {/* Decorative Icons */}
-        <div className="absolute -top-6 -left-8 md:-left-12 opacity-90 transform -rotate-12 pointer-events-none">
+        <div className="absolute -top-10 -left-4 md:-left-12 opacity-90 transform -rotate-12 pointer-events-none">
           <Image
             src="/hojasolivo.png"
             alt="Hojas de olivo"
@@ -67,7 +67,7 @@ export default function Home() {
           alt="Sello de Sostenibilidad"
           width={150}
           height={150}
-          className="absolute -top-10 -right-8 md:-right-14 w-28 md:w-36 h-auto drop-shadow-xl transform rotate-12"
+          className="absolute -top-14 -right-1 md:-right-14 w-28 md:w-36 h-auto drop-shadow-xl transform rotate-12"
         />
 
         {/* Logo */}
