@@ -163,7 +163,7 @@ export default function MapComponent({
                                     size="sm"
                                     className="w-full h-8 text-xs bg-primary hover:bg-primary/90 text-white"
                                 >
-                                    <Link href={selectedMarker.type === 'product' ? `/products/${selectedMarker.id}` : `/producers/${selectedMarker.id}`}>
+                                    <Link href={selectedMarker.type === 'product' ? `/product/${selectedMarker.id}` : `/producers/${selectedMarker.id}`}>
                                         Ver detalles
                                         <ArrowRight className="ml-1.5 h-3 w-3" />
                                     </Link>
