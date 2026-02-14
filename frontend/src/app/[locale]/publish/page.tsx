@@ -135,7 +135,6 @@ export default function PublishPage() {
         isFree: data.isFree,
         imageUrls: [], // Service handles images upload
         userId: user.uid,
-        location: currentUserProfile?.location || undefined,
       }, data.newImages);
 
       setShowSuccess(true);

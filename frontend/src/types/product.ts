@@ -7,7 +7,7 @@ export interface Product {
     userId: string;
     isForExchange?: boolean;
     isFree?: boolean;
-    location?: {
+    location?: { // Deprecated: Use producer's location instead
         latitude: number;
         longitude: number;
     };
