@@ -27,22 +27,37 @@ export default function LocationSearchInput({
   const [isLoading, setIsLoading] = useState(false);
 
   const { isLoaded, loadError } = useGoogleMaps();
+  const onLocationSelectRef = useRef(onLocationSelect);
 
   useEffect(() => {
-    if (!isLoaded || !inputRef.current || autocompleteRef.current) return;
+    onLocationSelectRef.current = onLocationSelect;
+  }, [onLocationSelect]);
+
+  useEffect(() => {
+    if (!isLoaded || !inputRef.current) {
+      console.log("LocationSearchInput: Not loaded or no input ref", { isLoaded, hasInput: !!inputRef.current });
+      return;
+    }
+
+    if (autocompleteRef.current) {
+      console.log("LocationSearchInput: Autocomplete already initialized");
+      return;
+    }
+
+    console.log("LocationSearchInput: Initializing Autocomplete...");
 
     // Initialize the autocomplete widget
-    autocompleteRef.current = new google.maps.places.Autocomplete(inputRef.current, {
+    const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
       types: ["geocode"],
       fields: ["formatted_address", "geometry"],
     });
+    autocompleteRef.current = autocomplete;
 
     // Add listener for place selection
-    autocompleteRef.current.addListener("place_changed", () => {
-      const place = autocompleteRef.current?.getPlace();
+    const listener = autocomplete.addListener("place_changed", () => {
+      const place = autocomplete.getPlace();
 
       if (!place || !place.geometry || !place.geometry.location) {
-        console.error("No place details available");
         return;
       }
 
@@ -55,22 +70,37 @@ export default function LocationSearchInput({
       // Generate geohash with precision 7 (approximately 150m x 150m)
       const geohash = geohashForLocation([lat, lng], 7);
 
-      onLocationSelect({
-        latitude: lat,
-        longitude: lng,
-        geohash,
-        address,
-      });
+      if (onLocationSelectRef.current) {
+        onLocationSelectRef.current({
+          latitude: lat,
+          longitude: lng,
+          geohash,
+          address,
+        });
+      }
 
       setIsLoading(false);
     });
 
-    return () => {
-      if (autocompleteRef.current) {
-        google.maps.event.clearInstanceListeners(autocompleteRef.current);
+    // Handle Enter key to select the first suggestion if the user doesn't click
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        // Prevent form submission
+        e.preventDefault();
       }
     };
-  }, [isLoaded, onLocationSelect]);
+    inputRef.current.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      if (listener) {
+        google.maps.event.removeListener(listener);
+      }
+      if (inputRef.current) {
+        inputRef.current.removeEventListener("keydown", handleKeyDown);
+      }
+      autocompleteRef.current = null;
+    };
+  }, [isLoaded]);
 
   if (loadError) {
     return (

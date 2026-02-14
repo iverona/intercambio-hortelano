@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { MapPin, Loader2, Check, RotateCcw } from "lucide-react";
 import LocationSearchInput from "@/components/shared/LocationSearchInput";
@@ -81,14 +81,14 @@ export default function LocationPicker({
         }
     };
 
-    const handleManualSelect = (location: {
+    const handleManualSelect = useCallback((location: {
         latitude: number;
         longitude: number;
         geohash: string;
         address: string;
     }) => {
         setPendingLocation(location);
-    };
+    }, []);
 
     const handleConfirm = async () => {
         if (!pendingLocation) return;
