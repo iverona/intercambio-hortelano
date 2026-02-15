@@ -19,6 +19,7 @@ import MapComponent from "@/components/shared/MapComponent";
 import { useUser } from "@/hooks/useUser";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
+import { ViewToggle } from "@/components/shared/ViewToggle";
 import { BrowseTabs } from "@/components/shared/BrowseTabs";
 
 // Skeleton loader component with organic styling
@@ -69,29 +70,6 @@ export default function ProducersPage() {
                     }
                 />
 
-                {/* View Toggle */}
-                <div className="flex justify-end mb-6">
-                    <div className="bg-white dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm inline-flex">
-                        <Button
-                            variant={!isMapView ? "secondary" : "ghost"}
-                            size="sm"
-                            onClick={() => setIsMapView(false)}
-                            className={!isMapView ? "bg-green-100 text-green-800 hover:bg-green-200" : ""}
-                        >
-                            <List className="w-4 h-4 mr-2" />
-                            {t('common.list') || "List"}
-                        </Button>
-                        <Button
-                            variant={isMapView ? "secondary" : "ghost"}
-                            size="sm"
-                            onClick={() => setIsMapView(true)}
-                            className={isMapView ? "bg-green-100 text-green-800 hover:bg-green-200" : ""}
-                        >
-                            <MapIcon className="w-4 h-4 mr-2" />
-                            {t('common.map') || "Map"}
-                        </Button>
-                    </div>
-                </div>
 
                 {/* Producers Grid, Map or Loading/Empty State */}
                 {loading ? (
@@ -133,6 +111,7 @@ export default function ProducersPage() {
                     />
                 )}
             </div>
+            <ViewToggle isMapView={isMapView} onToggle={setIsMapView} />
         </OrganicBackground>
     );
 }

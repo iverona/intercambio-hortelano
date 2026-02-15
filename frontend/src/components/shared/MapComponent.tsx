@@ -94,12 +94,12 @@ export default function MapComponent({
             <GoogleMap
                 mapContainerStyle={mapContainerStyle}
                 center={initialCenter}
-                zoom={12}
+                zoom={8}
                 onLoad={onLoad}
                 onUnmount={onUnmount}
                 options={{
                     disableDefaultUI: true,
-                    zoomControl: true,
+                    zoomControl: false,
                     styles: [
                         {
                             featureType: "poi",
@@ -174,18 +174,39 @@ export default function MapComponent({
                 )}
             </GoogleMap>
 
-            {/* Recenter Button */}
-            {userLocation && (
-                <Button
-                    size="icon"
-                    variant="secondary"
-                    className="absolute bottom-4 right-4 shadow-md bg-white hover:bg-gray-100 text-gray-700"
-                    onClick={handleRecenter}
-                    title="Recenter on me"
-                >
-                    <Navigation className="h-4 w-4" />
-                </Button>
-            )}
+            {/* Custom Unified Controls Stack */}
+            <div className="absolute bottom-6 right-4 flex flex-col gap-2 z-10">
+                {/* Recenter Button */}
+                {userLocation && (
+                    <Button
+                        size="icon"
+                        variant="secondary"
+                        className="shadow-lg bg-white hover:bg-gray-100 text-gray-700 rounded-full h-10 w-10 border border-gray-200"
+                        onClick={handleRecenter}
+                        title="Centrar en mi ubicación"
+                    >
+                        <Navigation className="h-5 w-5" />
+                    </Button>
+                )}
+
+                {/* Zoom Controls Pill */}
+                <div className="flex flex-col bg-white rounded-full shadow-lg border border-gray-200 overflow-hidden">
+                    <button
+                        className="p-2.5 hover:bg-gray-100 text-gray-700 transition-colors border-b border-gray-100"
+                        onClick={() => map?.setZoom((map.getZoom() || 8) + 1)}
+                        title="Zoom in"
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                    <button
+                        className="p-2.5 hover:bg-gray-100 text-gray-700 transition-colors"
+                        onClick={() => map?.setZoom((map.getZoom() || 8) - 1)}
+                        title="Zoom out"
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }

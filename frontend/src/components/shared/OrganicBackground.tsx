@@ -13,7 +13,7 @@ export function OrganicBackground({ children, className = "" }: OrganicBackgroun
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary dark:bg-tertiary rounded-full filter blur-3xl opacity-20 translate-x-1/3 translate-y-1/3 pointer-events-none"></div>
 
             {/* Main Content Wrapper */}
-            <div className="w-full flex flex-col items-center z-10 relative">
+            <div className="w-full flex flex-col items-center relative">
                 {children}
             </div>
         </div>

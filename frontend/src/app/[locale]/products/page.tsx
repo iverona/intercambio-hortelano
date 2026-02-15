@@ -20,6 +20,7 @@ import {
   Map as MapIcon,
   List,
 } from "lucide-react";
+import { ViewToggle } from "@/components/shared/ViewToggle";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Product } from "@/types/product";
 import { useProducts } from "@/hooks/useProducts";
@@ -95,29 +96,6 @@ export default function ProductsPage() {
         {/* Search and Filters UI */}
         <SearchAndFilter />
 
-        {/* View Toggle */}
-        <div className="flex justify-end mb-6">
-          <div className="bg-white dark:bg-gray-800 p-1 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm inline-flex">
-            <Button
-              variant={!isMapView ? "secondary" : "ghost"}
-              size="sm"
-              onClick={() => setIsMapView(false)}
-              className={!isMapView ? "bg-green-100 text-green-800 hover:bg-green-200" : ""}
-            >
-              <List className="w-4 h-4 mr-2" />
-              {t('common.list') || "List"}
-            </Button>
-            <Button
-              variant={isMapView ? "secondary" : "ghost"}
-              size="sm"
-              onClick={() => setIsMapView(true)}
-              className={isMapView ? "bg-green-100 text-green-800 hover:bg-green-200" : ""}
-            >
-              <MapIcon className="w-4 h-4 mr-2" />
-              {t('common.map') || "Map"}
-            </Button>
-          </div>
-        </div>
 
         {/* Products Grid, Map or Loading State */}
         {loading ? (
@@ -163,6 +141,7 @@ export default function ProductsPage() {
           </div>
         )}
       </div>
+      <ViewToggle isMapView={isMapView} onToggle={setIsMapView} />
     </OrganicBackground>
   );
 }

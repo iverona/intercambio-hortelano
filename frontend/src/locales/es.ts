@@ -20,6 +20,8 @@ export default {
   "common.or": "O",
   "common.list": "Lista",
   "common.map": "Mapa",
+  "common.show_map": "Ver mapa",
+  "common.show_list": "Ver lista",
 
   "home.hero.title": "Comparte Tu Cosecha",
   "home.hero.subtitle": "Conecta con hortelanos locales, intercambia productos frescos y construye una comunidad sostenible",

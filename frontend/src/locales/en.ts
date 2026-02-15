@@ -20,6 +20,8 @@ export default {
   "common.or": "Or",
   "common.list": "List",
   "common.map": "Map",
+  "common.show_map": "Show map",
+  "common.show_list": "Show list",
 
   "home.hero.title": "Share Your Harvest",
   "home.hero.subtitle": "Connect with local gardeners, exchange fresh produce, and build a sustainable community",
