@@ -1,7 +1,7 @@
 "use client";
 
 import { GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { useGoogleMaps } from "./GoogleMapsProvider";
 import { Navigation, ArrowRight } from "lucide-react";
 import { Button } from "../ui/button";
@@ -79,12 +79,31 @@ export default function MapComponent({
         return center || defaultCenter;
     }, [userLocation, center]);
 
-    const handleRecenter = () => {
+    const handleRecenter = useCallback(() => {
         if (map && userLocation) {
             map.panTo({ lat: userLocation.latitude, lng: userLocation.longitude });
             map.setZoom(13);
         }
-    };
+    }, [map, userLocation]);
+
+    // Auto-center based on browser geolocation if no userLocation is available
+    useEffect(() => {
+        if (isLoaded && map && !userLocation && navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
+                    map.panTo(pos);
+                    map.setZoom(11); // Slightly wider zoom for initial auto-center
+                },
+                () => {
+                    // Fail silently or handle error (e.g. user denied permission)
+                }
+            );
+        }
+    }, [isLoaded, map, userLocation]);
 
     if (loadError) return <div>Error loading map</div>;
     if (!isLoaded) return <div className="w-full h-full bg-gray-100 animate-pulse rounded-lg" />;
@@ -175,33 +194,46 @@ export default function MapComponent({
             </GoogleMap>
 
             {/* Custom Unified Controls Stack */}
-            <div className="absolute bottom-6 right-4 flex flex-col gap-2 z-10">
+            <div className="absolute bottom-6 right-4 flex flex-col gap-2 z-[200]">
                 {/* Recenter Button */}
-                {userLocation && (
-                    <Button
-                        size="icon"
-                        variant="secondary"
-                        className="shadow-lg bg-white hover:bg-gray-100 text-gray-700 rounded-full h-10 w-10 border border-gray-200"
-                        onClick={handleRecenter}
-                        title="Centrar en mi ubicación"
-                    >
-                        <Navigation className="h-5 w-5" />
-                    </Button>
-                )}
+                <Button
+                    size="icon"
+                    variant="secondary"
+                    className="shadow-lg bg-white hover:bg-gray-100 text-gray-700 rounded-full h-10 w-10 border border-gray-200"
+                    onClick={() => {
+                        if (userLocation) {
+                            handleRecenter();
+                        } else {
+                            // Fallback to browser geolocation
+                            if (navigator.geolocation) {
+                                navigator.geolocation.getCurrentPosition((position) => {
+                                    map?.panTo({
+                                        lat: position.coords.latitude,
+                                        lng: position.coords.longitude
+                                    });
+                                    map?.setZoom(13);
+                                });
+                            }
+                        }
+                    }}
+                    title="Centrar mapa"
+                >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M13 2L13 5M13 19L13 22M5 12L2 12M22 12L19 12"></path></svg>
+                </Button>
 
                 {/* Zoom Controls Pill */}
                 <div className="flex flex-col bg-white rounded-full shadow-lg border border-gray-200 overflow-hidden">
                     <button
                         className="p-2.5 hover:bg-gray-100 text-gray-700 transition-colors border-b border-gray-100"
                         onClick={() => map?.setZoom((map.getZoom() || 8) + 1)}
-                        title="Zoom in"
+                        title="Acercar"
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     </button>
                     <button
                         className="p-2.5 hover:bg-gray-100 text-gray-700 transition-colors"
                         onClick={() => map?.setZoom((map.getZoom() || 8) - 1)}
-                        title="Zoom out"
+                        title="Alejar"
                     >
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     </button>
