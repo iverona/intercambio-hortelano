@@ -58,10 +58,14 @@ export function getApproximateAddress(fullAddress?: string): string {
         // Split by comma
         const parts = noZip.split(',').map(p => p.trim()).filter(p => p.length > 0);
 
-        // If we have distinct parts, try to grab the last 2 (City, Country usually)
-        if (parts.length >= 2) {
-            // Check if the last part is a Country, and second to last is City/Province
-            return parts.slice(-2).join(', ');
+        // Filter out "Spain" or "España" as it's redundant for this app
+        const cleanedParts = parts.filter(p => !/^(spain|españa|espania)$/i.test(p));
+
+        if (cleanedParts.length >= 1) {
+            // Grab the last 2 parts (usually Town, Province)
+            // Use Set to remove duplicates
+            const lastParts = cleanedParts.slice(-2);
+            return [...new Set(lastParts)].join(', ');
         }
 
         // If only one part remains after stripping, return it
