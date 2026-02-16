@@ -34,7 +34,7 @@ export function useProductMutations() {
     const { user } = useAuth();
     const router = useRouter();
 
-    const createProduct = async (data: Omit<Product, "id" | "createdAt" | "updatedAt" | "deleted">, images: File[]) => {
+    const createProduct = async (data: Omit<Product, "id" | "createdAt" | "updatedAt">, images: File[]) => {
         setLoading(true);
         try {
             const id = await ProductService.createProduct(data, images);

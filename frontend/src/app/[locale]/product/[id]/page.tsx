@@ -77,7 +77,7 @@ export default function ProductDetailPage() {
   }, [currentUser, product]);
 
   const loading = productLoading;
-  const isUnavailable = !loading && (!product || product.deleted);
+  const isUnavailable = !loading && !product;
 
   const handleOfferSubmit = async (offer: {
     type: "exchange" | "chat";
