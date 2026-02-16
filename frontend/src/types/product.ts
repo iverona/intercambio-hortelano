@@ -16,5 +16,4 @@ export interface Product {
         seconds: number;
         nanoseconds: number;
     };
-    deleted?: boolean;
 }

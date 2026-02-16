@@ -28,8 +28,6 @@ export const ProductService = {
     ) => {
         let q = query(
             collection(db, "products"),
-            // We don't filter by 'deleted' at Firestore level because existing docs might lack the field.
-            // Firestore excludes documents missing the filtered field.
         );
 
         if (options.categories && options.categories.length > 0) {
@@ -53,8 +51,7 @@ export const ProductService = {
                         ...data,
                         imageUrls: data.imageUrls || [data.imageUrl],
                     } as Product;
-                })
-                .filter(product => !product.deleted);
+                });
 
             callback(productsData);
         });
@@ -108,7 +105,7 @@ export const ProductService = {
                         imageUrls: data.imageUrls || [data.imageUrl],
                     } as Product;
                 })
-                .filter(product => !product.deleted && product.id !== excludeProductId)
+                .filter(product => product.id !== excludeProductId)
                 .slice(0, limitCount);
         } catch (error) {
             console.error("Error fetching similar products:", error);
@@ -146,7 +143,6 @@ export const ProductService = {
                 ...data,
                 imageUrls,
                 createdAt: serverTimestamp(),
-                deleted: false,
             });
 
             // Increment user's product count
