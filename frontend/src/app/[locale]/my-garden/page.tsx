@@ -141,7 +141,7 @@ export default function MyGardenPage() {
                         <Button
                             asChild
                             size="lg"
-                            className="bg-secondary hover:bg-[#8f7477] text-white shadow-lg transition-all group"
+                            className="hidden md:inline-flex bg-secondary hover:bg-[#8f7477] text-white shadow-lg transition-all group"
                         >
                             <Link href="/publish">
                                 <Plus className="mr-2 h-5 w-5 group-hover:rotate-90 transition-transform" />
@@ -206,7 +206,7 @@ export default function MyGardenPage() {
                                     <Button
                                         asChild
                                         size="lg"
-                                        className="bg-primary hover:bg-[#7a8578] text-white shadow-lg group"
+                                        className="hidden md:inline-flex bg-primary hover:bg-[#7a8578] text-white shadow-lg group"
                                     >
                                         <Link href="/publish">
                                             <Plus className="mr-2 h-4 w-4 group-hover:rotate-90 transition-transform" />
