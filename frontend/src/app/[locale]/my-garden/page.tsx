@@ -2,17 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { db, storage } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import {
     collection,
     query,
     where,
     onSnapshot,
-    deleteDoc,
-    doc,
-    getDoc,
 } from "firebase/firestore";
-import { deleteObject, ref } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import ProductCard from "@/components/shared/ProductCard";
@@ -28,6 +24,7 @@ import {
 import { useI18n } from "@/locales/provider";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
+import { useProductMutations } from "@/hooks/useProduct";
 
 interface Product {
     id: string;
@@ -61,6 +58,7 @@ export default function MyGardenPage() {
     const router = useRouter();
     const [products, setProducts] = useState<Product[]>([]);
     const [productsLoading, setProductsLoading] = useState(true);
+    const { deleteProduct } = useProductMutations();
 
     useEffect(() => {
         // Redirect to home if not authenticated
@@ -92,34 +90,7 @@ export default function MyGardenPage() {
 
     const handleDelete = async (id: string) => {
         if (confirm(t("my_garden.delete_confirm"))) {
-            try {
-                const productRef = doc(db, "products", id);
-                const productSnap = await getDoc(productRef);
-                if (productSnap.exists()) {
-                    const productData = productSnap.data() as Product;
-                    if (productData.imageUrls && productData.imageUrls.length > 0) {
-                        const deletePromises = productData.imageUrls.map((url) => {
-                            // Extract the path from the URL
-                            const imagePath = url.split("/o/")[1].split("?")[0];
-                            const decodedPath = decodeURIComponent(imagePath);
-                            const imageRef = ref(storage, decodedPath);
-                            return deleteObject(imageRef).catch((error) => {
-                                // If the image doesn't exist, we can ignore the error
-                                if (error.code === "storage/object-not-found") {
-                                    console.log(`Image not found, skipping deletion: ${url}`);
-                                } else {
-                                    // For other errors, we might want to throw them to stop the process
-                                    throw error;
-                                }
-                            });
-                        });
-                        await Promise.all(deletePromises);
-                    }
-                }
-                await deleteDoc(productRef);
-            } catch (error) {
-                console.error("Error deleting product:", error);
-            }
+            await deleteProduct(id);
         }
     };
 

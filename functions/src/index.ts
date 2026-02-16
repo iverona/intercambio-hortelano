@@ -10,3 +10,4 @@ export * from "./reputation";
 export * from "./notifications";
 export * from "./contact";
 export * from "./account";
+export * from "./products";

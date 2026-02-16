@@ -163,29 +163,24 @@ export const UserService = {
 
     // Producer logic
     getProducers: async (): Promise<Producer[]> => {
-        const productsSnapshot = await getDocs(collection(db, "products"));
-        const producerIds = new Set<string>();
-        const producerProductCounts = new Map<string, number>();
+        try {
+            const producersQuery = query(
+                collection(db, "users"),
+                where("productsCount", ">", 0)
+            );
 
-        productsSnapshot.forEach((doc) => {
-            const userId = doc.data().userId;
-            if (userId) {
-                producerIds.add(userId);
-                producerProductCounts.set(userId, (producerProductCounts.get(userId) || 0) + 1);
-            }
-        });
+            const snapshot = await getDocs(producersQuery);
 
-        if (producerIds.size === 0) return [];
-
-        const usersData = await UserService.getUsersProfiles(Array.from(producerIds));
-
-        return usersData
-            .map((data) => {
+            return snapshot.docs.map(doc => {
+                const data = doc.data() as UserData;
                 return {
                     ...data,
-                    productsCount: producerProductCounts.get(data.uid || "") || 0,
+                    uid: doc.id, // Ensure UID is present
                 } as Producer;
-            })
-            .filter(producer => !producer.deleted);
+            });
+        } catch (error) {
+            console.error("Error fetching producers:", error);
+            throw error;
+        }
     }
 };

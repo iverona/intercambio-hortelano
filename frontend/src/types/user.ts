@@ -39,6 +39,7 @@ export interface UserData {
     level?: number;
     badges?: string[];
     preferredLocale?: string;
+    productsCount?: number;
     consent?: {
         privacyAccepted: boolean;
         legalAccepted: boolean;

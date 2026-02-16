@@ -15,7 +15,8 @@ import {
     limit,
     writeBatch,
     deleteDoc,
-    getDoc
+    getDoc,
+    increment
 } from "firebase/firestore";
 import { storage } from "@/lib/firebase";
 import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
@@ -148,6 +149,12 @@ export const ProductService = {
                 deleted: false,
             });
 
+            // Increment user's product count
+            const userRef = doc(db, "users", data.userId);
+            await updateDoc(userRef, {
+                productsCount: increment(1)
+            });
+
             return docRef.id;
         } catch (error) {
             console.error("Error creating product:", error);
@@ -238,21 +245,9 @@ export const ProductService = {
                 }
             };
 
-            // 2. Archive Product
-            // We store it in archived_users/{userId}/products/{productId}
-            const archiveRef = doc(db, "archived_users", userId, "products", id);
-
-            // Remove imageUrls since we are deleting the files
-            const { imageUrls: _imageUrls, ...productDataToArchive } = productData;
-
-            batch.set(archiveRef, {
-                ...productDataToArchive,
-                imageUrls: [], // Empty array
-                archivedAt: serverTimestamp(),
-                deletionReason: "user_delete_single"
-            });
-            operationCount++;
-            await commitBatch();
+            // 2. Archive Product (MOVED TO CLOUD FUNCTION)
+            // We no longer archive from client to avoid permission issues.
+            // A Cloud Function trigger on 'product.delete' will handle this.
 
             // 3. Delete Images (Best effort)
             if (productData.imageUrls && Array.isArray(productData.imageUrls)) {
@@ -271,9 +266,12 @@ export const ProductService = {
             }
 
             // 4. Reject Pending/Accepted Exchanges involving this product
+            // NOTE: We must include 'ownerId' in the query to satisfy Firestore security rules
+            // which require checking if auth.uid == ownerId || requesterId.
             const exchangesQuery = query(
                 collection(db, "exchanges"),
                 where("productId", "==", id),
+                where("ownerId", "==", userId),
                 where("status", "in", ["pending", "accepted"])
             );
 
@@ -294,25 +292,38 @@ export const ProductService = {
 
                 // Notify the other user (requester)
                 const partnerId = exchangeData.requesterId === userId
-                    ? exchangeData.ownerId  // Should technically resolve to requester usually, but safeguard
+                    ? exchangeData.ownerId
                     : exchangeData.requesterId;
+
+                console.log(`[deleteProduct] Processing exchange ${exchangeDoc.id}. Partner: ${partnerId}`);
 
                 if (operationCount >= BATCH_LIMIT) await commitBatch();
                 const notifRef = doc(collection(db, "notifications"));
                 batch.set(notifRef, {
-                    userId: partnerId,
-                    type: "offer_declined",
-                    exchangeId: exchangeDoc.id,
-                    productId: id,
-                    productName: productData.name || "Deleted Product",
-                    message: "The product for this exchange was deleted",
-                    read: false,
-                    createdAt: serverTimestamp()
+                    recipientId: partnerId,
+                    senderId: userId,
+                    type: "OFFER_REJECTED",
+                    entityId: exchangeDoc.id,
+                    isRead: false,
+                    createdAt: serverTimestamp(),
+                    metadata: {
+                        productId: id,
+                        productName: productData.name || "Deleted Product",
+                        message: "The product for this exchange was deleted",
+                    }
                 });
                 operationCount++;
             }
 
-            // 5. Hard Delete Product
+            // 5. Update user's product count
+            if (operationCount >= BATCH_LIMIT) await commitBatch();
+            const userRef = doc(db, "users", userId);
+            batch.update(userRef, {
+                productsCount: increment(-1)
+            });
+            operationCount++;
+
+            // 6. Hard Delete Product
             if (operationCount >= BATCH_LIMIT) await commitBatch();
             batch.delete(productRef);
 
