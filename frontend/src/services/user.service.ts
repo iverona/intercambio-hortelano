@@ -37,7 +37,7 @@ export const UserService = {
                 const userRef = doc(db, "users", uid);
                 const snapshot = await getDoc(userRef);
                 if (snapshot.exists()) {
-                    return snapshot.data() as UserData;
+                    return { ...(snapshot.data() as UserData), uid: snapshot.id };
                 }
                 return null;
             } catch (error) {
@@ -86,7 +86,7 @@ export const UserService = {
                         where("uid", "in", chunk)
                     );
                     const snapshot = await getDocs(q);
-                    const fetchedData = snapshot.docs.map(doc => doc.data() as UserData);
+                    const fetchedData = snapshot.docs.map(doc => ({ ...(doc.data() as UserData), uid: doc.id }));
 
                     // Add to results and update cache for each fetched user
                     fetchedData.forEach(userData => {
