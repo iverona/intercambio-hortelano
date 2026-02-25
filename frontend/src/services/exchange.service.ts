@@ -17,6 +17,7 @@ import {
 import { Exchange, Message, ExchangeStatus } from "@/types/exchange";
 import { UserData } from "@/types/user";
 import { ChatService } from "@/services/chat.service";
+import { UserService } from "@/services/user.service";
 import { createNotification } from "@/lib/notifications";
 
 export const ExchangeService = {
@@ -33,21 +34,45 @@ export const ExchangeService = {
         );
 
         return onSnapshot(exchangesQuery, async (snapshot) => {
+            const rawExchanges = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Exchange[];
             const exchangesData: Exchange[] = [];
 
-            for (const docSnap of snapshot.docs) {
-                const data = docSnap.data();
-                const exchange: Exchange = {
-                    id: docSnap.id,
+            // 1. Collect all partner IDs and chat IDs
+            const partnerIds = new Set<string>();
+            const chatIds = new Set<string>();
+
+            rawExchanges.forEach((data) => {
+                const partnerId = data.requesterId === userId ? data.ownerId : data.requesterId;
+                if (partnerId) partnerIds.add(partnerId);
+                if (data.chatId) chatIds.add(data.chatId);
+            });
+
+            // 2. Fetch all partners and chats in parallel
+            // Use UserService.getUsersProfiles for partners (efficient batching/caching)
+            const partnersPromise = UserService.getUsersProfiles(Array.from(partnerIds));
+
+            // Fetch chats in parallel
+            const chatPromise = Promise.all(Array.from(chatIds).map(async chatId => {
+                const chatDoc = await getDoc(doc(db, "chats", chatId));
+                return { id: chatId, exists: chatDoc.exists(), data: chatDoc.data() };
+            }));
+
+            const [partners, chats] = await Promise.all([partnersPromise, chatPromise]);
+
+            // 3. Create lookup maps
+            const partnersMap = new Map(partners.map(p => [p.uid, p]));
+            const chatsMap = new Map(chats.map(c => [c.id, c]));
+
+            // 4. Assemble exchanges
+            for (const data of rawExchanges) {
+                 const exchange: Exchange = {
                     ...data,
                 } as Exchange;
 
-                // Populate partner info
                 const partnerId = data.requesterId === userId ? data.ownerId : data.requesterId;
-                const partnerDoc = await getDoc(doc(db, "users", partnerId));
+                const partnerData = partnersMap.get(partnerId);
 
-                if (partnerDoc.exists()) {
-                    const partnerData = partnerDoc.data() as UserData;
+                if (partnerData) {
                     exchange.partner = {
                         id: partnerId,
                         name: partnerData.name || "Unknown User",
@@ -63,12 +88,11 @@ export const ExchangeService = {
                     };
                 }
 
-                // Populate last message
                 if (data.chatId) {
-                    const chatDoc = await getDoc(doc(db, "chats", data.chatId));
-                    if (chatDoc.exists()) {
-                        const chatData = chatDoc.data();
-                        if (chatData.lastMessage) {
+                    const chatInfo = chatsMap.get(data.chatId);
+                    if (chatInfo && chatInfo.exists && chatInfo.data) {
+                        const chatData = chatInfo.data;
+                         if (chatData.lastMessage) {
                             exchange.lastMessage = chatData.lastMessage;
                         }
                     }
