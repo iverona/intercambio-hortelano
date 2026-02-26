@@ -8,6 +8,7 @@
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
+    "seed": "npx ts-node src/seed.ts",
     "logs": "firebase functions:log"
   },
   "engines": {
@@ -20,10 +21,12 @@
     "nodemailer": "^6.10.1"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.3.0",
+    "@types/nodemailer": "^6.4.14",
     "eslint": "^8.15.0",
     "eslint-config-google": "^0.14.0",
     "firebase-functions-test": "^3.1.0",
-    "@types/nodemailer": "^6.4.14",
+    "geofire-common": "^6.0.0",
     "typescript": "^5.9.2"
   },
   "private": true
