@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -187,20 +187,49 @@ export default function ExchangesPage() {
     router.push(`/exchanges/details/${exchange.id}`);
   };
 
-  // Filter exchanges by status
-  const pendingExchanges = exchanges.filter(e => e.status === "pending");
-  const activeExchanges = exchanges.filter(e => e.status === "accepted");
-  const completedExchanges = exchanges.filter(e =>
-    e.status === "completed" || e.status === "rejected"
-  );
+  // Filter exchanges and calculate stats in a single pass using useMemo
+  const {
+    pendingExchanges,
+    activeExchanges,
+    completedExchanges,
+    pendingCount,
+    completedCount: _completedCount,
+    successRate,
+    totalExchanges
+  } = useMemo(() => {
+    const pending: Exchange[] = [];
+    const active: Exchange[] = [];
+    const completedHistory: Exchange[] = [];
+    let completedOnlyCount = 0;
 
-  // Calculate stats
-  const pendingCount = pendingExchanges.length;
-  const totalExchanges = exchanges.length;
-  const completedCount = exchanges.filter(e => e.status === "completed").length;
-  const successRate = totalExchanges > 0
-    ? Math.round((completedCount / totalExchanges) * 100)
-    : 0;
+    exchanges.forEach(e => {
+      if (e.status === "pending") {
+        pending.push(e);
+      } else if (e.status === "accepted") {
+        active.push(e);
+      } else if (e.status === "completed" || e.status === "rejected") {
+        completedHistory.push(e);
+        if (e.status === "completed") {
+          completedOnlyCount++;
+        }
+      }
+    });
+
+    const total = exchanges.length;
+    const rate = total > 0
+      ? Math.round((completedOnlyCount / total) * 100)
+      : 0;
+
+    return {
+      pendingExchanges: pending,
+      activeExchanges: active,
+      completedExchanges: completedHistory,
+      pendingCount: pending.length,
+      completedCount: completedOnlyCount,
+      successRate: rate,
+      totalExchanges: total
+    };
+  }, [exchanges]);
 
   if (authLoading || exchangesLoading) {
     return (
