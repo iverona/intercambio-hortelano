@@ -10,5 +10,6 @@ firebase firestore:delete users --recursive -f
 firebase firestore:delete chats --recursive -f
 firebase firestore:delete notifications --recursive -f
 firebase firestore:delete exchanges --recursive -f
+firebase firestore:delete archived_users --recursive -f
 
 echo "All specified Firestore collections have been deleted."
