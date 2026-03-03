@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useI18n } from "@/locales/provider";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -13,14 +15,15 @@ import {
     Map as MapIcon,
     List
 } from "lucide-react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import MapComponent from "@/components/shared/MapComponent";
 import { useUser } from "@/hooks/useUser";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 import { ViewToggle } from "@/components/shared/ViewToggle";
 import { BrowseTabs } from "@/components/shared/BrowseTabs";
+import { Pagination } from "@/components/shared/Pagination";
+
+const PAGE_SIZE = 12;
 
 // Skeleton loader component with organic styling
 const ProducerSkeleton = ({ index }: { index: number }) => (
@@ -39,6 +42,14 @@ export default function ProducersPage() {
     const { userData } = useUser();
     const router = useRouter();
     const [isMapView, setIsMapView] = useState(false);
+    const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+    // Reset pagination when producers data changes
+    useEffect(() => {
+        setVisibleCount(PAGE_SIZE);
+    }, [producers.length]);
+
+    const visibleProducers = producers.slice(0, visibleCount);
 
     const mapMarkers = producers
         .filter((p) => p.location)
@@ -89,11 +100,19 @@ export default function ProducersPage() {
                             />
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12 px-4">
-                            {producers.map((producer, index) => (
-                                <OrganicProducerCard key={producer.uid} producer={producer} index={index} />
-                            ))}
-                        </div>
+                        <>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12 px-4">
+                                {visibleProducers.map((producer, index) => (
+                                    <OrganicProducerCard key={producer.uid} producer={producer} index={index} />
+                                ))}
+                            </div>
+                            <Pagination
+                                visibleCount={visibleCount}
+                                totalCount={producers.length}
+                                pageSize={PAGE_SIZE}
+                                onLoadMore={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
+                            />
+                        </>
                     )
                 ) : (
                     <EmptyState

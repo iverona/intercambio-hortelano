@@ -685,4 +685,8 @@ export default {
   "contact.form.success": "Message sent successfully! We'll get back to you as soon as possible.",
   "contact.form.error": "There was an error sending your message. Please try again.",
   "contact.button": "Questions or Suggestions",
+
+  "pagination.showing": "Showing {visible} of {total}",
+  "pagination.load_more": "Load more",
+  "pagination.all_loaded": "You've seen all results",
 } as const;

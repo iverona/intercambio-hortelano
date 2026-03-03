@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import MapComponent from "@/components/shared/MapComponent";
 import { useI18n } from "@/locales/provider";
@@ -29,6 +29,9 @@ import { OrganicCard } from "@/components/shared/OrganicCard";
 import { BrowseTabs } from "@/components/shared/BrowseTabs";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { SearchAndFilter } from "@/components/shared/SearchAndFilter";
+import { Pagination } from "@/components/shared/Pagination";
+
+const PAGE_SIZE = 12;
 
 // Skeleton loader component
 const ProductSkeleton = () => (
@@ -49,9 +52,25 @@ export default function ProductsPage() {
   const router = useRouter();
   const userLocation = userData?.location ?? null;
   const [isMapView, setIsMapView] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   // Use custom hook for product data logic
   const { products, loading } = useProducts(userLocation, filters, user?.uid);
+
+  // Reset pagination when filters or product count changes
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [
+    filters.searchTerm,
+    filters.categories.join(","),
+    filters.distance,
+    filters.sortBy,
+    filters.transactionTypes.join(","),
+    filters.showOwnProducts,
+    products.length,
+  ]);
+
+  const visibleProducts = products.slice(0, visibleCount);
 
   const mapMarkers = products
     .filter((p) => p.location)
@@ -130,15 +149,23 @@ export default function ProductsPage() {
             />
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12 px-4">
-            {products.map((product, index) => (
-              <OrganicProductCard
-                key={product.id}
-                product={product}
-                index={index}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-8 gap-y-12 px-4">
+              {visibleProducts.map((product, index) => (
+                <OrganicProductCard
+                  key={product.id}
+                  product={product}
+                  index={index}
+                />
+              ))}
+            </div>
+            <Pagination
+              visibleCount={visibleCount}
+              totalCount={products.length}
+              pageSize={PAGE_SIZE}
+              onLoadMore={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
+            />
+          </>
         )}
       </div>
       <ViewToggle isMapView={isMapView} onToggle={setIsMapView} />

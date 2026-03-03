@@ -686,4 +686,8 @@ export default {
   "contact.form.success": "¡Mensaje enviado con éxito! Te responderemos lo antes posible.",
   "contact.form.error": "Hubo un error al enviar tu mensaje. Por favor, inténtalo de nuevo.",
   "contact.button": "Dudas o Sugerencias",
+
+  "pagination.showing": "Mostrando {visible} de {total}",
+  "pagination.load_more": "Cargar más",
+  "pagination.all_loaded": "Has visto todos los resultados",
 } as const;

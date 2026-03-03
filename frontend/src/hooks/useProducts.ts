@@ -30,7 +30,7 @@ export const useProducts = (
 
         const unsubscribe = ProductService.subscribeToProducts((productsData) => {
             setRawProducts(productsData);
-        }, { categories: categoriesFilter, limitCount: 100 });
+        }, { categories: categoriesFilter, limitCount: 500 });
 
         return () => unsubscribe();
     }, [categoriesKey]);
