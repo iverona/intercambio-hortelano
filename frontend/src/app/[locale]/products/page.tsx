@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import MapComponent from "@/components/shared/MapComponent";
 import { useI18n } from "@/locales/provider";
@@ -30,6 +30,7 @@ import { BrowseTabs } from "@/components/shared/BrowseTabs";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { SearchAndFilter } from "@/components/shared/SearchAndFilter";
 import { Pagination } from "@/components/shared/Pagination";
+import { DISTANCE_PRESETS } from "@/components/shared/Filter";
 
 const PAGE_SIZE = 12;
 
@@ -48,17 +49,27 @@ export default function ProductsPage() {
   const t = useI18n();
   const { user } = useAuth();
   const { userData } = useUser();
-  const { filters } = useFilters();
+  const { filters, setFilters } = useFilters();
   const router = useRouter();
+
+  const currentDistanceIndex = DISTANCE_PRESETS.indexOf(filters.distance);
+  const nextDistance = currentDistanceIndex !== -1 && currentDistanceIndex < DISTANCE_PRESETS.length - 1
+    ? DISTANCE_PRESETS[currentDistanceIndex + 1]
+    : null;
   const userLocation = userData?.location ?? null;
   const [isMapView, setIsMapView] = useState(false);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+  const isExtendingRef = useRef(false);
 
   // Use custom hook for product data logic
   const { products, loading } = useProducts(userLocation, filters, user?.uid);
 
   // Reset pagination when filters or product count changes
   useEffect(() => {
+    if (isExtendingRef.current) {
+      isExtendingRef.current = false;
+      return;
+    }
     setVisibleCount(PAGE_SIZE);
   }, [
     filters.searchTerm,
@@ -67,7 +78,6 @@ export default function ProductsPage() {
     filters.sortBy,
     filters.transactionTypes.join(","),
     filters.showOwnProducts,
-    products.length,
   ]);
 
   const visibleProducts = products.slice(0, visibleCount);
@@ -164,6 +174,21 @@ export default function ProductsPage() {
               totalCount={products.length}
               pageSize={PAGE_SIZE}
               onLoadMore={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
+              endAction={
+                nextDistance ? (
+                  <Button
+                    variant="outline"
+                    className="mt-2 border-green-200 text-green-700 hover:bg-green-50 shadow-sm transition-all duration-300 rounded-xl font-medium"
+                    onClick={() => {
+                      isExtendingRef.current = true;
+                      setFilters({ ...filters, distance: nextDistance });
+                    }}
+                  >
+                    <MapPin className="mr-2 h-4 w-4" />
+                    {(t as any)('filter.extend_search')} {nextDistance === 100 ? `(${(t as any)('filter.any_distance').toLowerCase()})` : `(hasta ${nextDistance} km)`}
+                  </Button>
+                ) : undefined
+              }
             />
           </>
         )}

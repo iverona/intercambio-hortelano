@@ -9,6 +9,7 @@ interface PaginationProps {
     totalCount: number;
     onLoadMore: () => void;
     pageSize?: number;
+    endAction?: React.ReactNode;
 }
 
 export const Pagination = ({
@@ -16,6 +17,7 @@ export const Pagination = ({
     totalCount,
     onLoadMore,
     pageSize = 12,
+    endAction,
 }: PaginationProps) => {
     const t = useI18n();
     const hasMore = visibleCount < totalCount;
@@ -51,9 +53,16 @@ export const Pagination = ({
                     <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
             ) : (
-                <div className="flex items-center gap-2 text-sm text-green-600/70">
-                    <Check className="h-4 w-4" />
-                    <span>{t("pagination.all_loaded")}</span>
+                <div className="flex flex-col items-center gap-2 mt-2">
+                    <div className="flex items-center gap-2 text-sm text-green-600/70">
+                        <Check className="h-4 w-4" />
+                        <span>{t("pagination.all_loaded")}</span>
+                    </div>
+                    {endAction && (
+                        <div className="mt-2">
+                            {endAction}
+                        </div>
+                    )}
                 </div>
             )}
         </div>

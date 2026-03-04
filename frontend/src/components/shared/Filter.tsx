@@ -19,6 +19,8 @@ import { useI18n } from "@/locales/provider";
 import { useFilters } from "@/context/FilterContext";
 import { categories } from "@/lib/categories";
 
+export const DISTANCE_PRESETS = [5, 10, 25, 100];
+
 const Filter = () => {
   const t = useI18n();
   const { filters, setFilters } = useFilters();
@@ -320,7 +322,7 @@ const Filter = () => {
             </div>
 
             <div className="mx-auto max-w-sm flex gap-1 p-1 bg-white border-2 border-gray-100 dark:bg-gray-800 rounded-full shadow-inner">
-              {[5, 10, 25, 100].map((preset) => (
+              {DISTANCE_PRESETS.map((preset) => (
                 <Button
                   key={preset}
                   variant="ghost"

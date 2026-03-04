@@ -356,6 +356,7 @@ export default {
   "header.filter": "Filter",
 
   "filter.title": "Filter Products",
+  "filter.extend_search": "Extend search range",
   "filter.subtitle": "Refine your search by category and distance",
   "filter.categories": "Categories",
   "filter.clear_all": "Clear all",
