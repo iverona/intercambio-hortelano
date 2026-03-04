@@ -48,7 +48,17 @@ export const useProducers = () => {
                     return { ...producer, distance } as Producer;
                 });
 
-                setProducers(processedProducers);
+                // Sort by distance if available, producers with location first
+                const sortedProducers = processedProducers.sort((a, b) => {
+                    if (a.distance !== undefined && b.distance !== undefined) {
+                        return a.distance - b.distance;
+                    }
+                    if (a.distance !== undefined) return -1;
+                    if (b.distance !== undefined) return 1;
+                    return 0;
+                });
+
+                setProducers(sortedProducers);
             } catch (error) {
                 console.error("Error fetching producers:", error);
             } finally {

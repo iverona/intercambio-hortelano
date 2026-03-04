@@ -47,7 +47,7 @@ export default function ProducersPage() {
     // Reset pagination when producers data changes
     useEffect(() => {
         setVisibleCount(PAGE_SIZE);
-    }, [producers.length]);
+    }, [producers]);
 
     const visibleProducers = producers.slice(0, visibleCount);
 
