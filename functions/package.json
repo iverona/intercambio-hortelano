@@ -8,7 +8,7 @@
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "seed": "npx ts-node src/seed.ts",
+    "seed": "npx ts-node ../scripts/seed.ts",
     "logs": "firebase functions:log"
   },
   "engines": {

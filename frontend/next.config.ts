@@ -12,18 +12,6 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "firebasestorage.googleapis.com",
       },
-      {
-        protocol: "https",
-        hostname: "placehold.co",
-      },
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-      {
-        protocol: "https",
-        hostname: "api.dicebear.com",
-      },
     ],
   },
   async headers() {
@@ -70,7 +58,7 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://apis.google.com https://maps.googleapis.com https://www.google.com https://www.gstatic.com",
               "style-src 'self' 'unsafe-inline' https://accounts.google.com https://fonts.googleapis.com https://maps.googleapis.com",
-              "img-src 'self' data: blob: https://firebasestorage.googleapis.com https://placehold.co https://images.unsplash.com https://api.dicebear.com https://*.googleusercontent.com https://*.gstatic.com https://*.googleapis.com",
+              "img-src 'self' data: blob: https://firebasestorage.googleapis.com https://*.googleusercontent.com https://*.gstatic.com https://*.googleapis.com",
               "font-src 'self' data: https://fonts.gstatic.com",
               "connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com https://*.cloudfunctions.net https://www.google.com",
               "frame-src 'self' https://accounts.google.com https://*.firebaseapp.com https://www.google.com https://recaptcha.google.com",
