@@ -128,7 +128,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
       {/* Content */}
       <CardContent className="p-4">
         <Link href={`/product/${product.id}`}>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 line-clamp-2 group-hover:text-primary transition-colors leading-tight">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 break-words group-hover:text-primary transition-colors leading-tight">
             {product.name}
           </h3>
         </Link>
@@ -151,7 +151,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
               </Link>
               <div className="min-w-0 flex-1">
                 <Link href={`/producers/${product.userId}`} className="block group/name">
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover/name:text-green-600 dark:group-hover/name:text-green-400 line-clamp-1 transition-colors" title={producer.name}>
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover/name:text-green-600 dark:group-hover/name:text-green-400 break-words transition-colors" title={producer.name}>
                     {producer.name}
                   </p>
                 </Link>
