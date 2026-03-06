@@ -1,4 +1,4 @@
-import { doc, updateDoc, getDoc, Timestamp, serverTimestamp } from "firebase/firestore";
+import { doc, updateDoc, Timestamp } from "firebase/firestore";
 import { db } from "./firebase";
 import { createNotification } from "./notifications";
 import { Review } from "@/components/shared/ReviewSection";

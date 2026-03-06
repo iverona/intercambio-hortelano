@@ -1,9 +1,7 @@
 "use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -12,13 +10,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Image from "next/image";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import OfferModal from "@/components/shared/OfferModal";
 import { ExchangeService } from "@/services/exchange.service";
@@ -28,8 +21,6 @@ import {
   Calendar,
   Package,
   Sparkles,
-  Star,
-  User as UserIcon,
   Leaf,
   ChevronRight,
   Gift,
@@ -41,8 +32,8 @@ import { ProductService } from "@/services/product.service";
 import { Product } from "@/types/product";
 import ProductCard from "@/components/shared/ProductCard";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
-import { categories, getCategoryColor } from "@/lib/categories";
-import { cn, getTimeAgo } from "@/lib/utils";
+import { getCategoryColor } from "@/lib/categories";
+import { getTimeAgo } from "@/lib/utils";
 
 // Category colors mapping - using shared source of truth
 
@@ -51,10 +42,9 @@ export default function ProductDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const { user: currentUser } = useAuth();
-  const router = useRouter();
 
   const { product, loading: productLoading } = useProduct(id);
-  const { user: seller, loading: sellerLoading } = useUserProfile(product?.userId);
+  const { user: seller } = useUserProfile(product?.userId);
   const { createOffer } = useProductMutations();
 
   // Fetch similar products using one-time query (more memory efficient)

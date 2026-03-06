@@ -4,7 +4,7 @@ import { ProductService } from "@/services/product.service";
 import { ExchangeService } from "@/services/exchange.service";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+
 
 export function useProduct(productId: string | null) {
     const [product, setProduct] = useState<Product | null>(null);
@@ -31,7 +31,7 @@ export function useProduct(productId: string | null) {
 
 export function useProductMutations() {
     const [loading, setLoading] = useState(false);
-    const { user } = useAuth();
+
     const router = useRouter();
 
     const createProduct = async (data: Omit<Product, "id" | "createdAt" | "updatedAt">, images: File[]) => {

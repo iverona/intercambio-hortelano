@@ -10,7 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useI18n } from "@/locales/provider";
-import { LogIn, UserPlus, X } from "lucide-react";
+import { LogIn, UserPlus } from "lucide-react";
 import Image from "next/image";
 
 interface LoginPromptModalProps {

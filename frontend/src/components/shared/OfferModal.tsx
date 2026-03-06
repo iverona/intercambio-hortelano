@@ -9,8 +9,6 @@ import {
   DialogDescription
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -72,39 +70,39 @@ export default function OfferModal({
   const [message, setMessage] = useState<string>("");
 
   useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // Fetch User Products
+        if (user) {
+          const q = query(
+            collection(db, "products"),
+            where("userId", "==", user.uid)
+          );
+          const querySnapshot = await getDocs(q);
+          const products = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          })) as Product[];
+          setUserProducts(products);
+        }
+
+        // Fetch Seller Profile
+        if (product.userId) {
+          const sellerData = await UserService.getUserProfile(product.userId);
+          setSeller(sellerData);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (isOpen && user) {
       fetchData();
     }
   }, [isOpen, user, product.userId]);
-
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      // Fetch User Products
-      if (user) {
-        const q = query(
-          collection(db, "products"),
-          where("userId", "==", user.uid)
-        );
-        const querySnapshot = await getDocs(q);
-        const products = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        })) as Product[];
-        setUserProducts(products);
-      }
-
-      // Fetch Seller Profile
-      if (product.userId) {
-        const sellerData = await UserService.getUserProfile(product.userId);
-        setSeller(sellerData);
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleExchange = () => {
     const selectedProduct = userProducts.find(p => p.id === selectedProductId);
@@ -140,13 +138,13 @@ export default function OfferModal({
         className="sm:max-w-md p-0 overflow-hidden bg-[#FFFBE6] dark:bg-[#2C2A25] gap-0 border-none shadow-2xl rounded-3xl"
       >
         <DialogHeader className="sr-only">
-          <DialogTitle>{(t as any)('product.contact.title')}</DialogTitle>
-          <DialogDescription>{(t as any)('product.contact.description')}</DialogDescription>
+          <DialogTitle>{t('product.contact.title')}</DialogTitle>
+          <DialogDescription>{t('product.contact.description')}</DialogDescription>
         </DialogHeader>
 
         <div className="px-8 py-6 flex items-center justify-between bg-[#EFEAC6] dark:bg-[#3E3B34] border-b border-[#879385]/10">
           <h2 className="text-xl font-bold text-[#2C2A25] dark:text-[#FFFBE6] tracking-tight">
-            {(t as any)('product.contact.header')}
+            {t('product.contact.header')}
           </h2>
           <Button
             variant="ghost"
@@ -186,7 +184,7 @@ export default function OfferModal({
             {/* Message Input */}
             <div className="space-y-3">
               <label className="text-sm font-bold text-[#3E3B34] dark:text-gray-300 ml-1">
-                {(t as any)('product.contact.message_label')}
+                {t('product.contact.message_label')}
               </label>
               <Textarea
                 placeholder={`Hola @${seller?.name || 'productor'}, me interesa tu ${product.name}...`}
@@ -200,8 +198,8 @@ export default function OfferModal({
               {/* Option 1: Exchange */}
               {product.isForExchange && (
                 <ContactOption
-                  title={(t as any)('product.contact.option_exchange')}
-                  description={(t as any)('product.contact.exchange_desc')}
+                  title={t('product.contact.option_exchange')}
+                  description={t('product.contact.exchange_desc')}
                   icon={<Leaf className="w-5 h-5 text-[#879385]" />}
                   colorClass="border-[#879385] shadow-[4px_4px_0px_0px_rgba(135,147,133,0.1)]"
                   bgColorClass="bg-[#879385]/10"
@@ -210,7 +208,7 @@ export default function OfferModal({
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-[#879385] uppercase tracking-wider ml-1">
-                        {(t as any)('product.contact.your_product')}
+                        {t('product.contact.your_product')}
                       </label>
                       <Select
                         value={selectedProductId}
@@ -244,7 +242,7 @@ export default function OfferModal({
                       disabled={!selectedProductId}
                     >
                       <ArrowRightLeft className="w-5 h-5 mr-2" />
-                      {(t as any)('product.contact.button_exchange')}
+                      {t('product.contact.button_exchange')}
                     </Button>
                   </div>
                 </ContactOption>
@@ -252,8 +250,8 @@ export default function OfferModal({
 
               {/* Option 2: Chat */}
               <ContactOption
-                title={(t as any)('product.contact.option_chat')}
-                description={(t as any)('product.contact.chat_desc')}
+                title={t('product.contact.option_chat')}
+                description={t('product.contact.chat_desc')}
                 icon={<MessageSquare className="w-5 h-5 text-[#A88C8F]" />}
                 colorClass="border-[#A88C8F] shadow-[4px_4px_0px_0px_rgba(168,140,143,0.1)]"
                 bgColorClass="bg-[#A88C8F]/10"
@@ -264,7 +262,7 @@ export default function OfferModal({
                   onClick={handleChat}
                 >
                   <Send className="w-5 h-5 mr-2" />
-                  {(t as any)('product.contact.button_chat')}
+                  {t('product.contact.button_chat')}
                 </Button>
               </ContactOption>
             </div>
@@ -276,8 +274,8 @@ export default function OfferModal({
               <Info className="w-5 h-5 text-[#879385]" />
             </div>
             <div className="text-xs leading-relaxed text-[#3E3B34] dark:text-[#A6C6B9]">
-              <span className="font-bold block mb-1">{(t as any)('product.contact.footer_note_title')}</span>
-              {(t as any)('product.contact.footer_note_text')}
+              <span className="font-bold block mb-1">{t('product.contact.footer_note_title')}</span>
+              {t('product.contact.footer_note_text')}
             </div>
           </div>
         </div>

@@ -15,7 +15,6 @@ import { Producer } from "@/types/user";
 import { Product } from "@/types/product";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 import { SectionHeader } from "@/components/shared/SectionHeader";
-import { OrganicCard } from "@/components/shared/OrganicCard";
 import { Button } from "@/components/ui/button";
 
 // Skeleton loader component

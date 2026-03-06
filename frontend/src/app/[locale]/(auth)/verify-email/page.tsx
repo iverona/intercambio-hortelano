@@ -47,13 +47,14 @@ export default function VerifyEmailPage() {
                 }, 1000);
 
                 return () => clearInterval(timer);
-            } catch (error: any) {
+            } catch (error) {
                 setVerificationState("error");
 
                 // Handle different error cases
-                if (error.code === "auth/invalid-action-code") {
+                const errorCode = (error as { code: string }).code;
+                if (errorCode === "auth/invalid-action-code") {
                     setErrorMessage(t("verify_email.error.invalid_code"));
-                } else if (error.code === "auth/expired-action-code") {
+                } else if (errorCode === "auth/expired-action-code") {
                     setErrorMessage(t("verify_email.error.expired_link"));
                 } else {
                     setErrorMessage(t("verify_email.error.generic"));

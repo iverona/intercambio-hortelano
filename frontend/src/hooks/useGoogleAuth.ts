@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { handleUserRedirect } from "@/lib/authUtils";
 import { useI18n } from "@/locales/provider";
+import { UserData } from "@/types/user";
 
 export const useGoogleAuth = () => {
   const router = useRouter();
@@ -12,14 +13,14 @@ export const useGoogleAuth = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleGoogleAuth = async (consentOrEvent?: any) => {
+  const handleGoogleAuth = async (consentOrEvent?: unknown) => {
     setError(null);
     setLoading(true);
 
     // If passed from an onClick, it might be an event object.
     // We only want to pass actual consent data.
     const consent = (consentOrEvent && typeof consentOrEvent === 'object' && 'privacyAccepted' in consentOrEvent)
-      ? consentOrEvent
+      ? consentOrEvent as UserData['consent']
       : undefined;
 
     try {
@@ -29,9 +30,9 @@ export const useGoogleAuth = () => {
         // Handle redirect
         await handleUserRedirect(user, router);
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Google auth error:", error);
-      const errorCode = error?.code;
+      const errorCode = (error as { code: string })?.code;
 
       switch (errorCode) {
         case 'auth/popup-closed-by-user':

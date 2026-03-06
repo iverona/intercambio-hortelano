@@ -8,7 +8,6 @@ import {
   ArrowRightLeft,
   Bell,
   LucideIcon,
-  DollarSign,
   Star,
 } from "lucide-react";
 

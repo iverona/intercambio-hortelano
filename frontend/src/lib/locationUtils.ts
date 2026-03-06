@@ -1,4 +1,3 @@
-import { getDistance } from "./geolocation";
 
 /**
  * Adds a random offset to a location (latitude/longitude) to protect user privacy.

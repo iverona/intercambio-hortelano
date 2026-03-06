@@ -5,11 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { auth } from "@/lib/firebase";
-import { applyActionCode, verifyPasswordResetCode, confirmPasswordReset, ActionCodeInfo, signOut } from "firebase/auth";
+import { applyActionCode, verifyPasswordResetCode, confirmPasswordReset, signOut } from "firebase/auth";
 import { CheckCircle, XCircle, Loader2, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useI18n } from "@/locales/provider";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 
@@ -28,6 +28,36 @@ export default function AuthActionPage() {
   const [accountEmail, setAccountEmail] = useState("");
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const startRedirectCountdown = useCallback((path: string) => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          router.push(path);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, [router]);
+
+  const getErrorMessage = useCallback((errorCode: string) => {
+    switch (errorCode) {
+      case "auth/expired-action-code":
+        return t("auth_action.error.expired_link");
+      case "auth/invalid-action-code":
+        return t("auth_action.error.invalid_code");
+      case "auth/user-disabled":
+        return t("auth_action.error.user_disabled");
+      case "auth/user-not-found":
+        return t("auth_action.error.user_not_found");
+      case "auth/weak-password":
+        return t("auth_action.error.weak_password");
+      default:
+        return t("auth_action.error.generic");
+    }
+  }, [t]);
 
   useEffect(() => {
     const handleAction = async () => {
@@ -72,45 +102,15 @@ export default function AuthActionPage() {
           setActionState("error");
           setErrorMessage(t("auth_action.error.unknown_mode"));
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error("Auth action error:", error);
         setActionState("error");
-        setErrorMessage(getErrorMessage(error.code));
+        setErrorMessage(getErrorMessage((error as { code: string }).code));
       }
     };
 
     handleAction();
-  }, [searchParams, router, t]);
-
-  const startRedirectCountdown = (path: string) => {
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          router.push(path);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  };
-
-  const getErrorMessage = (errorCode: string) => {
-    switch (errorCode) {
-      case "auth/expired-action-code":
-        return t("auth_action.error.expired_link");
-      case "auth/invalid-action-code":
-        return t("auth_action.error.invalid_code");
-      case "auth/user-disabled":
-        return t("auth_action.error.user_disabled");
-      case "auth/user-not-found":
-        return t("auth_action.error.user_not_found");
-      case "auth/weak-password":
-        return t("auth_action.error.weak_password");
-      default:
-        return t("auth_action.error.generic");
-    }
-  };
+  }, [searchParams, router, t, getErrorMessage, startRedirectCountdown]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,8 +135,8 @@ export default function AuthActionPage() {
       await signOut(auth);
       setActionState("success");
       startRedirectCountdown("/login");
-    } catch (error: any) {
-      setErrorMessage(getErrorMessage(error.code));
+    } catch (error) {
+      setErrorMessage(getErrorMessage((error as { code: string }).code));
       setIsSubmitting(false);
     }
   };

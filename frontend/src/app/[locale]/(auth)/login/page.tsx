@@ -45,8 +45,8 @@ export default function LoginPage() {
             await refreshUser();
             // Then handle the redirect
             await handleUserRedirect(user, router);
-        } catch (error: any) {
-            const errorCode = error?.code;
+        } catch (error) {
+            const errorCode = (error as { code: string })?.code;
 
             switch (errorCode) {
                 case 'auth/invalid-email':
@@ -97,7 +97,7 @@ export default function LoginPage() {
                 setShowResetForm(false);
                 setSuccessMessage(null);
             }, 3000);
-        } catch (error) {
+        } catch {
             setError(t('login.reset_email_error'));
         }
     };

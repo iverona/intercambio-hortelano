@@ -5,15 +5,12 @@ import { useParams, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { useNotifications } from "@/context/NotificationContext";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import {
   ArrowRightLeft,
-  DollarSign,
   MessageSquare,
   Package,
   CheckCircle,
@@ -28,6 +25,7 @@ import {
 } from "lucide-react";
 import { createNotification, NotificationMetadata } from "@/lib/notifications";
 import { useCurrentLocale, useI18n } from "@/locales/provider";
+import { Review } from "@/components/shared/ReviewSection";
 import { toast } from "sonner";
 import { ReviewSection } from "@/components/shared/ReviewSection";
 import { submitReview } from "@/lib/reviewHelpers";
@@ -201,20 +199,7 @@ export default function ExchangeDetailsPage() {
     }
   };
 
-  const getStatusBadgeStyle = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-[#EFEAC6] text-[#594a42] border border-[#D4CFAE]';
-      case 'accepted':
-        return 'bg-[#879385] text-white border border-[#6e796c]';
-      case 'rejected':
-        return 'bg-[#A88C8F] text-white border border-[#8e7679]';
-      case 'completed':
-        return 'bg-[#594a42] text-white border border-[#3e332e]';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+
 
   const formatDate = (timestamp?: Timestamp) => {
     if (!timestamp) return '';
@@ -261,7 +246,7 @@ export default function ExchangeDetailsPage() {
   const partner = isOwner ? exchange.requester : exchange.owner;
 
   // Extract reviews if they exist
-  const reviews = exchange.reviews as Record<string, any> | undefined;
+  const reviews = exchange.reviews as Record<string, Review> | undefined;
   const existingReviewByUser = user ? reviews?.[user.uid] : undefined;
   const existingReviewByPartner = partner ? reviews?.[partner.id] : undefined;
 
@@ -330,7 +315,7 @@ export default function ExchangeDetailsPage() {
             {exchange.status === 'rejected' && <XCircle className="w-5 h-5" />}
             {exchange.status === 'completed' && <Package className="w-5 h-5" />}
             <span className="text-lg font-bold uppercase tracking-wide">
-              {(t as any)(`exchanges.status.${exchange.status}`)}
+              {t(`exchanges.status.${exchange.status}` as Parameters<typeof t>[0])}
             </span>
           </div>
         </div>

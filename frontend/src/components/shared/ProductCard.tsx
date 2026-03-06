@@ -83,7 +83,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             <Badge className={`${getCategoryColor(product.category)} border-0 shadow-sm backdrop-blur-sm`}>
               {(() => {
                 const categoryInfo = categories.find(c => c.id === product.category);
-                return categoryInfo ? (t as any)(categoryInfo.translationKey) : product.category;
+                return categoryInfo ? t(categoryInfo.translationKey as Parameters<typeof t>[0]) : product.category;
               })()}
             </Badge>
           )}

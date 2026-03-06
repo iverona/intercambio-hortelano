@@ -128,7 +128,7 @@ export const UserService = {
                 createdAt: new Date(), // Dummy date
                 avatarUrl: "", // Or use a placeholder if available
                 deleted: true // Mark as deleted
-            } as any;
+            } as UserData;
 
             results.push(deletedUserStub);
             // Cache it so we don't keep trying to look it up

@@ -18,14 +18,11 @@ import {
 import {
   User,
   LogOut,
-  Search,
+  Leaf,
   Flower2,
-  ArrowRightLeft,
-  Leaf
+  ArrowRightLeft
 } from "lucide-react";
-import Filter from "./Filter";
-import { useFilters } from "@/context/FilterContext";
-import { Input } from "@/components/ui/input";
+
 import NotificationBell from "./NotificationBell";
 import { useCurrentLocale, useI18n } from "@/locales/provider";
 
@@ -34,7 +31,6 @@ const Header = () => {
   const locale = useCurrentLocale();
   const { user, loading } = useAuth();
   const router = useRouter();
-  const { filters, setFilters } = useFilters();
 
   const handleLogout = async () => {
     await signOut(auth);

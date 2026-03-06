@@ -3,13 +3,7 @@
 import { Button } from "@/components/ui/button";
 import {
   Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -20,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useI18n } from "@/locales/provider";
 import { categories } from "@/lib/categories";
 import {
@@ -31,7 +25,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import imageCompression from "browser-image-compression";
-import { Loader2, Upload, X, Package, MessageSquare, Tag, Camera, Leaf, ArrowRightLeft } from "lucide-react";
+import { Loader2, Upload, X, MessageSquare, Leaf, ArrowRightLeft } from "lucide-react";
 import Image from "next/image";
 
 export interface ProductData {
@@ -254,7 +248,7 @@ export default function ProductForm({
           <SelectContent>
             {categories.map((category) => (
               <SelectItem key={category.id} value={category.id}>
-                {(t as any)(category.translationKey)}
+                {t(category.translationKey as Parameters<typeof t>[0])}
               </SelectItem>
             ))}
           </SelectContent>

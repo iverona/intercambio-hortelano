@@ -100,7 +100,7 @@ export function SearchAndFilter() {
                             style={{ borderRadius: isSelected ? '15px 225px 15px 255px / 255px 15px 225px 15px' : '225px 15px 255px 15px / 15px 225px 15px 255px' }}
                         >
                             <span className="text-xl group-hover:scale-125 transition-transform duration-300">{category.icon}</span>
-                            <span>{(t as any)(category.translationKey)}</span>
+                            <span>{t(category.translationKey as Parameters<typeof t>[0])}</span>
                             {isSelected && (
                                 <div className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center shadow-md animate-scale-in">
                                     <Check className="w-3 h-3 text-green-600" />

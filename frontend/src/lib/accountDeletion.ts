@@ -41,16 +41,17 @@ export async function reauthenticateUser(
     }
 
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Re-authentication error:", error);
+    const errorCode = (error as { code: string }).code;
 
-    if (error.code === "auth/wrong-password") {
+    if (errorCode === "auth/wrong-password") {
       return { success: false, error: "Incorrect password. Please try again." };
-    } else if (error.code === "auth/too-many-requests") {
+    } else if (errorCode === "auth/too-many-requests") {
       return { success: false, error: "Too many attempts. Please try again later." };
-    } else if (error.code === "auth/popup-closed-by-user") {
+    } else if (errorCode === "auth/popup-closed-by-user") {
       return { success: false, error: "Sign-in popup was closed. Please try again." };
-    } else if (error.code === "auth/cancelled-popup-request") {
+    } else if (errorCode === "auth/cancelled-popup-request") {
       return { success: false, error: "Sign-in was cancelled." };
     }
 
@@ -69,11 +70,11 @@ export async function deleteUserAccount(): Promise<DeleteAccountResult> {
     const deleteAccount = httpsCallable(functions, "deleteUserAccount");
     const result = await deleteAccount();
     return result.data as DeleteAccountResult;
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error deleting account:", error);
     return {
       success: false,
-      error: error.message || "Failed to delete account. Please try again.",
+      error: (error as Error).message || "Failed to delete account. Please try again.",
     };
   }
 }

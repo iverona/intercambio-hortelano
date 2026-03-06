@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { AuthService } from "@/services/auth.service";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
-import { Chrome, UserPlus, LogIn, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { Chrome, UserPlus, LogIn, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
@@ -68,8 +68,8 @@ export default function SignupPage() {
 
       await AuthService.sendEmailVerification(user);
       setIsSubmitted(true);
-    } catch (error: any) {
-      const errorCode = error?.code;
+    } catch (error) {
+      const errorCode = (error as { code: string })?.code;
 
       // Check if email is already in use
       if (errorCode === "auth/email-already-in-use") {

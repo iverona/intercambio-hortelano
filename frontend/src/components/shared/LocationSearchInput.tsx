@@ -42,8 +42,10 @@ export default function LocationSearchInput({
       return;
     }
 
+    const currentInput = inputRef.current;
+
     // Initialize the autocomplete widget
-    const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {
+    const autocomplete = new google.maps.places.Autocomplete(currentInput, {
       types: ["geocode"],
       fields: ["formatted_address", "geometry"],
     });
@@ -85,14 +87,14 @@ export default function LocationSearchInput({
         e.preventDefault();
       }
     };
-    inputRef.current.addEventListener("keydown", handleKeyDown);
+    currentInput.addEventListener("keydown", handleKeyDown);
 
     return () => {
       if (listener) {
         google.maps.event.removeListener(listener);
       }
-      if (inputRef.current) {
-        inputRef.current.removeEventListener("keydown", handleKeyDown);
+      if (currentInput) {
+        currentInput.removeEventListener("keydown", handleKeyDown);
       }
       autocompleteRef.current = null;
     };

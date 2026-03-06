@@ -7,7 +7,8 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getTimeAgo(
   createdAt: { seconds: number; nanoseconds: number } | undefined,
-  t: (key: string, options?: any) => string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: (key: any, options?: any) => string
 ): { text: string | null; isNew: boolean } {
   if (!createdAt) return { text: null, isNew: false };
   const date = new Date(createdAt.seconds * 1000);

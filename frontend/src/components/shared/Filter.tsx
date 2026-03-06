@@ -96,7 +96,7 @@ const Filter = () => {
 
   const getCategoryName = (categoryId: string) => {
     const category = categories.find(c => c.id === categoryId);
-    return category ? (t as any)(category.translationKey) : categoryId;
+    return category ? t(category.translationKey as Parameters<typeof t>[0]) : categoryId;
   };
 
   return (
@@ -158,7 +158,7 @@ const Filter = () => {
                   ))}
                   {filters.transactionTypes.map(type => (
                     <Badge key={type} className="pl-3 pr-2 py-1.5 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-sm border border-green-100">
-                      <span>{(t as any)(`filter.transaction_options.${type}`)}</span>
+                      <span>{t(`filter.transaction_options.${type}` as Parameters<typeof t>[0])}</span>
                       <button
                         onClick={() => {
                           const newTypes = filters.transactionTypes.filter(t => t !== type);
@@ -187,7 +187,7 @@ const Filter = () => {
                   )}
                   {filters.sortBy !== 'distance' && (
                     <Badge key="sort-badge" className="pl-3 pr-2 py-1.5 rounded-full bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-sm border border-green-100">
-                      <span>{(t as any)(`filter.sort_options.${filters.sortBy}`)}</span>
+                      <span>{t(`filter.sort_options.${filters.sortBy}` as Parameters<typeof t>[0])}</span>
                       <button
                         onClick={() => {
                           setFilters({ ...filters, sortBy: 'distance' });
@@ -224,7 +224,7 @@ const Filter = () => {
                     }
                   `}>
                     <span className={`font-semibold text-sm ${localTransactionTypes.includes(type) ? 'text-green-700 dark:text-green-400' : 'text-gray-700 dark:text-gray-300'}`}>
-                      {(t as any)(`filter.transaction_options.${type}`)}
+                      {t(`filter.transaction_options.${type}` as Parameters<typeof t>[0])}
                     </span>
                     {localTransactionTypes.includes(type) && (
                       <div className="absolute top-1 right-1">
@@ -270,7 +270,7 @@ const Filter = () => {
                         {category.icon}
                       </span>
                       <span className="font-semibold text-xs text-gray-800 dark:text-gray-200">
-                        {(t as any)(category.translationKey)}
+                        {t(category.translationKey as Parameters<typeof t>[0])}
                       </span>
                     </div>
                   </div>

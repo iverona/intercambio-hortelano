@@ -30,9 +30,9 @@ interface ReviewSectionProps {
 }
 
 export function ReviewSection({
-  exchangeId,
-  currentUserId,
-  partnerId,
+  exchangeId: _exchangeId,
+  currentUserId: _currentUserId,
+  partnerId: _partnerId,
   partnerName,
   partnerAvatar,
   existingReviewByUser,

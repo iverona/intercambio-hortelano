@@ -8,12 +8,9 @@ import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { useProducers } from "@/hooks/useProducers";
 import OrganicProducerCard from "@/components/shared/OrganicProducerCard";
-import { OrganicCard } from "@/components/shared/OrganicCard";
 import {
     ArrowRight,
-    Users,
-    Map as MapIcon,
-    List
+    Users
 } from "lucide-react";
 import MapComponent from "@/components/shared/MapComponent";
 import { useUser } from "@/hooks/useUser";
@@ -100,7 +97,6 @@ export default function ProducersPage() {
                             <Pagination
                                 visibleCount={visibleCount}
                                 totalCount={producers.length}
-                                pageSize={PAGE_SIZE}
                                 onLoadMore={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
                             />
                         </>

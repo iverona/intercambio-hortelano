@@ -1,6 +1,6 @@
 "use client";
 
-import { useI18n, useCurrentLocale } from "@/locales/provider";
+import { useCurrentLocale } from "@/locales/provider";
 import Link from "next/link";
 import Image from "next/image";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
@@ -12,7 +12,6 @@ import { useAuth } from "@/context/AuthContext";
 import LoginPromptModal from "@/components/shared/LoginPromptModal";
 
 export default function Home() {
-  const t = useI18n();
   const locale = useCurrentLocale();
   const { user } = useAuth();
   const [showLoginPrompt, setShowLoginPrompt] = React.useState(false);

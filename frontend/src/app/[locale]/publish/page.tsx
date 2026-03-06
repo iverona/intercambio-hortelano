@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 import { useI18n } from "@/locales/provider";
 import { useProductMutations } from "@/hooks/useProduct";
-import { useUser as useUserHook } from "@/hooks/useUser";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
 
 // Loading skeleton component
@@ -111,7 +110,6 @@ export default function PublishPage() {
   const [showSuccess, setShowSuccess] = useState(false);
 
   const { createProduct, loading: isPublishing } = useProductMutations();
-  const { userData: currentUserProfile } = useUserHook();
 
   useEffect(() => {
     if (!loading && !user) {

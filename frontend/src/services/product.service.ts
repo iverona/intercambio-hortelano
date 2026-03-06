@@ -190,7 +190,7 @@ export const ProductService = {
             );
 
             // 2. Prepare update data
-            const updateData: any = {
+            const updateData: Partial<Product> & { updatedAt: ReturnType<typeof serverTimestamp> } = {
                 ...data,
                 updatedAt: serverTimestamp(),
             };

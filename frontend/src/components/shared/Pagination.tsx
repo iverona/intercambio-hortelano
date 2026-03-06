@@ -8,7 +8,7 @@ interface PaginationProps {
     visibleCount: number;
     totalCount: number;
     onLoadMore: () => void;
-    pageSize?: number;
+
     endAction?: React.ReactNode;
 }
 
@@ -16,7 +16,7 @@ export const Pagination = ({
     visibleCount,
     totalCount,
     onLoadMore,
-    pageSize = 12,
+
     endAction,
 }: PaginationProps) => {
     const t = useI18n();
@@ -38,7 +38,7 @@ export const Pagination = ({
             {/* Load More or All Loaded */}
             {hasMore ? (
                 <Button
-                    onClick={(e) => {
+                    onClick={(_e) => {
                         // Prevent browser from scrolling to follow the button
                         const scrollY = window.scrollY;
                         onLoadMore();

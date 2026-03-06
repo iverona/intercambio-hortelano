@@ -3,7 +3,7 @@
 import { GoogleMap, Marker, InfoWindow } from "@react-google-maps/api";
 import { useCallback, useMemo, useState, useEffect } from "react";
 import { useGoogleMaps } from "./GoogleMapsProvider";
-import { Navigation, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -38,8 +38,7 @@ const defaultCenter = {
     lng: -3.7038,
 };
 
-// SVG Path for the Leaf
-const LEAF_PATH = "M12 2C12 2 12 6 12 10C12 14 9 17 5 17C4 17 3 16 3 15C3 13 5 11 8 11C11 11 12 13 12 15M12 2C12 2 12 6 12 10C12 14 15 17 19 17C20 17 21 16 21 15C21 13 19 11 16 11C13 11 12 13 12 15";
+
 // Simplified SVG for Marker icon (simulating the Leaf)
 const LEAF_SVG = {
     path: "M12,2C12,2 12,6 12,10C12,14 9,17 5,17C4,17 3,16 3,15C3,13 5,11 8,11C11,11 12,13 12,15M12,2C12,2 12,6 12,10C12,14 15,17 19,17C20,17 21,16 21,15C21,13 19,11 16,11C13,11 12,13 12,15",
@@ -57,7 +56,7 @@ export default function MapComponent({
     center,
     userLocation,
     className,
-    onMarkerClick,
+    onMarkerClick: _onMarkerClick,
 }: MapComponentProps) {
     const { isLoaded, loadError } = useGoogleMaps();
     const [map, setMap] = useState<google.maps.Map | null>(null);

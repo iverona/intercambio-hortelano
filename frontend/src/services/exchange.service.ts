@@ -9,7 +9,6 @@ import {
     updateDoc,
     serverTimestamp,
     addDoc,
-    orderBy,
     or,
     Unsubscribe,
     getDocs
@@ -65,7 +64,7 @@ export const ExchangeService = {
 
             // 4. Assemble exchanges
             for (const data of rawExchanges) {
-                 const exchange: Exchange = {
+                const exchange: Exchange = {
                     ...data,
                 } as Exchange;
 
@@ -92,7 +91,7 @@ export const ExchangeService = {
                     const chatInfo = chatsMap.get(data.chatId);
                     if (chatInfo && chatInfo.exists && chatInfo.data) {
                         const chatData = chatInfo.data;
-                         if (chatData.lastMessage) {
+                        if (chatData.lastMessage) {
                             exchange.lastMessage = chatData.lastMessage;
                         }
                     }
@@ -115,7 +114,7 @@ export const ExchangeService = {
     /**
      * Get full details for a single exchange
      */
-    getExchangeDetails: (exchangeId: string, callback: (exchange: Exchange | null) => void, errorCallback?: (error: any) => void): Unsubscribe => {
+    getExchangeDetails: (exchangeId: string, callback: (exchange: Exchange | null) => void, errorCallback?: (error: unknown) => void): Unsubscribe => {
         const exchangeRef = doc(db, "exchanges", exchangeId);
 
         return onSnapshot(exchangeRef, async (exchangeDoc) => {
@@ -223,7 +222,11 @@ export const ExchangeService = {
      */
     updateStatus: async (exchangeId: string, status: ExchangeStatus): Promise<void> => {
         const exchangeRef = doc(db, "exchanges", exchangeId);
-        const updateData: any = {
+        const updateData: {
+            status: ExchangeStatus;
+            updatedAt: ReturnType<typeof serverTimestamp>;
+            completedAt?: ReturnType<typeof serverTimestamp>;
+        } = {
             status,
             updatedAt: serverTimestamp(),
         };
@@ -264,7 +267,12 @@ export const ExchangeService = {
             const exchangesRef = collection(db, "exchanges");
 
             // Sanitize offer data to avoid Firestore "undefined" errors
-            const sanitizedOffer: any = {
+            const sanitizedOffer: {
+                type: "exchange" | "chat";
+                offeredProductId?: string;
+                offeredProductName?: string;
+                message?: string;
+            } = {
                 type: data.offer.type,
             };
             if (data.offer.offeredProductId) sanitizedOffer.offeredProductId = data.offer.offeredProductId;

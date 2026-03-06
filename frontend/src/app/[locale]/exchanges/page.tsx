@@ -108,10 +108,10 @@ const ExchangeItem = ({ exchange, onClick }: { exchange: Exchange; onClick: () =
                 <AlertCircle className="w-3 h-3 mr-1" />
               )}
               <span className="hidden sm:inline">
-                {(t as any)(`exchanges.status.${exchange.status}`)}
+                {t(`exchanges.status.${exchange.status}` as Parameters<typeof t>[0])}
               </span>
               <span className="sm:hidden">
-                {(t as any)(`exchanges.status.${exchange.status}`).charAt(0)}
+                {t(`exchanges.status.${exchange.status}` as Parameters<typeof t>[0]).charAt(0)}
               </span>
             </Badge>
           </div>

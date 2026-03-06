@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Product } from "@/types/product";
 import { ProductService } from "@/services/product.service";
 import { UserService } from "@/services/user.service";
@@ -23,17 +23,18 @@ export const useProducts = (
     const [loading, setLoading] = useState(true);
 
     // 1. Subscription - Only re-subscribe if categories change (the only server-side filter used)
-    const categoriesKey = filters.categories.sort().join(',');
+    const categoriesJoined = filters.categories.join(',');
+
     useEffect(() => {
         setLoading(true);
-        const categoriesFilter = filters.categories.length > 0 ? filters.categories : undefined;
+        const categoriesFilter = categoriesJoined.length > 0 ? categoriesJoined.split(',') : undefined;
 
         const unsubscribe = ProductService.subscribeToProducts((productsData) => {
             setRawProducts(productsData);
         }, { categories: categoriesFilter, limitCount: 500 });
 
         return () => unsubscribe();
-    }, [categoriesKey]);
+    }, [categoriesJoined]);
 
     // 2. Fetch Producer Profiles - Reactive to raw products change
     useEffect(() => {
@@ -62,6 +63,8 @@ export const useProducts = (
     }, [rawProducts]);
 
     // 3. Client-side Processing - Distance, Joining, Filtering, and Sorting
+    const transactionTypesJoined = filters.transactionTypes.join(',');
+
     useEffect(() => {
         // Base filtering (own products)
         let data = rawProducts.filter((product) =>
@@ -91,10 +94,11 @@ export const useProducts = (
         });
 
         // Transaction Type filter
-        if (filters.transactionTypes.length > 0) {
+        if (transactionTypesJoined.length > 0) {
+            const types = transactionTypesJoined.split(',');
             data = data.filter((product) => {
-                const matchesExchange = filters.transactionTypes.includes('exchange') && product.isForExchange;
-                const matchesFree = filters.transactionTypes.includes('free') && product.isFree;
+                const matchesExchange = types.includes('exchange') && product.isForExchange;
+                const matchesFree = types.includes('free') && product.isFree;
                 return matchesExchange || matchesFree;
             });
         }
@@ -140,7 +144,7 @@ export const useProducts = (
         filters.distance,
         filters.sortBy,
         filters.showOwnProducts,
-        filters.transactionTypes.join(','),
+        transactionTypesJoined,
         excludeUserId
     ]);
 

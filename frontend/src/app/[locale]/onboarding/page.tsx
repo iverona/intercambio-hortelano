@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/context/AuthContext";
 import { db, storage } from "@/lib/firebase";
-import { doc, updateDoc, getDoc, deleteDoc } from "firebase/firestore";
+import { doc, updateDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { updateProfile } from "firebase/auth";
 import { useRouter } from "next/navigation";
@@ -43,14 +43,6 @@ export default function OnboardingPage() {
 
   // Old useEffect removed as it is merged with the consent check one
 
-
-  // Step 2: Location data (will be set when user selects location)
-  const [locationData, setLocationData] = useState<{
-    latitude: number;
-    longitude: number;
-    geohash: string;
-    address?: string;
-  } | null>(null);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -127,7 +119,15 @@ export default function OnboardingPage() {
       // Fuzz the location before saving to protect privacy
       const fuzzedCoords = fuzzLocation(location.latitude, location.longitude);
 
-      const updateData: any = {
+      const updateData: {
+        name: string;
+        bio: string;
+        location: { latitude: number; longitude: number };
+        geohash: string;
+        onboardingComplete: boolean;
+        avatarUrl?: string;
+        address?: string;
+      } = {
         name: name.trim(),
         bio: bio.trim(),
         location: {
@@ -150,7 +150,7 @@ export default function OnboardingPage() {
       await updateDoc(userRef, updateData);
 
       // Update Auth Profile with name and avatar
-      const authUpdateData: any = { displayName: name.trim() };
+      const authUpdateData: { displayName?: string; photoURL?: string } = { displayName: name.trim() };
       if (avatarUrl) {
         authUpdateData.photoURL = avatarUrl;
       }
@@ -208,8 +208,8 @@ export default function OnboardingPage() {
               if (snapshot.exists()) {
                 const userData = snapshot.data();
                 // Pre-fill name if it exists in Firestore (useful for email signups)
-                if (userData.name && !name) {
-                  setName(userData.name);
+                if (userData.name) {
+                  setName(prev => prev || userData.name);
                 }
                 // Check if consent is missing or incomplete
                 if (!userData.consent?.privacyAccepted || !userData.consent?.legalAccepted) {
@@ -276,7 +276,7 @@ export default function OnboardingPage() {
         await AuthService.logout();
         router.push("/login");
       }
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error during cancellation:", error);
       await AuthService.logout();
       router.push("/login");
@@ -470,7 +470,6 @@ export default function OnboardingPage() {
 
               <LocationPicker
                 onLocationConfirm={async (location) => {
-                  setLocationData(location);
                   await completeOnboarding(location);
                 }}
                 saving={saving || isUploadingAvatar}

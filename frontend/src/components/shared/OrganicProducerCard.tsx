@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { useI18n } from "@/locales/provider";
-import { Badge } from "@/components/ui/badge";
+
 import { Button } from "@/components/ui/button";
 import { OrganicCard } from "@/components/shared/OrganicCard";
 import { ProducerAvatar } from "@/components/shared/ProducerAvatar";

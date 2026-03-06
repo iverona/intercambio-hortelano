@@ -9,10 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { useI18n, useChangeLocale, useCurrentLocale } from "@/locales/provider";
+import { UserData } from "@/types/user";
 import { toast } from "sonner";
 import LocationPicker from "@/components/shared/LocationPicker";
 import { fuzzLocation, getApproximateAddress } from "@/lib/locationUtils";
@@ -28,7 +29,7 @@ import {
   X,
   Mail,
   MapPin,
-  Calendar,
+
   Eye,
   EyeOff,
   Trash2,
@@ -42,7 +43,7 @@ import {
 } from "lucide-react";
 import { TomatoRating } from "@/components/shared/TomatoRating";
 import { useUser } from "@/hooks/useUser";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Dialog,
   DialogContent,
@@ -172,7 +173,7 @@ export default function ProfilePage() {
     try {
       await uploadAvatar(file);
       toast.success(t('common.save_changes'));
-    } catch (error) {
+    } catch {
       toast.error(t('profile.upload_error'));
     } finally {
       if (fileInputRef.current) {
@@ -186,7 +187,7 @@ export default function ProfilePage() {
     try {
       await deleteAvatar();
       toast.success(t('profile.delete_photo_success'));
-    } catch (error) {
+    } catch {
       toast.error(t('profile.delete_photo_error'));
     }
   };
@@ -209,7 +210,7 @@ export default function ProfilePage() {
       });
       setIsEditing(false);
       toast.success(t('common.save_changes'));
-    } catch (error) {
+    } catch {
       toast.error(t('profile.save_error'));
     }
   };
@@ -220,7 +221,7 @@ export default function ProfilePage() {
       // Fuzz the location before saving to protect privacy
       const fuzzedCoords = fuzzLocation(locationData.latitude, locationData.longitude);
 
-      const updatePayload: any = {
+      const updatePayload: Partial<UserData> = {
         location: {
           latitude: fuzzedCoords.latitude,
           longitude: fuzzedCoords.longitude,
@@ -241,7 +242,7 @@ export default function ProfilePage() {
 
       setShowLocationUpdate(false);
       toast.success(t('profile.location_updated'));
-    } catch (error) {
+    } catch {
       toast.error(t('profile.location_update_failed'));
     } finally {
       setUpdatingLocation(false);
@@ -253,7 +254,7 @@ export default function ProfilePage() {
       await signOut(auth);
       router.push("/");
       toast.success(t('header.logout'));
-    } catch (error) {
+    } catch {
       toast.error(t('profile.save_error'));
     }
   };
@@ -318,9 +319,9 @@ export default function ProfilePage() {
       setTimeout(() => {
         router.push("/");
       }, 1500);
-    } catch (error: any) {
+    } catch (error) {
       console.error("Error during account deletion:", error);
-      setReauthError(error.message || t('profile.delete_error'));
+      setReauthError((error as Error).message || t('profile.delete_error'));
       setIsDeletingAccount(false);
     }
   };

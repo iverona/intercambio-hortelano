@@ -5,28 +5,22 @@ import { useRouter } from "next/navigation";
 import MapComponent from "@/components/shared/MapComponent";
 import { useI18n } from "@/locales/provider";
 import Link from "next/link";
-import ProductCard from "@/components/shared/ProductCard";
 import OrganicProductCard from "@/components/shared/OrganicProductCard";
 import { useAuth } from "@/context/AuthContext";
 import { useFilters } from "@/context/FilterContext";
 import { useUser } from "@/hooks/useUser";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 import {
   MapPin,
   Package,
   ArrowRight,
-  Leaf,
-  Map as MapIcon,
-  List,
 } from "lucide-react";
 import { ViewToggle } from "@/components/shared/ViewToggle";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { SkeletonCard } from "@/components/shared/SkeletonCard";
-import { Product } from "@/types/product";
 import { useProducts } from "@/hooks/useProducts";
 import { OrganicBackground } from "@/components/shared/OrganicBackground";
-import { OrganicCard } from "@/components/shared/OrganicCard";
 import { BrowseTabs } from "@/components/shared/BrowseTabs";
 import { SectionHeader } from "@/components/shared/SectionHeader";
 import { SearchAndFilter } from "@/components/shared/SearchAndFilter";
@@ -55,6 +49,9 @@ export default function ProductsPage() {
   // Use custom hook for product data logic
   const { products, loading } = useProducts(userLocation, filters, user?.uid);
 
+  const categoriesJoined = filters.categories.join(",");
+  const transactionTypesJoined = filters.transactionTypes.join(",");
+
   // Reset pagination when filters or product count changes
   useEffect(() => {
     if (isExtendingRef.current) {
@@ -64,10 +61,10 @@ export default function ProductsPage() {
     setVisibleCount(PAGE_SIZE);
   }, [
     filters.searchTerm,
-    filters.categories.join(","),
+    categoriesJoined,
     filters.distance,
     filters.sortBy,
-    filters.transactionTypes.join(","),
+    transactionTypesJoined,
     filters.showOwnProducts,
   ]);
 
@@ -163,7 +160,6 @@ export default function ProductsPage() {
             <Pagination
               visibleCount={visibleCount}
               totalCount={products.length}
-              pageSize={PAGE_SIZE}
               onLoadMore={() => setVisibleCount((prev) => prev + PAGE_SIZE)}
               endAction={
                 nextDistance ? (
@@ -176,7 +172,7 @@ export default function ProductsPage() {
                     }}
                   >
                     <MapPin className="mr-2 h-4 w-4" />
-                    {(t as any)('filter.extend_search')} {nextDistance === 100 ? `(${(t as any)('filter.any_distance').toLowerCase()})` : `(hasta ${nextDistance} km)`}
+                    {t('filter.extend_search' as Parameters<typeof t>[0])} {nextDistance === 100 ? `(${t('filter.any_distance' as Parameters<typeof t>[0]).toLowerCase()})` : `(hasta ${nextDistance} km)`}
                   </Button>
                 ) : undefined
               }
