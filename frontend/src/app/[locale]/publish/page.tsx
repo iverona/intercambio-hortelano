@@ -137,7 +137,7 @@ export default function PublishPage() {
 
       setShowSuccess(true);
       setTimeout(() => {
-        router.push("/");
+        router.push("/my-garden");
       }, 2000);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "An unexpected error occurred";
