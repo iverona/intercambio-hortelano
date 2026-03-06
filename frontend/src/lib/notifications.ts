@@ -1,7 +1,7 @@
 import { collection, addDoc, Timestamp, doc, updateDoc, getDoc } from "firebase/firestore";
 import { db } from "./firebase";
 
-export type NotificationType = 
+export type NotificationType =
   | "NEW_OFFER"
   | "OFFER_ACCEPTED"
   | "OFFER_REJECTED"
@@ -65,7 +65,6 @@ export async function createNotification({
     };
 
     const docRef = await addDoc(collection(db, "notifications"), notificationData);
-    console.log("Notification created with ID: ", docRef.id);
     return docRef.id;
   } catch (error) {
     console.error("Error creating notification: ", error);
@@ -80,7 +79,6 @@ export async function markNotificationAsRead(notificationId: string) {
     await updateDoc(notificationRef, {
       isRead: true
     });
-    console.log("Notification marked as read");
   } catch (error) {
     console.error("Error marking notification as read: ", error);
     throw error;

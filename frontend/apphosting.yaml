@@ -41,4 +41,4 @@ env:
     value: "6LfnAWIsAAAAADzOTZ_tDrgsYe5WujvfkdfeK_s_"
 
 scripts:
-  buildCommand: next build --no-lint
+  buildCommand: next build

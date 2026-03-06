@@ -85,7 +85,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           pathname.includes("logout");
 
         if (!isExcluded) {
-          console.log("Redirecting to onboarding due to incomplete profile");
           router.push("/onboarding");
         }
       }

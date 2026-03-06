@@ -24,7 +24,7 @@ export async function submitReview({
 }: SubmitReviewParams): Promise<void> {
   try {
     const exchangeRef = doc(db, "exchanges", exchangeId);
-    
+
     // Create the review object with reviewedUserId for the Cloud Function
     const review: Review & { reviewedUserId: string } = {
       rating,
@@ -33,17 +33,16 @@ export async function submitReview({
       reviewedUserId: reviewedUserId, // Added for Cloud Function to identify who is being reviewed
       createdAt: Timestamp.now(),
     };
-    
+
     // Update the exchange document with the review
     // Using the reviewer's ID as the key (the person who submitted the review)
     const updates: Record<string, Review & { reviewedUserId: string }> = {};
     updates[`reviews.${currentUserId}`] = review;
-    
+
     await updateDoc(exchangeRef, updates);
 
     // The Cloud Function will automatically handle reputation updates
     // when it detects the new review in the exchange document
-    console.log("Review submitted successfully. Reputation will be updated automatically.");
 
     // Send notification to the reviewed user
     await createNotification({

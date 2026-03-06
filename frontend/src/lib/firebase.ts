@@ -31,7 +31,6 @@ if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY)
       provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY),
       isTokenAutoRefreshEnabled: true,
     });
-    console.log("Firebase App Check initialized.");
   } catch (error) {
     console.error("Firebase App Check initialization failed:", error);
   }

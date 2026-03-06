@@ -291,8 +291,6 @@ export const ProductService = {
                     ? exchangeData.ownerId
                     : exchangeData.requesterId;
 
-                console.log(`[deleteProduct] Processing exchange ${exchangeDoc.id}. Partner: ${partnerId}`);
-
                 if (operationCount >= BATCH_LIMIT) await commitBatch();
                 const notifRef = doc(collection(db, "notifications"));
                 batch.set(notifRef, {

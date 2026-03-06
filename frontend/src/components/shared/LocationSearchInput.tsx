@@ -35,16 +35,12 @@ export default function LocationSearchInput({
 
   useEffect(() => {
     if (!isLoaded || !inputRef.current) {
-      console.log("LocationSearchInput: Not loaded or no input ref", { isLoaded, hasInput: !!inputRef.current });
       return;
     }
 
     if (autocompleteRef.current) {
-      console.log("LocationSearchInput: Autocomplete already initialized");
       return;
     }
-
-    console.log("LocationSearchInput: Initializing Autocomplete...");
 
     // Initialize the autocomplete widget
     const autocomplete = new google.maps.places.Autocomplete(inputRef.current, {

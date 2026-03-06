@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 
-// TODO Remove this when going live
 const nextConfig: NextConfig = {
   output: "standalone",
   images: {
