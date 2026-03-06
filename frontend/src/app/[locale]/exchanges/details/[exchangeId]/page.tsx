@@ -563,7 +563,6 @@ export default function ExchangeDetailsPage() {
                         <AvatarImage src={partner?.avatarUrl} />
                         <AvatarFallback>{partner?.name?.charAt(0)}</AvatarFallback>
                       </Avatar>
-                      <span className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full animate-pulse"></span>
                     </div>
                     <div>
                       <h3 className="font-bold text-lg text-[#2C2A25] dark:text-[#d6c7b0] leading-none mb-1">
