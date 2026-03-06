@@ -35,7 +35,7 @@ const ProducerCardContent: React.FC<{ producer: Producer; priority?: boolean }> 
                         priority={priority}
                     />
                     <div className="min-w-0 flex-1">
-                        <h3 className="text-lg font-bold text-foreground font-display leading-tight line-clamp-1">
+                        <h3 className="text-lg font-bold text-foreground font-display leading-tight break-words">
                             {producerName}
                         </h3>
                         {hasLocation && (
