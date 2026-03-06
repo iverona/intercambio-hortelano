@@ -278,11 +278,6 @@ export default function ProductDetailPage() {
                           <p className="font-serif font-bold text-lg text-foreground group-hover:text-primary transition-colors">
                             {seller.name}
                           </p>
-                          <div className="flex items-center gap-1 text-secondary">
-                            <Star className="w-4 h-4 fill-current" />
-                            <span className="font-sans font-medium">4.8</span>
-                            <span className="text-xs opacity-70">({t('product.seller_stats.response')}: 95%)</span>
-                          </div>
                         </div>
                       </Link>
                     )}
