@@ -39,8 +39,7 @@ export const useProducts = (
     useEffect(() => {
         const uids = Array.from(new Set(rawProducts.map(p => p.userId).filter(Boolean)));
         if (uids.length === 0) {
-            // If we have products but no UIDs (unlikely), stop loading
-            if (rawProducts.length > 0) setLoading(false);
+            setLoading(false);
             return;
         }
 
