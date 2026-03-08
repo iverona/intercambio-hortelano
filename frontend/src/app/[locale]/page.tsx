@@ -82,6 +82,18 @@ export default function Home() {
         </div>
       </OrganicCard>
 
+      {/* Slogan Hook Section */}
+      <div className="flex justify-center w-full px-4 mt-12 mb-4">
+        <div
+          className="bg-[#879385] dark:bg-[#525b51] text-white px-10 py-6 shadow-xl text-center max-w-2xl transform rotate-[-0.5deg] border-2 border-white/20"
+          style={{ borderRadius: '255px 15px 225px 15px / 15px 225px 15px 255px' }}
+        >
+          <h1 className="font-serif text-2xl md:text-4xl font-bold leading-tight">
+            <span className="text-[#FFCF56] font-extrabold uppercase tracking-tight">Comparte</span> lo que te sobra, <br className="hidden md:block" /> <span className="text-[#FFCF56] font-extrabold uppercase tracking-tight">consigue</span> lo que no tienes
+          </h1>
+        </div>
+      </div>
+
       {/* Action Buttons */}
       <div className="flex flex-col md:flex-row flex-wrap gap-6 mt-8 mb-12 items-center justify-center w-full px-4">
         <Link href={`/${locale}/publish`} onClick={handlePublishClick} className="relative group cursor-pointer w-64">
