@@ -55,16 +55,29 @@ export const updateUserReputation = onDocumentUpdated(
 
             try {
                 // Get all exchanges where this user has been reviewed
-                const exchangesSnapshot = await db.collection("exchanges")
-                    .where("status", "==", "completed")
-                    .get();
+                // We query both as requester and owner to catch all possible reviews
+                const [requesterSnapshot, ownerSnapshot] = await Promise.all([
+                    db.collection("exchanges")
+                        .where("status", "==", "completed")
+                        .where("requesterId", "==", reviewedUserId)
+                        .get(),
+                    db.collection("exchanges")
+                        .where("status", "==", "completed")
+                        .where("ownerId", "==", reviewedUserId)
+                        .get(),
+                ]);
+
+                // Use a map to deduplicate (though duplication should be rare)
+                const exchangeDocs = new Map();
+                requesterSnapshot.forEach((doc) => exchangeDocs.set(doc.id, doc));
+                ownerSnapshot.forEach((doc) => exchangeDocs.set(doc.id, doc));
 
                 let totalRating = 0;
                 let reviewCount = 0;
                 const processedReviews = new Set<string>();
 
                 // Calculate average rating from all reviews
-                exchangesSnapshot.forEach((doc) => {
+                exchangeDocs.forEach((doc) => {
                     const exchangeData = doc.data() as ExchangeData;
                     const reviews = exchangeData.reviews || {};
 
